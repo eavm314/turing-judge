@@ -28,8 +28,9 @@ export function Canvas() {
   const onConnect = useCallback((edge: Edge | Connection) => setEdges((eds) => addEdge(edge, eds)), [setEdges]);
 
   return (
-    <div className="h-[600px] border-4 border-red-600">
+    <div className="flex-1 h-[600px]">
       <ReactFlow
+        suppressHydrationWarning
         colorMode={theme as ColorMode}
         nodes={nodes}
         edges={edges}

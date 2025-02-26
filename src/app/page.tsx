@@ -32,14 +32,11 @@ export default function LandingPage() {
                   automata, and Turing machines.
                 </p>
               </div>
-              <div className="space-x-4">
-                <Button asChild>
-                  <Link href="/editor">Get Started</Link>
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link href="#features">Explore Features</Link>
-                </Button>
-              </div>
+              <Button size="lg" asChild>
+                <Link href="/editor" className="text-xl py-6">
+                  Go to Editor <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
             </div>
           </div>
         </section>
@@ -81,7 +78,7 @@ export default function LandingPage() {
                 </p>
               </div>
               <Button size="lg" asChild>
-                <Link href="#">
+                <Link href="/editor">
                   Get Started <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
