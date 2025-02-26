@@ -11,7 +11,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "TuringLabs",
+  title: "TuringProject",
   description: "Automaton Designer",
 };
 
