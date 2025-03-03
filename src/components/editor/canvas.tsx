@@ -12,13 +12,19 @@ import {
   type Edge,
   type Connection,
   type NodeTypes,
+  type EdgeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useTheme } from "next-themes";
 import { StateNode } from "./state-node";
+import { TransitionEdge } from "./transition-edge";
 
 const nodeTypes: NodeTypes = {
   state: StateNode,
+}
+
+const edgeTypes: EdgeTypes = {
+  transition: TransitionEdge,
 }
 
 export default function Canvas() {
@@ -30,7 +36,7 @@ export default function Canvas() {
     ]
   );
 
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([{ id: 'e1-2', type: 'transition', source: 'Q1', target: 'Q2' }]);
 
   const onConnect = useCallback((edge: Edge | Connection) => setEdges((eds) => addEdge(edge, eds)), [setEdges]);
 
@@ -44,6 +50,7 @@ export default function Canvas() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         fitView
       >
         <Controls position="bottom-right" />
