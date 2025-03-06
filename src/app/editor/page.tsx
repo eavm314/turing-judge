@@ -1,6 +1,7 @@
 "use client"
 
 import { SideMenu } from "@/components/editor/side-menu"
+import { ReactFlowProvider } from "@xyflow/react";
 import { Loader } from "lucide-react";
 import dynamic from "next/dynamic";
 
@@ -17,11 +18,13 @@ const Canvas = dynamic(() => import("@/components/editor/canvas"), {
 
 export default function EditorPage() {
   return (
-    <main>
-      <div className="flex">
-        <Canvas />
-        <SideMenu />
-      </div>
-    </main>
+    <ReactFlowProvider>
+      <main>
+        <div className="flex">
+          <Canvas />
+          <SideMenu />
+        </div>
+      </main>
+    </ReactFlowProvider>
   )
 }

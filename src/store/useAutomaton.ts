@@ -4,7 +4,7 @@ import { Automaton } from "@/lib/automaton/Automaton";
 type AutomatonStore = {
   automaton: Automaton;
   updateAutomaton: (callback: (automaton: Automaton) => void) => void;
-};
+}
 
 export const useAutomaton = create<AutomatonStore>((set) => ({
   automaton: new Automaton(),
@@ -16,4 +16,4 @@ export const useAutomaton = create<AutomatonStore>((set) => ({
       return { automaton: newAutomaton };
     });
   }
-}));
+}))

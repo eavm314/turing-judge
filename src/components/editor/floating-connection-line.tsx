@@ -6,7 +6,7 @@ import {
  
 import { getEdgeParams } from './utils';
  
-function FloatingConnectionLine({
+export function FloatingConnectionLine({
   toX,
   toY,
   fromPosition,
@@ -47,16 +47,6 @@ function FloatingConnectionLine({
         className="animated"
         d={edgePath}
       />
-      <circle
-        cx={toX}
-        cy={toY}
-        fill="#fff"
-        r={3}
-        stroke="#222"
-        strokeWidth={1.5}
-      />
     </g>
   );
 }
- 
-export default FloatingConnectionLine;
