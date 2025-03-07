@@ -16,8 +16,8 @@ function CustomToolbar({ nodeId }: { nodeId: string }) {
   const handleClick = useCallback(() => {
     updateAutomaton((auto) => {
       auto.toggleFinal(nodeId);
-    })
-  }, [updateAutomaton])
+    });
+  }, [updateAutomaton]);
 
   return (
     <NodeToolbar>

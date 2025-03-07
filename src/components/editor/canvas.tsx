@@ -64,12 +64,14 @@ export default function Canvas() {
     },
     [setNodes],
   );
+
   const onEdgesChange: OnEdgesChange = useCallback(
     (changes) => {
       setEdges((eds) => applyEdgeChanges(changes, eds));
     },
     [setEdges],
   );
+
   const onConnect: OnConnect = useCallback(
     (connection) => {
       setEdges((eds) => addEdge(connection, eds));
@@ -77,12 +79,29 @@ export default function Canvas() {
     [setEdges],
   );
 
+  const handleAddState = useCallback(() => {
+    const stateName = prompt("Enter State Name:");
+    if (!stateName) return;
+    if (!automaton.states.has(stateName)) {
+      updateAutomaton((auto) => {
+        auto.addState({
+          name: stateName,
+          position: { x: 0, y: 0 },
+          transitions: {}
+        });
+      });
+    } else {
+      alert("State name must be unique");
+    }
+  }, [updateAutomaton]);
+
   const { mode, setMode } = useEditor();
+
   useEffect(() => {
     if (mode === 'transition') {
       setNodes(prev => prev.map(n => ({ ...n, selected: false })))
     }
-  }, [mode])
+  }, [mode]);
 
   return (
     <div className="flex-1 h-[600px]">
@@ -102,12 +121,19 @@ export default function Canvas() {
         <Controls position="bottom-right" />
         <Background />
         <Panel>
-          <Button onClick={() => setMode(mode === 'transition' ? 'state' : 'transition')}>
-            {mode}
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button onClick={() => setMode(mode === 'transition' ? 'state' : 'transition')}>
+              Mode: {mode}
+            </Button>
+            {mode === 'state' &&
+              <Button onClick={handleAddState}>
+                Add State
+              </Button>
+            }
+          </div>
         </Panel>
       </ReactFlow>
-    </div>
+    </div >
   )
 }
 
