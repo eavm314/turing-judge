@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Controls,
   Background,
@@ -8,14 +8,19 @@ import {
   useEdgesState,
   useNodesState,
   addEdge,
+  MarkerType,
+  Panel,
   type ColorMode,
+  type Node,
   type Edge,
   type Connection,
   type NodeTypes,
   type EdgeTypes,
-  MarkerType,
-  Panel,
-  useReactFlow,
+  type OnNodesChange,
+  type OnEdgesChange,
+  type OnConnect,
+  applyNodeChanges,
+  applyEdgeChanges,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useTheme } from "next-themes";
@@ -24,6 +29,8 @@ import { TransitionEdge } from "./transition-edge";
 import { FloatingConnectionLine } from "./floating-connection-line";
 import { Button } from "@/components/ui/button";
 import { useEditor } from "@/store/useEditor";
+import { useAutomaton } from "@/store/useAutomaton";
+import { dfaToFlow } from "./utils/transformations";
 
 const nodeTypes: NodeTypes = {
   state: StateNode,
@@ -40,18 +47,35 @@ const defaultEdgeOpts = {
 
 export default function Canvas() {
   const { theme } = useTheme();
-  const [nodes, setNodes, onNodesChange] = useNodesState([
-    { id: 'Q1', type: 'state', position: { x: 0, y: 0 }, data: { label: '1' } },
-    { id: 'Q2', type: 'state', position: { x: 0, y: 100 }, data: { label: '2' } },
-    { id: 'Q3', type: 'state', position: { x: 100, y: 100 }, data: { label: '3' } },
-    { id: 'Q4', type: 'state', position: { x: -100, y: 100 }, data: { label: '4' } },
-  ]);
+  const { automaton, updateAutomaton } = useAutomaton();
 
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([
-    { id: 'e1-2', source: 'Q1', target: 'Q2' },
-  ]);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
 
-  const onConnect = useCallback((edge: Edge | Connection) => setEdges((eds) => addEdge(edge, eds)), [setEdges]);
+  useEffect(() => {
+    const { nodes: newNodes, edges: newEdges } = dfaToFlow(automaton);
+    setNodes(newNodes);
+    setEdges(newEdges);
+  }, [automaton])
+
+  const onNodesChange: OnNodesChange = useCallback(
+    (changes) => {
+      setNodes((nds) => applyNodeChanges(changes, nds));
+    },
+    [setNodes],
+  );
+  const onEdgesChange: OnEdgesChange = useCallback(
+    (changes) => {
+      setEdges((eds) => applyEdgeChanges(changes, eds));
+    },
+    [setEdges],
+  );
+  const onConnect: OnConnect = useCallback(
+    (connection) => {
+      setEdges((eds) => addEdge(connection, eds));
+    },
+    [setEdges],
+  );
 
   const { mode, setMode } = useEditor();
   useEffect(() => {

@@ -30,22 +30,33 @@ const customHandleStyles = {
   opacity: 0,
 }
 
-type StateNodeData = Node<{
+export type StateNodeType = Node<{
   isInitial: boolean,
   isFinal: boolean,
 }>
 
-export function StateNode({ id, data, selected }: NodeProps<StateNodeData>) {
+export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
   const { mode } = useEditor();
   return (
-    <div className={`relative grid rounded-full size-12 border-2 bg-background ${selected ? 'border-green-500' : 'border-foreground'}`}>
-      <div className="m-auto">{id}</div>
-      {mode === "transition" &&
-        <Handle style={customHandleStyles} type="source" position={Position.Top} />
+    <div className="relative flex items-center justify-center size-14">
+      <div className={`relative grid rounded-full size-full border-2 bg-background 
+      ${data.isFinal && `outline outline-2 -outline-offset-8`}
+      ${selected ? 'border-green-500 outline-green-500' : `border-foreground outline-foreground`}
+      `}>
+        <div className="m-auto">{id}</div>
+        {mode === "transition" &&
+          <Handle style={customHandleStyles} type="source" position={Position.Top} />
+        }
+        <Handle style={customHandleStyles} type="source" position={Position.Top} isConnectable={false} />
+        <Handle style={customHandleStyles} type="target" position={Position.Top} isConnectableStart={false} />
+        <CustomToolbar />
+      </div>
+      {data.isInitial &&
+        <div className="absolute -left-[18px] flex flex-col gap-2">
+          <div className="w-5 h-0.5 bg-foreground rotate-[30deg]"></div>
+          <div className="w-5 h-0.5 bg-foreground -rotate-[30deg]"></div>
+        </div>
       }
-      <Handle style={customHandleStyles} type="source" position={Position.Top} isConnectable={false} />
-      <Handle style={customHandleStyles} type="target" position={Position.Top} isConnectableStart={false} />
-      <CustomToolbar />
     </div>
   );
 }

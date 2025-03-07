@@ -4,7 +4,7 @@ import {
   type InternalNode,
 } from '@xyflow/react';
  
-import { getEdgeParams } from './utils';
+import { getEdgeParams } from './utils/graphics';
  
 export function FloatingConnectionLine({
   toX,
