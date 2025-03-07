@@ -1,5 +1,5 @@
-import { create } from "zustand";
 import { DFA } from "@/lib/automaton/DFA";
+import { create } from "zustand";
 
 const dfaExample = {
   alphabet: ["0", "1"],

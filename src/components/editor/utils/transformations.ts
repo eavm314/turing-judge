@@ -1,7 +1,6 @@
 import { DFA } from "@/lib/automaton/DFA";
 import { StateNodeType } from "../state-node";
 import { TransitionEdgeType } from "../transition-edge";
-import { OnNodesChange } from "@xyflow/react";
 
 export const dfaToFlow = (dfa: DFA) => {
   const nodes: StateNodeType[] = dfa.states.values().map(st => {

@@ -1,7 +1,7 @@
-import { 
-  Position, 
-  type InternalNode, 
-  type XYPosition, 
+import {
+  Position,
+  type InternalNode,
+  type XYPosition,
 } from '@xyflow/react';
 
 // this helper function returns the intersection point

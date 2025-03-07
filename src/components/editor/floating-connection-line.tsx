@@ -1,5 +1,5 @@
-import { 
-  getBezierPath, 
+import {
+  getBezierPath,
   type ConnectionLineComponentProps,
   type InternalNode,
 } from '@xyflow/react';

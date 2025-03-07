@@ -1,6 +1,6 @@
-import { 
-  getBezierPath, 
-  useInternalNode, 
+import {
+  getBezierPath,
+  useInternalNode,
   type Edge,
   type EdgeProps,
 } from '@xyflow/react';
@@ -10,7 +10,7 @@ export type TransitionEdgeType = Edge<{
   symbols: string[],
 }>
  
-export function TransitionEdge({ id, source, target, markerEnd, style, data }: EdgeProps<TransitionEdgeType>) {
+export function TransitionEdge({ id, source, target, markerEnd, style }: EdgeProps<TransitionEdgeType>) {
   const sourceNode = useInternalNode(source);
   const targetNode = useInternalNode(target);
  

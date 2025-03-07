@@ -1,13 +1,13 @@
+import { Button } from "@/components/ui/button";
+import { useAutomaton } from "@/store/useAutomaton";
+import { useEditor } from "@/store/useEditor";
 import {
   Handle,
   NodeToolbar,
   Position,
   type Node,
   type NodeProps,
-} from "@xyflow/react"
-import { Button } from "@/components/ui/button";
-import { useEditor } from "@/store/useEditor";
-import { useAutomaton } from "@/store/useAutomaton";
+} from "@xyflow/react";
 import { useCallback } from "react";
 
 function CustomToolbar({ nodeId }: { nodeId: string }) {
@@ -17,7 +17,7 @@ function CustomToolbar({ nodeId }: { nodeId: string }) {
     updateAutomaton((auto) => {
       auto.toggleFinal(nodeId);
     });
-  }, [updateAutomaton]);
+  }, [updateAutomaton, nodeId]);
 
   return (
     <NodeToolbar>

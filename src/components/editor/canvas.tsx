@@ -1,35 +1,32 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useAutomaton } from "@/store/useAutomaton";
+import { useEditor } from "@/store/useEditor";
 import {
-  Controls,
-  Background,
-  ReactFlow,
-  useEdgesState,
-  useNodesState,
   addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
+  Background,
+  Controls,
   MarkerType,
   Panel,
+  ReactFlow,
   type ColorMode,
-  type Node,
   type Edge,
-  type Connection,
-  type NodeTypes,
   type EdgeTypes,
-  type OnNodesChange,
-  type OnEdgesChange,
+  type Node,
+  type NodeTypes,
   type OnConnect,
-  applyNodeChanges,
-  applyEdgeChanges,
+  type OnEdgesChange,
+  type OnNodesChange
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useTheme } from "next-themes";
+import { useCallback, useEffect, useState } from "react";
+import { FloatingConnectionLine } from "./floating-connection-line";
 import { StateNode } from "./state-node";
 import { TransitionEdge } from "./transition-edge";
-import { FloatingConnectionLine } from "./floating-connection-line";
-import { Button } from "@/components/ui/button";
-import { useEditor } from "@/store/useEditor";
-import { useAutomaton } from "@/store/useAutomaton";
 import { dfaToFlow } from "./utils/transformations";
 
 const nodeTypes: NodeTypes = {
@@ -93,7 +90,7 @@ export default function Canvas() {
     } else {
       alert("State name must be unique");
     }
-  }, [updateAutomaton]);
+  }, [automaton.states, updateAutomaton]);
 
   const { mode, setMode } = useEditor();
 
