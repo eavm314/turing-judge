@@ -4,16 +4,25 @@ import {
   Position,
   type Node,
   type NodeProps,
-  type NodeToolbarProps,
 } from "@xyflow/react"
 import { Button } from "@/components/ui/button";
 import { useEditor } from "@/store/useEditor";
+import { useAutomaton } from "@/store/useAutomaton";
+import { useCallback } from "react";
 
-function CustomToolbar({ isVisible }: NodeToolbarProps) {
+function CustomToolbar({ nodeId }: { nodeId: string }) {
+  const { updateAutomaton } = useAutomaton();
+
+  const handleClick = useCallback(() => {
+    updateAutomaton((auto) => {
+      auto.toggleFinal(nodeId);
+    })
+  }, [updateAutomaton])
+
   return (
-    <NodeToolbar isVisible={isVisible}>
+    <NodeToolbar>
       <div className="flex gap-1">
-        <Button>Final</Button>
+        <Button onClick={handleClick}>Final</Button>
       </div>
     </NodeToolbar>
   )
@@ -49,7 +58,7 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
         }
         <Handle style={customHandleStyles} type="source" position={Position.Top} isConnectable={false} />
         <Handle style={customHandleStyles} type="target" position={Position.Top} isConnectableStart={false} />
-        <CustomToolbar />
+        <CustomToolbar nodeId={id} />
       </div>
       {data.isInitial &&
         <div className="absolute -left-[18px] flex flex-col gap-2">
