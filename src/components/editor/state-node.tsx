@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useAutomaton } from "@/store/useAutomaton";
-import { useEditor } from "@/store/useEditor";
+import { useAutomaton, useEditor } from "@/store/editor-context";
 import {
   Handle,
   NodeToolbar,

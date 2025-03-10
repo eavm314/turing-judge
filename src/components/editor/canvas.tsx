@@ -1,10 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { useAutomaton } from "@/store/useAutomaton";
-import { useEditor } from "@/store/useEditor";
+import { useAutomaton, useEditor } from "@/store/editor-context";
 import {
-  addEdge,
   applyEdgeChanges,
   applyNodeChanges,
   Background,
@@ -19,8 +17,7 @@ import {
   type NodeTypes,
   type OnConnect,
   type OnEdgesChange,
-  type OnNodesChange,
-  type NodePositionChange,
+  type OnNodesChange
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useTheme } from "next-themes";
@@ -52,10 +49,10 @@ export default function Canvas() {
 
   useEffect(() => {
     const { nodes: newNodes, edges: newEdges } = dfaToFlow(automaton);
-    
+
     const mergedNodes = Object.values(
       [...nodes, ...newNodes].reduce((acc, obj) => {
-        acc[obj.id] = { ...acc[obj.id], ...obj }; 
+        acc[obj.id] = { ...acc[obj.id], ...obj };
         return acc;
       }, {} as Record<string, Node>)
     );
