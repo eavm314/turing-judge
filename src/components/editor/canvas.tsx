@@ -52,7 +52,14 @@ export default function Canvas() {
 
   useEffect(() => {
     const { nodes: newNodes, edges: newEdges } = dfaToFlow(automaton);
-    setNodes(newNodes);
+    
+    const mergedNodes = Object.values(
+      [...nodes, ...newNodes].reduce((acc, obj) => {
+        acc[obj.id] = { ...acc[obj.id], ...obj }; 
+        return acc;
+      }, {} as Record<string, Node>)
+    );
+    setNodes(mergedNodes);
     setEdges(newEdges);
   }, [automaton])
 
@@ -63,7 +70,15 @@ export default function Canvas() {
           changes.forEach((change) => {
             if (change.type === 'position') {
               const state = auto.states.get(change.id);
-              state?.setPosition(change.position!.x, change.position!.y);
+              state?.setPosition(change.position!);
+            }
+          });
+        });
+      } else if (changes.some((change) => change.type === 'remove')) {
+        updateAutomaton((auto) => {
+          changes.forEach((change) => {
+            if (change.type === 'remove') {
+              auto.removeState(change.id);
             }
           });
         });
@@ -76,14 +91,30 @@ export default function Canvas() {
 
   const onEdgesChange: OnEdgesChange = useCallback(
     (changes) => {
-      setEdges((eds) => applyEdgeChanges(changes, eds));
+      if (changes.some((change) => change.type === 'remove')) {
+        updateAutomaton((auto) => {
+          changes.forEach((change) => {
+            if (change.type === 'remove') {
+              const [source, target] = change.id.split('->');
+              auto.removeTransition(source, target);
+            }
+          });
+        });
+      } else {
+        setEdges((eds) => applyEdgeChanges(changes, eds));
+      }
     },
     [setEdges],
   );
 
   const onConnect: OnConnect = useCallback(
     (connection) => {
-      setEdges((eds) => addEdge(connection, eds));
+      const symbols = prompt("Enter symbols separated by commas:");
+      if (!symbols) return;
+      const symbolsArr = symbols.split(',').map(s => s.trim());
+      updateAutomaton((auto) => {
+        auto.addTransition(connection.source, connection.target, symbolsArr);
+      });
     },
     [setEdges],
   );

@@ -8,7 +8,7 @@ export class State {
   name: string;
   position: { x: number, y: number }
   isFinal: boolean;
-  transitions: Map<string, string>;
+  transitions: Map<string, string[]>;
 
   constructor(json: JsonState) {
     this.name = json.name;
@@ -17,7 +17,7 @@ export class State {
     this.transitions = new Map();
 
     for (const [symbol, target] of Object.entries(json.transitions)) {
-      this.addTransition(symbol, target);
+      this.addTransition([symbol], target);
     }
   }
 
@@ -25,15 +25,23 @@ export class State {
     this.isFinal = value;
   }
 
-  setPosition(x: number, y: number) {
+  setPosition({ x, y }: { x: number, y: number }) {
     this.position = { x, y };
   }
 
-  addTransition(symbol: string, target: string) {
-    this.transitions.set(symbol, target);
+  addTransition(symbols: string[], target: string) {
+    symbols.forEach(symbol => {
+      if (this.transitions.has(symbol)) {
+        this.transitions.get(symbol)!.push(target);
+      } else {
+        this.transitions.set(symbol, [target]);
+      }
+    });
   }
 
-  removeTransition(symbol: string) {
-    this.transitions.delete(symbol);
+  removeTransition(to: string) {
+    this.transitions.forEach((targets, symbol) => {
+      this.transitions.set(symbol, targets.filter(target => target !== to));
+    });
   }
 }

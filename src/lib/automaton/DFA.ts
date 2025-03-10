@@ -56,12 +56,12 @@ export class DFA {
     }
   }
 
-  addTransition(from: string, symbol: string, to: string) {
-    this.states.get(from)?.addTransition(symbol, to);
+  addTransition(from: string, to: string, symbols: string[]) {
+    this.states.get(from)!.addTransition(symbols, to);
   }
 
-  removeTransition(from: string, symbol: string) {
-    this.states.get(from)?.removeTransition(symbol);
+  removeTransition(from: string, to: string) {
+    this.states.get(from)!.removeTransition(to);
   }
 
   toggleFinal(name: string) {

@@ -16,21 +16,23 @@ export const dfaToFlow = (dfa: DFA) => {
   }).toArray();
 
   const edges: TransitionEdgeType[] = dfa.states.values().flatMap(st => {
-    const obj = st.transitions.entries().reduce((acc, [symbol, target]) => {
-      const key = `${st.name}->${target}`;
-      acc[key] = acc[key] ?
-        {
-          id: key,
-          source: st.name,
-          target,
-          data: { symbols: [...acc[key].data!.symbols, symbol] }
-        } :
-        {
-          id: key,
-          source: st.name,
-          target,
-          data: { symbols: [symbol] }
-        };
+    const obj = st.transitions.entries().reduce((acc, [symbol, targets]) => {
+      targets.forEach(target => {
+        const key = `${st.name}->${target}`;
+        acc[key] = acc[key] ?
+          {
+            id: key,
+            source: st.name,
+            target,
+            data: { symbols: [...acc[key].data!.symbols, symbol] }
+          } :
+          {
+            id: key,
+            source: st.name,
+            target,
+            data: { symbols: [symbol] }
+          };
+      });
       return acc
     }, {} as Record<string, TransitionEdgeType>)
     return Object.values(obj);
