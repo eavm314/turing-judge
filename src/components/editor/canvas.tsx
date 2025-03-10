@@ -19,7 +19,8 @@ import {
   type NodeTypes,
   type OnConnect,
   type OnEdgesChange,
-  type OnNodesChange
+  type OnNodesChange,
+  type NodePositionChange,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useTheme } from "next-themes";
@@ -57,7 +58,18 @@ export default function Canvas() {
 
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => {
-      setNodes((nds) => applyNodeChanges(changes, nds));
+      if (changes.some((change) => change.type === 'position' && !change.dragging)) {
+        updateAutomaton((auto) => {
+          changes.forEach((change) => {
+            if (change.type === 'position') {
+              const state = auto.states.get(change.id);
+              state?.setPosition(change.position!.x, change.position!.y);
+            }
+          });
+        });
+      } else {
+        setNodes((nds) => applyNodeChanges(changes, nds));
+      }
     },
     [setNodes],
   );
