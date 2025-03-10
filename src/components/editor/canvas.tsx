@@ -156,7 +156,7 @@ export default function Canvas() {
         fitView
       >
         <Controls position="bottom-right" />
-        <Background />
+        <Background color={theme === 'light' ? 'black' : 'white'} />
         <Panel>
           <div className="flex flex-col gap-2">
             <Button onClick={() => setMode(mode === 'transition' ? 'state' : 'transition')}>
