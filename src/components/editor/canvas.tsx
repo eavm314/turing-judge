@@ -48,15 +48,8 @@ export default function Canvas() {
   const [edges, setEdges] = useState<Edge[]>([]);
 
   useEffect(() => {
-    const { nodes: newNodes, edges: newEdges } = dfaToFlow(automaton);
-
-    const mergedNodes = Object.values(
-      [...nodes, ...newNodes].reduce((acc, obj) => {
-        acc[obj.id] = { ...acc[obj.id], ...obj };
-        return acc;
-      }, {} as Record<string, Node>)
-    );
-    setNodes(mergedNodes);
+    const { nodes: newNodes, edges: newEdges } = dfaToFlow(automaton, nodes);
+    setNodes(newNodes);
     setEdges(newEdges);
   }, [automaton])
 

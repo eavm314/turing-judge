@@ -19,9 +19,13 @@ function CustomToolbar({ nodeId }: { nodeId: string }) {
   }, [updateAutomaton, nodeId]);
 
   return (
-    <NodeToolbar className="nopan">
+    <NodeToolbar className="nopan top-2">
       <div className="flex gap-1">
-        <Button onClick={handleClick}>Final</Button>
+        <Button className="p-2"
+          variant="secondary"
+          onClick={handleClick}>
+          Final
+        </Button>
       </div>
     </NodeToolbar>
   )
