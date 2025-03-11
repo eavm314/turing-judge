@@ -1,7 +1,7 @@
 export interface JsonState {
   name: string,
   position: { x: number, y: number },
-  transitions: Record<string, string>
+  transitions: Record<string, string[]>
 }
 
 export class State {
@@ -16,8 +16,8 @@ export class State {
     this.isFinal = false;
     this.transitions = new Map();
 
-    for (const [symbol, target] of Object.entries(json.transitions)) {
-      this.addTransition([symbol], target);
+    for (const [symbol, targets] of Object.entries(json.transitions)) {
+      this.addTransition([symbol], targets);
     }
   }
 
@@ -29,12 +29,12 @@ export class State {
     this.position = { x, y };
   }
 
-  addTransition(symbols: string[], target: string) {
+  addTransition(symbols: string[], targets: string[]) {
     symbols.forEach(symbol => {
       if (this.transitions.has(symbol)) {
-        this.transitions.get(symbol)!.push(target);
+        this.transitions.get(symbol)!.push(...targets);
       } else {
-        this.transitions.set(symbol, [target]);
+        this.transitions.set(symbol, targets);
       }
     });
   }

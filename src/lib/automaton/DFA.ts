@@ -37,7 +37,7 @@ export class DFA {
     }
 
     for (const finalState of json.finals) {
-      this.states.get(finalState)?.setFinal(true);
+      this.states.get(finalState)!.setFinal(true);
     }
   }
 
@@ -57,7 +57,7 @@ export class DFA {
   }
 
   addTransition(from: string, to: string, symbols: string[]) {
-    this.states.get(from)!.addTransition(symbols, to);
+    this.states.get(from)!.addTransition(symbols, [to]);
   }
 
   removeTransition(from: string, to: string) {
