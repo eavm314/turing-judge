@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 95%;
+    --background: 240 20% 90%;
     --foreground: 240 10% 3.9%;
 
     --card: 0 0% 100%;
@@ -29,7 +29,7 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
+    --border: 240 5.9% 75%;
 
     --input: 240 5.9% 90%;
 
@@ -43,7 +43,7 @@
 
     --radius: 0.5rem;
 
-    --xy-background-color: hsl(0 0% 100%);
+    --xy-background-color: hsl(12 20% 98%);
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -82,7 +82,7 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
-    --xy-background-color: hsl(240 10% 3.9%);
+    --xy-background-color: hsl(240 3% 5%);
   }
 }
 

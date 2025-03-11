@@ -9,7 +9,7 @@ export default function EditorLayout({
 }>) {
   return (
     <div className="flex flex-col h-screen">
-      <header className="px-4 lg:px-6 h-14 flex items-center">
+      <header className="px-4 lg:px-6 h-14 flex items-center border-b">
         <Link className="flex items-center justify-center" href="/">
           <Cpu className="h-6 w-6 mr-2" />
           <span className="font-bold">TuringProject</span>

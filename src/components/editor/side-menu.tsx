@@ -5,7 +5,7 @@ export function SideMenu() {
   const result = null;
 
   return (
-    <div className="w-72 p-4">
+    <div className="w-72 p-4 border-l">
       <h2 className="text-lg font-bold mb-4">Test Cases</h2>
       <Input
         type="text"
