@@ -44,6 +44,8 @@
     --radius: 0.5rem;
 
     --xy-background-color: hsl(12 20% 98%);
+
+    --remark: hsl(130 66% 45%);
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -94,8 +96,5 @@
   }
   body {
     @apply bg-background text-foreground;
-  }
-  .react-flow {
-    @apply bg-blue-600;
   }
 }

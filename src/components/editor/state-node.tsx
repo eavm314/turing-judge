@@ -19,7 +19,7 @@ function CustomToolbar({ nodeId }: { nodeId: string }) {
   }, [updateAutomaton, nodeId]);
 
   return (
-    <NodeToolbar className="nopan top-2">
+    <NodeToolbar className="nopan -top-1" position={Position.Bottom}>
       <div className="flex gap-1">
         <Button className="p-2"
           variant="secondary"
@@ -50,12 +50,18 @@ export type StateNodeType = Node<{
 export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
   const { mode } = useEditor();
   return (
-    <div className="relative flex items-center justify-center size-14">
+    <div className="relative flex items-center justify-center size-24">
+      {data.isInitial &&
+        <div className="absolute -left-7 flex flex-col gap-3">
+          <div className="w-8 h-0.5 bg-foreground rotate-[30deg]"></div>
+          <div className="w-8 h-0.5 bg-foreground -rotate-[30deg]"></div>
+        </div>
+      }
       <div className={`relative grid rounded-full size-full border-2 bg-background 
-      ${data.isFinal && `outline outline-2 -outline-offset-8`}
-      ${selected ? 'border-green-500 outline-green-500' : `border-foreground outline-foreground`}
+        ${data.isFinal ? 'outline outline-2 -outline-offset-[12px]' : ''}
+        ${selected ? 'border-remark outline-remark' : `border-foreground outline-foreground`}
       `}>
-        <div className="m-auto">{id}</div>
+        <div className="m-auto text-2xl">{id}</div>
         {mode === "transition" &&
           <Handle style={customHandleStyles} type="source" position={Position.Top} />
         }
@@ -63,12 +69,6 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
         <Handle style={customHandleStyles} type="target" position={Position.Top} isConnectableStart={false} />
         <CustomToolbar nodeId={id} />
       </div>
-      {data.isInitial &&
-        <div className="absolute -left-[18px] flex flex-col gap-2">
-          <div className="w-5 h-0.5 bg-foreground rotate-[30deg]"></div>
-          <div className="w-5 h-0.5 bg-foreground -rotate-[30deg]"></div>
-        </div>
-      }
     </div>
   );
 }

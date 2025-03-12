@@ -7,7 +7,6 @@ import {
   applyNodeChanges,
   Background,
   Controls,
-  MarkerType,
   Panel,
   ReactFlow,
   type ColorMode,
@@ -37,7 +36,6 @@ const edgeTypes: EdgeTypes = {
 
 const defaultEdgeOpts = {
   type: 'transition',
-  markerEnd: { type: MarkerType.ArrowClosed },
 }
 
 export default function Canvas() {
