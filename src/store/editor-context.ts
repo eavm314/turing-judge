@@ -2,6 +2,7 @@ import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
 import { create } from "zustand";
 import { dfaExample, nfaExample } from "./data";
 import { useShallow } from "zustand/react/shallow";
+import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 
 type EditorMode = "state" | "transition";
 
@@ -17,13 +18,14 @@ type EditorActions = {
 
 export const useEditorStore = create<EditorState & EditorActions>((set) => ({
   mode: "state",
-  automaton: new FiniteStateMachine(dfaExample),
+  automaton: new FiniteStateMachine(),
 
   setMode: (newMode: EditorMode) => set({ mode: newMode }),
   updateAutomaton: (callback) => {
     set((state) => {
       const newAutomaton = state.automaton.clone();
       callback(newAutomaton);
+      AutomatonExecutor.setAutomaton(newAutomaton);
       return { automaton: newAutomaton };
     });
   }
