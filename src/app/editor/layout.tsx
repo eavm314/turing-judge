@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Cpu } from "lucide-react";
 import { DarkModeToggle } from "@/components/layout/dark-mode-toogle";
+import { ExamplesMenu } from "@/components/layout/examples-menu";
 
 export default function EditorLayout({
   children,
@@ -14,6 +15,9 @@ export default function EditorLayout({
           <Cpu className="h-6 w-6 mr-2" />
           <span className="font-bold">TuringProject</span>
         </Link>
+        <nav className="ml-6 mr-auto flex items-center gap-4 sm:gap-6">
+          <ExamplesMenu />
+        </nav>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">
           <DarkModeToggle />
         </nav>

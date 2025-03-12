@@ -16,7 +16,8 @@ import {
   type NodeTypes,
   type OnConnect,
   type OnEdgesChange,
-  type OnNodesChange
+  type OnNodesChange,
+  type FitViewOptions,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useTheme } from "next-themes";
@@ -36,6 +37,11 @@ const edgeTypes: EdgeTypes = {
 
 const defaultEdgeOpts = {
   type: 'transition',
+}
+
+const viewOptions: FitViewOptions = {
+  minZoom: 0,
+  maxZoom: 1,
 }
 
 export default function Canvas() {
@@ -145,6 +151,7 @@ export default function Canvas() {
         connectionLineComponent={FloatingConnectionLine}
         defaultEdgeOptions={defaultEdgeOpts}
         fitView
+        fitViewOptions={viewOptions}
       >
         <Controls position="bottom-right" />
         <Background color={theme === 'light' ? 'black' : 'white'} />
