@@ -24,7 +24,7 @@ import { useCallback, useEffect, useState } from "react";
 import { FloatingConnectionLine } from "./floating-connection-line";
 import { StateNode } from "./state-node";
 import { TransitionEdge } from "./transition-edge";
-import { dfaToFlow } from "./utils/transformations";
+import { fsmToFlow } from "./utils/transformations";
 
 const nodeTypes: NodeTypes = {
   state: StateNode,
@@ -46,7 +46,7 @@ export default function Canvas() {
   const [edges, setEdges] = useState<Edge[]>([]);
 
   useEffect(() => {
-    const { nodes: newNodes, edges: newEdges } = dfaToFlow(automaton, nodes);
+    const { nodes: newNodes, edges: newEdges } = fsmToFlow(automaton, nodes);
     setNodes(newNodes);
     setEdges(newEdges);
   }, [automaton])

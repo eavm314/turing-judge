@@ -1,13 +1,13 @@
 import { State, type JsonState } from "./State";
 
-export interface JsonDFA {
+export interface JsonFSM {
   alphabet: string[],
   states: JsonState[],
   initial: string,
   finals: string[],
 }
 
-const basicAutomata: JsonDFA = {
+const basicAutomata: JsonFSM = {
   alphabet: [],
   states: [
     {
@@ -20,12 +20,12 @@ const basicAutomata: JsonDFA = {
   finals: [],
 }
 
-export class DFA {
+export class FiniteStateMachine {
   states: Map<string, State>;
   alphabet: Set<string>;
   initial: string;
 
-  constructor(json: JsonDFA = basicAutomata) {
+  constructor(json: JsonFSM = basicAutomata) {
     this.states = new Map();
     this.alphabet = new Set(json.alphabet);
     this.initial = json.initial;
@@ -41,7 +41,7 @@ export class DFA {
     }
   }
 
-  clone(): DFA {
+  clone(): FiniteStateMachine {
     return Object.assign(Object.create(Object.getPrototypeOf(this)), this);
   }
 

@@ -1,23 +1,23 @@
-import { DFA } from "@/lib/automaton/DFA";
+import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
 import { create } from "zustand";
-import { dfaExample } from "./data";
+import { dfaExample, nfaExample } from "./data";
 import { useShallow } from "zustand/react/shallow";
 
 type EditorMode = "state" | "transition";
 
 type EditorState = {
-  automaton: DFA;
+  automaton: FiniteStateMachine;
   mode: EditorMode,
 }
 
 type EditorActions = {
-  updateAutomaton: (callback: (automaton: DFA) => void) => void;
+  updateAutomaton: (callback: (automaton: FiniteStateMachine) => void) => void;
   setMode: (newMode: EditorMode) => void,
 }
 
 export const useEditorStore = create<EditorState & EditorActions>((set) => ({
   mode: "state",
-  automaton: new DFA(dfaExample),
+  automaton: new FiniteStateMachine(dfaExample),
 
   setMode: (newMode: EditorMode) => set({ mode: newMode }),
   updateAutomaton: (callback) => {
