@@ -71,7 +71,7 @@ export default function Canvas() {
       } else if (changes.some((change) => change.type === 'remove')) {
         updateAutomaton((auto) => {
           changes.forEach((change) => {
-            if (change.type === 'remove') {
+            if (change.type === 'remove' && change.id !== auto.initial) {
               auto.removeState(change.id);
             }
           });

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useAutomaton, useEditor } from "@/store/editor-context";
 import {
   Handle,
@@ -8,8 +7,9 @@ import {
   type NodeProps,
 } from "@xyflow/react";
 import { useCallback } from "react";
+import { Toggle } from "@/components/ui/toggle";
 
-function CustomToolbar({ nodeId }: { nodeId: string }) {
+function CustomToolbar({ nodeId, final }: { nodeId: string, final: boolean }) {
   const { updateAutomaton } = useAutomaton();
 
   const handleClick = useCallback(() => {
@@ -21,11 +21,12 @@ function CustomToolbar({ nodeId }: { nodeId: string }) {
   return (
     <NodeToolbar className="nopan -top-1" position={Position.Bottom}>
       <div className="flex gap-1">
-        <Button className="p-2"
-          variant="secondary"
-          onClick={handleClick}>
+        <Toggle className="p-2"
+          variant="outline"
+          pressed={final}
+          onPressedChange={handleClick}>
           Final
-        </Button>
+        </Toggle>
       </div>
     </NodeToolbar>
   )
@@ -67,7 +68,7 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
         }
         <Handle style={customHandleStyles} type="source" position={Position.Top} isConnectable={false} />
         <Handle style={customHandleStyles} type="target" position={Position.Top} isConnectableStart={false} />
-        <CustomToolbar nodeId={id} />
+        <CustomToolbar nodeId={id} final={data.isFinal} />
       </div>
     </div>
   );

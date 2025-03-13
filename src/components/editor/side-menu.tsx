@@ -2,12 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { useRef, useState } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 export function SideMenu() {
   const [result, setResult] = useState<string>("");
