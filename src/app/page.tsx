@@ -3,8 +3,11 @@ import { ArrowRight, Cpu, Save, PlayCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { DarkModeToggle } from "@/components/layout/dark-mode-toogle"
+import { auth } from "@/lib/auth"
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const session = await auth();
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center">
@@ -14,9 +17,13 @@ export default function LandingPage() {
         </Link>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">
           <DarkModeToggle />
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/editor">
-            Get Started
+          {session ? (
+            <div>{session.user?.name}</div>
+          ) : (
+          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/login">
+            Sign In
           </Link>
+          )}
         </nav>
       </header>
       <main className="flex-1 font-robo">
