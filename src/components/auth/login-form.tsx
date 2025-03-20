@@ -1,31 +1,31 @@
 "use client"
 
 import Link from "next/link"
-
+import { useRouter } from "next/navigation"
 import type React from "react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { signInGoogle } from "@/lib/auth/actions"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+
+import { signIn } from "@/actions/auth"
 
 export function LoginForm() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setIsLoading(true)
+    setError(null)
 
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+    const formData = new FormData(event.currentTarget)
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
 
     try {
       // Here you would implement your authentication logic
@@ -33,29 +33,27 @@ export function LoginForm() {
       // await signIn(email, password)
 
       // Simulate authentication delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      router.push("/");
+      // Redirect to dashboard after successful login
+      router.push("/dashboard")
     } catch (error) {
-      setError("Invalid email or password");
+      setError("Invalid email or password")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   }
 
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    setError(null);
+  async function handleGoogleSignIn() {
+    setIsLoading(true)
+    setError(null)
 
     try {
-      await signInGoogle();
-
-      // router.push("/");
+      await signIn("google");
     } catch (error) {
-      console.error(error)
-      setError("Failed to sign in with Google");
+      setError("Failed to sign in with Google")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   }
 
@@ -120,3 +118,4 @@ export function LoginForm() {
     </div>
   )
 }
+

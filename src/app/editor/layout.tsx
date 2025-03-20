@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Cpu } from "lucide-react";
 import { DarkModeToggle } from "@/components/layout/dark-mode-toogle";
 import { ExamplesMenu } from "@/components/layout/examples-menu";
+import { AccountMenu } from "@/components/layout/account-menu";
 
 export default function EditorLayout({
   children,
@@ -20,6 +21,7 @@ export default function EditorLayout({
         </nav>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">
           <DarkModeToggle />
+          <AccountMenu variant="ghost" />
         </nav>
       </header>
       {children}
