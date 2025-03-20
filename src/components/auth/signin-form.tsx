@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator"
 
 import { signIn } from "@/actions/auth"
 
-export function LoginForm() {
+export function SignInForm() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -35,8 +35,7 @@ export function LoginForm() {
       // Simulate authentication delay
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      // Redirect to dashboard after successful login
-      router.push("/dashboard")
+      router.push("/")
     } catch (error) {
       setError("Invalid email or password")
     } finally {

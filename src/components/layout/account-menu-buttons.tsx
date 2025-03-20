@@ -5,7 +5,7 @@ import { Button, ButtonProps } from "@/components/ui/button"
 
 export const SignInButton = ({ variant = "default" }: { variant?: ButtonProps["variant"] }) => {
   const handleClick = () => {
-    const popup = window.open("/login", "Login", "width=480,height=600,top=100,left=460");
+    const popup = window.open("/signin", "Sign In", "width=480,height=600,top=100,left=460");
     popup?.focus();
     const checkPopupClosed = setInterval(() => {
       if (!popup || popup.closed) {

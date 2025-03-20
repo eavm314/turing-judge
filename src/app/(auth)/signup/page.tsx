@@ -18,7 +18,7 @@ export default function SignUpPage() {
         <SignUpForm />
         <p className="px-8 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link href="/login" className="underline underline-offset-4 hover:text-primary">
+          <Link href="/signin" className="underline underline-offset-4 hover:text-primary">
             Sign in
           </Link>
         </p>

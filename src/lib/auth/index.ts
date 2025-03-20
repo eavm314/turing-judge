@@ -6,6 +6,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google
   ],
   pages: {
-    signIn: "/login",
+    signIn: "/signin",
   },
 })
