@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  EDITOR
+}
+
+model User {
+  id       String  @id @default(cuid(2))
+  name     String?
+  image    String?
+  email    String  @unique
+  password String?
+  role     Role    @default(USER)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  accounts      Account[]
+  problems      Problem[]
+  Submission    Submission[]
+  UserAutomaton UserAutomaton[]
+
+  @@map("users")
+}
+
+model Account {
+  userId            String @unique @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String @map("provider_account_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@id([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model UserAutomaton {
+  id        String  @id @default(cuid(2))
+  title     String?
+  userId    String  @map("user_id")
+  automaton Json
+  isPublic  Boolean @map("is_public")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("user_automata")
+}
+
+model Problem {
+  id         String  @id @default(cuid(2))
+  authorId   String  @map("author_id")
+  title      String
+  difficulty Int
+  statement  String  @db.Text
+  isPublic   Boolean @map("is_public")
+
+  allowFSM    Boolean @map("allow_fsm")
+  allowPDA    Boolean @map("allow_pda")
+  allowTM     Boolean @map("allow_tm")
+  allowNonDet Boolean @map("allow_non_deterministic")
+  stateLimit  Int     @map("state_limit")
+  stepLimit   Int     @map("step_limit")
+  timeLimit   Int     @map("time_limit")
+
+  solutionAutomaton Json @map("solution_automaton")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  author     User         @relation(fields: [authorId], references: [id])
+  TestCase   TestCase[]
+  Submission Submission[]
+
+  @@map("problems")
+}
+
+model TestCase {
+  id             Int     @id @default(autoincrement())
+  problemId      String  @map("problem_id")
+  input          String
+  expectedResult String  @map("expected_result")
+  expectedOutput String? @map("expected_output")
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@map("test_cases")
+}
+
+enum Verdict {
+  ACCEPTED
+  WRONG_ANSWER
+  TIME_LIMIT_EXCEEDED
+  INVALID_FORMAT
+  UNKNOWN_ERROR
+}
+
+enum Status {
+  PENDING
+  JUDGING
+  FINISHED
+}
+
+model Submission {
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id")
+  problemId String   @map("problem_id")
+  verdict   Verdict?
+  status    Status
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user    User    @relation(fields: [userId], references: [id])
+  problem Problem @relation(fields: [problemId], references: [id])
+
+  @@map("submissions")
+}
