@@ -1,7 +1,7 @@
 "use client"
 
 import { type User } from "next-auth";
-import { createContext, useContext, useRef } from "react";
+import { createContext, useContext } from "react";
 
 export const UserContext = createContext<User | undefined>(undefined);
 

@@ -1,14 +1,16 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+
+import { Loader2 } from "lucide-react"
+
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { Icons } from "@/components/ui/icons"
+import { GoogleIcon } from "@/components/ui/icons"
 
 export function SignUpForm() {
   const router = useRouter()
@@ -132,7 +134,7 @@ export function SignUpForm() {
           </div>
           {error && <div className="text-sm text-destructive">{error}</div>}
           <Button type="submit" disabled={isLoading}>
-            {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Create Account
           </Button>
         </div>
@@ -147,9 +149,9 @@ export function SignUpForm() {
       </div>
       <Button variant="outline" type="button" disabled={isLoading} onClick={handleGoogleSignUp}>
         {isLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         ) : (
-          <Icons.google className="mr-2 h-4 w-4" />
+          <GoogleIcon className="mr-2 h-4 w-4" />
         )}
         Google
       </Button>

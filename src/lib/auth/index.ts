@@ -4,7 +4,7 @@ import PrismaAdapter from "./adapter"
 import { type Role } from "@prisma/client";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // @ts-ignore
+  // @ts-expect-error: Using the overridden adapter
   adapter: PrismaAdapter,
   providers: [
     Google({
@@ -26,6 +26,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   session: {
     strategy: "jwt",
-  }
+  },
+  trustHost: true,
   // debug: true,
 })

@@ -4,7 +4,7 @@ import { Role } from "@prisma/client";
 
 const prismaAdapter = PrismaAdapter(prisma);
 
-//@ts-ignore
+//@ts-expect-error: Overriding the createUser method
 prismaAdapter.createUser = (data) => {
   return prisma.user.create({
     data: {

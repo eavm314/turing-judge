@@ -10,7 +10,6 @@ class AutomatonExecutor {
 
   setAutomaton(automaton: FiniteStateMachine) {
     this.automaton = automaton;
-    // this.currentState = this.automaton.states.get(this.automaton.initial)!;
   }
 
   step(input: string, state: State): string[] {
@@ -19,7 +18,7 @@ class AutomatonExecutor {
     if (!targets) return [];
     return targets;
   }
-  
+
   execute(input: string, stateName: string = this.automaton.initial) {
     const state = this.automaton.states.get(stateName)!;
 
@@ -34,5 +33,5 @@ class AutomatonExecutor {
   }
 }
 
-// Export a singleton instance of AutomatonExecutor
-export default new AutomatonExecutor();
+const executor = new AutomatonExecutor();
+export default executor;

@@ -2,11 +2,12 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import type React from "react"
 import { useState } from "react"
 
+import { Loader2 } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
-import { Icons } from "@/components/ui/icons"
+import { GoogleIcon } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
@@ -93,7 +94,7 @@ export function SignInForm() {
           </div>
           {error && <div className="text-sm text-destructive">{error}</div>}
           <Button type="submit" disabled={isLoading}>
-            {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign In
           </Button>
         </div>
@@ -108,9 +109,9 @@ export function SignInForm() {
       </div>
       <Button variant="outline" type="button" disabled={isLoading} onClick={handleGoogleSignIn}>
         {isLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         ) : (
-          <Icons.google className="mr-2 h-4 w-4" />
+          <GoogleIcon className="mr-2 h-4 w-4" />
         )}
         Google
       </Button>
