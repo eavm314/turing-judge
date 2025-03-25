@@ -4,7 +4,7 @@ import { createContext, useContext, useRef } from "react";
 import { useStore } from 'zustand';
 import { useShallow } from "zustand/react/shallow";
 
-import { createEditorStore, type EditorStore } from "@/store/editor-store";
+import { createEditorStore, EditorState, type EditorStore } from "@/store/editor-store";
 
 type EditorStoreApi = ReturnType<typeof createEditorStore>;
 
@@ -12,7 +12,7 @@ export const EditorStoreContext = createContext<EditorStoreApi | undefined>(unde
 
 interface EditorProviderProps {
   children: React.ReactNode,
-  initState?: EditorStore,
+  initState?: EditorState,
 };
 
 export const EditorStoreProvider = ({

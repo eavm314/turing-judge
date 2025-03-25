@@ -3,6 +3,8 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 
 import { ThemeProvider } from "@/components/layout/theme-provider"
+import { SessionProvider } from "@/providers/user-provider";
+import { auth } from "@/lib/auth";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -15,20 +17,24 @@ export const metadata: Metadata = {
   description: "Automaton Designer",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${roboto.variable} antialiased`}
       >
         <ThemeProvider>
-          {children}
+          <SessionProvider user={session?.user}>
+            {children}
+          </SessionProvider>
         </ThemeProvider>
       </body>
-    </html>
+    </html >
   );
 }

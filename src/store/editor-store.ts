@@ -5,12 +5,12 @@ import { examples } from "./data";
 
 type EditorMode = "state" | "transition";
 
-type EditorState = {
+export type EditorState = {
   automaton: FiniteStateMachine;
   mode: EditorMode,
 }
 
-type EditorActions = {
+export type EditorActions = {
   setExample: (key: string) => void;
   updateAutomaton: (callback: (automaton: FiniteStateMachine) => void) => void;
   setMode: (newMode: EditorMode) => void,
