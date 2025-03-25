@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { useRef, useState } from "react";
 
-export function SideMenu() {
+export default function SideMenu() {
   const [result, setResult] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
 

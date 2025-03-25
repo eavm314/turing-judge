@@ -44,7 +44,7 @@ export const useAutomaton = () => useEditorStore(useShallow((state) => ({
   setExample: state.setExample
 })));
 
-export const useEditor = () => useEditorStore(useShallow((state) => ({
+export const useEditorMode = () => useEditorStore(useShallow((state) => ({
   mode: state.mode,
   setMode: state.setMode
 })));
