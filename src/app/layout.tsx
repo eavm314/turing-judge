@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 
-import { ThemeProvider } from "@/components/layout/theme-provider"
+import { ThemeProvider } from "@/providers/theme-provider"
 import { SessionProvider } from "@/providers/user-provider";
 import { auth } from "@/lib/auth";
 
