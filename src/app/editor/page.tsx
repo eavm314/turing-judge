@@ -1,31 +1,14 @@
-"use client"
-
-import { ReactFlowProvider } from "@xyflow/react";
-import { Loader } from "lucide-react";
-import dynamic from "next/dynamic";
-
-import SideMenu from "@/components/editor/SideMenu";
-
-const LoadingCanvas = () => (
-  <div className="flex-1 h-full flex items-center justify-center">
-    <Loader className="animate-spin" size={60} />
-  </div>
-);
-
-const Canvas = dynamic(() => import("@/components/editor/Canvas"), {
-  ssr: false,
-  loading: LoadingCanvas,
-});
+import { EditorStoreProvider } from "@/providers/editor-provider";
+import EditorContent from "./editor-content";
+import EditorLayout from "./editor-layout";
 
 export default function EditorPage() {
   return (
-    <ReactFlowProvider>
-      <main className="h-full">
-        <div className="flex h-full">
-          <Canvas />
-          <SideMenu />
-        </div>
-      </main>
-    </ReactFlowProvider>
+    <EditorStoreProvider>
+      <div className="flex flex-col h-screen">
+        <EditorLayout />
+        <EditorContent />
+      </div>
+    </EditorStoreProvider>
   )
 }

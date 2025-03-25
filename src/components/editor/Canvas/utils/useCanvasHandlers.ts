@@ -1,4 +1,4 @@
-import { useAutomaton, useEditorMode } from "@/store/editor-context";
+import { useAutomaton, useEditorMode } from "@/providers/editor-provider";
 import {
   applyEdgeChanges,
   applyNodeChanges,
