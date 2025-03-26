@@ -1,4 +1,5 @@
 import { JsonFSM } from "@/lib/automaton/FiniteStateMachine";
+import { AutomatonLibraryItem } from "@/lib/automaton/types";
 
 export const examples: Record<string, JsonFSM> = {
   "dfa": {
@@ -22,3 +23,55 @@ export const examples: Record<string, JsonFSM> = {
     finals: ["q2"]
   }
 }
+
+// Helper function to generate random dates within the last year
+function randomDate(start: Date, end: Date): Date {
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()))
+}
+
+// Generate dates for the automata
+const now = new Date()
+const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate())
+
+export const automataData: AutomatonLibraryItem[] = [
+  {
+    id: "dfa-even-binary",
+    title: "Even Binary Numbers",
+    type: "FSM",
+    isPublic: true,
+    createdAt: randomDate(oneYearAgo, new Date(now.getFullYear(), now.getMonth() - 3, now.getDate())),
+    updatedAt: randomDate(new Date(now.getFullYear(), now.getMonth() - 2, now.getDate()), now),
+  },
+  {
+    id: "nfa-ends-with-01",
+    title: "Ends with 01",
+    type: "FSM",
+    isPublic: true,
+    createdAt: randomDate(oneYearAgo, new Date(now.getFullYear(), now.getMonth() - 3, now.getDate())),
+    updatedAt: randomDate(new Date(now.getFullYear(), now.getMonth() - 2, now.getDate()), now),
+  },
+  {
+    id: "pda-palindrome",
+    title: "Palindrome",
+    type: "PDA",
+    isPublic: false,
+    createdAt: randomDate(oneYearAgo, new Date(now.getFullYear(), now.getMonth() - 3, now.getDate())),
+    updatedAt: randomDate(new Date(now.getFullYear(), now.getMonth() - 2, now.getDate()), now),
+  },
+  {
+    id: "tm-addition",
+    title: "Addition",
+    type: "TM",
+    isPublic: true,
+    createdAt: randomDate(oneYearAgo, new Date(now.getFullYear(), now.getMonth() - 3, now.getDate())),
+    updatedAt: randomDate(new Date(now.getFullYear(), now.getMonth() - 2, now.getDate()), now),
+  },
+  {
+    id: "tm-subtraction",
+    title: "Subtraction",
+    type: "TM",
+    isPublic: false,
+    createdAt: randomDate(oneYearAgo, new Date(now.getFullYear(), now.getMonth() - 3, now.getDate())),
+    updatedAt: randomDate(new Date(now.getFullYear(), now.getMonth() - 2, now.getDate()), now),
+  },
+]

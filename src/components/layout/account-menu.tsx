@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { handleSignIn, handleSignOut } from "@/lib/auth/client-handlers";
 import { useSession } from "@/providers/user-provider";
+import Link from "next/link";
 
 export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
   const user = useSession();
@@ -29,7 +30,9 @@ export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
           Profile
         </DropdownMenuItem>
         <DropdownMenuItem>
-          My Automatons
+          <Link className="cursor-pointer" href="/library">
+            Automata Library
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>

@@ -47,12 +47,19 @@ model Account {
   @@map("accounts")
 }
 
+enum AutomatonType {
+  FSM
+  PDA
+  TM
+}
+
 model UserAutomaton {
-  id        String  @id @default(cuid(2))
+  id        String        @id @default(cuid(2))
   title     String?
-  userId    String  @map("user_id")
+  userId    String        @map("user_id")
+  type      AutomatonType
   automaton Json
-  isPublic  Boolean @map("is_public")
+  isPublic  Boolean       @map("is_public")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
