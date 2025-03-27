@@ -32,6 +32,7 @@ CREATE TABLE `user_automata` (
     `id` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NULL,
     `user_id` VARCHAR(191) NOT NULL,
+    `type` ENUM('FSM', 'PDA', 'TM') NOT NULL,
     `automaton` JSON NOT NULL,
     `is_public` BOOLEAN NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
