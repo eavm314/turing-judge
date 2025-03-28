@@ -23,8 +23,9 @@ const defaultState: EditorState = {
   automaton: new FiniteStateMachine(),
 };
 
-export const createEditorStore = (initialState: EditorState = defaultState) => {
+export const createEditorStore = (initialState?: Partial<EditorState>) => {
   return createStore<EditorStore>()((set) => ({
+    ...defaultState,
     ...initialState,
     setMode: (newMode: EditorMode) => set({ mode: newMode }),
     setExample: (key: string) => {

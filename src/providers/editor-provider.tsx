@@ -12,7 +12,7 @@ export const EditorStoreContext = createContext<EditorStoreApi | undefined>(unde
 
 interface EditorProviderProps {
   children: React.ReactNode,
-  initState?: EditorState,
+  initState?: Partial<EditorState>,
 };
 
 export const EditorStoreProvider = ({

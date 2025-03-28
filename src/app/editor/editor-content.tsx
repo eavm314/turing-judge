@@ -10,8 +10,8 @@ import { AccountMenu } from "@/components/layout/account-menu";
 import { DarkModeToggle } from "@/components/layout/dark-mode-toogle";
 import { ExamplesMenu } from "@/components/layout/examples-menu";
 import { EditorStoreProvider } from "@/providers/editor-provider";
-import { EditorState } from "@/store/editor-store";
 import { SaveButton } from "@/components/layout/save-button";
+import { FiniteStateMachine, type JsonFSM } from "@/lib/automaton/FiniteStateMachine";
 
 const LoadingCanvas = () => (
   <div className="flex-1 h-full flex items-center justify-center">
@@ -24,15 +24,15 @@ const Canvas = dynamic(() => import("@/components/editor/Canvas"), {
   loading: LoadingCanvas,
 });
 
-export default function EditorContent({ initState }: { initState?: EditorState }) {
+export default function EditorContent({ automaton, title }: { automaton: JsonFSM, title: string | null }) {
   return (
-    <EditorStoreProvider initState={initState}>
+    <EditorStoreProvider initState={{ automaton: new FiniteStateMachine(automaton) }}>
       <div className="flex flex-col h-screen">
         <header className="px-4 lg:px-6 h-14 flex items-center border-b">
           <Link className="flex items-center justify-center" href="/">
             <Cpu className="h-6 w-6 mr-2" />
-            <span className="font-bold">TuringProject</span>
           </Link>
+          <span className={`${!title && 'italic opacity-80'}`}>{title || 'Untitled'}</span>
           <nav className="ml-6 mr-auto flex items-center gap-4 sm:gap-6">
             <ExamplesMenu />
             <SaveButton />

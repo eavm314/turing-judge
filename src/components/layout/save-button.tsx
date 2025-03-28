@@ -9,12 +9,15 @@ import { handleSignIn } from "@/lib/auth/client-handlers";
 import { useAutomaton } from "@/providers/editor-provider";
 import { useSession } from "@/providers/user-provider";
 import { saveAutomaton } from "@/actions/library";
+import { useRouter } from "next/navigation";
 
 export function SaveButton() {
   const [retry, setRetry] = useState(false);
 
   const { automaton } = useAutomaton();
   const session = useSession();
+
+  const router = useRouter();
 
   useEffect(() => {
     if (session && retry) {
@@ -36,7 +39,7 @@ export function SaveButton() {
       return;
     }
     const savedAutomatonId = await saveAutomaton(title, "FSM", true, automaton.toJson());
-    console.log("Automaton saved!", savedAutomatonId);
+    router.push(`/editor/${savedAutomatonId}`);
   };
 
   return (
