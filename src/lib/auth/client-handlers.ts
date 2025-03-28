@@ -1,4 +1,4 @@
-import { revalidate, signOut } from "@/actions/auth"
+import { revalidateAll, signOut } from "@/actions/auth"
 
 export const handleSignIn = () => {
   return new Promise((resolve, reject) => {
@@ -8,7 +8,7 @@ export const handleSignIn = () => {
       const checkPopupClosed = setInterval(() => {
         if (!popup || popup.closed) {
           clearInterval(checkPopupClosed);
-          revalidate();
+          revalidateAll();
           resolve(0);
         }
       }, 500);
