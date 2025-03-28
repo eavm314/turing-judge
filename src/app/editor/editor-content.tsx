@@ -11,6 +11,7 @@ import { DarkModeToggle } from "@/components/layout/dark-mode-toogle";
 import { ExamplesMenu } from "@/components/layout/examples-menu";
 import { EditorStoreProvider } from "@/providers/editor-provider";
 import { EditorState } from "@/store/editor-store";
+import { SaveButton } from "@/components/layout/save-button";
 
 const LoadingCanvas = () => (
   <div className="flex-1 h-full flex items-center justify-center">
@@ -34,6 +35,7 @@ export default function EditorContent({ initState }: { initState?: EditorState }
           </Link>
           <nav className="ml-6 mr-auto flex items-center gap-4 sm:gap-6">
             <ExamplesMenu />
+            <SaveButton />
           </nav>
           <nav className="ml-auto flex items-center gap-4 sm:gap-6">
             <DarkModeToggle />
