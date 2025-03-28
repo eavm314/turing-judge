@@ -41,6 +41,20 @@ export class FiniteStateMachine {
     }
   }
 
+  toJson(): JsonFSM {
+    const states = Array.from(this.states.values()).map(state => state.toJson());
+    const finals = Array.from(this.states.values())
+      .filter(state => state.isFinal)
+      .map(state => state.name);
+
+    return {
+      alphabet: Array.from(this.alphabet),
+      states,
+      initial: this.initial,
+      finals,
+    };
+  }
+
   clone(): FiniteStateMachine {
     return Object.assign(Object.create(Object.getPrototypeOf(this)), this);
   }

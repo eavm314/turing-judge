@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { handleSignIn } from "@/lib/auth/client-handlers";
 import { useAutomaton } from "@/providers/editor-provider";
 import { useSession } from "@/providers/user-provider";
+import { saveAutomaton } from "@/actions/library";
 
 export function SaveButton() {
   const [retry, setRetry] = useState(false);
@@ -28,8 +29,14 @@ export function SaveButton() {
       setRetry(true);
       return;
     }
-    console.log("Automaton saved!");
-    console.table(automaton);
+
+    const title = prompt("Enter a title for the automaton:");
+    if (!title) {
+      alert("Automaton not saved.");
+      return;
+    }
+    const savedAutomatonId = await saveAutomaton(title, "FSM", true, automaton.toJson());
+    console.log("Automaton saved!", savedAutomatonId);
   };
 
   return (

@@ -21,6 +21,16 @@ export class State {
     }
   }
 
+  toJson(): JsonState {
+    const transitions = Object.fromEntries(this.transitions);
+
+    return {
+      name: this.name,
+      position: this.position,
+      transitions,
+    };
+  }
+
   setFinal(value: boolean) {
     this.isFinal = value;
   }

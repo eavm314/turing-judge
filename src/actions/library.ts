@@ -1,10 +1,14 @@
 "use server"
 
-import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-import { prisma } from "@/lib/db/prisma";
+import { type AutomatonType } from "@prisma/client";
+import { type JsonObject } from "@prisma/client/runtime/library";
+
+import { auth } from "@/lib/auth";
+import { type JsonFSM } from "@/lib/automaton/FiniteStateMachine";
 import { AutomatonLibraryItem } from "@/lib/automaton/types";
+import { prisma } from "@/lib/db/prisma";
 
 export const getSavedAutomata = async (): Promise<AutomatonLibraryItem[]> => {
   const session = await auth();
@@ -26,9 +30,26 @@ export const getSavedAutomata = async (): Promise<AutomatonLibraryItem[]> => {
   return results;
 }
 
-export const saveAutomaton = async (automaton: any) => {
+export const saveAutomaton = async (
+  title: string,
+  type: AutomatonType,
+  isPublic: boolean,
+  automaton: JsonFSM
+) => {
   const session = await auth();
-  if (!session?.user) {
+  if (!session?.user?.id) {
     redirect('/signin');
   }
+
+  const savedAutomaton = await prisma.userAutomaton.create({
+    data: {
+      userId: session.user.id,
+      title,
+      type,
+      isPublic,
+      automaton: automaton as unknown as JsonObject,
+    },
+  });
+
+  return savedAutomaton.id;
 }
