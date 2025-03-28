@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
+import { type UserAutomaton } from "@prisma/client";
 import { Cpu, Loader } from "lucide-react";
 
 import SideMenu from "@/components/editor/SideMenu";
@@ -10,7 +11,7 @@ import { AccountMenu } from "@/components/layout/account-menu";
 import { DarkModeToggle } from "@/components/layout/dark-mode-toogle";
 import { ExamplesMenu } from "@/components/layout/examples-menu";
 import { EditorStoreProvider } from "@/providers/editor-provider";
-import { SaveButton } from "@/components/layout/save-button";
+import { SaveAutomaton } from "@/components/layout/save-automaton";
 import { FiniteStateMachine, type JsonFSM } from "@/lib/automaton/FiniteStateMachine";
 
 const LoadingCanvas = () => (
@@ -24,20 +25,20 @@ const Canvas = dynamic(() => import("@/components/editor/Canvas"), {
   loading: LoadingCanvas,
 });
 
-export default function EditorContent({ automaton, title }: { automaton: JsonFSM, title: string | null }) {
+export default function EditorContent({ data }: { data?: UserAutomaton }) {
+  const metadata = data ? { ...data, automaton: undefined } : undefined;
   return (
-    <EditorStoreProvider initState={{ automaton: new FiniteStateMachine(automaton) }}>
+    <EditorStoreProvider initState={{ automaton: new FiniteStateMachine(data?.automaton as unknown as JsonFSM | undefined) }}>
       <div className="flex flex-col h-screen">
         <header className="px-4 lg:px-6 h-14 flex items-center border-b">
           <Link className="flex items-center justify-center" href="/">
             <Cpu className="h-6 w-6 mr-2" />
           </Link>
-          <span className={`${!title && 'italic opacity-80'}`}>{title || 'Untitled'}</span>
-          <nav className="ml-6 mr-auto flex items-center gap-4 sm:gap-6">
-            <ExamplesMenu />
-            <SaveButton />
+          <nav className="ml-2 mr-auto flex items-center gap-4 sm:gap-6">
+            <SaveAutomaton metadata={metadata}/>
           </nav>
           <nav className="ml-auto flex items-center gap-4 sm:gap-6">
+            <ExamplesMenu />
             <DarkModeToggle />
             <AccountMenu variant="ghost" />
           </nav>
