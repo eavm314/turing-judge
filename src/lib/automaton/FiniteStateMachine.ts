@@ -2,20 +2,19 @@ import { State, type JsonState } from "./State";
 
 export interface JsonFSM {
   alphabet: string[],
-  states: JsonState[],
+  states: Record<string, JsonState>,
   initial: string,
   finals: string[],
 }
 
 const basicAutomata: JsonFSM = {
   alphabet: [],
-  states: [
-    {
-      name: "q0",
+  states: {
+    "q0": {
       position: { x: 0, y: 0 },
       transitions: {},
     }
-  ],
+  },
   initial: "q0",
   finals: [],
 }
@@ -31,9 +30,9 @@ export class FiniteStateMachine {
     this.initial = json.initial;
 
     // Convert JSON to State objects
-    for (const stateInfo of json.states) {
-      const state = new State(stateInfo);
-      this.states.set(stateInfo.name, state);
+    for (const [name, value] of Object.entries(json.states)) {
+      const state = new State(name, value);
+      this.states.set(name, state);
     }
 
     for (const finalState of json.finals) {
@@ -42,7 +41,9 @@ export class FiniteStateMachine {
   }
 
   toJson(): JsonFSM {
-    const states = Array.from(this.states.values()).map(state => state.toJson());
+    // const states = Array.from();
+    const states = Object.fromEntries(this.states.entries()
+      .map(([name, state]) => [name, state.toJson()]));
     const finals = Array.from(this.states.values())
       .filter(state => state.isFinal)
       .map(state => state.name);
@@ -59,8 +60,8 @@ export class FiniteStateMachine {
     return Object.assign(Object.create(Object.getPrototypeOf(this)), this);
   }
 
-  addState(stateJson: JsonState) {
-    if (!this.states.has(stateJson.name)) this.states.set(stateJson.name, new State(stateJson));
+  addState(name: string, stateJson: JsonState) {
+    if (!this.states.has(name)) this.states.set(name, new State(name, stateJson));
   }
 
   removeState(name: string) {

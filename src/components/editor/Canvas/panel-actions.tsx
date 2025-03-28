@@ -13,10 +13,9 @@ export const PanelActions = () => {
       alert("State name must be unique");
       return;
     }
-    
+
     updateAutomaton((auto) => {
-      auto.addState({
-        name: stateName,
+      auto.addState(stateName, {
         position: { x: 0, y: 0 },
         transitions: {}
       });

@@ -1,5 +1,4 @@
 export interface JsonState {
-  name: string,
   position: { x: number, y: number },
   transitions: Record<string, string[]>
 }
@@ -10,8 +9,8 @@ export class State {
   isFinal: boolean;
   transitions: Map<string, string[]>;
 
-  constructor(json: JsonState) {
-    this.name = json.name;
+  constructor(name: string, json: JsonState) {
+    this.name = name;
     this.position = json.position;
     this.isFinal = false;
     this.transitions = new Map();
@@ -25,7 +24,6 @@ export class State {
     const transitions = Object.fromEntries(this.transitions);
 
     return {
-      name: this.name,
       position: this.position,
       transitions,
     };
