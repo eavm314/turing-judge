@@ -1,19 +1,17 @@
 "use client"
 
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { SaveIcon } from "lucide-react";
 
 import { createAutomaton, updateAutomaton } from "@/actions/library";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { handleSignIn } from "@/lib/auth/client-handlers";
 import { useAutomaton } from "@/providers/editor-provider";
 import { useSession } from "@/providers/user-provider";
-import { UserAutomaton } from "@prisma/client";
-import { useParams, useRouter } from "next/navigation";
 
-export function SaveAutomaton({ metadata }: { metadata?: Omit<UserAutomaton, 'automaton'> }) {
+export function SaveAutomaton() {
   const user = useSession();
   const { automaton } = useAutomaton();
 
@@ -38,7 +36,6 @@ export function SaveAutomaton({ metadata }: { metadata?: Omit<UserAutomaton, 'au
     }
 
     if (automatonId) {
-      if (!metadata) return;
       const result = await updateAutomaton({
         id: automatonId,
         automaton: automaton.toJson(),
@@ -69,20 +66,6 @@ export function SaveAutomaton({ metadata }: { metadata?: Omit<UserAutomaton, 'au
 
   return (
     <div className="flex items-center gap-4">
-      {metadata &&
-        <>
-          <span className={`${!metadata?.title && 'italic opacity-80'}`}>{metadata?.title || 'Untitled'}</span>
-          <Select defaultValue={String(metadata.isPublic)} >
-            <SelectTrigger className="w-[130px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="true">Public</SelectItem>
-              <SelectItem value="false">Private</SelectItem>
-            </SelectContent>
-          </Select>
-        </>
-      }
       <Button
         size="sm"
         variant="secondary"

@@ -9,10 +9,12 @@ import { Cpu, Loader } from "lucide-react";
 import SideMenu from "@/components/editor/SideMenu";
 import { AccountMenu } from "@/components/layout/account-menu";
 import { DarkModeToggle } from "@/components/layout/dark-mode-toogle";
-import { ExamplesMenu } from "@/components/layout/examples-menu";
+import { ExamplesMenu } from "@/components/editor/Layout/examples-menu";
 import { EditorStoreProvider } from "@/providers/editor-provider";
-import { SaveAutomaton } from "@/components/layout/save-automaton";
+import { SaveAutomaton } from "@/components/editor/Layout/save-automaton";
 import { FiniteStateMachine, type JsonFSM } from "@/lib/automaton/FiniteStateMachine";
+import { AutomatonTitle } from "@/components/editor/Layout/automaton-title";
+import { PublicSelect } from "@/components/editor/Layout/public-select";
 
 const LoadingCanvas = () => (
   <div className="flex-1 h-full flex items-center justify-center">
@@ -26,7 +28,6 @@ const Canvas = dynamic(() => import("@/components/editor/Canvas"), {
 });
 
 export default function EditorContent({ data }: { data?: UserAutomaton }) {
-  const metadata = data ? { ...data, automaton: undefined } : undefined;
   return (
     <EditorStoreProvider initState={{ automaton: new FiniteStateMachine(data?.automaton as unknown as JsonFSM | undefined) }}>
       <div className="flex flex-col h-screen">
@@ -35,7 +36,11 @@ export default function EditorContent({ data }: { data?: UserAutomaton }) {
             <Cpu className="h-6 w-6 mr-2" />
           </Link>
           <nav className="ml-2 mr-auto flex items-center gap-4 sm:gap-6">
-            <SaveAutomaton metadata={metadata}/>
+            {data && (<>
+              <AutomatonTitle title={data.title} />
+              <PublicSelect isPublic={data.isPublic} />
+            </>)}
+            <SaveAutomaton />
           </nav>
           <nav className="ml-auto flex items-center gap-4 sm:gap-6">
             <ExamplesMenu />
