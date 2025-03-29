@@ -1,20 +1,50 @@
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import { useParams } from "next/navigation";
+
+import { Lock, Unlock } from "lucide-react";
+
+import { updateAutomaton } from "@/actions/library";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 
-export function PublicSelect({ isPublic }: { isPublic: boolean }) {
+export function PublicSelect({ isPublic, isOwner }: { isPublic: boolean, isOwner: boolean }) {
+  const { automatonId } = useParams<{ automatonId: string }>();
+
+  const handleSelectChange = async (value: string) => {
+    const confirmation = confirm(`Are you sure you want to change the visibility to ${value}?`);
+    if (!confirmation) return;
+
+    const result = await updateAutomaton({
+      id: automatonId,
+      isPublic: value === 'public'
+    })
+    if (result) {
+      alert("Automaton visibility updated successfully.");
+    } else {
+      alert("Automaton visibility not updated.");
+    }
+  }
   return (
-    <Select defaultValue={String(isPublic)} >
-      <SelectTrigger className="w-[130px]">
+    <Select disabled={!isOwner}
+      value={isPublic ? 'public' : 'private'}
+      onValueChange={handleSelectChange}
+    >
+      <SelectTrigger className="w-28">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="true">Public</SelectItem>
-        <SelectItem value="false">Private</SelectItem>
+        <SelectItem value="public">
+          <Unlock className="inline mr-2 align-[-6%]" size={14} />
+          Public
+        </SelectItem>
+        <SelectItem value="private">
+          <Lock className="inline mr-2 align-[-6%]" size={14} />
+          Private
+        </SelectItem>
       </SelectContent>
     </Select>
   );
