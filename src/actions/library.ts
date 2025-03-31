@@ -7,7 +7,7 @@ import { type JsonObject } from "@prisma/client/runtime/library";
 
 import { auth } from "@/lib/auth";
 import { type JsonFSM } from "@/lib/automaton/FiniteStateMachine";
-import { AutomatonLibraryItem } from "@/lib/automaton/types";
+import { AutomatonLibraryItem } from "@/actions/types";
 import { prisma } from "@/lib/db/prisma";
 import { revalidatePath } from "next/cache";
 

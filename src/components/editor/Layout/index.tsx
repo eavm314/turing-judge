@@ -16,10 +16,10 @@ export function EditorLayout({ data }: { data?: UserAutomaton }) {
   const isOwner = Boolean(user && data && user.id === data.userId);
   return (
     <header className="px-4 lg:px-6 h-14 flex items-center border-b">
-      <Link className="flex items-center justify-center" href="/">
-        <Cpu className="h-6 w-6 mr-2" />
-      </Link>
-      <nav className="ml-2 mr-auto flex items-center gap-4 sm:gap-6">
+      <nav className="mr-auto flex items-center gap-4">
+        <Link className="flex items-center justify-center" href="/">
+          <Cpu className="size-6" />
+        </Link>
         {data && (<>
           <AutomatonTitle title={data.title} />
           <PublicSelect isPublic={data.isPublic} isOwner={isOwner} />

@@ -7,7 +7,7 @@ import { MoreHorizontal, Trash2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { type AutomatonLibraryItem } from "@/lib/automaton/types"
+import { type AutomatonLibraryItem } from "@/actions/types"
 
 interface AutomatonItemProps {
   automaton: AutomatonLibraryItem

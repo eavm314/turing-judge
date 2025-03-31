@@ -11,12 +11,17 @@ export default function PlatformLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center">
-        <Link className="flex items-center justify-center" href="/">
-          <Cpu className="h-6 w-6 mr-2" />
-          <span className="font-bold">TuringProject</span>
-        </Link>
+        <nav className="mr-auto flex items-center gap-8">
+          <Link className="flex items-center justify-center" href="/">
+            <Cpu className="size-6 mr-2" />
+            <span className="font-bold">TuringProject</span>
+          </Link>
+          <Link href="/problemset">
+            <span className="underline underline-offset-4">Problems</span>
+          </Link>
+        </nav>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">
           <DarkModeToggle />
           <AccountMenu />

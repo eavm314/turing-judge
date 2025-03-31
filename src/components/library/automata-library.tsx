@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import AutomatonItem from "@/components/library/automaton-item"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { type AutomatonLibraryItem } from "@/lib/automaton/types"
+import { type AutomatonLibraryItem } from "@/actions/types"
 import { deleteAutomaton } from "@/actions/library"
 
 export type SortField = "title" | "type" | "createdAt" | "updatedAt";

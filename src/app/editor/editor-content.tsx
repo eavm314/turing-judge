@@ -26,11 +26,9 @@ export default function EditorContent({ data }: { data?: UserAutomaton }) {
     <EditorStoreProvider initState={{ automaton: new FiniteStateMachine(data?.automaton as unknown as JsonFSM | undefined) }}>
       <div className="flex flex-col h-screen">
         <EditorLayout data={data} />
-        <main className="h-full">
-          <div className="flex h-full">
-            <Canvas />
-            <SideMenu />
-          </div>
+        <main className="flex h-full">
+          <Canvas />
+          <SideMenu />
         </main>
       </div>
     </EditorStoreProvider>
