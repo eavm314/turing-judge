@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import AutomatonItem from "@/components/library/automaton-item"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { type AutomatonLibraryItem } from "@/lib/automaton/types"
+import { deleteAutomaton } from "@/actions/library"
 
 export type SortField = "title" | "type" | "createdAt" | "updatedAt";
 export type SortDirection = "asc" | "desc";
@@ -20,9 +21,8 @@ export default function AutomataLibrary({ automataData }: { automataData: Automa
   const [sortField, setSortField] = useState<SortField>("title");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
-  const handleDeleteAutomaton = (id: string) => {
-    // TODO: Implement delete automaton
-    console.log('delete automaton with id:', id);
+  const handleDeleteAutomaton = async (id: string) => {
+    await deleteAutomaton(id);
   }
 
   const handleSort = (field: SortField) => {

@@ -13,16 +13,15 @@ interface AutomatonItemProps {
   automaton: AutomatonLibraryItem
   onDelete: (id: string) => void
 }
+const formatDate = (date: Date) => {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date)
+}
 
 export default function AutomatonItem({ automaton, onDelete }: AutomatonItemProps) {
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }).format(date)
-  }
-
   return (
     <div className="grid grid-cols-12 gap-6 py-3 px-4 items-center hover:bg-muted/50">
       {/* Name */}
