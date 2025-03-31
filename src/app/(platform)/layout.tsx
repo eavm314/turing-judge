@@ -11,7 +11,7 @@ export default function PlatformLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center">
         <nav className="mr-auto flex items-center gap-8">
           <Link className="flex items-center justify-center" href="/">
