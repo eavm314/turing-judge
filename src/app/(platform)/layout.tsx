@@ -18,7 +18,7 @@ export default function PlatformLayout({
             <Cpu className="size-6 mr-2" />
             <span className="font-bold">TuringProject</span>
           </Link>
-          <Link href="/problemset">
+          <Link href="/problems">
             <span className="underline underline-offset-4">Problems</span>
           </Link>
         </nav>
