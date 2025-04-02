@@ -31,7 +31,7 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
           />
         </TabsContent>
         <TabsContent value="preview" className="p-0">
-          <div className="min-h-[300px] p-4 prose prose-sm max-w-none dark:prose-invert">
+          <div className="min-h-[300px] p-4 prose prose-sm prose-headings:my-2 prose-headings:p-0 max-w-none dark:prose-invert">
             {value ? (
               <ReactMarkdown>{value}</ReactMarkdown>
             ) : (
