@@ -7,10 +7,10 @@ import { MoreHorizontal, Trash2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { type AutomatonLibraryItem } from "@/actions/types"
+import { type AutomatonProjectItem } from "@/actions/types"
 
 interface AutomatonItemProps {
-  automaton: AutomatonLibraryItem
+  item: AutomatonProjectItem
   onDelete: (id: string) => void
 }
 const formatDate = (date: Date) => {
@@ -21,28 +21,28 @@ const formatDate = (date: Date) => {
   }).format(date)
 }
 
-export default function AutomatonItem({ automaton, onDelete }: AutomatonItemProps) {
+export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
   return (
     <div className="grid grid-cols-12 gap-6 py-3 px-4 items-center hover:bg-muted/50">
       {/* Name */}
       <div className="col-span-5">
-        <Link href={`/editor/${automaton.id}`} className="font-medium hover:underline">
-          {automaton.title}
+        <Link href={`/editor/${item.id}`} className="font-medium hover:underline">
+          {item.title}
         </Link>
       </div>
 
       {/* Type */}
       <div className="col-span-2 flex items-center gap-2">
         <Badge variant="secondary" className="text-xs">
-          {automaton.type}
+          {item.type}
         </Badge>
       </div>
 
       {/* Created Date */}
-      <div className="col-span-2 text-sm text-muted-foreground">{formatDate(automaton.createdAt)}</div>
+      <div className="col-span-2 text-sm text-muted-foreground">{formatDate(item.createdAt)}</div>
 
       {/* Modified Date */}
-      <div className="col-span-2 text-sm text-muted-foreground">{formatDate(automaton.updatedAt)}</div>
+      <div className="col-span-2 text-sm text-muted-foreground">{formatDate(item.updatedAt)}</div>
 
       {/* Actions */}
       <div className="col-span-1 flex justify-end">
@@ -56,7 +56,7 @@ export default function AutomatonItem({ automaton, onDelete }: AutomatonItemProp
           <DropdownMenuContent align="end">
             <DropdownMenuItem
               className="text-destructive focus:text-destructive cursor-pointer"
-              onClick={() => onDelete(automaton.id)}
+              onClick={() => onDelete(item.id)}
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Delete

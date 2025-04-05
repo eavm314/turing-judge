@@ -2,7 +2,7 @@ import { useParams } from "next/navigation";
 
 import { Lock, Unlock } from "lucide-react";
 
-import { updateAutomaton } from "@/actions/library";
+import { updateAutomaton } from "@/actions/projects";
 import {
   Select,
   SelectContent,

@@ -7,15 +7,15 @@ import { Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import AutomatonItem from "@/components/library/automaton-item"
+import ProjectItem from "@/components/projects/project-item"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { type AutomatonLibraryItem } from "@/actions/types"
-import { deleteAutomaton } from "@/actions/library"
+import { type AutomatonProjectItem } from "@/actions/types"
+import { deleteAutomaton } from "@/actions/projects"
 
 export type SortField = "title" | "type" | "createdAt" | "updatedAt";
 export type SortDirection = "asc" | "desc";
 
-export default function AutomataLibrary({ automataData }: { automataData: AutomatonLibraryItem[] }) {
+export default function AutomatonProjects({ projectItems }: { projectItems: AutomatonProjectItem[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const [sortField, setSortField] = useState<SortField>("title");
@@ -37,19 +37,19 @@ export default function AutomataLibrary({ automataData }: { automataData: Automa
   }
 
   // Filter automata
-  const filteredAutomata = automataData.filter((automaton) => {
+  const filteredItems = projectItems.filter((item) => {
     // Search filter
-    const matchesSearch = automaton.title?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = item.title?.toLowerCase().includes(searchQuery.toLowerCase());
 
     // Type filter
     let matchesType = true;
     if (typeFilter) {
       if (typeFilter === "FSM") {
-        matchesType = automaton.type === "FSM";
+        matchesType = item.type === "FSM";
       } else if (typeFilter === "PDA") {
-        matchesType = automaton.type === "PDA";
+        matchesType = item.type === "PDA";
       } else if (typeFilter === "TM") {
-        matchesType = automaton.type === "TM";
+        matchesType = item.type === "TM";
       }
     }
 
@@ -57,7 +57,7 @@ export default function AutomataLibrary({ automataData }: { automataData: Automa
   })
 
   // Sort automata
-  const sortedAutomata = [...filteredAutomata].sort((a, b) => {
+  const sortedItems = [...filteredItems].sort((a, b) => {
     let comparison = 0;
 
     if (sortField === "title") {
@@ -118,10 +118,10 @@ export default function AutomataLibrary({ automataData }: { automataData: Automa
 
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <div className="text-sm text-muted-foreground">{sortedAutomata.length} automata found</div>
+          <div className="text-sm text-muted-foreground">{sortedItems.length} automata found</div>
         </div>
 
-        {sortedAutomata.length > 0 ? (
+        {sortedItems.length > 0 ? (
           <div className="border rounded-md">
             {/* Table Header */}
             <div className="grid grid-cols-12 border-b bg-muted/50 font-medium text-sm">
@@ -158,8 +158,8 @@ export default function AutomataLibrary({ automataData }: { automataData: Automa
 
             {/* Table Body */}
             <div className="divide-y">
-              {sortedAutomata.map((automaton) => (
-                <AutomatonItem key={automaton.id} automaton={automaton} onDelete={handleDeleteAutomaton} />
+              {sortedItems.map((item) => (
+                <ProjectItem key={item.id} item={item} onDelete={handleDeleteAutomaton} />
               ))}
             </div>
           </div>

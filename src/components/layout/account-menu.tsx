@@ -30,8 +30,8 @@ export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
           Profile
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link className="cursor-pointer" href="/library">
-            Automata Library
+          <Link className="cursor-pointer" href="/projects">
+            My Projects
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

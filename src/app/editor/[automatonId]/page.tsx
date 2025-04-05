@@ -1,4 +1,4 @@
-import { getAutomatonById } from "@/actions/library";
+import { getAutomatonById } from "@/actions/projects";
 import EditorContent from "../editor-content";
 
 export default async function EditorPageById({ params }: { params: Promise<{ automatonId: string }> }) {

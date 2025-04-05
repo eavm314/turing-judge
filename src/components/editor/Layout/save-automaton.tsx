@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { SaveIcon } from "lucide-react";
 
-import { createAutomaton, updateAutomaton } from "@/actions/library";
+import { createAutomaton, updateAutomaton } from "@/actions/projects";
 import { Button } from "@/components/ui/button";
 import { handleSignIn } from "@/lib/auth/client-handlers";
 import { useAutomaton } from "@/providers/editor-provider";

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { type UserAutomaton } from "@prisma/client";
+import { type Project } from "@prisma/client";
 import { Cpu } from "lucide-react";
 
 import { AccountMenu } from "@/components/layout/account-menu";
@@ -11,7 +11,7 @@ import { ExamplesMenu } from "./examples-menu";
 import { PublicSelect } from "./public-select";
 import { SaveAutomaton } from "./save-automaton";
 
-export function EditorLayout({ data }: { data?: UserAutomaton }) {
+export function EditorLayout({ data }: { data?: Project }) {
   const user = useSession();
   const isOwner = Boolean(user && data && user.id === data.userId);
   return (

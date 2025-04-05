@@ -26,7 +26,7 @@ model User {
   accounts       Account[]
   problems       Problem[]
   submissions    Submission[]
-  userAutomatons UserAutomaton[]
+  userAutomatons Project[]
 
   @@map("users")
 }
@@ -53,7 +53,7 @@ enum AutomatonType {
   TM
 }
 
-model UserAutomaton {
+model Project {
   id        String        @id @default(cuid(2))
   title     String?
   userId    String        @map("user_id")
@@ -66,16 +66,24 @@ model UserAutomaton {
 
   user User @relation(fields: [userId], references: [id])
 
-  @@map("user_automata")
+  @@map("projects")
+}
+
+enum ProblemDifficulty {
+  UNKNOWN
+  EASY
+  MEDIUM
+  HARD
+  EXPERT
 }
 
 model Problem {
-  id         String  @id @default(cuid(2))
-  authorId   String  @map("author_id")
+  id         String            @id @default(cuid(2))
+  authorId   String            @map("author_id")
   title      String
-  difficulty Int
-  statement  String  @db.Text
-  isPublic   Boolean @map("is_public")
+  difficulty ProblemDifficulty
+  statement  String            @db.Text
+  isPublic   Boolean           @map("is_public")
 
   allowFSM    Boolean @map("allow_fsm")
   allowPDA    Boolean @map("allow_pda")
@@ -101,7 +109,7 @@ model TestCase {
   id             Int     @id @default(autoincrement())
   problemId      String  @map("problem_id")
   input          String
-  expectedResult String  @map("expected_result")
+  expectedResult Boolean  @map("expected_result")
   expectedOutput String? @map("expected_output")
 
   problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
@@ -111,7 +119,9 @@ model TestCase {
 
 enum Verdict {
   ACCEPTED
-  WRONG_ANSWER
+  WRONG_RESULT
+  WRONG_OUTPUT
+  STEP_LIMIT_EXCEEDED
   TIME_LIMIT_EXCEEDED
   INVALID_FORMAT
   UNKNOWN_ERROR
@@ -129,6 +139,7 @@ model Submission {
   problemId String   @map("problem_id")
   verdict   Verdict?
   status    Status
+  message   String?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

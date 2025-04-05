@@ -2,29 +2,29 @@
 
 import { notFound, redirect } from "next/navigation";
 
-import { type AutomatonType, type UserAutomaton } from "@prisma/client";
+import { type AutomatonType, type Project } from "@prisma/client";
 import { type JsonObject } from "@prisma/client/runtime/library";
 
 import { auth } from "@/lib/auth";
 import { type JsonFSM } from "@/lib/automaton/FiniteStateMachine";
-import { AutomatonLibraryItem } from "@/actions/types";
+import { AutomatonProjectItem } from "@/actions/types";
 import { prisma } from "@/lib/db/prisma";
 import { revalidatePath } from "next/cache";
 
-export const getAutomatonById = async (id: string): Promise<UserAutomaton> => {
+export const getAutomatonById = async (id: string): Promise<Project> => {
   const session = await auth();
-  const savedItem = await prisma.userAutomaton.findUnique({ where: { id } });
+  const savedItem = await prisma.project.findUnique({ where: { id } });
   if (!savedItem || (!savedItem.isPublic && savedItem.userId !== session?.user?.id)) {
     notFound()
   }
   return savedItem;
 }
 
-export const getSavedAutomata = async (): Promise<AutomatonLibraryItem[]> => {
+export const getSavedAutomata = async (): Promise<AutomatonProjectItem[]> => {
   const session = await auth();
   if (!session?.user?.id) redirect('/signin');
 
-  const results = await prisma.userAutomaton.findMany({
+  const results = await prisma.project.findMany({
     where: { userId: session.user.id },
     select: {
       id: true,
@@ -49,7 +49,7 @@ export const createAutomaton = async (body: {
   if (!session?.user?.id) redirect('/signin');
 
   try {
-    const savedAutomaton = await prisma.userAutomaton.create({
+    const savedAutomaton = await prisma.project.create({
       data: {
         userId: session.user.id,
         title: body.title,
@@ -75,7 +75,7 @@ export const updateAutomaton = async (body: {
 }) => {
   const session = await auth();
   if (!session?.user?.id) redirect('/signin');
-  const oldAutomaton = await prisma.userAutomaton.findUnique({ where: { id: body.id } });
+  const oldAutomaton = await prisma.project.findUnique({ where: { id: body.id } });
   if (!oldAutomaton) {
     notFound();
   }
@@ -84,7 +84,7 @@ export const updateAutomaton = async (body: {
     return false;
   }
   try {
-    await prisma.userAutomaton.update({
+    await prisma.project.update({
       where: { id: body.id },
       data: {
         title: body.title,
@@ -106,7 +106,7 @@ export const deleteAutomaton = async (id: string) => {
   if (!session?.user?.id) redirect('/signin');
 
   try {
-    await prisma.userAutomaton.delete({ where: { id } });
+    await prisma.project.delete({ where: { id } });
     revalidatePath('/library');
     return true;
   } catch (error) {
