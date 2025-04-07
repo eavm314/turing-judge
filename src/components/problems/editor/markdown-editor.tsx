@@ -17,7 +17,7 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
     <div className="w-full rounded-md border">
       <Tabs defaultValue="write" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex items-center justify-between border-b px-4">
-          <TabsList className="h-12">
+          <TabsList className="h-8 my-1">
             <TabsTrigger value="write">Write</TabsTrigger>
             <TabsTrigger value="preview">Preview</TabsTrigger>
           </TabsList>
@@ -26,7 +26,7 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
           <Textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder="Write your problem statement using Markdown..."
+            placeholder={"Write your problem statement using Markdown...\nAt least 20 characters."}
             className="min-h-[300px] resize-y border-0 p-4 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         </TabsContent>

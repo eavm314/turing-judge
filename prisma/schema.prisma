@@ -93,7 +93,8 @@ model Problem {
   stepLimit   Int     @map("step_limit")
   timeLimit   Int     @map("time_limit")
 
-  solutionAutomaton Json @map("solution_automaton")
+  publicSolution    Boolean @default(false) @map("public_solution")
+  solutionAutomaton Json?   @map("solution_automaton")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -109,7 +110,7 @@ model TestCase {
   id             Int     @id @default(autoincrement())
   problemId      String  @map("problem_id")
   input          String
-  expectedResult Boolean  @map("expected_result")
+  expectedResult Boolean @map("expected_result")
   expectedOutput String? @map("expected_output")
 
   problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)

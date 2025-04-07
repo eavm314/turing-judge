@@ -1,117 +1,56 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Loader2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent } from "@/components/ui/card"
-import { TestCasesEditor } from "@/components/problems/editor/test-cases-editor"
+import { problemSchema } from "@/lib/schemas/problem-form"
 import { MarkdownEditor } from "./markdown-editor"
+import { Textarea } from "@/components/ui/textarea"
 
-// Define the difficulty enum
-const DifficultyEnum = z.enum(["EASY", "MEDIUM", "HARD", "EXPERT"])
-
-// Define the form schema
-const formSchema = z.object({
-  title: z.string().min(3, {
-    message: "Title must be at least 3 characters.",
-  }),
-  difficulty: DifficultyEnum,
-  statement: z.string().min(10, {
-    message: "Problem statement must be at least 10 characters.",
-  }),
-  isPublic: z.boolean().default(false),
-  allowFSM: z.boolean().default(true),
-  allowPDA: z.boolean().default(false),
-  allowTM: z.boolean().default(false),
-  allowNonDet: z.boolean().default(false),
-  stateLimit: z.number().int().min(1).default(10),
-  stepLimit: z.number().int().min(1).default(100),
-  timeLimit: z.number().int().min(1).default(5000),
-  solutionAutomaton: z.string().refine(
-    (val) => {
-      try {
-        JSON.parse(val)
-        return true
-      } catch (e) {
-        return false
-      }
-    },
-    {
-      message: "Solution must be valid JSON",
-    },
-  ),
-  testCases: z
-    .array(
-      z.object({
-        input: z.string().min(1, { message: "Input cannot be empty" }),
-        expectedOutput: z.string().min(1, { message: "Expected output cannot be empty" }),
-        isPublic: z.boolean().default(true),
-        description: z.string().optional(),
-      }),
-    )
-    .default([]),
-})
+type ProblemValues = z.infer<typeof problemSchema>;
 
 export function ProblemForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Initialize the form
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ProblemValues>({
+    resolver: zodResolver(problemSchema),
     defaultValues: {
       title: "",
-      difficulty: "MEDIUM",
+      difficulty: "UNKNOWN",
       statement: "",
-      isPublic: false,
       allowFSM: true,
       allowPDA: false,
       allowTM: false,
       allowNonDet: false,
       stateLimit: 10,
-      stepLimit: 100,
-      timeLimit: 5000,
-      solutionAutomaton: JSON.stringify({ states: [], transitions: [] }, null, 2),
-      testCases: [
-        {
-          input: "",
-          expectedOutput: "",
-          isPublic: true,
-          description: "",
-        },
-      ],
+      stepLimit: 10,
+      timeLimit: 1000,
+      testCases: "",
     },
   })
 
-  // Handle form submission
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: ProblemValues) {
     setIsSubmitting(true)
     try {
-      // Here you would typically send the data to your API
       console.log(values)
-
-      // Parse the JSON string to an object before sending
-      const formattedValues = {
-        ...values,
-        solutionAutomaton: JSON.parse(values.solutionAutomaton),
-        // No need to transform testCases as they're already in the right format
-      }
 
       // Mock API call
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
       // Redirect to problems list or the newly created problem
-      router.push("/problems")
+      // router.push("/problems")
     } catch (error) {
       console.error("Error submitting form:", error)
     } finally {
@@ -119,18 +58,29 @@ export function ProblemForm() {
     }
   }
 
+  const basicErrors = form.formState.errors.title || form.formState.errors.statement;
+  const automatonErrors = form.formState.errors.stateLimit || form.formState.errors.stepLimit || form.formState.errors.timeLimit;
+  const testCasesErrors = form.formState.errors.testCases;
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <Tabs defaultValue="basic" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="basic">Basic Information</TabsTrigger>
-            <TabsTrigger value="settings">Automaton Settings</TabsTrigger>
-            {/* <TabsTrigger value="solution">Solution</TabsTrigger> */}
-            <TabsTrigger value="testcases">Test Cases</TabsTrigger>
+            <TabsTrigger value="basic">
+              Basic Information
+              {basicErrors && <span className="ml-1 text-destructive">(errors)</span>}
+            </TabsTrigger>
+            <TabsTrigger value="settings">
+              Automaton Settings
+              {automatonErrors && <span className="ml-1 text-destructive">(errors)</span>}
+            </TabsTrigger>
+            <TabsTrigger value="testcases">
+              Test Cases
+              {testCasesErrors && <span className="ml-1 text-destructive">(errors)</span>}
+            </TabsTrigger>
           </TabsList>
 
-          {/* Basic Information Tab */}
           <TabsContent value="basic" className="space-y-6">
             <Card>
               <CardContent className="pt-6">
@@ -161,6 +111,7 @@ export function ProblemForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
+                          <SelectItem value="UNKNOWN">Unknown</SelectItem>
                           <SelectItem value="EASY">Easy</SelectItem>
                           <SelectItem value="MEDIUM">Medium</SelectItem>
                           <SelectItem value="HARD">Hard</SelectItem>
@@ -183,22 +134,6 @@ export function ProblemForm() {
                       </FormControl>
                       <FormDescription>Write your problem statement using Markdown.</FormDescription>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="isPublic"
-                  render={({ field }) => (
-                    <FormItem className="mt-4 flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">Public Problem</FormLabel>
-                        <FormDescription>Make this problem visible to all users.</FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
-                      </FormControl>
                     </FormItem>
                   )}
                 />
@@ -341,32 +276,10 @@ export function ProblemForm() {
             </Card>
           </TabsContent>
 
-          {/* Solution Tab */}
-          {/* <TabsContent value="solution" className="space-y-6">
-            <Card>
-              <CardContent className="pt-6">
-                <FormField
-                  control={form.control}
-                  name="solutionAutomaton"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Solution Automaton</FormLabel>
-                      <FormControl>
-                        <JsonEditor value={field.value} onChange={field.onChange} />
-                      </FormControl>
-                      <FormDescription>Enter the solution automaton as JSON or select from the library</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
           {/* Test Cases Tab */}
           <TabsContent value="testcases" className="space-y-6">
             <Card>
-              <CardContent className="pt-6">
+              <CardContent className="pt-6 space-y-4">
                 <FormField
                   control={form.control}
                   name="testCases"
@@ -375,12 +288,24 @@ export function ProblemForm() {
                       <FormLabel>Test Cases</FormLabel>
                       <FormDescription>Add test cases to validate solutions against your problem.</FormDescription>
                       <FormControl>
-                        <TestCasesEditor value={field.value} onChange={field.onChange} />
+                        <Textarea
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="Enter test cases in format: input,accept|reject,output?"
+                          className="min-h-[200px] font-mono"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                <div className="bg-muted p-3 rounded-md">
+                  <h4 className="text-sm font-medium mb-2">Examples:</h4>
+                  <pre className="text-xs">
+                    {"FSM/PDA:\n 0101,1\n 1110,0\n\nTM:\n 0011,0\n 0101,1\n 0000,1,1111"}
+                  </pre>
+                  <p className="text-xs text-muted-foreground mt-2">1 = accept, 0 = reject</p>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
