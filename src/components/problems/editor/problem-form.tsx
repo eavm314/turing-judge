@@ -14,17 +14,16 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { problemSchema } from "@/lib/schemas/problem-form"
+import { problemSchema, type ProblemSchema } from "@/lib/schemas/problem-form"
 import { MarkdownEditor } from "./markdown-editor"
 import { Textarea } from "@/components/ui/textarea"
-
-type ProblemValues = z.infer<typeof problemSchema>;
+import { createProblem } from "@/actions/problems"
 
 export function ProblemForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const form = useForm<ProblemValues>({
+  const form = useForm<ProblemSchema>({
     resolver: zodResolver(problemSchema),
     defaultValues: {
       title: "",
@@ -41,21 +40,18 @@ export function ProblemForm() {
     },
   })
 
-  async function onSubmit(values: ProblemValues) {
+  async function onSubmit(data: ProblemSchema) {
     setIsSubmitting(true)
-    try {
-      console.log(values)
+    console.log(data)
 
-      // Mock API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Redirect to problems list or the newly created problem
-      // router.push("/problems")
-    } catch (error) {
-      console.error("Error submitting form:", error)
-    } finally {
-      setIsSubmitting(false)
+    const result = await createProblem(data);
+    if (result) {
+      alert("Problem created successfully.")
+      router.push("/problems")
+    } else {
+      alert("Problem not created.")
     }
+    setIsSubmitting(false)
   }
 
   const basicErrors = form.formState.errors.title || form.formState.errors.statement;

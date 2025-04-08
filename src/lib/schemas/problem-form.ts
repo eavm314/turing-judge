@@ -1,7 +1,7 @@
 import { ProblemDifficulty } from "@prisma/client"
 import { z } from "zod"
 
-export const DifficultyEnum = z.nativeEnum(ProblemDifficulty)
+const DifficultyEnum = z.nativeEnum(ProblemDifficulty)
 
 export const problemSchema = z.object({
   title: z.string().min(3, {
@@ -31,3 +31,5 @@ export const problemSchema = z.object({
     message: "Invalid format for test cases.",
   }),
 })
+
+export type ProblemSchema = z.infer<typeof problemSchema>;
