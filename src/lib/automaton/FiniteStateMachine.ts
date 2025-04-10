@@ -21,12 +21,12 @@ const basicAutomata: JsonFSM = {
 
 export class FiniteStateMachine {
   states: Map<string, State>;
-  alphabet: Set<string>;
+  alphabet: string[];
   initial: string;
 
   constructor(json: JsonFSM = basicAutomata) {
     this.states = new Map();
-    this.alphabet = new Set(json.alphabet);
+    this.alphabet = json.alphabet;
     this.initial = json.initial;
 
     // Convert JSON to State objects
@@ -40,8 +40,11 @@ export class FiniteStateMachine {
     }
   }
 
+  setAlphabet(alphabet: string[]) {
+    this.alphabet = alphabet;
+  }
+
   toJson(): JsonFSM {
-    // const states = Array.from();
     const states = Object.fromEntries(this.states.entries()
       .map(([name, state]) => [name, state.toJson()]));
     const finals = Array.from(this.states.values())
