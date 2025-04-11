@@ -11,6 +11,7 @@ import ProjectItem from "@/components/projects/project-item"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { type AutomatonProjectItem } from "@/actions/types"
 import { deleteAutomaton } from "@/actions/projects"
+import { useModal } from "@/providers/modal-provider"
 
 export type SortField = "title" | "type" | "createdAt" | "updatedAt";
 export type SortDirection = "asc" | "desc";
@@ -21,7 +22,15 @@ export default function AutomatonProjects({ projectItems }: { projectItems: Auto
   const [sortField, setSortField] = useState<SortField>("title");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
+  const { showConfirm } = useModal();
+
   const handleDeleteAutomaton = async (id: string) => {
+    const confirmation = await showConfirm({
+      title: "Delete Automaton",
+      message: "Are you sure you want to delete this automaton? This action cannot be undone.",
+      confirmLabel: "Delete",
+    });
+    if (!confirmation) return;
     await deleteAutomaton(id);
   }
 

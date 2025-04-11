@@ -1,6 +1,8 @@
 "use client"
 
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState } from "react";
+
+import { Modal } from "@/components/modal";
 
 type ModalType = "alert" | "confirm" | "prompt" | "custom";
 
@@ -40,7 +42,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("alert");
   const [options, setOptions] = useState<ModalOptions>({});
-  const [resolveRef, setResolveRef] = useState<(value: any) => void>(() => { });
 
   const closeModal = () => {
     setIsOpen(false);
@@ -59,7 +60,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           options.onConfirm?.()
         },
       });
-      setResolveRef(() => resolve);
       setIsOpen(true);
     })
   }
@@ -83,7 +83,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           options.onCancel?.()
         },
       });
-      setResolveRef(() => resolve);
       setIsOpen(true);
     });
   }
@@ -111,7 +110,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           options.onCancel?.()
         },
       });
-      setResolveRef(() => resolve);
       setIsOpen(true);
     });
   }
@@ -135,7 +133,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           options.onCancel?.()
         },
       });
-      setResolveRef(() => resolve);
       setIsOpen(true);
     });
   }
@@ -154,6 +151,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
+      <Modal />
     </ModalContext.Provider>
   )
 }

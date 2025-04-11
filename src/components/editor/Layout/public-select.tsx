@@ -10,12 +10,19 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { useModal } from "@/providers/modal-provider";
 
 export function PublicSelect({ isPublic, isOwner }: { isPublic: boolean, isOwner: boolean }) {
   const { automatonId } = useParams<{ automatonId: string }>();
+  const { showConfirm } = useModal();
 
   const handleSelectChange = async (value: string) => {
-    const confirmation = confirm(`Are you sure you want to change the visibility to ${value}?`);
+    const confirmation = await showConfirm({
+      title: "Change Visibility",
+      message: `Are you sure you want to change the visibility to ${value}?`,
+      confirmLabel: "Yes",
+      cancelLabel: "No"
+    });
     if (!confirmation) return;
 
     const result = await updateAutomaton({

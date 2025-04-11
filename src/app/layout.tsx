@@ -6,7 +6,6 @@ import { ThemeProvider } from "@/providers/theme-provider"
 import { SessionProvider } from "@/providers/user-provider";
 import { auth } from "@/lib/auth";
 import { ModalProvider } from "@/providers/modal-provider";
-import { Modal } from "@/components/modal";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -34,7 +33,6 @@ export default async function RootLayout({
           <ModalProvider>
             <SessionProvider user={session?.user}>
               {children}
-              <Modal />
             </SessionProvider>
           </ModalProvider>
         </ThemeProvider>

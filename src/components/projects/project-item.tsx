@@ -2,12 +2,11 @@
 
 import Link from "next/link"
 
-import { MoreHorizontal, Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react"
 
+import { type AutomatonProjectItem } from "@/actions/types"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { type AutomatonProjectItem } from "@/actions/types"
 
 interface AutomatonItemProps {
   item: AutomatonProjectItem
@@ -46,23 +45,13 @@ export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
 
       {/* Actions */}
       <div className="col-span-1 flex justify-end">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive cursor-pointer"
-              onClick={() => onDelete(item.id)}
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button variant="ghost" size="icon" 
+          className="size-8 text-destructive hover:text-destructive"
+          onClick={() => onDelete(item.id)}
+        >
+          <Trash2 className="size-4" />
+          <span className="sr-only">Delete</span>
+        </Button>
       </div>
     </div>
   )
