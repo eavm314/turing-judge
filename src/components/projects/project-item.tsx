@@ -26,7 +26,7 @@ export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
       {/* Name */}
       <div className="col-span-5">
         <Link href={`/editor/${item.id}`} className="font-medium hover:underline">
-          {item.title}
+          <span className={`${!item.title && 'italic opacity-60'}`}>{item.title || 'Untitled'}</span>
         </Link>
       </div>
 
@@ -45,7 +45,7 @@ export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
 
       {/* Actions */}
       <div className="col-span-1 flex justify-end">
-        <Button variant="ghost" size="icon" 
+        <Button variant="ghost" size="icon"
           className="size-8 text-destructive hover:text-destructive"
           onClick={() => onDelete(item.id)}
         >

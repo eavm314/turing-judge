@@ -1,14 +1,14 @@
 "use client"
 
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 import { Modal } from "@/components/modal";
 
 type ModalType = "alert" | "confirm" | "prompt" | "custom";
 
-interface CustomContentProps {
-  value: any
-  onChange: (value: any) => void
+export interface CustomContentProps<T> {
+  value: T
+  setValue: React.Dispatch<React.SetStateAction<T>>
 }
 
 interface ModalOptions {
@@ -20,19 +20,23 @@ interface ModalOptions {
   inputPlaceholder?: string
   defaultValue?: string
   inputType?: string
-  customContent?: React.FC<CustomContentProps>
-  onConfirm?: (value?: any) => void
+  onConfirm?: (value?: string) => void
   onCancel?: () => void
 };
+
+interface CustomModalOptions<T> extends ModalOptions {
+  customContent?: React.FC<CustomContentProps<T>>
+  onSubmit?: (value: T) => void
+}
 
 interface ModalContextType {
   isOpen: boolean
   modalType: ModalType
-  options: ModalOptions
+  options: CustomModalOptions<unknown>
   showAlert: (options: ModalOptions) => Promise<void>
   showConfirm: (options: ModalOptions) => Promise<boolean>
   showPrompt: (options: ModalOptions) => Promise<string | null>
-  showCustomModal: <T>(options: ModalOptions) => Promise<T | null>
+  showCustomModal: <T>(options: CustomModalOptions<T>) => Promise<T | null>
   closeModal: () => void
 };
 
@@ -41,7 +45,7 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
 export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("alert");
-  const [options, setOptions] = useState<ModalOptions>({});
+  const [options, setOptions] = useState<CustomModalOptions<any>>({});
 
   const closeModal = () => {
     setIsOpen(false);
@@ -101,7 +105,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         inputType: options.inputType || "text",
         onConfirm: (value) => {
           closeModal()
-          resolve(value)
+          resolve(value!)
           options.onConfirm?.(value)
         },
         onCancel: () => {
@@ -114,7 +118,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     });
   }
 
-  const showCustomModal = <T,>(options: ModalOptions): Promise<T | null> => {
+  const showCustomModal = <T,>(options: CustomModalOptions<T>): Promise<T | null> => {
     return new Promise((resolve) => {
       setModalType("custom");
       setOptions({
@@ -122,10 +126,10 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         confirmLabel: options.confirmLabel || "OK",
         cancelLabel: options.cancelLabel || "Cancel",
         customContent: options.customContent,
-        onConfirm: (value) => {
+        onSubmit: (value: T) => {
           closeModal()
           resolve(value as T)
-          options.onConfirm?.(value)
+          options.onSubmit?.(value)
         },
         onCancel: () => {
           closeModal()

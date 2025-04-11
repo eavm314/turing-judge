@@ -40,7 +40,7 @@ export const getSavedAutomata = async (): Promise<AutomatonProjectItem[]> => {
 }
 
 export const createAutomaton = async (body: {
-  title: string,
+  title: string | null,
   type: AutomatonType,
   isPublic: boolean,
   automaton: JsonFSM,
@@ -48,8 +48,9 @@ export const createAutomaton = async (body: {
   const session = await auth();
   if (!session?.user?.id) redirect('/signin');
 
+  let savedAutomaton = null;
   try {
-    const savedAutomaton = await prisma.project.create({
+    savedAutomaton = await prisma.project.create({
       data: {
         userId: session.user.id,
         title: body.title,
@@ -59,11 +60,11 @@ export const createAutomaton = async (body: {
       },
     });
     revalidatePath('/library');
-    return savedAutomaton.id;
   } catch (error) {
     console.error("Error creating automaton:", error);
     return null;
   }
+  redirect(`/editor/${savedAutomaton.id}`);
 }
 
 export const updateAutomaton = async (body: {

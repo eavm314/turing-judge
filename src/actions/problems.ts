@@ -51,9 +51,9 @@ export const createProblem = async (data: ProblemSchema) => {
     });
     revalidatePath('/problems');
     revalidatePath(`/problems/view/${result.id}`);
-    return true;
   } catch (error) {
     console.error("Error creating problem:", error);
     return false;
   }
+  redirect('/problems');
 }

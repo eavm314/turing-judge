@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { handleSignIn } from "@/lib/auth/client-handlers";
 import { useAutomaton } from "@/providers/editor-provider";
 import { useSession } from "@/providers/user-provider";
+import { useSaveAutomatonPrompt } from "@/components/modal/use-save-automaton";
 
 export function SaveAutomaton() {
   const user = useSession();
@@ -18,8 +19,9 @@ export function SaveAutomaton() {
   const [retry, setRetry] = useState(false);
 
   const { automatonId } = useParams<{ automatonId: string }>();
-
   const router = useRouter();
+
+  const saveAutomatonPrompt = useSaveAutomatonPrompt();
 
   useEffect(() => {
     if (user && retry) {
@@ -48,20 +50,16 @@ export function SaveAutomaton() {
       return;
     }
 
-    const newTitle = prompt("Enter a title for the automaton:");
-    if (!newTitle) {
-      alert("Automaton not saved.");
+    const userInput = await saveAutomatonPrompt();
+    if (!userInput) {
       return;
     }
-    const savedAutomatonId = await createAutomaton({
-      title: newTitle,
+    await createAutomaton({
+      title: userInput.title || null,
+      isPublic: userInput.isPublic,
       type: "FSM",
-      isPublic: true,
       automaton: automaton.toJson(),
     });
-    if (savedAutomatonId) {
-      router.push(`/editor/${savedAutomatonId}`);
-    }
   };
 
   return (

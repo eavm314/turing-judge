@@ -48,7 +48,7 @@ export default function AutomatonProjects({ projectItems }: { projectItems: Auto
   // Filter automata
   const filteredItems = projectItems.filter((item) => {
     // Search filter
-    const matchesSearch = item.title?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = !searchQuery || item.title?.toLowerCase().includes(searchQuery.toLowerCase());
 
     // Type filter
     let matchesType = true;
@@ -70,7 +70,8 @@ export default function AutomatonProjects({ projectItems }: { projectItems: Auto
     let comparison = 0;
 
     if (sortField === "title") {
-      if (!a.title || !b.title) return 0;
+      if (!a.title) return -1;
+      if (!b.title) return 1;
       comparison = a.title.localeCompare(b.title);
     } else if (sortField === "type") {
       comparison = a.type.localeCompare(b.type);

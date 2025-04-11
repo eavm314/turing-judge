@@ -9,14 +9,15 @@ import { Input } from "@/components/ui/input"
 import { useModal } from "@/providers/modal-provider"
 
 export function Modal() {
-  const { isOpen, modalType, options, closeModal } = useModal();
+  const { isOpen, modalType, options } = useModal();
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const [customInputValue, setCustomInputValue] = useState<unknown>(null);
 
   useEffect(() => {
     if (isOpen && modalType === "prompt") {
       setInputValue(options.defaultValue || "");
-      // Focus the input after the modal is fully open
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100)
@@ -24,7 +25,9 @@ export function Modal() {
   }, [isOpen, modalType, options.defaultValue]);
 
   const handleConfirm = () => {
-    if (modalType === "prompt" || modalType === "custom") {
+    if (modalType === "custom") {
+      options.onSubmit?.(customInputValue);
+    } else if (modalType === "prompt") {
       options.onConfirm?.(inputValue);
     } else {
       options.onConfirm?.();
@@ -45,7 +48,7 @@ export function Modal() {
   const CustomContent = options.customContent;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleCancel()}>
       <DialogContent className="sm:max-w-[425px]" onKeyDown={handleKeyDown}>
         <DialogHeader>
           <DialogTitle>{options.title}</DialogTitle>
@@ -72,11 +75,9 @@ export function Modal() {
           </div>
         )}
 
-        {modalType === "custom" && (
-          <div className="py-4">
-            {CustomContent && <CustomContent value={inputValue} onChange={setInputValue} />}
-          </div>
-        )}
+        {modalType === "custom" && CustomContent &&
+          <CustomContent value={customInputValue} setValue={setCustomInputValue} />
+        }
 
         <DialogFooter>
           <Button onClick={handleConfirm}>{options.confirmLabel || "OK"}</Button>

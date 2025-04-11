@@ -44,13 +44,7 @@ export function ProblemForm() {
     setIsSubmitting(true)
     console.log(data)
 
-    const result = await createProblem(data);
-    if (result) {
-      alert("Problem created successfully.")
-      router.push("/problems")
-    } else {
-      alert("Problem not created.")
-    }
+    await createProblem(data);
     setIsSubmitting(false)
   }
 
