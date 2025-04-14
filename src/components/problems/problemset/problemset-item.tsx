@@ -19,7 +19,7 @@ export default function ProblemSetItem({ problem }: { problem: ProblemSetItem })
     <div className="grid grid-cols-12 gap-6 py-3 px-4 items-center hover:bg-muted/50">
       {/* Name */}
       <div className="col-span-5">
-        <Link href={`/editor/${problem.id}`} className="font-medium hover:underline">
+        <Link href={`/problems/view/${problem.id}`} className="font-medium hover:underline">
           {problem.title}
         </Link>
       </div>
