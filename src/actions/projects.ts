@@ -20,7 +20,7 @@ export const getAutomatonById = async (id: string): Promise<Project> => {
   return savedItem;
 }
 
-export const getSavedAutomata = async (): Promise<AutomatonProjectItem[]> => {
+export const getUserProjects = async (): Promise<AutomatonProjectItem[]> => {
   const session = await auth();
   if (!session?.user?.id) redirect('/signin');
 

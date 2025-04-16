@@ -1,4 +1,6 @@
+import { JsonFSM } from '@/lib/automaton/FiniteStateMachine'
 import {
+  type AutomatonType,
   type Problem,
   type Project,
   type Submission,
@@ -13,3 +15,8 @@ export type ProblemConstraints = Pick<Problem, 'allowFSM' | 'allowPDA' | 'allowT
 export type ProblemView = Pick<Problem, 'id' | 'title' | 'difficulty' | 'statement'> & { constraints: ProblemConstraints }
 
 export type SubmissionItem = Pick<Submission, 'status' | 'verdict' | 'message' | 'createdAt'>
+
+export type AutomatonCode = {
+  type: AutomatonType
+  automaton: JsonFSM
+}
