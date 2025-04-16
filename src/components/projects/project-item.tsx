@@ -4,7 +4,7 @@ import Link from "next/link"
 
 import { Trash2 } from "lucide-react"
 
-import { type AutomatonProjectItem } from "@/actions/types"
+import { type AutomatonProjectItem } from "@/dtos"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 

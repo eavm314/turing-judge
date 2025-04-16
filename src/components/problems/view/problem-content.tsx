@@ -60,7 +60,7 @@ export default function ProblemContent({ markdown }: ProblemContentProps) {
 
       <div className="space-y-8">
         <Constraints constraints={constraints} />
-        <SubmitSolution problemId={"1"} />
+        <SubmitSolution />
       </div>
     </div>
   )

@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import ProjectItem from "@/components/projects/project-item"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { type AutomatonProjectItem } from "@/actions/types"
+import { type AutomatonProjectItem } from "@/dtos"
 import { deleteAutomaton } from "@/actions/projects"
 import { useModal } from "@/providers/modal-provider"
 

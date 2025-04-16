@@ -1,11 +1,11 @@
 "use server"
 
-import { prisma } from "@/lib/db/prisma";
-import { type ProblemSetItem } from "./types";
-import { ProblemSchema } from "@/lib/schemas/problem-form";
+import { type ProblemSetItem } from "@/dtos";
 import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { prisma } from "@/lib/db/prisma";
+import { ProblemSchema } from "@/lib/schemas/problem-form";
 import { revalidatePath } from "next/cache";
+import { notFound, redirect } from "next/navigation";
 
 export const getProblemSet = async (): Promise<ProblemSetItem[]> => {
   const session = await auth();
@@ -50,7 +50,7 @@ export const createProblem = async (data: ProblemSchema) => {
       },
     });
     revalidatePath('/problems');
-    revalidatePath(`/problems/view/${result.id}`);
+    revalidatePath(`/problems/${result.id}`);
   } catch (error) {
     console.error("Error creating problem:", error);
     return false;

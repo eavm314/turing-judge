@@ -1,61 +1,38 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
+
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+import { type SubmissionItem } from "@/dtos"
 import SubmitSolution from "./submit-solution"
-import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 
-// Mock submissions data
-const mockSubmissions = [
-  {
-    id: "1",
-    status: "Accepted",
-    automaton: "DFA",
-    submittedAt: "2023-10-20T14:30:00Z",
-  },
-  {
-    id: "2",
-    status: "Wrong Answer",
-    automaton: "NFA",
-    submittedAt: "2023-10-19T10:15:00Z",
-  },
-  {
-    id: "3",
-    status: "Accepted",
-    automaton: "DFA",
-    submittedAt: "2023-10-18T09:45:00Z",
-  },
-  {
-    id: "4",
-    status: "Runtime Error",
-    automaton: "FSM",
-    submittedAt: "2023-10-17T16:20:00Z",
-  },
-]
-
-interface SubmissionsProps {
-  problemId: string
-}
-
-export default function Submissions({ problemId }: SubmissionsProps) {
-  const [submissions, setSubmissions] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+export default function Submissions() {
+  const [submissions, setSubmissions] = useState<SubmissionItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real application, you would fetch submissions from an API
-    // For now, we'll simulate a network request with a timeout
-    const timer = setTimeout(() => {
-      setSubmissions(mockSubmissions)
+    handleRefresh()
+  }, []);
+
+  const handleRefresh = async () => {
+    setLoading(true)
+    try {
+      // const response = await fetch("/api/queries/submissions")
+      // const data = await response.json()
+      // setSubmissions(data)
+      console.log('loading')
+      await new Promise((resolve) => setTimeout(resolve, 2000)) // Simulate a delay
+      console.log('not loading')
+    } catch (error) {
+      console.error("Error fetching submissions, try again later.")
+    } finally {
       setLoading(false)
-    }, 500)
+    }
+  }
 
-    return () => clearTimeout(timer)
-  }, [problemId])
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+  const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
       month: "short",
@@ -78,45 +55,45 @@ export default function Submissions({ problemId }: SubmissionsProps) {
     }
   }
 
-  // if (loading) {
-  //   return (
-  //     <div className="space-y-4">
-  //       <Skeleton className="h-10 w-full" />
-  //       <Skeleton className="h-24 w-full" />
-  //     </div>
-  //   )
-  // }
-
   return (
     <div className="space-y-6">
-      <SubmitSolution problemId={problemId} />
+      <SubmitSolution />
       <h3 className="text-lg font-medium mb-4">Summary</h3>
-      {submissions.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          You haven't submitted any solutions for this problem yet.
-        </div>
-      ) : (
-        <Table>
-          <TableHeader>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Status</TableHead>
+            <TableHead>Automaton</TableHead>
+            <TableHead>Submitted</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {loading ? (
             <TableRow>
-              <TableHead>Status</TableHead>
-              <TableHead>Automaton</TableHead>
-              <TableHead>Submitted</TableHead>
+              <TableCell colSpan={3} className="space-y-2">
+                <Skeleton className="h-10" />
+                <Skeleton className="h-10" />
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {submissions.map((submission) => (
-              <TableRow key={submission.id} className="cursor-pointer hover:bg-muted/50">
-                <TableCell>{getStatusBadge(submission.status)}</TableCell>
-                <TableCell>
-                  <Badge variant="outline">{submission.automaton}</Badge>
+          ) :
+            submissions.length === 0 ? (
+              <TableRow className="h-14 text-center text-muted-foreground">
+                <TableCell colSpan={3}>
+                  You haven't submitted any solutions for this problem yet.
                 </TableCell>
-                <TableCell>{formatDate(submission.submittedAt)}</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
+            ) :
+              submissions.map((submission, index) => (
+                <TableRow key={index} className="cursor-pointer hover:bg-muted/50">
+                  <TableCell>{getStatusBadge(submission.status)}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">FSM</Badge>
+                  </TableCell>
+                  <TableCell>{formatDate(submission.createdAt)}</TableCell>
+                </TableRow>
+              ))}
+        </TableBody>
+      </Table>
     </div>
   )
 }

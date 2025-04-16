@@ -3,7 +3,7 @@
 import Link from "next/link"
 
 
-import { type ProblemSetItem } from "@/actions/types"
+import { type ProblemSetItem } from "@/dtos"
 import { Badge } from "@/components/ui/badge"
 
 const formatDate = (date: Date) => {
@@ -19,7 +19,7 @@ export default function ProblemSetItem({ problem }: { problem: ProblemSetItem })
     <div className="grid grid-cols-12 gap-6 py-3 px-4 items-center hover:bg-muted/50">
       {/* Name */}
       <div className="col-span-5">
-        <Link href={`/problems/view/${problem.id}`} className="font-medium hover:underline">
+        <Link href={`/problems/${problem.id}`} className="font-medium hover:underline">
           {problem.title}
         </Link>
       </div>

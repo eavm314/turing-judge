@@ -5,9 +5,9 @@ import { notFound, redirect } from "next/navigation";
 import { type AutomatonType, type Project } from "@prisma/client";
 import { type JsonObject } from "@prisma/client/runtime/library";
 
+import { type AutomatonProjectItem } from "@/dtos";
 import { auth } from "@/lib/auth";
 import { type JsonFSM } from "@/lib/automaton/FiniteStateMachine";
-import { AutomatonProjectItem } from "@/actions/types";
 import { prisma } from "@/lib/db/prisma";
 import { revalidatePath } from "next/cache";
 

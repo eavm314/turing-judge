@@ -4,7 +4,7 @@ import { useState } from "react"
 
 import { ArrowDown, ArrowUp, ArrowUpDown, Search } from "lucide-react"
 
-import { type ProblemSetItem as ProblemItem } from "@/actions/types"
+import { type ProblemSetItem as ProblemItem } from "@/dtos"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"

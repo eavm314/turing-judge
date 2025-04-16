@@ -28,6 +28,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/ui/utils"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { useState } from "react"
+import { useParams } from "next/navigation";
 
 // Mock data for automatons
 const automatons = [
@@ -38,11 +39,7 @@ const automatons = [
   { id: "5", name: "Non-deterministic Finite Automaton", type: "NFA" },
 ]
 
-interface SubmitSolutionProps {
-  problemId: string
-}
-
-export default function SubmitSolution({ problemId }: SubmitSolutionProps) {
+export default function SubmitSolution() {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState("")
   const [code, setCode] = useState(
@@ -50,27 +47,9 @@ export default function SubmitSolution({ problemId }: SubmitSolutionProps) {
   )
   const [submitting, setSubmitting] = useState(false)
 
-  // Mock constraints for this problem
-  const constraints = {
-    allowFSM: true,
-    allowPDA: false,
-    allowTM: false,
-    allowNonDet: false,
-    stateLimit: 10,
-    stepLimit: 1000,
-    timeLimit: 5000,
-  }
+  const { problemId } = useParams();
 
-  // Filter automatons based on constraints
-  const filteredAutomatons = automatons.filter((automaton) => {
-    if (automaton.type === "FSM" && constraints.allowFSM) return true
-    if (automaton.type === "PDA" && constraints.allowPDA) return true
-    if (automaton.type === "TM" && constraints.allowTM) return true
-    if (automaton.type === "NFA" && !constraints.allowNonDet) return false
-    return true
-  })
-
-  const selectedAutomaton = filteredAutomatons.find((automaton) => automaton.id === value)
+  const selectedAutomaton = automatons.find((automaton) => automaton.id === value)
 
   const handleSubmit = async () => {
     setSubmitting(true)
@@ -125,7 +104,7 @@ export default function SubmitSolution({ problemId }: SubmitSolutionProps) {
                   <CommandList>
                     <CommandEmpty>No automaton found.</CommandEmpty>
                     <CommandGroup>
-                      {filteredAutomatons.map((automaton) => (
+                      {automatons.map((automaton) => (
                         <CommandItem
                           key={automaton.id}
                           value={automaton.id}
@@ -160,7 +139,7 @@ export default function SubmitSolution({ problemId }: SubmitSolutionProps) {
 
         </div>
         <DialogFooter className="flex justify-end">
-          <Button onClick={handleSubmit} disabled={!selectedAutomaton || submitting}>
+          <Button onClick={handleSubmit}>
             {submitting ? "Submitting..." : "Submit Solution"}
           </Button>
           <DialogClose asChild>
