@@ -1,65 +1,39 @@
+import { type ProblemView } from "@/dtos"
 import ReactMarkdown from "react-markdown"
 import { Constraints } from "./constraints"
-import SubmitSolution from "./submit-solution"
+import { SubmitSolution } from "./submit-solution"
+import { ProblemDifficulty } from "@prisma/client"
+import { cn } from "@/lib/ui/utils"
 
-// Mock problem content in markdown
-const mockProblemMarkdown = `
-# Deterministic Finite Automaton for Binary Strings
-
-## Problem Description
-
-Design a deterministic finite automaton (DFA) that accepts all binary strings that meet the following criteria:
-
-1. The string must end with "01"
-2. The string must not contain "11" as a substring
-
-## Input Format
-
-Your automaton should process a string of 0s and 1s.
-
-## Output
-
-Your automaton should accept the string if it meets the criteria, and reject it otherwise.
-
-## Examples
-
-- "01" → Accept
-- "001" → Accept
-- "101" → Accept
-- "0101" → Accept
-- "11" → Reject
-- "010" → Reject
-- "0011" → Reject
-
-## Alphabet
-
-- The input string will only contain the characters '0' and '1'
-- The input string length will be between 1 and 100 characters
-`
-const constraints = {
-  allowFSM: true,
-  allowPDA: false,
-  allowTM: false,
-  allowNonDet: false,
-  stateLimit: 10,
-  stepLimit: 1000,
-  timeLimit: 5000,
+const getFormatedDifficulty = (difficulty: ProblemDifficulty) => {
+  const colorMap = {
+    [ProblemDifficulty.UNKNOWN]: "bg-gray-100 text-gray-800",
+    [ProblemDifficulty.EASY]: "bg-green-100 text-green-800",
+    [ProblemDifficulty.MEDIUM]: "bg-yellow-100 text-yellow-800",
+    [ProblemDifficulty.HARD]: "bg-red-100 text-red-800",
+    [ProblemDifficulty.EXPERT]: "bg-purple-100 text-purple-800",
+  };
+  const text = difficulty.charAt(0).toUpperCase() + difficulty.slice(1).toLowerCase();
+  return { color: colorMap[difficulty], text };
 }
 
-interface ProblemContentProps {
-  markdown: string
-}
-
-export default function ProblemContent({ markdown }: ProblemContentProps) {
+export default function ProblemContent({ problem }: { problem: ProblemView }) {
+  const { color, text } = getFormatedDifficulty(problem.difficulty);
   return (
     <div className="grid grid-cols-3 gap-4">
-      {/* Markdown content */}
-      <div className="col-span-2 prose prose-headings:my-4 prose-headings:p-0 max-w-none dark:prose-invert">
-        <ReactMarkdown>{mockProblemMarkdown || ""}</ReactMarkdown>
+      <div className="col-span-2">
+        <div className="flex justify-between items-center">
+          <div className="flex gap-2">
+            <div className={cn("px-2 py-1 rounded text-sm", color)}>{text}</div>
+          </div>
+        </div>
+        <div className="prose prose-headings:my-4 prose-headings:p-0 max-w-none dark:prose-invert">
+          <ReactMarkdown>{problem.statement || ""}</ReactMarkdown>
+        </div>
       </div>
 
       <div className="space-y-8">
-        <Constraints constraints={constraints} />
+        <Constraints constraints={problem.constraints} />
         <SubmitSolution />
       </div>
     </div>

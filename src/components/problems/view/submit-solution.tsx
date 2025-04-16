@@ -39,7 +39,7 @@ const automatons = [
   { id: "5", name: "Non-deterministic Finite Automaton", type: "NFA" },
 ]
 
-export default function SubmitSolution() {
+export function SubmitSolution() {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState("")
   const [code, setCode] = useState(

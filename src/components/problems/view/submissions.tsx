@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { type SubmissionItem } from "@/dtos"
-import SubmitSolution from "./submit-solution"
-import { Skeleton } from "@/components/ui/skeleton"
+import { SubmitSolution } from "./submit-solution"
 
-export default function Submissions() {
+export default function Submissions({ problemId }: { problemId: string }) {
   const [submissions, setSubmissions] = useState<SubmissionItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,7 +19,7 @@ export default function Submissions() {
   const handleRefresh = async () => {
     setLoading(true)
     try {
-      // const response = await fetch("/api/queries/submissions")
+      // const response = await fetch(`/api/queries/submissions/${problemId}`)
       // const data = await response.json()
       // setSubmissions(data)
       console.log('loading')

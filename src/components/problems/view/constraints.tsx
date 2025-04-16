@@ -1,4 +1,6 @@
-export const Constraints = ({ constraints }: any) => {
+import { type ProblemConstraints } from "@/dtos"
+
+export const Constraints = ({ constraints }: { constraints: ProblemConstraints }) => {
   return (
     <div className="mt-4 p-4 border rounded-md bg-secondary max-h-max">
       <h3 className="text-lg font-medium mb-3">Problem Constraints</h3>

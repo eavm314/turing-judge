@@ -1,3 +1,4 @@
+import { getProblemView } from "@/actions/problems";
 import { ProblemContent, Submissions } from "@/components/problems/view"
 import { SetSection } from "@/components/problems/view/set-section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -12,6 +13,8 @@ export default async function ProblemPage({ params, searchParams }:
 
   const currentTab = section === "submissions" ? "submissions" : "statement";
 
+  const problem = await getProblemView(problemId);
+
   return (
     <main className="mx-10 my-4 flex-1">
       <Tabs defaultValue={currentTab}>
@@ -20,11 +23,11 @@ export default async function ProblemPage({ params, searchParams }:
           <TabsTrigger value="submissions">Submissions</TabsTrigger>
         </TabsList>
         <TabsContent value="statement" className="pt-4">
-          <ProblemContent markdown={"1"} />
+          <ProblemContent problem={problem} />
           <SetSection section="statement" />
         </TabsContent>
         <TabsContent value="submissions" className="pt-4">
-          <Submissions />
+          <Submissions problemId={problem.id} />
           <SetSection section="submissions" />
         </TabsContent>
       </Tabs>

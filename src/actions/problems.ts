@@ -1,6 +1,6 @@
 "use server"
 
-import { type ProblemSetItem } from "@/dtos";
+import { type ProblemView, type ProblemSetItem } from "@/dtos";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
 import { ProblemSchema } from "@/lib/schemas/problem-form";
@@ -21,6 +21,33 @@ export const getProblemSet = async (): Promise<ProblemSetItem[]> => {
   });
 
   return results;
+}
+
+export const getProblemView = async (id: string): Promise<ProblemView> => {
+  const session = await auth();
+  const problem = await prisma.problem.findUnique({ where: { id } });
+
+  if (!problem || (!problem.isPublic && problem.authorId !== (session?.user?.id))) {
+    notFound();
+  }
+
+  const problemView: ProblemView = {
+    id: problem.id,
+    title: problem.title,
+    difficulty: problem.difficulty,
+    statement: problem.statement,
+    constraints: {
+      allowFSM: problem.allowFSM,
+      allowPDA: problem.allowPDA,
+      allowTM: problem.allowTM,
+      allowNonDet: problem.allowNonDet,
+      stateLimit: problem.stateLimit,
+      stepLimit: problem.stepLimit,
+      timeLimit: problem.timeLimit,
+    },
+  }
+  
+  return problemView;
 }
 
 export const createProblem = async (data: ProblemSchema) => {
