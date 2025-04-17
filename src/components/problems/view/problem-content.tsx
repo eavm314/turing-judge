@@ -20,12 +20,10 @@ const getFormatedDifficulty = (difficulty: ProblemDifficulty) => {
 export default function ProblemContent({ problem }: { problem: ProblemView }) {
   const { color, text } = getFormatedDifficulty(problem.difficulty);
   return (
-    <div className="grid grid-cols-3 gap-4">
-      <div className="col-span-2">
-        <div className="flex justify-between items-center">
-          <div className="flex gap-2">
-            <div className={cn("px-2 py-1 rounded text-sm", color)}>{text}</div>
-          </div>
+    <div className="flex gap-4 flex-col md:flex-row">
+      <div className="flex-1">
+        <div className="flex gap-2 justify-between items-center">
+          <div className={cn("px-2 py-1 rounded text-sm", color)}>{text}</div>
         </div>
         <div className="prose prose-headings:my-4 prose-headings:p-0 max-w-none dark:prose-invert">
           <ReactMarkdown>{problem.statement || ""}</ReactMarkdown>

@@ -18,7 +18,7 @@ export default async function ProblemPage({ params, searchParams }:
   return (
     <main className="mx-10 my-4 flex-1">
       <Tabs defaultValue={currentTab}>
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-2 text-4xl">
           <TabsTrigger value="statement">Problem Statement</TabsTrigger>
           <TabsTrigger value="submissions">Submissions</TabsTrigger>
         </TabsList>

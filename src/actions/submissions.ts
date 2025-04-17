@@ -125,7 +125,7 @@ const verifySolution = async (submissionId: number, problemId: string, solution:
     data: {
       status: "FINISHED",
       verdict: overallResult ? "ACCEPTED" : "WRONG_RESULT",
-      message: failedTestCase ? `Failed test case: ${failedTestCase.input}` : null,
+      message: failedTestCase ? `Failed test case: '${failedTestCase.input}'` : null,
     }
   });
 }

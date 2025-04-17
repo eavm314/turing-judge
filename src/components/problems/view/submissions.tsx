@@ -9,9 +9,10 @@ import { type SubmissionItem } from "@/dtos"
 import { SubmitSolution } from "./submit-solution"
 import { Button } from "@/components/ui/button"
 import { RefreshCw } from "lucide-react"
+import { cn } from "@/lib/ui/utils"
 
 export default function Submissions({ problemId }: { problemId: string }) {
-  const [submissions, setSubmissions] = useState<SubmissionItem[]>([]);
+  const [submissions, setSubmissions] = useState<SubmissionItem[]>();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,13 +47,13 @@ export default function Submissions({ problemId }: { problemId: string }) {
     const result = submission.verdict || submission.status;
     switch (result) {
       case "ACCEPTED":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Accepted</Badge>
+        return { color: "bg-green-100 text-green-800 hover:bg-green-100", text: 'Accepted' }
       case "WRONG_RESULT":
-        return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Wrong Answer</Badge>
+        return { color: "bg-red-100 text-red-800 hover:bg-red-100", text: 'Wrong Result' }
       case "PENDING":
-        return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Pending</Badge>
+        return { color: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100", text: 'Pending' }
       default:
-        return <Badge variant="outline">{result}</Badge>
+        return { color: "bg-gray-100 text-gray-800 hover:bg-gray-100", text: 'Unknown' }
     }
   }
 
@@ -60,23 +61,24 @@ export default function Submissions({ problemId }: { problemId: string }) {
     <div className="space-y-6">
       <SubmitSolution />
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium mb-4">Summary</h3>
+        <h3 className="text-2xl font-medium mb-2">Summary</h3>
         <Button variant="outline" size="icon" onClick={handleRefresh}>
           <RefreshCw className={loading ? "animate-spin" : undefined} />
         </Button>
       </div>
-      <Table>
+      <Table className="md:mx-5">
         <TableHeader>
-          <TableRow>
-            <TableHead>Status</TableHead>
-            <TableHead>Automaton</TableHead>
+          <TableRow className="md:text-lg">
+            <TableHead className="w-48">Status</TableHead>
+            <TableHead className="w-32">Type</TableHead>
+            <TableHead className="w-1/2">Message</TableHead>
             <TableHead>Submitted</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {loading ? (
+          {submissions === undefined ? (
             <TableRow>
-              <TableCell colSpan={3} className="space-y-2">
+              <TableCell colSpan={4} className="space-y-2">
                 <Skeleton className="h-10" />
                 <Skeleton className="h-10" />
               </TableCell>
@@ -84,20 +86,24 @@ export default function Submissions({ problemId }: { problemId: string }) {
           ) :
             submissions.length === 0 ? (
               <TableRow className="h-14 text-center text-muted-foreground">
-                <TableCell colSpan={3}>
+                <TableCell colSpan={4}>
                   You haven't submitted any solutions for this problem yet.
                 </TableCell>
               </TableRow>
             ) :
-              submissions.map((submission, index) => (
-                <TableRow key={index} className="cursor-pointer hover:bg-muted/50">
-                  <TableCell>{getStatusBadge(submission)}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">FSM</Badge>
-                  </TableCell>
-                  <TableCell>{formatDate(submission.createdAt)}</TableCell>
-                </TableRow>
-              ))}
+              submissions.map((submission, index) => {
+                const { color, text } = getStatusBadge(submission);
+                return (
+                  <TableRow key={index} className="cursor-pointer hover:bg-muted/50">
+                    <TableCell className="w-48 text-nowrap"><Badge className={cn("md:text-sm", color)}>{text}</Badge></TableCell>
+                    <TableCell className="w-32">
+                      <Badge variant="secondary">FSM</Badge>
+                    </TableCell>
+                    <TableCell width="50%" className="text-base truncate">{submission.message}</TableCell>
+                    <TableCell className="text-nowrap">{formatDate(submission.createdAt)}</TableCell>
+                  </TableRow>
+                )
+              })}
         </TableBody>
       </Table>
     </div>
