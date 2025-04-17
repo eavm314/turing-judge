@@ -2,19 +2,29 @@
 
 import { useState } from "react"
 
-import { Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpDown, Search } from "lucide-react"
 
-import { Input } from "@/components/ui/input"
-import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
-import ProjectItem from "@/components/projects/project-item"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { type AutomatonProjectItem } from "@/dtos"
 import { deleteAutomaton } from "@/actions/projects"
+import ProjectItem from "@/components/projects/project-item"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { type AutomatonProjectItem } from "@/dtos"
 import { useModal } from "@/providers/modal-provider"
 
-export type SortField = "title" | "type" | "createdAt" | "updatedAt";
-export type SortDirection = "asc" | "desc";
+const tableFields = ["title", "type", "createdAt", "updatedAt"] as const;
+type SortField = typeof tableFields[number];
+
+const tableHeaders = {
+  "title": "Title",
+  "type": "Type",
+  "createdAt": "Created At",
+  "updatedAt": "Updated At",
+};
+
+type SortDirection = "asc" | "desc";
 
 export default function AutomatonProjects({ projectItems }: { projectItems: AutomatonProjectItem[] }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -93,8 +103,8 @@ export default function AutomatonProjects({ projectItems }: { projectItems: Auto
   }
 
   return (
-    <div className="space-y-4">
-      <div className="bg-card rounded-lg p-4 shadow-sm">
+    <div className="space-y-4 mt-4">
+      <div className="bg-card rounded-lg md:px-4 shadow-sm">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -126,58 +136,37 @@ export default function AutomatonProjects({ projectItems }: { projectItems: Auto
 
       <Separator />
 
-      <div className="space-y-2">
-        <div className="flex justify-between items-center">
-          <div className="text-sm text-muted-foreground">{sortedItems.length} automata found</div>
-        </div>
-
-        {sortedItems.length > 0 ? (
-          <div className="border rounded-md">
-            {/* Table Header */}
-            <div className="grid grid-cols-12 border-b bg-muted/50 font-medium text-sm">
-              <Button
-                variant="ghost"
-                className="col-span-5 justify-start p-3 h-auto font-medium"
-                onClick={() => handleSort("title")}
-              >
-                Title {getSortIcon("title")}
-              </Button>
-              <Button
-                variant="ghost"
-                className="col-span-2 justify-start p-3 h-auto font-medium"
-                onClick={() => handleSort("type")}
-              >
-                Type {getSortIcon("type")}
-              </Button>
-              <Button
-                variant="ghost"
-                className="col-span-2 justify-start p-3 h-auto font-medium"
-                onClick={() => handleSort("createdAt")}
-              >
-                Created {getSortIcon("createdAt")}
-              </Button>
-              <Button
-                variant="ghost"
-                className="col-span-2 justify-start p-3 h-auto font-medium"
-                onClick={() => handleSort("updatedAt")}
-              >
-                Modified {getSortIcon("updatedAt")}
-              </Button>
-              <div className="col-span-1"></div> {/* Space for actions */}
-            </div>
-
-            {/* Table Body */}
-            <div className="divide-y">
-              {sortedItems.map((item) => (
-                <ProjectItem key={item.id} item={item} onDelete={handleDeleteAutomaton} />
+      <div className="rounded-lg border">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/80">
+              {tableFields.map((field) => (
+                <TableHead key={field} className="p-0">
+                  <Button
+                    variant="ghost"
+                    className="w-full p-2 justify-start md:text-base"
+                    onClick={() => handleSort(field)}
+                  >
+                    {tableHeaders[field]}{getSortIcon(field)}
+                  </Button>
+                </TableHead>
               ))}
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-10 bg-muted/50 rounded-lg">
-            <p className="text-muted-foreground">No automata saved yet</p>
-          </div>
-        )}
+              <TableHead className="w-16 p-0" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sortedItems.length > 0 ?
+              sortedItems.map((item) => (
+                <ProjectItem key={item.id} item={item} onDelete={handleDeleteAutomaton} />
+              )) : (
+                <TableRow className="h-14 text-center text-muted-foreground">
+                  <TableCell colSpan={5}>
+                    No automata saved yet
+                  </TableCell>
+                </TableRow>
+              )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   )

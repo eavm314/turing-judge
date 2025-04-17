@@ -7,6 +7,8 @@ import { Trash2 } from "lucide-react"
 import { type AutomatonProjectItem } from "@/dtos"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { cn } from "@/lib/ui/utils"
 
 interface AutomatonItemProps {
   item: AutomatonProjectItem
@@ -22,29 +24,20 @@ const formatDate = (date: Date) => {
 
 export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
   return (
-    <div className="grid grid-cols-12 gap-6 py-3 px-4 items-center hover:bg-muted/50">
-      {/* Name */}
-      <div className="col-span-5">
+    <TableRow className="py-3 px-4 hover:bg-muted/50">
+      <TableCell className="w-2/5">
         <Link href={`/editor/${item.id}`} className="font-medium hover:underline">
-          <span className={`${!item.title && 'italic opacity-60'}`}>{item.title || 'Untitled'}</span>
+          <span className={cn("text-nowrap md:text-base", !item.title && 'italic opacity-60')}>{item.title || 'Untitled'}</span>
         </Link>
-      </div>
-
-      {/* Type */}
-      <div className="col-span-2 flex items-center gap-2">
+      </TableCell>
+      <TableCell>
         <Badge variant="secondary" className="text-xs">
           {item.type}
         </Badge>
-      </div>
-
-      {/* Created Date */}
-      <div className="col-span-2 text-sm text-muted-foreground">{formatDate(item.createdAt)}</div>
-
-      {/* Modified Date */}
-      <div className="col-span-2 text-sm text-muted-foreground">{formatDate(item.updatedAt)}</div>
-
-      {/* Actions */}
-      <div className="col-span-1 flex justify-end">
+      </TableCell>
+      <TableCell className="text-sm text-muted-foreground">{formatDate(item.createdAt)}</TableCell>
+      <TableCell className="text-sm text-muted-foreground">{formatDate(item.updatedAt)}</TableCell>
+      <TableCell className="flex justify-end">
         <Button variant="ghost" size="icon"
           className="size-8 text-destructive hover:text-destructive"
           onClick={() => onDelete(item.id)}
@@ -52,8 +45,8 @@ export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
           <Trash2 className="size-4" />
           <span className="sr-only">Delete</span>
         </Button>
-      </div>
-    </div>
+      </TableCell>
+    </TableRow>
   )
 }
 
