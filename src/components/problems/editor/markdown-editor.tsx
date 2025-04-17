@@ -1,9 +1,10 @@
 "use client"
 
 import { useState } from "react"
+
+import { MarkdownWrapper } from "@/components/ui/markdown-wrapper"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import ReactMarkdown from "react-markdown"
 
 interface MarkdownEditorProps {
   value: string
@@ -31,9 +32,9 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
           />
         </TabsContent>
         <TabsContent value="preview" className="p-0">
-          <div className="min-h-[300px] p-4 prose prose-sm prose-headings:my-2 prose-headings:p-0 max-w-none dark:prose-invert">
+          <div className="min-h-[300px] p-4">
             {value ? (
-              <ReactMarkdown>{value}</ReactMarkdown>
+              <MarkdownWrapper content={value}/>
             ) : (
               <p className="text-muted-foreground">Nothing to preview</p>
             )}

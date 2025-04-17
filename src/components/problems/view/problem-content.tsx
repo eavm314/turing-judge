@@ -1,9 +1,10 @@
+
 import { type ProblemView } from "@/dtos"
-import ReactMarkdown from "react-markdown"
 import { Constraints } from "./constraints"
 import { SubmitSolution } from "./submit-solution"
 import { ProblemDifficulty } from "@prisma/client"
 import { cn } from "@/lib/ui/utils"
+import { MarkdownWrapper } from "@/components/ui/markdown-wrapper"
 
 const getFormatedDifficulty = (difficulty: ProblemDifficulty) => {
   const colorMap = {
@@ -26,7 +27,7 @@ export default function ProblemContent({ problem }: { problem: ProblemView }) {
           <div className={cn("px-2 py-1 rounded text-sm", color)}>{text}</div>
         </div>
         <div className="prose prose-headings:my-4 prose-headings:p-0 max-w-none dark:prose-invert">
-          <ReactMarkdown>{problem.statement || ""}</ReactMarkdown>
+          <MarkdownWrapper content={problem.statement} />
         </div>
       </div>
 
