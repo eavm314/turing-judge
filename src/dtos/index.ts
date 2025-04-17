@@ -14,7 +14,7 @@ export type ProblemConstraints = Pick<Problem, 'allowFSM' | 'allowPDA' | 'allowT
 
 export type ProblemView = Pick<Problem, 'id' | 'title' | 'difficulty' | 'statement'> & { constraints: ProblemConstraints }
 
-export type SubmissionItem = Pick<Submission, 'status' | 'verdict' | 'message' | 'createdAt'>
+export type SubmissionItem = Pick<Submission, 'status' | 'verdict' | 'message'> & { createdAt: string }
 
 export type AutomatonCode = {
   type: AutomatonType

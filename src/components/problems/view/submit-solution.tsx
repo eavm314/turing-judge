@@ -1,6 +1,6 @@
 "use client"
 
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -27,29 +27,39 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/ui/utils"
 import { Check, ChevronsUpDown } from "lucide-react"
-import { useState } from "react"
-import { useParams } from "next/navigation";
-
-// Mock data for automatons
-const automatons = [
-  { id: "1", name: "Finite State Machine", type: "FSM" },
-  { id: "2", name: "Pushdown Automaton", type: "PDA" },
-  { id: "3", name: "Turing Machine", type: "TM" },
-  { id: "4", name: "Deterministic Finite Automaton", type: "DFA" },
-  { id: "5", name: "Non-deterministic Finite Automaton", type: "NFA" },
-]
+import { useEffect, useState } from "react"
+import { useParams, useRouter } from "next/navigation";
+import { AutomatonProjectItem } from "@/dtos";
+import { submitSolution } from "@/actions/submissions";
 
 export function SubmitSolution() {
-  const [open, setOpen] = useState(false)
+  const [openDialog, setOpenDialog] = useState(false)
+  const [openCombo, setOpenCombo] = useState(false)
   const [value, setValue] = useState("")
   const [code, setCode] = useState(
     '{\n  "states": [],\n  "alphabet": [],\n  "transitions": {},\n  "initialState": "",\n  "acceptStates": []\n}',
   )
+  const [automatons, setAutomatons] = useState<AutomatonProjectItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [submitting, setSubmitting] = useState(false)
 
   const { problemId } = useParams();
 
-  const selectedAutomaton = automatons.find((automaton) => automaton.id === value)
+  useEffect(() => {
+    const fetchAutomatons = async () => {
+      try {
+        const response = await fetch(`/api/queries/projects`);
+        const data = await response.json();
+        setAutomatons(data);
+      } catch (error) {
+        console.error("Error fetching automatons:", error);
+      }
+    }
+
+    fetchAutomatons();
+  }, []);
+
+  const selectedAutomaton = automatons.find((automaton) => automaton.id === value);
 
   const handleSubmit = async () => {
     setSubmitting(true)
@@ -58,16 +68,10 @@ export function SubmitSolution() {
       // Validate JSON
       const parsedCode = JSON.parse(code)
 
-      // In a real application, you would send this data to your backend
-      console.log("Submitting solution for problem:", problemId)
-      console.log("Selected automaton:", selectedAutomaton)
-      console.log("Code:", parsedCode)
+      await submitSolution(problemId as string, selectedAutomaton?.id || null, null);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Show success message or redirect
-      alert("Solution submitted successfully!")
+      setOpenDialog(false)
+      // alert("Solution submitted successfully!")
     } catch (error) {
       alert("Invalid JSON. Please check your code.")
       console.error(error)
@@ -76,8 +80,10 @@ export function SubmitSolution() {
     }
   }
 
+  const filteredAutomatons = automatons.filter((auto) => !searchQuery || auto.title?.toLowerCase().includes(searchQuery.toLowerCase()));
+
   return (
-    <Dialog>
+    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>
         <Button><PlusCircle /> New Solution </Button>
       </DialogTrigger>
@@ -89,36 +95,46 @@ export function SubmitSolution() {
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-6">
-          <div className="space-y-2 max-w-md">
+          <div className="space-y-2">
             <label className="text-sm font-medium">Select Automaton</label>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
-                  {selectedAutomaton ? selectedAutomaton.name : "Select automaton..."}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
+            <Popover open={openCombo} onOpenChange={setOpenCombo}>
+              <div className="flex gap-4">
+                <PopoverTrigger asChild>
+                  <Button variant="outline" role="combobox" aria-expanded={openCombo} className="w-full justify-between">
+                    {selectedAutomaton ? (
+                      <div className="flex items-center">
+                        <Badge variant="outline" className="mr-2">
+                          {selectedAutomaton.type}
+                        </Badge>
+                        <span className={!selectedAutomaton.title ? 'italic opacity-60' : undefined}>{selectedAutomaton.title || 'Untitled'}</span>
+                      </div>
+                    ) : "Select automaton..."}
+                    <ChevronsUpDown className="ml-2 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <Button variant="outline" size="icon" onClick={() => setValue("")}><X className="text-destructive" /></Button>
+              </div>
               <PopoverContent className="w-full p-0">
-                <Command>
-                  <CommandInput placeholder="Search automaton..." />
+                <Command filter={() => 1}>
+                  <CommandInput placeholder="Search automaton..." value={searchQuery} onValueChange={setSearchQuery} />
                   <CommandList>
                     <CommandEmpty>No automaton found.</CommandEmpty>
                     <CommandGroup>
-                      {automatons.map((automaton) => (
+                      {filteredAutomatons.map((automaton) => (
                         <CommandItem
                           key={automaton.id}
                           value={automaton.id}
                           onSelect={(currentValue) => {
-                            setValue(currentValue === value ? "" : currentValue)
-                            setOpen(false)
+                            setValue(currentValue === value ? "" : currentValue);
+                            setOpenCombo(false);
                           }}
                           className="flex items-center justify-between"
                         >
                           <div className="flex items-center">
-                            {automaton.name}
-                            <Badge variant="outline" className="ml-2">
+                            <Badge variant="outline" className="mr-2">
                               {automaton.type}
                             </Badge>
+                            <span className={!automaton.title ? 'italic opacity-60' : undefined}>{automaton.title || 'Untitled'}</span>
                           </div>
                           <Check className={cn("ml-auto h-4 w-4", value === automaton.id ? "opacity-100" : "opacity-0")} />
                         </CommandItem>
@@ -133,7 +149,7 @@ export function SubmitSolution() {
           <div className="space-y-2">
             <label className="text-sm font-medium">Solution Code (JSON)</label>
             <div className="border rounded-md">
-              <CodeEditor value={code} onChange={setCode} />
+              <CodeEditor value={code} onChange={setCode} mode={value ? 'disabled' : 'editable'} />
             </div>
           </div>
 

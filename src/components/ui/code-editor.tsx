@@ -6,13 +6,17 @@ import { EditorState } from "@codemirror/state"
 import { json } from "@codemirror/lang-json"
 import { oneDark } from "@codemirror/theme-one-dark"
 import { useTheme } from "next-themes"
+import { cn } from "@/lib/ui/utils"
+
+type CodeEditorMode = "editable" | "readonly" | "disabled";
 
 interface CodeEditorProps {
   value: string
   onChange: (value: string) => void
+  mode?: CodeEditorMode
 }
 
-export function CodeEditor({ value, onChange }: CodeEditorProps) {
+export function CodeEditor({ value, onChange, mode = "editable" }: CodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
   const viewRef = useRef<EditorView | null>(null)
 
@@ -34,7 +38,9 @@ export function CodeEditor({ value, onChange }: CodeEditorProps) {
       }
     })
 
-    const themeExtension = theme === "dark" ? oneDark : []
+    const themeExtension = theme === "dark" ? oneDark : [];
+    const readOnlyExtension = EditorState.readOnly.of(mode === "readonly");
+    const disabledExtension = EditorView.editable.of(mode !== "disabled");
 
     const state = EditorState.create({
       doc: value,
@@ -50,6 +56,8 @@ export function CodeEditor({ value, onChange }: CodeEditorProps) {
           },
         }),
         themeExtension,
+        readOnlyExtension,
+        disabledExtension,
       ],
     })
 
@@ -65,6 +73,6 @@ export function CodeEditor({ value, onChange }: CodeEditorProps) {
     }
   }, [editorRef])
 
-  return <div ref={editorRef} className="w-full h-80" />
+  return <div ref={editorRef} className={cn("w-full h-80", mode === 'disabled'? 'pointer-events-none select-none opacity-50': '')} />
 }
 

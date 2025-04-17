@@ -2,14 +2,14 @@
 
 import { redirect } from "next/navigation";
 
-import { type AutomatonCode, type SubmissionItem } from "@/dtos";
+import { type AutomatonCode } from "@/dtos";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db/prisma";
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
-import { TestCase } from "@prisma/client";
+import { prisma } from "@/lib/db/prisma";
+import { revalidatePath } from "next/cache";
 
-export const getUserSubmissions = async (problemId: string): Promise<SubmissionItem[]> => {
+export const getUserSubmissions = async (problemId: string) => {
   const session = await auth();
   if (!session?.user?.id) redirect('/signin');
 
@@ -30,17 +30,16 @@ export const getUserSubmissions = async (problemId: string): Promise<SubmissionI
 export const submitSolution = async (
   problemId: string,
   projectId: string | null,
-  automatonCode: AutomatonCode,
+  automatonCode: AutomatonCode | null,
 ) => {
   const session = await auth();
   if (!session?.user?.id) redirect('/signin');
 
   let solutionCode: AutomatonCode;
-
   if (projectId !== null) {
     const project = await prisma.project.findUnique({
       where: {
-        id: problemId,
+        id: projectId,
         userId: session.user.id
       },
       select: {
@@ -73,8 +72,7 @@ export const submitSolution = async (
 
   setTimeout(() => {
     verifySolution(submission.id, problemId, solutionCode)
-  }, 0);
-  return true;
+  }, 5000);
 }
 
 const verifySolution = async (submissionId: number, problemId: string, solution: AutomatonCode) => {

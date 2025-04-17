@@ -47,6 +47,18 @@ const CommandInput = React.forwardRef<
         "flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
+      onKeyDown={(e) => {
+        const input = e.target as HTMLInputElement;
+        if (e.key === 'Home') {
+          input.selectionStart = 0;
+          input.selectionEnd = 0;
+        }
+        if (e.key === 'End') {
+          const len = input.value.length;
+          input.selectionStart = len;
+          input.selectionEnd = len;
+        }
+      }}
       {...props}
     />
   </div>

@@ -7,6 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { type SubmissionItem } from "@/dtos"
 import { SubmitSolution } from "./submit-solution"
+import { Button } from "@/components/ui/button"
+import { RefreshCw } from "lucide-react"
 
 export default function Submissions({ problemId }: { problemId: string }) {
   const [submissions, setSubmissions] = useState<SubmissionItem[]>([]);
@@ -19,46 +21,50 @@ export default function Submissions({ problemId }: { problemId: string }) {
   const handleRefresh = async () => {
     setLoading(true)
     try {
-      // const response = await fetch(`/api/queries/submissions/${problemId}`)
-      // const data = await response.json()
-      // setSubmissions(data)
-      console.log('loading')
-      await new Promise((resolve) => setTimeout(resolve, 2000)) // Simulate a delay
-      console.log('not loading')
+      const response = await fetch(`/api/queries/submissions/${problemId}`);
+      const data = await response.json();
+      setSubmissions(data);
     } catch (error) {
       console.error("Error fetching submissions, try again later.")
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
-  const formatDate = (date: Date) => {
+  const formatDate = (stringDate: string) => {
+    const date = new Date(stringDate);
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    }).format(date)
+    }).format(date);
   }
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "Accepted":
+  const getStatusBadge = (submission: SubmissionItem) => {
+    const result = submission.verdict || submission.status;
+    switch (result) {
+      case "ACCEPTED":
         return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Accepted</Badge>
-      case "Wrong Answer":
+      case "WRONG_RESULT":
         return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Wrong Answer</Badge>
-      case "Runtime Error":
-        return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">Runtime Error</Badge>
+      case "PENDING":
+        return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Pending</Badge>
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline">{result}</Badge>
     }
   }
 
   return (
     <div className="space-y-6">
       <SubmitSolution />
-      <h3 className="text-lg font-medium mb-4">Summary</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium mb-4">Summary</h3>
+        <Button variant="outline" size="icon" onClick={handleRefresh}>
+          <RefreshCw className={loading ? "animate-spin" : undefined} />
+        </Button>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -85,7 +91,7 @@ export default function Submissions({ problemId }: { problemId: string }) {
             ) :
               submissions.map((submission, index) => (
                 <TableRow key={index} className="cursor-pointer hover:bg-muted/50">
-                  <TableCell>{getStatusBadge(submission.status)}</TableCell>
+                  <TableCell>{getStatusBadge(submission)}</TableCell>
                   <TableCell>
                     <Badge variant="outline">FSM</Badge>
                   </TableCell>
