@@ -8,7 +8,7 @@ import { type ProblemSetItem as ProblemItem } from "@/dtos"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import ProblemSetItem from "./problemset-item"
+import ProblemSetItem from "./item"
 
 export type SortField = "title" | "type" | "createdAt" | "updatedAt";
 export type SortDirection = "asc" | "desc";
@@ -113,7 +113,7 @@ export default function ProblemSet({ problems }: { problems: ProblemItem[] }) {
                 className="col-span-2 justify-start p-3 h-auto font-medium"
                 // onClick={() => handleSort("type")}
               >
-                Type {getSortIcon("type")}
+                Difficulty {getSortIcon("type")}
               </Button>
               <Button
                 variant="ghost"

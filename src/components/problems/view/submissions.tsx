@@ -10,6 +10,8 @@ import { SubmitSolution } from "./submit-solution"
 import { Button } from "@/components/ui/button"
 import { RefreshCw } from "lucide-react"
 import { cn } from "@/lib/ui/utils"
+import { getStatusBadge } from "@/utils/badges"
+import { formatDateTime } from "@/utils/date"
 
 export default function Submissions({ problemId }: { problemId: string }) {
   const [submissions, setSubmissions] = useState<SubmissionItem[]>();
@@ -29,31 +31,6 @@ export default function Submissions({ problemId }: { problemId: string }) {
       console.error("Error fetching submissions, try again later.")
     } finally {
       setLoading(false);
-    }
-  }
-
-  const formatDate = (stringDate: string) => {
-    const date = new Date(stringDate);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
-  }
-
-  const getStatusBadge = (submission: SubmissionItem) => {
-    const result = submission.verdict || submission.status;
-    switch (result) {
-      case "ACCEPTED":
-        return { color: "bg-green-100 text-green-800 hover:bg-green-100", text: 'Accepted' }
-      case "WRONG_RESULT":
-        return { color: "bg-red-100 text-red-800 hover:bg-red-100", text: 'Wrong Result' }
-      case "PENDING":
-        return { color: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100", text: 'Pending' }
-      default:
-        return { color: "bg-gray-100 text-gray-800 hover:bg-gray-100", text: 'Unknown' }
     }
   }
 
@@ -92,7 +69,7 @@ export default function Submissions({ problemId }: { problemId: string }) {
               </TableRow>
             ) :
               submissions.map((submission, index) => {
-                const { color, text } = getStatusBadge(submission);
+                const { color, text } = getStatusBadge(submission.verdict, submission.status);
                 return (
                   <TableRow key={index} className="cursor-pointer hover:bg-muted/50">
                     <TableCell className="w-48 text-nowrap"><Badge className={cn("md:text-sm", color)}>{text}</Badge></TableCell>
@@ -100,7 +77,7 @@ export default function Submissions({ problemId }: { problemId: string }) {
                       <Badge variant="secondary">FSM</Badge>
                     </TableCell>
                     <TableCell width="50%" className="text-base truncate">{submission.message}</TableCell>
-                    <TableCell className="text-nowrap">{formatDate(submission.createdAt)}</TableCell>
+                    <TableCell className="text-nowrap">{formatDateTime(submission.createdAt)}</TableCell>
                   </TableRow>
                 )
               })}

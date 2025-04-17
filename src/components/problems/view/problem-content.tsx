@@ -2,24 +2,12 @@
 import { type ProblemView } from "@/dtos"
 import { Constraints } from "./constraints"
 import { SubmitSolution } from "./submit-solution"
-import { ProblemDifficulty } from "@prisma/client"
 import { cn } from "@/lib/ui/utils"
 import { MarkdownWrapper } from "@/components/ui/markdown-wrapper"
-
-const getFormatedDifficulty = (difficulty: ProblemDifficulty) => {
-  const colorMap = {
-    [ProblemDifficulty.UNKNOWN]: "bg-gray-100 text-gray-800",
-    [ProblemDifficulty.EASY]: "bg-green-100 text-green-800",
-    [ProblemDifficulty.MEDIUM]: "bg-yellow-100 text-yellow-800",
-    [ProblemDifficulty.HARD]: "bg-red-100 text-red-800",
-    [ProblemDifficulty.EXPERT]: "bg-purple-100 text-purple-800",
-  };
-  const text = difficulty.charAt(0).toUpperCase() + difficulty.slice(1).toLowerCase();
-  return { color: colorMap[difficulty], text };
-}
+import { getDifficultyBadge } from "@/utils/badges"
 
 export default function ProblemContent({ problem }: { problem: ProblemView }) {
-  const { color, text } = getFormatedDifficulty(problem.difficulty);
+  const { color, text } = getDifficultyBadge(problem.difficulty);
   return (
     <div className="flex gap-4 flex-col md:flex-row">
       <div className="flex-1">

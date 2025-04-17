@@ -9,17 +9,11 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { cn } from "@/lib/ui/utils"
+import { formatDateTime } from "@/utils/date"
 
 interface AutomatonItemProps {
   item: AutomatonProjectItem
   onDelete: (id: string) => void
-}
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date)
 }
 
 export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
@@ -35,8 +29,8 @@ export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
           {item.type}
         </Badge>
       </TableCell>
-      <TableCell className="text-sm text-muted-foreground">{formatDate(item.createdAt)}</TableCell>
-      <TableCell className="text-sm text-muted-foreground">{formatDate(item.updatedAt)}</TableCell>
+      <TableCell className="text-sm text-muted-foreground">{formatDateTime(item.createdAt)}</TableCell>
+      <TableCell className="text-sm text-muted-foreground">{formatDateTime(item.updatedAt)}</TableCell>
       <TableCell className="flex justify-end">
         <Button variant="ghost" size="icon"
           className="size-8 text-destructive hover:text-destructive"

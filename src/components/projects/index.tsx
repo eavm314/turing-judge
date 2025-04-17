@@ -5,7 +5,6 @@ import { useState } from "react"
 import { ArrowDown, ArrowUp, ArrowUpDown, Search } from "lucide-react"
 
 import { deleteAutomaton } from "@/actions/projects"
-import ProjectItem from "@/components/projects/project-item"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -13,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { type AutomatonProjectItem } from "@/dtos"
 import { useModal } from "@/providers/modal-provider"
+import ProjectItem from "./item"
 
 const tableFields = ["title", "type", "createdAt", "updatedAt"] as const;
 type SortField = typeof tableFields[number];
