@@ -15,7 +15,7 @@ import { type AutomatonProjectItem } from "@/dtos"
 import { useModal } from "@/providers/modal-provider"
 import ProjectItem from "./item"
 
-type TableColumn = "title" | "type" | "createdAt" | "updatedAt";
+type TableColumn = keyof AutomatonProjectItem;
 
 export default function AutomatonProjects({ projectItems }: { projectItems: AutomatonProjectItem[] }) {
   const [searchQuery, setSearchQuery] = useState("");

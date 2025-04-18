@@ -3,6 +3,7 @@
 import { useState } from "react"
 
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
+import { ProblemDifficulty } from "@prisma/client"
 
 import { EmptyTableRow, InputSearch, TableHeadButton } from "@/components/ui/my-table"
 import { Separator } from "@/components/ui/separator"
@@ -10,9 +11,8 @@ import { Table, TableBody, TableHeader, TableRow } from "@/components/ui/table"
 import { SortDirection } from "@/constants/table"
 import { type ProblemSetItem as ProblemItem } from "@/dtos"
 import ProblemSetItem from "./item"
-import { ProblemDifficulty } from "@prisma/client"
 
-type TableColumn = "title" | "difficulty" | "updatedAt";
+type TableColumn = keyof ProblemItem;
 
 export default function ProblemSet({ problems }: { problems: ProblemItem[] }) {
   const [searchQuery, setSearchQuery] = useState("");
