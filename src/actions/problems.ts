@@ -15,7 +15,6 @@ export const getProblemSet = async (): Promise<ProblemSetItem[]> => {
       id: true,
       title: true,
       difficulty: true,
-      createdAt: true,
       updatedAt: true,
     },
   });

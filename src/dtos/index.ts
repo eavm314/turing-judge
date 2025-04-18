@@ -8,7 +8,7 @@ import {
 
 export type AutomatonProjectItem = Omit<Project, 'automaton' | 'userId'>
 
-export type ProblemSetItem = Pick<Problem, 'id' | 'title' | 'difficulty' | 'createdAt' | 'updatedAt'>
+export type ProblemSetItem = Pick<Problem, 'id' | 'title' | 'difficulty' | 'updatedAt'>
 
 export type ProblemConstraints = Pick<Problem, 'allowFSM' | 'allowPDA' | 'allowTM' | 'allowNonDet' | 'stateLimit' | 'stepLimit' | 'timeLimit'>
 
