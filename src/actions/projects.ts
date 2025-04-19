@@ -76,7 +76,10 @@ export const updateAutomaton = async (body: {
 }) => {
   const session = await auth();
   if (!session?.user?.id) redirect('/signin');
-  const oldAutomaton = await prisma.project.findUnique({ where: { id: body.id } });
+  const oldAutomaton = await prisma.project.findUnique({ 
+    where: { id: body.id }, 
+    select: { id: true, userId: true },
+  });
   if (!oldAutomaton) {
     notFound();
   }
@@ -86,7 +89,7 @@ export const updateAutomaton = async (body: {
   }
   try {
     await prisma.project.update({
-      where: { id: body.id },
+      where: { id: oldAutomaton.id },
       data: {
         title: body.title,
         type: body.type,

@@ -2,11 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2 } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
+import { createProblem, updateProblem } from "@/actions/problems"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -14,18 +13,18 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
 import { problemSchema, type ProblemSchema } from "@/lib/schemas/problem-form"
 import { MarkdownEditor } from "./markdown-editor"
-import { Textarea } from "@/components/ui/textarea"
-import { createProblem } from "@/actions/problems"
 
-export function ProblemForm() {
-  const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+export function ProblemForm({ problemId, problemData }:
+  { problemId?: string, problemData?: ProblemSchema }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [changeTestCases, setChangeTestCases] = useState(!problemId);
 
   const form = useForm<ProblemSchema>({
     resolver: zodResolver(problemSchema),
-    defaultValues: {
+    defaultValues: problemData ?? {
       title: "",
       difficulty: "UNKNOWN",
       statement: "",
@@ -38,19 +37,30 @@ export function ProblemForm() {
       timeLimit: 1000,
       testCases: "",
     },
-  })
+  });
 
   async function onSubmit(data: ProblemSchema) {
     setIsSubmitting(true)
-    console.log(data)
-
-    await createProblem(data);
+    if (problemId) {
+      const testCases = changeTestCases ? data.testCases : undefined;
+      await updateProblem(problemId, { ...data, testCases });
+    } else {
+      await createProblem(data);
+    }
     setIsSubmitting(false)
   }
 
   const basicErrors = form.formState.errors.title || form.formState.errors.statement;
   const automatonErrors = form.formState.errors.stateLimit || form.formState.errors.stepLimit || form.formState.errors.timeLimit;
   const testCasesErrors = form.formState.errors.testCases;
+
+  const someErrors = basicErrors || automatonErrors || testCasesErrors;
+
+  useEffect(() => {
+    if (someErrors) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [someErrors]);
 
   return (
     <Form {...form}>
@@ -304,7 +314,7 @@ export function ProblemForm() {
         <div className="flex justify-end">
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create Problem
+            {problemId ? "Edit" : "Create"} Problem
           </Button>
         </div>
       </form>

@@ -10,7 +10,7 @@ export default function ProblemEditorItem({ problem }: { problem: ProblemItem })
   return (
     <TableRow className="hover:bg-muted/50">
       <TableCell className="w-2/5">
-        <Link href={`/problems/${problem.id}`} className="font-medium hover:underline">
+        <Link href={`/problems/editor/${problem.id}`} className="font-medium hover:underline">
           <span className="text-nowrap md:text-base">{problem.title}</span>
         </Link>
       </TableCell>
