@@ -54,17 +54,13 @@ export function ProblemForm({ problemId, problemData }:
   const automatonErrors = form.formState.errors.stateLimit || form.formState.errors.stepLimit || form.formState.errors.timeLimit;
   const testCasesErrors = form.formState.errors.testCases;
 
-  const someErrors = basicErrors || automatonErrors || testCasesErrors;
-
-  useEffect(() => {
-    if (someErrors) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [someErrors]);
+  const onInvalidForm = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit, onInvalidForm)} className="space-y-8">
         <Tabs defaultValue="basic" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="basic">
@@ -280,6 +276,17 @@ export function ProblemForm({ problemId, problemData }:
           <TabsContent value="testcases" className="space-y-6">
             <Card>
               <CardContent className="pt-6 space-y-4">
+                {problemId && (
+                  <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Modify Test Cases</FormLabel>
+                      <FormDescription>Enabling this will replace all the existing test cases with the new ones.</FormDescription>
+                    </div>
+                    <div>
+                      <Switch checked={changeTestCases} onCheckedChange={setChangeTestCases} />
+                    </div>
+                  </div>
+                )}
                 <FormField
                   control={form.control}
                   name="testCases"
@@ -289,6 +296,7 @@ export function ProblemForm({ problemId, problemData }:
                       <FormDescription>Add test cases to validate solutions against your problem.</FormDescription>
                       <FormControl>
                         <Textarea
+                          disabled={!changeTestCases}
                           value={field.value}
                           onChange={field.onChange}
                           placeholder="Enter test cases in format: input,accept|reject,output?"
