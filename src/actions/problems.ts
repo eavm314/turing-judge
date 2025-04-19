@@ -1,6 +1,6 @@
 "use server"
 
-import { type ProblemView, type ProblemSetItem } from "@/dtos";
+import { type ProblemView, type ProblemSetItem, type ProblemEditorItem } from "@/dtos";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
 import { ProblemSchema } from "@/lib/schemas/problem-form";
@@ -47,6 +47,22 @@ export const getProblemView = async (id: string): Promise<ProblemView> => {
   }
   
   return problemView;
+}
+
+export const getUserProblems = async (): Promise<ProblemEditorItem[]> => {
+  const session = await auth();
+  const results = await prisma.problem.findMany({
+    where: { OR: [{ isPublic: true }, { authorId: session?.user?.id }] },
+    select: {
+      id: true,
+      title: true,
+      isPublic: true,
+      updatedAt: true,
+      createdAt: true,
+    },
+  });
+
+  return results;
 }
 
 export const createProblem = async (data: ProblemSchema) => {

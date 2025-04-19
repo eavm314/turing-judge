@@ -5,7 +5,7 @@ import { TableCell, TableHead, TableRow } from "./table"
 
 export const TableHeadButton = ({ children, onClick }: {
   children: React.ReactNode,
-  onClick: React.MouseEventHandler<HTMLButtonElement>,
+  onClick?: React.MouseEventHandler<HTMLButtonElement>,
 }) => (
   <TableHead className="p-0">
     <Button
