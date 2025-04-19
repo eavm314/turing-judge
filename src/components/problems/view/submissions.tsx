@@ -64,7 +64,7 @@ export default function Submissions({ problemId }: { problemId: string }) {
             submissions.length === 0 ? (
               <TableRow className="h-14 text-center text-muted-foreground">
                 <TableCell colSpan={4}>
-                  You haven't submitted any solutions for this problem yet.
+                  You haven&apos;t submitted any solutions for this problem yet.
                 </TableCell>
               </TableRow>
             ) :
