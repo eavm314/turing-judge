@@ -45,7 +45,7 @@
 
     --xy-background-color: hsl(12 20% 98%);
 
-    --remark: hsl(130 66% 45%);
+    --remark: 130 66% 45%;
   }
   .dark {
     --background: 240 10% 3.9%;
