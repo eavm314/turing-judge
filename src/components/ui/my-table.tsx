@@ -1,20 +1,20 @@
 import { Search } from "lucide-react"
-import { Button } from "./button"
+
+import { cn } from "@/lib/ui/utils"
 import { Input } from "./input"
 import { TableCell, TableHead, TableRow } from "./table"
 
-export const TableHeadButton = ({ children, onClick }: {
+export const TableHeadButton = ({ children, onClick, className }: {
   children: React.ReactNode,
-  onClick?: React.MouseEventHandler<HTMLButtonElement>,
+  onClick?: React.MouseEventHandler,
+  className?: string,
 }) => (
-  <TableHead className="p-0">
-    <Button
-      variant="ghost"
-      className="w-full p-2 justify-start md:text-base"
-      onClick={onClick}
-    >
+  <TableHead 
+    className={cn("md:text-base hover:bg-accent text-secondary-foreground/80 hover:text-accent-foreground cursor-pointer text-nowrap", className)}
+    onClick={onClick}>
+    <span className="inline-flex items-center gap-2">
       {children}
-    </Button>
+    </span>
   </TableHead>
 )
 

@@ -70,7 +70,7 @@ export default function ProblemSet({ problems }: { problems: ProblemItem[] }) {
               <TableHeadButton onClick={() => handleSort("title")}>
                 Title {getSortIcon("title")}
               </TableHeadButton>
-              <TableHeadButton onClick={() => handleSort("difficulty")}>
+              <TableHeadButton className="text-center" onClick={() => handleSort("difficulty")}>
                 Difficulty {getSortIcon("difficulty")}
               </TableHeadButton>
               <TableHeadButton onClick={() => handleSort("updatedAt")}>
