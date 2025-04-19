@@ -1,4 +1,5 @@
 import { JsonFSM } from '@/lib/automaton/FiniteStateMachine'
+import { ProblemSchema } from '@/lib/schemas/problem-form'
 import {
   type AutomatonType,
   type Problem,
@@ -22,3 +23,5 @@ export type AutomatonCode = {
   type: AutomatonType
   automaton: JsonFSM
 }
+
+export type ProblemUpdateSchema = ProblemSchema & { isPublic: boolean }

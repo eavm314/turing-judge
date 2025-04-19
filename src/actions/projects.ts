@@ -110,7 +110,7 @@ export const deleteAutomaton = async (id: string) => {
   if (!session?.user?.id) redirect('/signin');
 
   try {
-    await prisma.project.delete({ where: { id } });
+    await prisma.project.delete({ where: { id, userId: session.user.id } });
     revalidatePath('/library');
     return true;
   } catch (error) {

@@ -10,6 +10,8 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components
 import { SortDirection } from "@/constants/table"
 import { type ProblemEditorItem as ProblemItem } from "@/dtos"
 import ProblemEditorItem from "./item"
+import { useModal } from "@/providers/modal-provider"
+import { deleteProblem, updateProblem } from "@/actions/problems"
 
 type TableColumn = keyof ProblemItem;
 
@@ -17,6 +19,28 @@ export default function UserProblems({ problems }: { problems: ProblemItem[] }) 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortColumn, setSortColumn] = useState<TableColumn>("updatedAt");
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.DESC);
+
+  const { showConfirm } = useModal();
+  
+  const handleDeleteProblem = async (id: string) => {
+    const confirmation = await showConfirm({
+      title: "Delete Problem",
+      message: "Are you sure you want to delete this problem? This action cannot be undone.",
+      confirmLabel: "Delete",
+    });
+    if (!confirmation) return;
+    await deleteProblem(id);
+  }
+
+  const handlePublicProblem = async (id: string, value: boolean) => {
+    const confirmation = await showConfirm({
+      title: value ? "Make Problem Public" : "Make Problem Private",
+      message: `Are you sure you want to make this problem ${value ? "public" : "private"}?`,
+      confirmLabel: value ? "Make Public" : "Make Private",
+    });
+    if (!confirmation) return;
+    await updateProblem(id, { isPublic: value });
+  }
 
   const handleSort = (field: TableColumn) => {
     if (sortColumn === field) {
@@ -70,7 +94,7 @@ export default function UserProblems({ problems }: { problems: ProblemItem[] }) 
                 Title {getSortIcon("title")}
               </TableHeadButton>
               <TableHeadButton onClick={() => handleSort("isPublic")}>
-                Public {getSortIcon("isPublic")}
+                Published {getSortIcon("isPublic")}
               </TableHeadButton>
               <TableHeadButton onClick={() => handleSort("updatedAt")}>
                 Updated At {getSortIcon("updatedAt")}
@@ -78,12 +102,17 @@ export default function UserProblems({ problems }: { problems: ProblemItem[] }) 
               <TableHeadButton onClick={() => handleSort("createdAt")}>
                 Created At {getSortIcon("createdAt")}
               </TableHeadButton>
+              <TableHead className="w-16 p-0" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {sortedProblems.length > 0 ?
               sortedProblems.map((problem) => (
-                <ProblemEditorItem key={problem.id} problem={problem} />
+                <ProblemEditorItem key={problem.id} 
+                  problem={problem}
+                  onPublic={handlePublicProblem}
+                  onDelete={handleDeleteProblem}
+                />
               )) : (
                 <EmptyTableRow colSpan={4} text="No problems created yet." />
               )}

@@ -4,7 +4,12 @@ import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 
 
-import { type ProblemEditorItem, type ProblemSetItem, type ProblemView } from "@/dtos";
+import {
+  type ProblemUpdateSchema,
+  type ProblemEditorItem,
+  type ProblemSetItem,
+  type ProblemView
+} from "@/dtos";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
 import { ProblemSchema } from "@/lib/schemas/problem-form";
@@ -104,7 +109,7 @@ export const createProblem = async (body: ProblemSchema) => {
   redirect('/problems/editor');
 }
 
-export const updateProblem = async (problemId: string, body: Partial<ProblemSchema>) => {
+export const updateProblem = async (problemId: string, body: Partial<ProblemUpdateSchema>) => {
   const session = await auth();
   if (!session?.user?.id) redirect('/signin');
   if (session.user.role !== 'EDITOR') {
@@ -199,4 +204,21 @@ export const getProblemEditable = async (id: string): Promise<ProblemSchema> => 
   }).join("\n");
 
   return { ...problem, testCases };
+}
+
+export const deleteProblem = async (id: string) => {
+  const session = await auth();
+  if (!session?.user?.id) redirect('/signin');
+
+  try {
+    await prisma.problem.delete({ where: { id, authorId: session.user.id } });
+    revalidatePath('/problems');
+    revalidatePath(`/problems/${id}`);
+    revalidatePath('/problems/editor');
+    revalidatePath(`/problems/editor/${id}`);
+    return true;
+  } catch (error) {
+    console.error("Error deleting problem:", error);
+    return false;
+  }
 }
