@@ -1,18 +1,28 @@
-import { Button } from "@/components/ui/button"
-import { useAutomaton, useEditorMode } from "@/providers/editor-provider"
-import { Panel } from "@xyflow/react"
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/ui/utils";
+import { useAutomaton, useEditorMode } from "@/providers/editor-provider";
+import { useModal } from "@/providers/modal-provider";
 
-export const PanelActions = () => {
-  const { mode, setMode } = useEditorMode();
+export const AddStateButton = () => {
+  const { mode } = useEditorMode();
   const { automaton, updateAutomaton } = useAutomaton();
+  const { showPrompt } = useModal();
 
-  const handleAddState = () => {
-    const stateName = prompt("Enter State Name:");
+  if (mode !== 'states') return null;
+
+  const handleAddState = async () => {
+    const stateName = await showPrompt({
+      title: "Add State",
+      inputLabel: "Enter the name of the new state:",
+      defaultValue: "",
+      validator: (value) => {
+        if (value.length < 1 || value.length > 3) return "State name must contain 1 to 3 characters";
+        if (value.match(/[^a-zA-Z0-9]/)) return "State name can only contain letters and numbers";
+        if (automaton.states.has(value)) return "State name must be unique";
+        return "";
+      }
+    });
     if (!stateName) return;
-    if (automaton.states.has(stateName)) {
-      alert("State name must be unique");
-      return;
-    }
 
     updateAutomaton((auto) => {
       auto.addState(stateName, {
@@ -23,17 +33,48 @@ export const PanelActions = () => {
   };
 
   return (
-    <Panel>
-      <div className="flex flex-col gap-2">
-        <Button onClick={() => setMode(mode === 'transition' ? 'state' : 'transition')}>
-          Mode: {mode}
-        </Button>
-        {mode === 'state' &&
-          <Button onClick={handleAddState}>
-            Add State
-          </Button>
-        }
-      </div>
-    </Panel>
+    <Button onClick={handleAddState}>
+      Add State
+    </Button>
+  )
+}
+
+export function SwitchMode() {
+  const { mode, setMode } = useEditorMode();
+
+  return (
+    <div>
+      <div className="text-sm font-medium text-foreground mb-1">Mode:</div>
+
+      {mode === 'simulation' ? (
+        <button
+          disabled
+          className="rounded-md border border-input bg-background px-6 py-2 text-sm font-medium text-muted-foreground opacity-70"
+        >
+          Simulation
+        </button>
+      ) : (
+        <div className="flex overflow-hidden rounded-md border border-input bg-background">
+          <button
+            onClick={() => setMode('states')}
+            className={cn(
+              "relative px-4 py-2 text-sm font-medium transition-colors",
+              mode === 'states' ? "bg-primary text-primary-foreground" : "bg-background text-foreground hover:bg-muted",
+            )}
+          >
+            States
+          </button>
+          <button
+            onClick={() => setMode('transitions')}
+            className={cn(
+              "relative px-4 py-2 text-sm font-medium transition-colors",
+              mode === 'transitions' ? "bg-primary text-primary-foreground" : "bg-background text-foreground hover:bg-muted",
+            )}
+          >
+            Transitions
+          </button>
+        </div>
+      )}
+    </div>
   )
 }

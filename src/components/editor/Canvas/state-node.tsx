@@ -63,7 +63,7 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
         ${selected ? 'border-remark outline-remark' : `border-foreground outline-foreground`}
       `}>
         <div className="m-auto text-2xl">{id}</div>
-        {mode === "transition" &&
+        {mode === "transitions" &&
           <Handle style={customHandleStyles} type="source" position={Position.Top} />
         }
         <Handle style={customHandleStyles} type="source" position={Position.Top} isConnectable={false} />

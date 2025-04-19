@@ -3,6 +3,7 @@
 import {
   Background,
   Controls,
+  Panel,
   ReactFlow,
   type ColorMode,
   type EdgeTypes,
@@ -10,13 +11,13 @@ import {
   type NodeTypes
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-
 import { useTheme } from "next-themes";
+
 import { FloatingConnectionLine } from "./floating-connection-line";
-import { useCanvasHandlers } from "./utils/useCanvasHandlers";
-import { PanelActions } from "./panel-actions";
+import { AddStateButton, SwitchMode } from "./panel-actions";
 import { StateNode } from "./state-node";
 import { TransitionEdge } from "./transition-edge";
+import { useCanvasHandlers } from "./utils/useCanvasHandlers";
 
 const nodeTypes: NodeTypes = {
   state: StateNode,
@@ -61,7 +62,12 @@ export default function Canvas() {
       >
         <Controls position="bottom-right" />
         <Background color={theme === 'light' ? 'black' : 'white'} />
-        <PanelActions />
+        <Panel position="top-left">
+          <SwitchMode />
+        </Panel>
+        <Panel position="top-center">
+          <AddStateButton />
+        </Panel>
       </ReactFlow>
     </div >
   )

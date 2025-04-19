@@ -11,6 +11,7 @@ import { useModal } from "@/providers/modal-provider"
 export function Modal() {
   const { isOpen, modalType, options } = useModal();
   const [inputValue, setInputValue] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string>();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [customInputValue, setCustomInputValue] = useState<unknown>(null);
@@ -24,7 +25,24 @@ export function Modal() {
     }
   }, [isOpen, modalType, options.defaultValue]);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+    if (options.validator && errorMessage !== undefined) {
+      const error = options.validator(value);
+      setErrorMessage(error);
+    }
+  }
+
   const handleConfirm = () => {
+    if (options.validator) {
+      const error = options.validator(inputValue);
+      if (error) {
+        setErrorMessage(error);
+        return;
+      }
+    }
+
     if (modalType === "custom") {
       options.onSubmit?.(customInputValue);
     } else if (modalType === "prompt") {
@@ -57,9 +75,9 @@ export function Modal() {
         {options.message && <p className="text-sm text-muted-foreground">{options.message}</p>}
 
         {modalType === "prompt" && (
-          <div className="grid gap-4 py-4">
+          <div>
             {options.inputLabel && (
-              <Label htmlFor="modal-input" className="text-left">
+              <Label htmlFor="modal-input" className="text-left font-light">
                 {options.inputLabel}
               </Label>
             )}
@@ -69,9 +87,10 @@ export function Modal() {
               type={options.inputType || "text"}
               placeholder={options.inputPlaceholder}
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              className="col-span-3"
+              onChange={handleInputChange}
+              className="my-1"
             />
+            {errorMessage && <p className="text-xs text-destructive">{errorMessage}</p>}
           </div>
         )}
 

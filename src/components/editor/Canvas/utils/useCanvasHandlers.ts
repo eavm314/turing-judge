@@ -82,7 +82,7 @@ export const useCanvasHandlers = () => {
   );
 
   useEffect(() => {
-    if (mode === 'transition') {
+    if (mode === 'transitions') {
       setNodes(prev => prev.map(n => ({ ...n, selected: false })))
     }
   }, [mode]);

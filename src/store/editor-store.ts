@@ -3,7 +3,7 @@ import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
 import { createStore } from 'zustand/vanilla';
 import { examples } from "./data";
 
-type EditorMode = "state" | "transition";
+export type EditorMode = "states" | "transitions" | "simulation";
 
 export type EditorState = {
   automaton: FiniteStateMachine;
@@ -19,7 +19,7 @@ export type EditorActions = {
 export type EditorStore = EditorState & EditorActions;
 
 const defaultState: EditorState = {
-  mode: "state",
+  mode: "states",
   automaton: new FiniteStateMachine(),
 };
 

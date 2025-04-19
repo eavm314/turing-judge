@@ -14,6 +14,7 @@ export interface CustomContentProps<T> {
 interface ModalOptions {
   title?: string
   message?: string
+  validator?: (value: string) => string | undefined
   confirmLabel?: string
   cancelLabel?: string
   inputLabel?: string
@@ -103,6 +104,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         inputPlaceholder: options.inputPlaceholder || "",
         defaultValue: options.defaultValue || "",
         inputType: options.inputType || "text",
+        validator: options.validator,
         onConfirm: (value) => {
           closeModal()
           resolve(value!)
