@@ -58,8 +58,10 @@ export const getProblemView = async (id: string): Promise<ProblemView> => {
 
 export const getUserProblems = async (): Promise<ProblemEditorItem[]> => {
   const session = await auth();
+  if (!session?.user?.id) redirect('/signin');
+
   const results = await prisma.problem.findMany({
-    where: { OR: [{ isPublic: true }, { authorId: session?.user?.id }] },
+    where: { authorId: session.user.id },
     select: {
       id: true,
       title: true,

@@ -1,5 +1,8 @@
 "use client"
 
+import Link from "next/link";
+import { useState } from "react";
+
 import { Button, type ButtonProps } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,15 +14,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { handleSignIn, handleSignOut } from "@/lib/auth/client-handlers";
 import { useSession } from "@/providers/user-provider";
-import Link from "next/link";
 
 export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
+  const [open, setOpen] = useState(false);
   const user = useSession();
 
   if (!user) return <Button variant={variant} onClick={handleSignIn}>Sign In</Button>;
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="outline">User</Button>
       </DropdownMenuTrigger>
@@ -27,13 +30,17 @@ export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
         <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          Profile
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link className="cursor-pointer" href="/projects">
+          <Link href="/projects" className="cursor-pointer w-full">
             My Projects
           </Link>
         </DropdownMenuItem>
+        {user.role === 'EDITOR' &&
+          <DropdownMenuItem>
+            <Link href="/problems/editor" className="cursor-pointer w-full">
+              Problems Editor
+            </Link>
+          </DropdownMenuItem>
+        }
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <button className="w-full text-left" onClick={handleSignOut}>Log Out</button>

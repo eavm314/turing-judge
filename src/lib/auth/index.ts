@@ -2,7 +2,7 @@ import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import PrismaAdapter from "./adapter"
 import { type Role } from "@prisma/client";
-import { prisma } from "../db/prisma";
+import { prisma } from "@/lib/db/prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   // @ts-expect-error: Using the overridden adapter
@@ -39,5 +39,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   trustHost: true,
-  // debug: true,
+  debug: true,
 })
