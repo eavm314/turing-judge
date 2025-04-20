@@ -11,10 +11,13 @@ import {
 import "@xyflow/react/dist/style.css";
 import { useCallback, useEffect, useState } from "react";
 import { fsmToFlow } from "./transformations";
+import { useAddTransitionPrompt } from "@/components/modal/use-add-transition";
 
 export const useCanvasHandlers = () => {
   const { automaton, updateAutomaton } = useAutomaton();
   const { mode } = useEditorMode();
+
+  const addTransitionPrompt = useAddTransitionPrompt();
 
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -70,15 +73,14 @@ export const useCanvasHandlers = () => {
   );
 
   const onConnect: OnConnect = useCallback(
-    (connection) => {
-      const symbols = prompt("Enter symbols separated by commas:");
+    async (connection) => {
+      const symbols = await addTransitionPrompt(automaton);
       if (!symbols) return;
-      const symbolsArr = symbols.split(',').map(s => s.trim());
       updateAutomaton((auto) => {
-        auto.addTransition(connection.source, connection.target, symbolsArr);
+        auto.addTransition(connection.source, connection.target, symbols);
       });
     },
-    [setEdges],
+    [automaton],
   );
 
   useEffect(() => {

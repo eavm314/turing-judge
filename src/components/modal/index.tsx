@@ -50,10 +50,17 @@ export function Modal() {
     } else {
       options.onConfirm?.();
     }
+    
+    setInputValue("");
+    setCustomInputValue(null);
+    setErrorMessage(undefined);
   }
 
   const handleCancel = () => {
     options.onCancel?.();
+    setInputValue("");
+    setCustomInputValue(null);
+    setErrorMessage(undefined);
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -95,7 +102,7 @@ export function Modal() {
         )}
 
         {modalType === "custom" && CustomContent &&
-          <CustomContent value={customInputValue} setValue={setCustomInputValue} />
+          <CustomContent value={customInputValue} setValue={setCustomInputValue} data={options.customComponentData} />
         }
 
         <DialogFooter>

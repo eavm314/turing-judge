@@ -32,7 +32,7 @@ export function TransitionEdge({ id, source, target, style, data, selected }: Ed
           markerWidth="5"
           markerHeight="5"
           orient="auto">
-          <path d="M 0 0 L 10 5 L 0 10" fill={`${selected ? 'var(--remark)' : 'hsl(var(--foreground))'}`} />
+          <path d="M 0 0 L 10 5 L 0 10" fill={`hsl(var(${selected ? '--remark' : '--foreground'}))`} />
         </marker>
       </defs>
       <path
