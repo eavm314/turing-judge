@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/ui/utils";
-import { useAutomaton, useEditorMode } from "@/providers/editor-provider";
+import { useAutomaton, usePlaygroundMode } from "@/providers/playground-provider";
 import { useModal } from "@/providers/modal-provider";
 
 export const AddStateButton = () => {
-  const { mode } = useEditorMode();
+  const { mode } = usePlaygroundMode();
   const { automaton, updateAutomaton } = useAutomaton();
   const { showPrompt } = useModal();
 
@@ -40,7 +40,7 @@ export const AddStateButton = () => {
 }
 
 export function SwitchMode() {
-  const { mode, setMode } = useEditorMode();
+  const { mode, setMode } = usePlaygroundMode();
 
   return (
     <div>

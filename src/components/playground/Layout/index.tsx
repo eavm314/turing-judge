@@ -11,7 +11,7 @@ import { ExamplesMenu } from "./examples-menu";
 import { PublicSelect } from "./public-select";
 import { SaveAutomaton } from "./save-automaton";
 
-export function EditorLayout({ data }: { data?: Project }) {
+export function PlaygroundLayout({ data }: { data?: Project }) {
   const user = useSession();
   const isOwner = Boolean(user && data && user.id === data.userId);
   return (

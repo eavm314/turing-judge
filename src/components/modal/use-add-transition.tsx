@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAutomaton } from "@/providers/editor-provider";
+import { useAutomaton } from "@/providers/playground-provider";
 import { type CustomContentProps, useModal } from "@/providers/modal-provider";
 import { type FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
 import { EPSILON } from "@/constants/symbols";

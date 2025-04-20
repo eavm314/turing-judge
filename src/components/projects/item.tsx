@@ -20,7 +20,7 @@ export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
   return (
     <TableRow className="py-3 px-4 hover:bg-muted/50">
       <TableCell className="w-2/5">
-        <Link href={`/editor/${item.id}`} className="font-medium hover:underline">
+        <Link href={`/playground/${item.id}`} className="font-medium hover:underline">
           <span className={cn("text-nowrap md:text-base", !item.title && 'italic opacity-60')}>{item.title || 'Untitled'}</span>
         </Link>
       </TableCell>

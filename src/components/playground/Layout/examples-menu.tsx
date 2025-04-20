@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useAutomaton } from "@/providers/editor-provider"
+import { useAutomaton } from "@/providers/playground-provider"
 import { ChevronDown } from "lucide-react"
 
 const automatonExamples = [

@@ -1,4 +1,4 @@
-import { useAutomaton, useEditorMode } from "@/providers/editor-provider";
+import { useAutomaton, usePlaygroundMode } from "@/providers/playground-provider";
 import {
   applyEdgeChanges,
   applyNodeChanges,
@@ -15,7 +15,7 @@ import { useAddTransitionPrompt } from "@/components/modal/use-add-transition";
 
 export const useCanvasHandlers = () => {
   const { automaton, updateAutomaton } = useAutomaton();
-  const { mode } = useEditorMode();
+  const { mode } = usePlaygroundMode();
 
   const addTransitionPrompt = useAddTransitionPrompt();
 

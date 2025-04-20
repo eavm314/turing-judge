@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EPSILON } from "@/constants/symbols";
-import { useAutomaton } from "@/providers/editor-provider";
+import { useAutomaton } from "@/providers/playground-provider";
 
 export function AlphabetEditor() {
   const { automaton, updateAutomaton } = useAutomaton();
@@ -48,7 +48,7 @@ export function AlphabetEditor() {
 
   return (
     <div className="space-y-2">
-      <h2 className="text-lg font-bold">Alphabet Editor</h2>
+      <h2 className="text-lg font-bold">Alphabet</h2>
       <Label htmlFor="alphabet-input" className="text-left text-sm text-muted-foreground">
         Only alphanumeric characters.
       </Label>

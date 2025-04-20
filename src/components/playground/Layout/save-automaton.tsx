@@ -8,7 +8,7 @@ import { SaveIcon } from "lucide-react";
 import { createAutomaton, updateAutomaton } from "@/actions/projects";
 import { Button } from "@/components/ui/button";
 import { handleSignIn } from "@/lib/auth/client-handlers";
-import { useAutomaton } from "@/providers/editor-provider";
+import { useAutomaton } from "@/providers/playground-provider";
 import { useSession } from "@/providers/user-provider";
 import { useSaveAutomatonPrompt } from "@/components/modal/use-save-automaton";
 

@@ -1,4 +1,4 @@
-import { useAutomaton, useEditorMode } from "@/providers/editor-provider";
+import { useAutomaton, usePlaygroundMode } from "@/providers/playground-provider";
 import {
   Handle,
   NodeToolbar,
@@ -49,7 +49,7 @@ export type StateNodeType = Node<{
 }>
 
 export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
-  const { mode } = useEditorMode();
+  const { mode } = usePlaygroundMode();
   return (
     <div className="relative flex items-center justify-center size-24">
       {data.isInitial &&

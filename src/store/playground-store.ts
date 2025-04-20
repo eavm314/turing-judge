@@ -3,31 +3,31 @@ import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
 import { createStore } from 'zustand/vanilla';
 import { examples } from "./data";
 
-export type EditorMode = "states" | "transitions" | "simulation";
+export type PlaygroundMode = "states" | "transitions" | "simulation";
 
-export type EditorState = {
+export type PlaygroundState = {
   automaton: FiniteStateMachine;
-  mode: EditorMode,
+  mode: PlaygroundMode,
 }
 
-export type EditorActions = {
+export type PlaygroundActions = {
   setExample: (key: string) => void;
   updateAutomaton: (callback: (automaton: FiniteStateMachine) => void) => void;
-  setMode: (newMode: EditorMode) => void,
+  setMode: (newMode: PlaygroundMode) => void,
 }
 
-export type EditorStore = EditorState & EditorActions;
+export type PlaygroundStore = PlaygroundState & PlaygroundActions;
 
-const defaultState: EditorState = {
+const defaultState: PlaygroundState = {
   mode: "states",
   automaton: new FiniteStateMachine(),
 };
 
-export const createEditorStore = (initialState?: Partial<EditorState>) => {
-  return createStore<EditorStore>()((set) => ({
+export const createPlaygroundStore = (initialState?: Partial<PlaygroundState>) => {
+  return createStore<PlaygroundStore>()((set) => ({
     ...defaultState,
     ...initialState,
-    setMode: (newMode: EditorMode) => set({ mode: newMode }),
+    setMode: (newMode: PlaygroundMode) => set({ mode: newMode }),
     setExample: (key: string) => {
       const newAutomaton = new FiniteStateMachine(examples[key]);
       AutomatonExecutor.setAutomaton(newAutomaton);

@@ -64,7 +64,7 @@ export const createAutomaton = async (body: {
     console.error("Error creating automaton:", error);
     return null;
   }
-  redirect(`/editor/${savedAutomaton.id}`);
+  redirect(`/playground/${savedAutomaton.id}`);
 }
 
 export const updateAutomaton = async (body: {
@@ -97,7 +97,7 @@ export const updateAutomaton = async (body: {
         automaton: body.automaton as unknown as JsonObject,
       },
     });
-    revalidatePath(`/editor/${body.id}`);
+    revalidatePath(`/playground/${body.id}`);
     return true;
   } catch(error) {
     console.error("Error updating automaton:", error);
