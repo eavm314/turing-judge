@@ -85,7 +85,7 @@ export function SubmitSolution() {
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>
-        <Button><PlusCircle /> New Solution </Button>
+        <Button><PlusCircle size={20} /> Submit Solution </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[540px]">
         <DialogHeader>

@@ -19,4 +19,4 @@ export const handleSignIn = () => {
   });
 }
 
-export const handleSignOut = () => signOut();
+export const handleSignOut = () => signOut({redirectTo: "/"});

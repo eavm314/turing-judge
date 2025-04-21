@@ -322,7 +322,7 @@ export function ProblemForm({ problemId, problemData }:
         <div className="flex justify-end">
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {problemId ? "Edit" : "Create"} Problem
+            {problemId ? "Save" : "Create"} Problem
           </Button>
         </div>
       </form>

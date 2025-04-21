@@ -13,9 +13,9 @@ export default async function HomePage() {
             <h1 className="text-2xl font-bold tracking-tighter md:text-5xl max-w-[800px]">
               Explore the world of formal languages and automata theory
             </h1>
-            <Button asChild>
-              <Link href="/playground" className="text-xl py-6">
-                Go to Playground <ArrowRight className="ml-2 h-5 w-5" />
+            <Button className="text-base md:text-lg h-10" asChild>
+              <Link href="/playground">
+                Go to Playground <ArrowRight size={22} className="ml-2 mt-0.5" />
               </Link>
             </Button>
           </div>

@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { handleSignIn, handleSignOut } from "@/lib/auth/client-handlers";
 import { useSession } from "@/providers/user-provider";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { AvatarImage } from "@radix-ui/react-avatar";
 
 export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
   const [open, setOpen] = useState(false);
@@ -24,7 +26,10 @@ export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">User</Button>
+        <Avatar className="cursor-pointer hover:brightness-125">
+          <AvatarImage src={user.image ?? undefined} alt={user.name ?? "User"} className="object-cover" />
+          <AvatarFallback className="font-bold text-xl">{user.name?.charAt(0)}</AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>{user.email}</DropdownMenuLabel>

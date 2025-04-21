@@ -41,7 +41,7 @@ export default function Submissions({ problemId }: { problemId: string }) {
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-medium mb-2">Summary</h3>
         <Button variant="outline" size="icon" onClick={handleRefresh}>
-          <RefreshCw className={loading ? "animate-spin" : undefined} />
+          <RefreshCw size={20} className={loading ? "animate-spin" : undefined} />
         </Button>
       </div>
       <Table>

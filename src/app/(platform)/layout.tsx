@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Cpu } from "lucide-react";
+import { Cpu, ExternalLink } from "lucide-react";
 
 import { AccountMenu } from "@/components/layout/account-menu";
 import { DarkModeToggle } from "@/components/layout/dark-mode-toogle";
@@ -18,8 +18,14 @@ export default function PlatformLayout({
             <Cpu className="size-6 mr-2" />
             <span className="font-bold">TuringProject</span>
           </Link>
-          <Link href="/problems">
-            <span className="underline underline-offset-4">Problems</span>
+          <Link href="/playground" target="_blank"
+            className="flex gap-1 hover:border-b border-foreground"
+          >
+            <span>Playground</span>
+            <ExternalLink size={19} className="mt-0.5" />
+          </Link>
+          <Link href="/problems" className="hover:border-b border-foreground">
+            <span>Problems</span>
           </Link>
         </nav>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">

@@ -9,9 +9,5 @@ export default async function AuthLayout({
   const session = await auth();
   if (session) return <CloseOnAuth />;
   
-  return (
-    <>
-      {children}
-    </>
-  )
+  return children;
 }
