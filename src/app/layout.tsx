@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Orbitron } from "next/font/google";
 import "./globals.css";
 
 import { ThemeProvider } from "@/providers/theme-provider"
 import { SessionProvider } from "@/providers/user-provider";
 import { auth } from "@/lib/auth";
 import { ModalProvider } from "@/providers/modal-provider";
+import { appName } from "@/constants/app";
 
-const roboto = Roboto({
-  variable: "--font-roboto",
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "TuringProject",
+  title: appName,
   description: "Automaton Designer",
 };
 
@@ -27,7 +28,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${roboto.variable} antialiased`}
+        className={`${orbitron.variable} antialiased`}
       >
         <ThemeProvider>
           <ModalProvider>

@@ -58,8 +58,8 @@ export default {
     			sm: 'calc(var(--radius) - 4px)'
     		},
     		fontFamily: {
-    			robo: [
-    				'var(--font-roboto)'
+    			orbitron: [
+    				'var(--font-orbitron)'
     			]
     		},
     		keyframes: {
