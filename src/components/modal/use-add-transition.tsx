@@ -38,7 +38,7 @@ const AddTransitionPrompt = ({
           <span className="text-muted-foreground italic">None</span>
         ) : (
           selectedSymbols.map((symbol) => (
-            <Badge key={symbol} variant="secondary" className="h-6">
+            <Badge key={symbol} variant="outline" className="h-6 font-mono text-sm">
               {symbol}
             </Badge>
           ))

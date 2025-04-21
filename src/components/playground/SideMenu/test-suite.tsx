@@ -14,7 +14,7 @@ export function TestSuite() {
   }
 
   return (
-    <div>
+    <div className="p-4">
       <h2 className="text-lg font-bold mb-4">Test Suite</h2>
       <Input
         ref={inputRef}

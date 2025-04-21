@@ -5,6 +5,7 @@ import {
   type EdgeProps
 } from '@xyflow/react';
 import { getPath } from './utils/graphics';
+import { cn } from '@/lib/ui/utils';
 
 export type TransitionEdgeType = Edge<{
   symbols: string[],
@@ -51,7 +52,7 @@ export function TransitionEdge({ id, source, target, style, data, selected }: Ed
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
             pointerEvents: 'all',
           }}
-          className={`nopan bg-background px-2 border rounded-md cursor-pointer ${selected ? 'border-remark' : 'border-foreground'}`}
+          className={cn("nopan bg-background px-2 border rounded-md cursor-pointer font-mono", selected ? 'border-remark' : 'border-foreground')}
         >
           {data?.symbols.join(',')}
         </div>

@@ -47,7 +47,7 @@ export function AlphabetEditor() {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 p-4">
       <h2 className="text-lg font-bold">Alphabet</h2>
       <Label htmlFor="alphabet-input" className="text-left text-sm text-muted-foreground">
         Only alphanumeric characters.
@@ -63,18 +63,18 @@ export function AlphabetEditor() {
         />
         <Button size="sm" onClick={handleAddToAlphabet}>Add</Button>
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 font-mono">
         {!automaton.alphabet.includes(EPSILON) &&
-          <Button variant="outline" size="sm"
+          <Button variant="outline" size="default"
             className="flex items-center gap-1 px-2 w-11 h-[30px]"
             onClick={handleAddEpsilonToAlphabet}
           >
-            <span className="font-mono">{EPSILON}</span>
-            <PlusCircle />
+            <span>{EPSILON}</span>
+            <PlusCircle size={16} />
           </Button>}
         {automaton.alphabet.map((symbol) => (
           <Badge key={symbol} variant="outline" className="flex items-center gap-1 p-0 w-11">
-            <span className="font-mono py-1 pl-2 pr-0">{symbol}</span>
+            <span className="py-1 pl-2 pr-0 text-sm">{symbol}</span>
             <button
               className="p-2 pt-1 text-muted-foreground hover:text-foreground select-none"
               onClick={() => handleRemoveFromAlphabet(symbol)}

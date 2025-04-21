@@ -8,7 +8,7 @@ export interface JsonFSM {
 }
 
 const basicAutomata: JsonFSM = {
-  alphabet: [],
+  alphabet: ['0', '1'],
   states: {
     "q0": {
       position: { x: 0, y: 0 },
