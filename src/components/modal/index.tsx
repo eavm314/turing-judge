@@ -50,7 +50,7 @@ export function Modal() {
     } else {
       options.onConfirm?.();
     }
-    
+
     setInputValue("");
     setCustomInputValue(null);
     setErrorMessage(undefined);
@@ -64,7 +64,7 @@ export function Modal() {
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && modalType !== "custom") {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleConfirm();
     }
@@ -106,7 +106,7 @@ export function Modal() {
         }
 
         <DialogFooter>
-          <Button onClick={handleConfirm}>{options.confirmLabel || "OK"}</Button>
+          <Button variant={options.destructive ? "destructive" : "secondary"} onClick={handleConfirm}>{options.confirmLabel || "OK"}</Button>
           {(modalType === "confirm" || modalType === "prompt" || modalType === "custom") && (
             <Button variant="outline" onClick={handleCancel}>
               {options.cancelLabel || "Cancel"}

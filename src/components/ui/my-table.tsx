@@ -10,7 +10,7 @@ export const TableHeadButton = ({ children, onClick, className }: {
   className?: string,
 }) => (
   <TableHead 
-    className={cn("md:text-base hover:bg-accent text-secondary-foreground/80 hover:text-accent-foreground cursor-pointer text-nowrap", className)}
+    className={cn("md:text-base hover:bg-accent/60 hover:text-accent-foreground cursor-pointer text-nowrap", className)}
     onClick={onClick}>
     <span className="inline-flex items-center gap-2">
       {children}

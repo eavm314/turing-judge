@@ -125,10 +125,10 @@ export function ProblemForm({ problemId, problemData }:
                   render={({ field }) => (
                     <FormItem className="mt-4">
                       <FormLabel>Problem Statement</FormLabel>
+                      <FormDescription>Write your problem statement using Markdown.</FormDescription>
                       <FormControl>
                         <MarkdownEditor value={field.value} onChange={field.onChange} />
                       </FormControl>
-                      <FormDescription>Write your problem statement using Markdown.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -320,7 +320,7 @@ export function ProblemForm({ problemId, problemData }:
         </Tabs>
 
         <div className="flex justify-end">
-          <Button type="submit" disabled={isSubmitting}>
+          <Button variant="secondary" type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {problemId ? "Save" : "Create"} Problem
           </Button>

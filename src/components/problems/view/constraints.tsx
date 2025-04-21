@@ -2,7 +2,7 @@ import { type ProblemConstraints } from "@/dtos"
 
 export const Constraints = ({ constraints }: { constraints: ProblemConstraints }) => {
   return (
-    <div className="mt-4 p-4 rounded-md bg-accent max-h-max">
+    <div className="mt-4 p-4 rounded-md bg-accent text-accent-foreground max-h-max">
       <h3 className="text-lg font-medium mb-3">Problem Constraints</h3>
       <div className="grid grid-cols-1 gap-6">
         <div>

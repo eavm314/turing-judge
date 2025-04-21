@@ -49,12 +49,12 @@ export function SwitchMode() {
       {mode === 'simulation' ? (
         <button
           disabled
-          className="rounded-md border border-input bg-background px-6 py-2 text-sm font-medium text-muted-foreground opacity-70"
+          className="rounded-md border bg-background px-6 py-2 text-sm font-medium text-muted-foreground opacity-70"
         >
           Simulation
         </button>
       ) : (
-        <div className="flex overflow-hidden rounded-md border border-input bg-background">
+        <div className="flex overflow-hidden rounded-md border bg-background">
           <button
             onClick={() => setMode('states')}
             className={cn(

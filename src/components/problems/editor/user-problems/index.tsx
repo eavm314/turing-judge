@@ -27,6 +27,7 @@ export default function UserProblems({ problems }: { problems: ProblemItem[] }) 
       title: "Delete Problem",
       message: "Are you sure you want to delete this problem? This action cannot be undone.",
       confirmLabel: "Delete",
+      destructive: true,
     });
     if (!confirmation) return;
     await deleteProblem(id);

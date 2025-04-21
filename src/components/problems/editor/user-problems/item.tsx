@@ -31,7 +31,7 @@ export default function ProblemEditorItem({ problem, onPublic, onDelete }: Probl
       <TableCell>{formatDateTime(problem.createdAt)}</TableCell>
       <TableCell className="flex justify-end">
         <Button variant="ghost" size="icon"
-          className="size-8 text-destructive hover:text-destructive"
+          className="size-8 text-destructive hover:bg-destructive"
           onClick={() => onDelete(problem.id)}
         >
           <Trash2 className="size-4" />

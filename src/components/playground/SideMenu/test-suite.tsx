@@ -22,7 +22,7 @@ export function TestSuite() {
         placeholder="Enter test string"
         className="mb-2"
       />
-      <Button className="w-full mb-2" onClick={handleTest}>
+      <Button variant="secondary" className="w-full mb-2" onClick={handleTest}>
         Test
       </Button>
       {result && <div className={`p-2 ${result === "accepted" ? "text-green-500" : "text-red-500"}`}>{result}</div>}

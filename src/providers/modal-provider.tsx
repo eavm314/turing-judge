@@ -24,6 +24,7 @@ interface ModalOptions {
   inputType?: string
   onConfirm?: (value?: string) => void
   onCancel?: () => void
+  destructive?: boolean
 };
 
 interface CustomModalOptions<T, D> extends ModalOptions {
@@ -79,6 +80,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         message: options.message || "",
         confirmLabel: options.confirmLabel || "OK",
         cancelLabel: options.cancelLabel || "Cancel",
+        destructive: options.destructive,
         onConfirm: () => {
           closeModal()
           resolve(true)

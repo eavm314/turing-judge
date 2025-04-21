@@ -8,6 +8,7 @@ import {
 } from "@xyflow/react";
 import { useCallback } from "react";
 import { Toggle } from "@/components/ui/toggle";
+import { cn } from "@/lib/ui/utils";
 
 function CustomToolbar({ nodeId, final }: { nodeId: string, final: boolean }) {
   const { updateAutomaton } = useAutomaton();
@@ -58,10 +59,9 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
           <div className="w-8 h-0.5 bg-foreground -rotate-[30deg]"></div>
         </div>
       }
-      <div className={`relative grid rounded-full size-full border-2 bg-background 
-        ${data.isFinal ? 'outline outline-2 -outline-offset-[12px]' : ''}
-        ${selected ? 'border-remark outline-remark' : `border-foreground outline-foreground`}
-      `}>
+      <div className={cn("relative grid rounded-full size-full border-2 bg-muted/80",
+        data.isFinal && 'outline outline-2 -outline-offset-[12px]',
+        selected ? 'border-remark outline-remark' : 'border-foreground outline-foreground')}>
         <div className="m-auto text-2xl">{id}</div>
         {mode === "transitions" &&
           <Handle style={customHandleStyles} type="source" position={Position.Top} />

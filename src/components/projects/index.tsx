@@ -30,6 +30,7 @@ export default function AutomatonProjects({ projectItems }: { projectItems: Auto
       title: "Delete Automaton",
       message: "Are you sure you want to delete this automaton? This action cannot be undone.",
       confirmLabel: "Delete",
+      destructive: true,
     });
     if (!confirmation) return;
     await deleteAutomaton(id);

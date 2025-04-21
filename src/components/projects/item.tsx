@@ -33,7 +33,7 @@ export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
       <TableCell className="text-sm text-muted-foreground">{formatDateTime(item.updatedAt)}</TableCell>
       <TableCell className="flex justify-end">
         <Button variant="ghost" size="icon"
-          className="size-8 text-destructive hover:text-destructive"
+          className="size-8 text-destructive hover:bg-destructive"
           onClick={() => onDelete(item.id)}
         >
           <Trash2 className="size-4" />
