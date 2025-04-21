@@ -15,8 +15,8 @@ export default function PlatformLayout({
       <header className="px-4 lg:px-6 h-14 flex items-center border-b">
         <nav className="mr-auto flex items-center gap-8">
           <Link className="flex items-center justify-center" href="/">
-            <Cpu className="size-6 mr-2" />
-            <span className="font-bold">TuringProject</span>
+            <Cpu className="size-8 mr-2" />
+            <span className="font-bold h-full">TuringProject</span>
           </Link>
           <Link href="/playground" target="_blank"
             className="flex gap-1 hover:border-b border-foreground"

@@ -18,7 +18,7 @@ export function PlaygroundLayout({ data }: { data?: Project }) {
     <header className="px-4 lg:px-6 h-14 flex items-center border-b">
       <nav className="mr-auto flex items-center gap-4">
         <Link className="flex items-center justify-center" href="/">
-          <Cpu className="size-6" />
+          <Cpu className="size-8" />
         </Link>
         {data && (<>
           <AutomatonTitle title={data.title} />

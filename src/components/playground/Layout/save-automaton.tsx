@@ -69,7 +69,7 @@ export function SaveAutomaton() {
         variant="secondary"
         onClick={handleSave}
       >
-        <SaveIcon />
+        <SaveIcon size={18} />
         Save
       </Button>
     </div>
