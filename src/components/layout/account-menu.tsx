@@ -26,7 +26,7 @@ export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer hover:brightness-125">
+        <Avatar className="cursor-pointer hover:opacity-80">
           <AvatarImage src={user.image ?? undefined} alt={user.name ?? "User"} className="object-cover" />
           <AvatarFallback className="font-bold text-xl">{user.name?.charAt(0)}</AvatarFallback>
         </Avatar>

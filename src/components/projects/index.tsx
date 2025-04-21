@@ -75,7 +75,7 @@ export default function AutomatonProjects({ projectItems }: { projectItems: Auto
   }
 
   return (
-    <div className="space-y-4 mt-4">
+    <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-4">
         <InputSearch value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value === "all" ? "" : value)}>

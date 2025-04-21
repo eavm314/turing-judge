@@ -12,7 +12,7 @@ export default function PlatformLayout({
 }>) {
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="px-4 lg:px-6 h-14 flex items-center">
+      <header className="px-4 lg:px-6 h-14 flex items-center border-b">
         <nav className="mr-auto flex items-center gap-8">
           <Link className="flex items-center justify-center" href="/">
             <Cpu className="size-6 mr-2" />
@@ -25,7 +25,7 @@ export default function PlatformLayout({
             <ExternalLink size={19} className="mt-0.5" />
           </Link>
           <Link href="/problems" className="hover:border-b border-foreground">
-            <span>Problems</span>
+            <span>Problem Set</span>
           </Link>
         </nav>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">
