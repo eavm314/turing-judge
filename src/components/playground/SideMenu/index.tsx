@@ -4,9 +4,9 @@ import { TestSuite } from "./test-suite";
 
 export default function SideMenu() {
   return (
-    <div className="w-72 border-l">
+    <div className="w-72 border-l border-input">
       <AlphabetEditor />
-      <Separator />
+      <Separator className="bg-input" />
       <TestSuite />
     </div>
   )

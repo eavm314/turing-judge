@@ -15,7 +15,7 @@ export function PlaygroundLayout({ data }: { data?: Project }) {
   const user = useSession();
   const isOwner = Boolean(user && data && user.id === data.userId);
   return (
-    <header className="px-4 lg:px-6 h-14 flex items-center border-b">
+    <header className="px-4 lg:px-6 h-14 flex items-center border-b border-input">
       <nav className="mr-auto flex items-center gap-4">
         <Link className="flex items-center justify-center" href="/">
           <Cpu className="size-8" />

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { type SubmissionItem } from "@/dtos"
-import { StatusBadge } from "@/utils/badges"
+import { AutomatonTypeBadge, StatusBadge } from "@/utils/badges"
 import { formatDateTime } from "@/utils/date"
 import { SubmitSolution } from "./submit-solution"
 import { EmptyTableRow, TableHeadButton } from "@/components/ui/my-table"
@@ -71,7 +71,7 @@ export default function Submissions({ problemId }: { problemId: string }) {
                     <StatusBadge verdict={submission.verdict} status={submission.status} />
                   </TableCell>
                   <TableCell className="w-32 text-center">
-                    <Badge variant="secondary">FSM</Badge>
+                    <AutomatonTypeBadge type={"FSM"} />
                   </TableCell>
                   <TableCell width="50%" className="text-base truncate">{submission.message}</TableCell>
                   <TableCell className="text-nowrap">{formatDateTime(submission.createdAt)}</TableCell>

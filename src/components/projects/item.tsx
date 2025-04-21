@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { cn } from "@/lib/ui/utils"
 import { formatDateTime } from "@/utils/date"
+import { AutomatonTypeBadge } from "@/utils/badges"
 
 interface AutomatonItemProps {
   item: AutomatonProjectItem
@@ -25,9 +26,7 @@ export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
         </Link>
       </TableCell>
       <TableCell>
-        <Badge variant="secondary" className="text-xs">
-          {item.type}
-        </Badge>
+        <AutomatonTypeBadge type={item.type} />
       </TableCell>
       <TableCell className="text-sm text-muted-foreground">{formatDateTime(item.createdAt)}</TableCell>
       <TableCell className="text-sm text-muted-foreground">{formatDateTime(item.updatedAt)}</TableCell>

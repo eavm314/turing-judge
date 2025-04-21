@@ -3,16 +3,21 @@ import Link from "next/link"
 import { ArrowRight, Cpu, PlayCircle, Save } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { appName } from "@/constants/app"
 
 export default async function HomePage() {
   return (
     <main className="flex-1">
-      <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
+      <section className="w-full py-12 md:py-24">
         <div className="container px-4 md:px-6 mx-auto">
           <div className="flex flex-col items-center space-y-8 text-center">
-            <h1 className="text-2xl font-bold tracking-tighter md:text-5xl max-w-[800px]">
+            <div>
+              <Cpu size={80} className="text-secondary w-full"/>
+              <h1 className="font-bold h-full text-2xl md:text-5xl font-orbitron">{appName}</h1>
+            </div>
+            <h2 className="text-xl font-bold tracking-tighter md:text-3xl max-w-[800px]">
               Explore the world of formal languages and automata theory
-            </h1>
+            </h2>
             <div className="flex flex-col md:flex-row gap-4">
             <Button className="text-base md:text-lg h-10" asChild>
               <Link href="/problems">

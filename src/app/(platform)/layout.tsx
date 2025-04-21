@@ -13,21 +13,23 @@ export default function PlatformLayout({
 }>) {
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="px-4 lg:px-6 h-14 flex items-center border-b">
-        <nav className="mr-auto flex items-center gap-8">
-          <Link className="flex items-center justify-center" href="/">
-            <Cpu className="size-8 mr-2" />
+      <header className="px-4 lg:px-6 h-14 flex items-center border-b border-input">
+        <nav className="mr-auto flex items-center">
+          <Link className="flex items-center justify-center mr-8" href="/">
+            <Cpu className="size-8 mr-2 text-secondary" />
             <span className="font-bold h-full text-xl font-orbitron">{appName}</span>
           </Link>
-          <Link href="/playground" target="_blank"
-            className="flex gap-1 hover:border-b border-foreground"
-          >
-            <span>Playground</span>
-            <ExternalLink size={19} className="mt-0.5" />
-          </Link>
-          <Link href="/problems" className="hover:border-b border-foreground">
-            <span>Problem Set</span>
-          </Link>
+          <div className="flex items-center gap-6">
+            <Link href="/playground" target="_blank"
+              className="flex gap-1 hover:border-b hover:text-secondary border-secondary"
+            >
+              <span>Playground</span>
+              <ExternalLink size={19} className="mt-0.5" />
+            </Link>
+            <Link href="/problems" className="hover:border-b hover:text-secondary border-secondary">
+              <span>Problem Set</span>
+            </Link>
+          </div>
         </nav>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">
           <DarkModeToggle />

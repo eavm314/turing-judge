@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/ui/utils";
-import { ProblemDifficulty, Status, Verdict } from "@prisma/client"
+import { AutomatonType, ProblemDifficulty, Status, Verdict } from "@prisma/client"
 
 export const DifficultyBadge = ({ difficulty }: { difficulty: ProblemDifficulty }) => {
   let values;
@@ -20,6 +20,7 @@ export const DifficultyBadge = ({ difficulty }: { difficulty: ProblemDifficulty 
     default:
       values = { color: "bg-gray-200 text-gray-800 hover:bg-gray-200/80", text: 'Unknown' };
   }
+
   return <Badge className={cn(values.color, "md:text-sm")}>{values.text}</Badge>;
 }
 
@@ -38,7 +39,26 @@ export const StatusBadge = ({ verdict, status }: { verdict: Verdict | null, stat
       break;
     default:
       values = { color: "bg-gray-100 text-gray-800 hover:bg-gray-100/80", text: 'Unknown' };
-
   }
+  
   return <Badge className={cn(values.color, "md:text-sm")}>{values.text}</Badge>;
+}
+
+export const AutomatonTypeBadge = ({ type }: { type: AutomatonType }) => {
+  let color;
+  switch (type) {
+    case AutomatonType.FSM:
+      color = "bg-blue-300 text-blue-900 hover:bg-blue-300/80";
+      break;
+    case AutomatonType.PDA:
+      color = "bg-purple-300 text-purple-900 hover:bg-purple-300/80";
+      break;
+    case AutomatonType.TM:
+      color = "bg-orange-300 text-orange-900 hover:bg-orange-300/80";
+      break;
+    default:
+      color = "bg-gray-200 text-gray-800 hover:bg-gray-200/80";
+  }
+
+  return <Badge className={color}>{type}</Badge>
 }
