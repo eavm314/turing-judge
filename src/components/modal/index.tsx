@@ -105,14 +105,16 @@ export function Modal() {
           <CustomContent value={customInputValue} setValue={setCustomInputValue} data={options.customComponentData} />
         }
 
-        <DialogFooter>
-          <Button variant={options.destructive ? "destructive" : "secondary"} onClick={handleConfirm}>{options.confirmLabel || "OK"}</Button>
-          {(modalType === "confirm" || modalType === "prompt" || modalType === "custom") && (
-            <Button variant="outline" onClick={handleCancel}>
-              {options.cancelLabel || "Cancel"}
-            </Button>
-          )}
-        </DialogFooter>
+        {!options.hideFooter && (
+          <DialogFooter>
+            <Button variant={options.destructive ? "destructive" : "secondary"} onClick={handleConfirm}>{options.confirmLabel || "OK"}</Button>
+            {(modalType === "confirm" || modalType === "prompt" || modalType === "custom") && (
+              <Button variant="outline" onClick={handleCancel}>
+                {options.cancelLabel || "Cancel"}
+              </Button>
+            )}
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   )

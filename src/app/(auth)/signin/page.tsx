@@ -1,28 +1,24 @@
-import { SignInForm } from "@/components/auth/signin-form"
-import type { Metadata } from "next"
-
-export const metadata: Metadata = {
-  title: "Sign In",
-  description: "Sign In to your account",
-}
+"use client"
+import { signIn } from "@/actions/auth"
+import { useSession } from "@/providers/user-provider";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function SignInPage() {
-  return (
-    <main className="container mx-auto h-screen flex items-center justify-center">
-      <div className="py-10 px-4 space-y-10 border-4 rounded-xl">
-        <div className="flex flex-col space-y-2 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">Welcome!</h1>
-          <p className="text-sm text-accent">Choose your favorite provider to sign in to your account:</p>
-        </div>
-        <SignInForm />
-        {/* <p className="px-8 text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
-          <Link href="/signup" className="underline underline-offset-4 hover:text-primary">
-          Sign up
-          </Link>
-          </p> */}
-      </div>
-    </main>
-  )
-}
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
+  const { user, setOpenSignIn } = useSession();
+
+  useEffect(() => {
+    if (user) {
+      setOpenSignIn(false);
+      window.close();
+      router.replace("/");
+    } else {
+      signIn(searchParams.get('provider') || 'google');
+    }
+  }, [user, searchParams]);
+
+  return null;
+}

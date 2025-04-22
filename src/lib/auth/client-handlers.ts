@@ -1,9 +1,9 @@
 import { revalidateAll, signOut } from "@/actions/auth"
 
-export const handleSignIn = () => {
+export const handleSignIn = (provider?: string) => {
   return new Promise((resolve, reject) => {
     try {
-      const popup = window.open("/signin", "Sign In", "width=480,height=600,top=100,left=460");
+      const popup = window.open(`/signin?provider=${provider}`, "Sign In", "width=480,height=600,top=100,left=460");
       popup?.focus();
       const checkPopupClosed = setInterval(() => {
         if (!popup || popup.closed) {
@@ -19,4 +19,4 @@ export const handleSignIn = () => {
   });
 }
 
-export const handleSignOut = () => signOut({redirectTo: "/"});
+export const handleSignOut = () => signOut();

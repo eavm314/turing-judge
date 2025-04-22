@@ -39,6 +39,22 @@ export const getUserProjects = async (): Promise<AutomatonProjectItem[]> => {
   return results;
 }
 
+export const getUserProjectsLight = async (): Promise<Partial<AutomatonProjectItem>[]> => {
+  const session = await auth();
+  if (!session?.user?.id) return [];
+
+  const results = await prisma.project.findMany({
+    where: { userId: session.user.id },
+    select: {
+      id: true,
+      title: true,
+      type: true,
+    },
+  });
+
+  return results;
+}
+
 export const createAutomaton = async (body: {
   title: string | null,
   type: AutomatonType,

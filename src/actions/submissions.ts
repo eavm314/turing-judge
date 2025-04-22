@@ -7,11 +7,10 @@ import { auth } from "@/lib/auth";
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
 import { prisma } from "@/lib/db/prisma";
-import { revalidatePath } from "next/cache";
 
 export const getUserSubmissions = async (problemId: string) => {
   const session = await auth();
-  if (!session?.user?.id) redirect('/signin');
+  if (!session?.user?.id) return [];
 
   const results = await prisma.submission.findMany({
     where: { problemId, userId: session.user.id },

@@ -31,6 +31,8 @@ import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation";
 import { AutomatonProjectItem } from "@/dtos";
 import { submitSolution } from "@/actions/submissions";
+import { useSession } from "@/providers/user-provider";
+import { handleSignIn } from "@/lib/auth/client-handlers";
 
 export function SubmitSolution() {
   const [openDialog, setOpenDialog] = useState(false)
@@ -43,21 +45,27 @@ export function SubmitSolution() {
   const [searchQuery, setSearchQuery] = useState("");
   const [submitting, setSubmitting] = useState(false)
 
+  const { user, setOpenSignIn } = useSession();
+
   const { problemId } = useParams();
 
   useEffect(() => {
     const fetchAutomatons = async () => {
-      try {
-        const response = await fetch(`/api/queries/projects`);
-        const data = await response.json();
-        setAutomatons(data);
-      } catch (error) {
-        console.error("Error fetching automatons:", error);
-      }
+      const response = await fetch(`/api/queries/projects`);
+      const data = await response.json();
+      setAutomatons(data);
     }
 
     fetchAutomatons();
   }, []);
+
+  const handleOpen = async (open: boolean) => {
+    if (!open || user) {
+      setOpenDialog(open);
+    } else {
+      setOpenSignIn(true);
+    }
+  }
 
   const selectedAutomaton = automatons.find((automaton) => automaton.id === value);
 
@@ -83,7 +91,7 @@ export function SubmitSolution() {
   const filteredAutomatons = automatons.filter((auto) => !searchQuery || auto.title?.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+    <Dialog open={openDialog} onOpenChange={handleOpen}>
       <DialogTrigger asChild>
         <Button><PlusCircle size={20} /> Submit Solution </Button>
       </DialogTrigger>

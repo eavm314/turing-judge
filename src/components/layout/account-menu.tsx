@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,16 +13,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { handleSignIn, handleSignOut } from "@/lib/auth/client-handlers";
+import { handleSignOut } from "@/lib/auth/client-handlers";
 import { useSession } from "@/providers/user-provider";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 
 export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
   const [open, setOpen] = useState(false);
-  const user = useSession();
+  const { user, setOpenSignIn } = useSession();
 
-  if (!user) return <Button variant={variant} onClick={handleSignIn}>Sign In</Button>;
+  if (!user) return <Button variant={variant} onClick={() => setOpenSignIn(true)}>Sign In</Button>;
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -34,13 +34,13 @@ export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setOpen(false)}>
           <Link href="/projects" className="cursor-pointer w-full">
             My Projects
           </Link>
         </DropdownMenuItem>
         {user.role === 'EDITOR' &&
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setOpen(false)}>
             <Link href="/problems/editor" className="cursor-pointer w-full">
               Problems Editor
             </Link>

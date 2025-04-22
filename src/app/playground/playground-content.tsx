@@ -23,7 +23,7 @@ const Canvas = dynamic(() => import("@/components/playground/Canvas"), {
 });
 
 export default function PlaygroundContent({ data }: { data?: Project }) {
-  const user = useSession();
+  const { user } = useSession();
   const isOwner = data ? user?.id === data.userId : true;
 
   const automaton = new FiniteStateMachine(data?.automaton as unknown as JsonFSM | undefined)

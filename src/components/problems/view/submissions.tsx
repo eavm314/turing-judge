@@ -24,15 +24,10 @@ export default function Submissions({ problemId }: { problemId: string }) {
 
   const handleRefresh = async () => {
     setLoading(true)
-    try {
-      const response = await fetch(`/api/queries/submissions/${problemId}`);
-      const data = await response.json();
-      setSubmissions(data);
-    } catch (error) {
-      console.error("Error fetching submissions, try again later.")
-    } finally {
-      setLoading(false);
-    }
+    const response = await fetch(`/api/queries/submissions/${problemId}`);
+    const data = await response.json();
+    setSubmissions(data);
+    setLoading(false);
   }
 
   return (

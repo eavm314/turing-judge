@@ -13,13 +13,12 @@ import { useSession } from "@/providers/user-provider";
 import { useSaveAutomatonPrompt } from "@/components/modal/use-save-automaton";
 
 export function SaveAutomaton() {
-  const user = useSession();
+  const { user, setOpenSignIn } = useSession();
   const { automaton } = useAutomaton();
 
   const [retry, setRetry] = useState(false);
 
   const { automatonId } = useParams<{ automatonId: string }>();
-  const router = useRouter();
 
   const saveAutomatonPrompt = useSaveAutomatonPrompt();
 
@@ -32,7 +31,7 @@ export function SaveAutomaton() {
 
   const handleSave = async () => {
     if (!user) {
-      await handleSignIn();
+      setOpenSignIn(true);
       setRetry(true);
       return;
     }
