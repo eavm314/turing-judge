@@ -49,9 +49,16 @@ export function SwitchMode() {
       {mode === 'simulation' ? (
         <button
           disabled
-          className="rounded-md border bg-background px-6 py-2 text-sm font-medium text-muted-foreground opacity-70"
+          className="rounded-md border bg-background px-6 py-2 text-sm font-medium text-muted-foreground"
         >
           Simulation
+        </button>
+      ) : mode === 'viewer' ? (
+        <button
+          disabled
+          className="rounded-md border bg-background px-6 py-2 text-sm font-medium text-muted-foreground"
+        >
+          Only View
         </button>
       ) : (
         <div className="flex overflow-hidden rounded-md border bg-background">

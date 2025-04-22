@@ -1,3 +1,4 @@
+import { useAddTransitionPrompt } from "@/components/modal/use-add-transition";
 import { useAutomaton, usePlaygroundMode } from "@/providers/playground-provider";
 import {
   applyEdgeChanges,
@@ -11,7 +12,6 @@ import {
 import "@xyflow/react/dist/style.css";
 import { useCallback, useEffect, useState } from "react";
 import { fsmToFlow } from "./transformations";
-import { useAddTransitionPrompt } from "@/components/modal/use-add-transition";
 
 export const useCanvasHandlers = () => {
   const { automaton, updateAutomaton } = useAutomaton();

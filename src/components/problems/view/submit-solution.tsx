@@ -65,15 +65,15 @@ export function SubmitSolution() {
     setSubmitting(true)
 
     try {
-      // Validate JSON
       const parsedCode = JSON.parse(code)
-
-      await submitSolution(problemId as string, selectedAutomaton?.id || null, null);
+      if (selectedAutomaton) {
+        await submitSolution(problemId as string, selectedAutomaton.id, null);
+      } else {
+        await submitSolution(problemId as string, null, parsedCode);
+      }
 
       setOpenDialog(false)
-      // alert("Solution submitted successfully!")
     } catch (error) {
-      alert("Invalid JSON. Please check your code.")
       console.error(error)
     } finally {
       setSubmitting(false)

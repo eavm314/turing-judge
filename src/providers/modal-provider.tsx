@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState } from "react";
 
 import { Modal } from "@/components/modal";
 
-type ModalType = "alert" | "confirm" | "prompt" | "custom";
+type ModalType = "confirm" | "prompt" | "custom";
 
 export interface CustomContentProps<T, D = undefined> {
   value: T
@@ -37,7 +37,6 @@ interface ModalContextType {
   isOpen: boolean
   modalType: ModalType
   options: CustomModalOptions<unknown, unknown>
-  showAlert: (options: ModalOptions) => Promise<void>
   showConfirm: (options: ModalOptions) => Promise<boolean>
   showPrompt: (options: ModalOptions) => Promise<string | null>
   showCustomModal: <T, D = undefined>(options: CustomModalOptions<T, D>) => Promise<T | null>
@@ -48,28 +47,11 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [modalType, setModalType] = useState<ModalType>("alert");
+  const [modalType, setModalType] = useState<ModalType>("confirm");
   const [options, setOptions] = useState<CustomModalOptions<any, any>>({});
 
   const closeModal = () => {
     setIsOpen(false);
-  }
-
-  const showAlert = (options: ModalOptions): Promise<void> => {
-    return new Promise((resolve) => {
-      setModalType("alert");
-      setOptions({
-        title: options.title || "Alert",
-        message: options.message || "",
-        confirmLabel: options.confirmLabel || "OK",
-        onConfirm: () => {
-          closeModal()
-          resolve()
-          options.onConfirm?.()
-        },
-      });
-      setIsOpen(true);
-    })
   }
 
   const showConfirm = (options: ModalOptions): Promise<boolean> => {
@@ -155,7 +137,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         isOpen,
         modalType,
         options,
-        showAlert,
         showConfirm,
         showPrompt,
         showCustomModal,

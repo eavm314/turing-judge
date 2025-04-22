@@ -11,10 +11,13 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { useModal } from "@/providers/modal-provider";
+import { useIsOwner } from "@/providers/playground-provider";
 
-export function PublicSelect({ isPublic, isOwner }: { isPublic: boolean, isOwner: boolean }) {
+export function PublicSelect({ isPublic }: { isPublic: boolean }) {
   const { automatonId } = useParams<{ automatonId: string }>();
   const { showConfirm } = useModal();
+
+  const isOwner = useIsOwner();
 
   const handleSelectChange = async (value: string) => {
     const confirmation = await showConfirm({
@@ -25,15 +28,10 @@ export function PublicSelect({ isPublic, isOwner }: { isPublic: boolean, isOwner
     });
     if (!confirmation) return;
 
-    const result = await updateAutomaton({
+    await updateAutomaton({
       id: automatonId,
       isPublic: value === 'public'
     })
-    if (result) {
-      alert("Automaton visibility updated successfully.");
-    } else {
-      alert("Automaton visibility not updated.");
-    }
   }
   return (
     <Select disabled={!isOwner}

@@ -18,6 +18,7 @@ import { AddStateButton, SwitchMode } from "./panel-actions";
 import { StateNode } from "./state-node";
 import { TransitionEdge } from "./transition-edge";
 import { useCanvasHandlers } from "./utils/useCanvasHandlers";
+import { usePlaygroundMode } from "@/providers/playground-provider";
 
 const nodeTypes: NodeTypes = {
   state: StateNode,
@@ -40,8 +41,17 @@ const proOptions = { hideAttribution: true };
 
 export default function Canvas() {
   const { theme } = useTheme();
+  const { mode } = usePlaygroundMode();
 
-  const { nodes, edges, onConnect, onEdgesChange, onNodesChange } = useCanvasHandlers();
+  const isInteractive = mode !== 'simulation' && mode !== 'viewer';
+
+  const { 
+    nodes, 
+    edges, 
+    onConnect, 
+    onEdgesChange, 
+    onNodesChange, 
+  } = useCanvasHandlers();
 
   return (
     <div className="flex-1 h-full">
@@ -59,6 +69,9 @@ export default function Canvas() {
         fitView
         fitViewOptions={viewOptions}
         proOptions={proOptions}
+        nodesDraggable={isInteractive}
+        nodesConnectable={isInteractive}
+        elementsSelectable={isInteractive}
       >
         <Controls position="bottom-right" />
         <Background color={theme === 'light' ? 'black' : 'white'} />

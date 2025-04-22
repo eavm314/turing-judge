@@ -9,6 +9,7 @@ import { PlaygroundLayout } from "@/components/playground/Layout";
 import SideMenu from "@/components/playground/SideMenu";
 import { FiniteStateMachine, type JsonFSM } from "@/lib/automaton/FiniteStateMachine";
 import { PlaygroundStoreProvider } from "@/providers/playground-provider";
+import { useSession } from "@/providers/user-provider";
 
 const LoadingCanvas = () => (
   <div className="flex-1 h-full flex items-center justify-center">
@@ -22,8 +23,14 @@ const Canvas = dynamic(() => import("@/components/playground/Canvas"), {
 });
 
 export default function PlaygroundContent({ data }: { data?: Project }) {
+  const user = useSession();
+  const isOwner = data ? user?.id === data.userId : true;
+
+  const automaton = new FiniteStateMachine(data?.automaton as unknown as JsonFSM | undefined)
+  const mode = isOwner ? 'states' : 'viewer';
+
   return (
-    <PlaygroundStoreProvider initState={{ automaton: new FiniteStateMachine(data?.automaton as unknown as JsonFSM | undefined) }}>
+    <PlaygroundStoreProvider initState={{ automaton, mode, isOwner }}>
       <div className="flex flex-col h-screen">
         <PlaygroundLayout data={data} />
         <main className="flex h-full">

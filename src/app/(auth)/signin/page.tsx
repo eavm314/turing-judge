@@ -1,6 +1,5 @@
-import Link from "next/link"
-import type { Metadata } from "next"
 import { SignInForm } from "@/components/auth/signin-form"
+import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Sign In",
@@ -13,7 +12,7 @@ export default function SignInPage() {
       <div className="py-10 px-4 space-y-10 border-4 rounded-xl">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Welcome!</h1>
-          <p className="text-sm text-accent-foreground">Choose your favorite provider to sign in to your account:</p>
+          <p className="text-sm text-accent">Choose your favorite provider to sign in to your account:</p>
         </div>
         <SignInForm />
         {/* <p className="px-8 text-center text-sm text-muted-foreground">

@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useRef } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import { useStore } from 'zustand';
 import { useShallow } from "zustand/react/shallow";
 
@@ -19,9 +19,7 @@ export const PlaygroundStoreProvider = ({
   children, initState
 }: PlaygroundProviderProps) => {
   const storeRef = useRef<PlaygroundStoreApi | null>(null);
-  if (storeRef.current === null) {
-    storeRef.current = createPlaygroundStore(initState);
-  }
+  storeRef.current = useMemo(() => createPlaygroundStore(initState), [initState]);
 
   return (
     <PlaygroundStoreContext.Provider value={storeRef.current}>
@@ -45,10 +43,12 @@ export const usePlaygroundStore = <T,>(
 export const useAutomaton = () => usePlaygroundStore(useShallow((state) => ({
   automaton: state.automaton,
   updateAutomaton: state.updateAutomaton,
-  setExample: state.setExample
+  setExample: state.setExample,
 })));
 
 export const usePlaygroundMode = () => usePlaygroundStore(useShallow((state) => ({
   mode: state.mode,
   setMode: state.setMode
 })));
+
+export const useIsOwner = () => usePlaygroundStore((state) => state.isOwner);

@@ -3,11 +3,12 @@ import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
 import { createStore } from 'zustand/vanilla';
 import { examples } from "./data";
 
-export type PlaygroundMode = "states" | "transitions" | "simulation";
+export type PlaygroundMode = "states" | "transitions" | "simulation" | "viewer";
 
 export type PlaygroundState = {
   automaton: FiniteStateMachine;
   mode: PlaygroundMode,
+  isOwner: boolean,
 }
 
 export type PlaygroundActions = {
@@ -21,6 +22,7 @@ export type PlaygroundStore = PlaygroundState & PlaygroundActions;
 const defaultState: PlaygroundState = {
   mode: "states",
   automaton: new FiniteStateMachine(),
+  isOwner: true,
 };
 
 export const createPlaygroundStore = (initialState?: Partial<PlaygroundState>) => {

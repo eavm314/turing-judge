@@ -38,15 +38,10 @@ export function SaveAutomaton() {
     }
 
     if (automatonId) {
-      const result = await updateAutomaton({
+      await updateAutomaton({
         id: automatonId,
         automaton: automaton.toJson(),
       });
-      if (result) {
-        alert("Automaton saved successfully.");
-      } else {
-        alert("Automaton not saved.");
-      }
       return;
     }
 
