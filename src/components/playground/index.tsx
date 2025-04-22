@@ -22,7 +22,7 @@ const Canvas = dynamic(() => import("@/components/playground/Canvas"), {
   loading: LoadingCanvas,
 });
 
-export default function PlaygroundContent({ data }: { data?: Project }) {
+export default function Playground({ data }: { data?: Project }) {
   const { user } = useSession();
   const isOwner = data ? user?.id === data.userId : true;
 
