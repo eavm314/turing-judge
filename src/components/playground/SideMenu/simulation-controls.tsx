@@ -47,7 +47,7 @@ export function SimulationControls() {
 
   const goToPreviousState = () => {
     // This would be implemented with actual logic
-    console.log("Go to previous state")
+    // console.log("Go to previous state")
   }
 
   const goToNextState = (nextState: string, symbol: string) => {

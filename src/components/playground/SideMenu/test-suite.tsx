@@ -1,35 +1,89 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { PenLine, Play, Shuffle } from "lucide-react";
+import { PenLine, Play, Shuffle, CircleStop } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { useIsOwner, usePlaygroundMode } from "@/providers/playground-provider";
-
+import { useReactFlow } from "@xyflow/react";
 
 export function TestSuite() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { mode, setMode } = usePlaygroundMode();
   const isOwner = useIsOwner();
+  const { updateNodeData, setNodes, updateEdgeData, setEdges } = useReactFlow();
 
   const isSimulation = mode === 'simulation';
 
+  const [simulating, setSimulating] = useState(false);
+  const [simulationInterval, setSimulationInterval] = useState<NodeJS.Timeout>();
+
   const handleTest = () => {
     const input = inputRef.current!.value;
-    const testResult = AutomatonExecutor.execute(input);
-    console.log(testResult);
+    const { accepted } = AutomatonExecutor.execute(input);
+    console.log('Accepted:', accepted);
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleTest();
+    }
   }
 
   const switchSimulationMode = () => {
-    setMode(!isSimulation ? 'simulation' : isOwner ? 'states' : 'viewer');
+    if (!isSimulation) {
+      setMode('simulation');
+      return;
+    }
+
+    setSimulating(false);
+    setMode(isOwner ? 'states' : 'viewer');
   }
 
-  const startAutoSimulation = () => {
-    
-  }
+  useEffect(() => {
+    if (!simulating) {
+      clearInterval(simulationInterval);
+      setNodes((nodes) => nodes.map(node => ({ ...node, data: { ...node.data, visited: false } })));
+      setEdges((edges) => edges.map(edge => ({ ...edge, data: { ...edge.data, visited: false } })));
+      return;
+    }
+
+    const input = inputRef.current!.value;
+    const { accepted, path } = AutomatonExecutor.execute(input);
+    if (!accepted) {
+      console.log('No solution found');
+      setSimulating(false);
+      return;
+    }
+
+    const initialState = AutomatonExecutor.getAutomaton().initial;
+    updateNodeData(initialState, (data) => ({ ...data, visited: true }));
+
+    let step = 0;
+    let transition = true;
+    const interval = setInterval(() => {
+      if (step >= path.length) {
+        setSimulating(false);
+        return;
+      }
+      const [from, to, symbol] = path[step];
+      if (transition) {
+        updateNodeData(from, (data) => ({ ...data, visited: false }));
+        updateEdgeData(`${from}->${to}`, (data) => ({ ...data, visited: true }));
+      } else {
+        updateEdgeData(`${from}->${to}`, (data) => ({ ...data, visited: false }));
+        updateNodeData(to, (data) => ({ ...data, visited: true }));
+        step++;
+      }
+      transition = !transition;
+    }, 800);
+
+    setSimulationInterval(interval);
+  }, [simulating]);
 
   return (
     <div className="p-4">
@@ -38,13 +92,14 @@ export function TestSuite() {
         ref={inputRef}
         type="text"
         placeholder="Enter test string"
+        onKeyDown={handleKeyDown}
       />
       <div className="flex gap-2 my-3">
         <Button variant="secondary" className="w-full" onClick={handleTest}>
           Test
         </Button>
         <Button variant={isSimulation ? 'destructive' : 'default'} className="w-full" onClick={switchSimulationMode}>
-          {isSimulation ? 'Stop' : 'Simulate'}
+          {isSimulation ? 'Exit' : 'Simulate'}
         </Button>
       </div>
       {isSimulation && (
@@ -55,21 +110,21 @@ export function TestSuite() {
           </CardHeader>
           <CardContent className="space-y-2 px-4 pb-4">
             <Button
-              onClick={() => startAutoSimulation()}
+              onClick={() => setSimulating(prev => !prev)}
               className="w-full justify-start"
-              variant="outline"
+              variant={simulating ? "destructive" : "outline"}
             >
-              <Play className="h-4 w-4" />
-              Find Solution
+              {simulating ? <CircleStop className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              {simulating ? "Stop" : "Find Solution"}
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            {/* <Button className="w-full justify-start" variant="outline">
               <Shuffle className="h-4 w-4" />
               Random Steps
             </Button>
             <Button className="w-full justify-start" variant="outline">
               <PenLine className="h-4 w-4" />
               Manual Simulation
-            </Button>
+            </Button> */}
           </CardContent>
         </Card>
       )}

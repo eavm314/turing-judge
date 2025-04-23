@@ -26,9 +26,14 @@ const defaultState: PlaygroundState = {
 };
 
 export const createPlaygroundStore = (initialState?: Partial<PlaygroundState>) => {
-  return createStore<PlaygroundStore>()((set) => ({
+  const initialStateWithDefaults = {
     ...defaultState,
     ...initialState,
+  };
+
+  AutomatonExecutor.setAutomaton(initialStateWithDefaults.automaton);
+  return createStore<PlaygroundStore>()((set) => ({
+    ...initialStateWithDefaults,
     setMode: (newMode: PlaygroundMode) => set({ mode: newMode }),
     setExample: (key: string) => {
       const newAutomaton = new FiniteStateMachine(examples[key]);

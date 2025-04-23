@@ -108,7 +108,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   }
 
   const showCustomModal = <T, D>(options: CustomModalOptions<T, D>): Promise<T | null> => {
-    console.log(options.customComponentData)
     return new Promise((resolve) => {
       setModalType("custom");
       setOptions({

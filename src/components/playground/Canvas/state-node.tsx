@@ -1,23 +1,23 @@
-import { useAutomaton, usePlaygroundMode } from "@/providers/playground-provider";
 import {
   Handle,
   NodeToolbar,
   Position,
   type Node,
-  type NodeProps,
+  type NodeProps
 } from "@xyflow/react";
-import { useCallback } from "react";
+
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/ui/utils";
+import { useAutomaton, usePlaygroundMode } from "@/providers/playground-provider";
 
 function CustomToolbar({ nodeId, final }: { nodeId: string, final: boolean }) {
   const { updateAutomaton } = useAutomaton();
 
-  const handleClick = useCallback(() => {
+  const handleClick = () => {
     updateAutomaton((auto) => {
       auto.toggleFinal(nodeId);
     });
-  }, [updateAutomaton, nodeId]);
+  }
 
   return (
     <NodeToolbar className="nopan -top-1" position={Position.Bottom}>
@@ -47,6 +47,7 @@ const customHandleStyles = {
 export type StateNodeType = Node<{
   isInitial: boolean,
   isFinal: boolean,
+  visited: boolean,
 }>
 
 export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
@@ -59,9 +60,12 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
           <div className="w-8 h-0.5 bg-foreground -rotate-[30deg]"></div>
         </div>
       }
-      <div className={cn("relative grid rounded-full size-full border-2 bg-muted/80",
+      <div className={cn(
+        "relative grid rounded-full size-full border-2 bg-muted/80 border-foreground outline-foreground",
         data.isFinal && 'outline outline-2 -outline-offset-[12px]',
-        selected ? 'border-remark outline-remark' : 'border-foreground outline-foreground')}>
+        selected && 'border-green-500 outline-green-500',
+        data.visited && 'bg-amber-300 dark:bg-purple-900',
+      )}>
         <div className="m-auto text-2xl">{id}</div>
         {mode === "transitions" &&
           <Handle style={customHandleStyles} type="source" position={Position.Top} />
