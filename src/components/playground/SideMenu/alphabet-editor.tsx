@@ -7,11 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EPSILON } from "@/constants/symbols";
-import { useAutomaton } from "@/providers/playground-provider";
+import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
+import { cn } from "@/lib/ui/utils";
 
 export function AlphabetEditor() {
   const { automaton, updateAutomaton } = useAutomaton();
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const isOwner = useIsOwner();
 
   const handleAddToAlphabet = () => {
     const inputChar = inputRef.current!.value.trim();
@@ -60,14 +63,16 @@ export function AlphabetEditor() {
           maxLength={1}
           minLength={1}
           onKeyDown={handleKeyDown}
+          disabled={!isOwner}
         />
-        <Button size="sm" onClick={handleAddToAlphabet}>Add</Button>
+        <Button size="sm" onClick={handleAddToAlphabet} disabled={!isOwner}>Add</Button>
       </div>
       <div className="flex flex-wrap gap-2 font-mono">
         {!automaton.alphabet.includes(EPSILON) &&
           <Button variant="outline" size="default"
             className="flex items-center gap-1 px-2 w-11 h-[30px]"
             onClick={handleAddEpsilonToAlphabet}
+            disabled={!isOwner}
           >
             <span>{EPSILON}</span>
             <PlusCircle size={16} />
@@ -76,8 +81,9 @@ export function AlphabetEditor() {
           <Badge key={symbol} variant="outline" className="flex items-center gap-1 p-0 w-11">
             <span className="py-1 pl-2 pr-0 text-sm">{symbol}</span>
             <button
-              className="p-2 pt-1 text-muted-foreground hover:text-foreground select-none"
+              className={cn("p-2 pt-1 text-muted-foreground select-none", isOwner && 'hover:text-foreground')}
               onClick={() => handleRemoveFromAlphabet(symbol)}
+              disabled={!isOwner}
             >
               x
             </button>
