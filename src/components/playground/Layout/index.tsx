@@ -24,7 +24,7 @@ export function PlaygroundLayout({ data }: { data?: Project }) {
         <SaveAutomaton />
       </nav>
       <nav className="ml-auto flex items-center gap-4 sm:gap-6">
-        <ExamplesMenu />
+        {/* <ExamplesMenu /> */}
         <DarkModeToggle />
         <AccountMenu variant="ghost" />
       </nav>
