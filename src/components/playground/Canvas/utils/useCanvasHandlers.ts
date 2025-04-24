@@ -22,6 +22,8 @@ export const useCanvasHandlers = () => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
+  console.log(automaton)
+
   useEffect(() => {
     const { nodes: newNodes, edges: newEdges } = fsmToFlow(automaton, nodes);
     setNodes(newNodes);
@@ -51,7 +53,7 @@ export const useCanvasHandlers = () => {
         setNodes((nds) => applyNodeChanges(changes, nds));
       }
     },
-    [setNodes],
+    [setNodes, updateAutomaton],
   );
 
   const onEdgesChange: OnEdgesChange = useCallback(
@@ -69,7 +71,7 @@ export const useCanvasHandlers = () => {
         setEdges((eds) => applyEdgeChanges(changes, eds));
       }
     },
-    [setEdges],
+    [setEdges, updateAutomaton],
   );
 
   const onConnect: OnConnect = useCallback(
@@ -80,7 +82,7 @@ export const useCanvasHandlers = () => {
         auto.addTransition(connection.source, connection.target, symbols);
       });
     },
-    [automaton],
+    [automaton, updateAutomaton],
   );
 
   useEffect(() => {

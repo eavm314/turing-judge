@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useEffect, useMemo, useRef } from "react";
+import { createContext, useContext, useMemo, useRef } from "react";
 import { useStore } from 'zustand';
 import { useShallow } from "zustand/react/shallow";
 

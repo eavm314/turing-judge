@@ -30,7 +30,6 @@ export const createPlaygroundStore = (initialState?: Partial<PlaygroundState>) =
     ...defaultState,
     ...initialState,
   };
-
   AutomatonExecutor.setAutomaton(initialStateWithDefaults.automaton);
   return createStore<PlaygroundStore>()((set) => ({
     ...initialStateWithDefaults,
