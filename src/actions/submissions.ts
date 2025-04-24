@@ -83,8 +83,8 @@ const verifySolution = async (submissionId: number, problemId: string, solution:
       allowTM: true,
       allowNonDet: true,
       stateLimit: true,
-      stepLimit: true,
-      timeLimit: true,
+      depthLimit: true,
+      maxStepLimit: true,
       testCases: {
         select: {
           input: true,

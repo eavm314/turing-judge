@@ -13,7 +13,7 @@ export type ProblemSetItem = Pick<Problem, 'id' | 'title' | 'difficulty' | 'upda
 
 export type ProblemEditorItem = Pick<Problem, 'id' | 'title' | 'isPublic' | 'updatedAt' | 'createdAt'>
 
-export type ProblemConstraints = Pick<Problem, 'allowFSM' | 'allowPDA' | 'allowTM' | 'allowNonDet' | 'stateLimit' | 'stepLimit' | 'timeLimit'>
+export type ProblemConstraints = Pick<Problem, 'allowFSM' | 'allowPDA' | 'allowTM' | 'allowNonDet' | 'stateLimit' | 'depthLimit' | 'maxStepLimit'>
 
 export type ProblemView = Pick<Problem, 'id' | 'title' | 'difficulty' | 'statement'> & { constraints: ProblemConstraints }
 

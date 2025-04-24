@@ -49,10 +49,10 @@ export const Constraints = ({ constraints }: { constraints: ProblemConstraints }
               <span className="font-medium mr-2">State Limit:</span> {constraints.stateLimit} states
             </li>
             <li className="flex items-center">
-              <span className="font-medium mr-2">Step Limit:</span> {constraints.stepLimit} steps
+              <span className="font-medium mr-2">Depth Limit:</span> {constraints.depthLimit} steps
             </li>
             <li className="flex items-center">
-              <span className="font-medium mr-2">Time Limit:</span> {constraints.timeLimit}ms
+              <span className="font-medium mr-2">Maximum Step Limit:</span> {constraints.maxStepLimit} steps
             </li>
           </ul>
         </div>

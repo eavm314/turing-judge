@@ -48,8 +48,8 @@ export const getProblemView = async (id: string): Promise<ProblemView> => {
       allowTM: problem.allowTM,
       allowNonDet: problem.allowNonDet,
       stateLimit: problem.stateLimit,
-      stepLimit: problem.stepLimit,
-      timeLimit: problem.timeLimit,
+      depthLimit: problem.depthLimit,
+      maxStepLimit: problem.maxStepLimit,
     },
   }
 
@@ -182,8 +182,8 @@ export const getProblemEditable = async (id: string): Promise<ProblemSchema> => 
       allowTM: true,
       allowNonDet: true,
       stateLimit: true,
-      stepLimit: true,
-      timeLimit: true,
+      depthLimit: true,
+      maxStepLimit: true,
       testCases: {
         select: {
           input: true,

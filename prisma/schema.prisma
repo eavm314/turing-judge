@@ -10,6 +10,7 @@ datasource db {
 enum Role {
   USER
   EDITOR
+  ADMIN
 }
 
 model User {
@@ -85,16 +86,13 @@ model Problem {
   statement  String            @db.Text
   isPublic   Boolean           @map("is_public")
 
-  allowFSM    Boolean @map("allow_fsm")
-  allowPDA    Boolean @map("allow_pda")
-  allowTM     Boolean @map("allow_tm")
-  allowNonDet Boolean @map("allow_non_deterministic")
-  stateLimit  Int     @map("state_limit")
-  stepLimit   Int     @map("step_limit")
-  timeLimit   Int     @map("time_limit")
-
-  publicSolution    Boolean @default(false) @map("public_solution")
-  solutionAutomaton Json?   @map("solution_automaton")
+  allowFSM     Boolean @map("allow_fsm")
+  allowPDA     Boolean @map("allow_pda")
+  allowTM      Boolean @map("allow_tm")
+  allowNonDet  Boolean @map("allow_non_deterministic")
+  stateLimit   Int     @map("state_limit")
+  depthLimit   Int     @map("depth_limit")
+  maxStepLimit Int     @map("max_step_limit")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -123,7 +121,6 @@ enum Verdict {
   WRONG_RESULT
   WRONG_OUTPUT
   STEP_LIMIT_EXCEEDED
-  TIME_LIMIT_EXCEEDED
   INVALID_FORMAT
   UNKNOWN_ERROR
 }
@@ -143,7 +140,6 @@ model Submission {
   message   String?
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
 
   user    User    @relation(fields: [userId], references: [id])
   problem Problem @relation(fields: [problemId], references: [id])

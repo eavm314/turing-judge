@@ -33,8 +33,8 @@ export function ProblemForm({ problemId, problemData }:
       allowTM: false,
       allowNonDet: false,
       stateLimit: 10,
-      stepLimit: 10,
-      timeLimit: 1000,
+      depthLimit: 10,
+      maxStepLimit: 100,
       testCases: "",
     },
   });
@@ -51,7 +51,7 @@ export function ProblemForm({ problemId, problemData }:
   }
 
   const basicErrors = form.formState.errors.title || form.formState.errors.statement;
-  const automatonErrors = form.formState.errors.stateLimit || form.formState.errors.stepLimit || form.formState.errors.timeLimit;
+  const automatonErrors = form.formState.errors.stateLimit || form.formState.errors.depthLimit || form.formState.errors.maxStepLimit;
   const testCasesErrors = form.formState.errors.testCases;
 
   const onInvalidForm = () => {
@@ -230,10 +230,10 @@ export function ProblemForm({ problemId, problemData }:
 
                   <FormField
                     control={form.control}
-                    name="stepLimit"
+                    name="depthLimit"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Step Limit</FormLabel>
+                        <FormLabel>Depth Limit</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -242,7 +242,7 @@ export function ProblemForm({ problemId, problemData }:
                             onChange={(e) => field.onChange(Number.parseInt(e.target.value) || 1)}
                           />
                         </FormControl>
-                        <FormDescription>Maximum number of steps allowed</FormDescription>
+                        <FormDescription>Maximum depth explored per test case before backtracking</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -250,10 +250,10 @@ export function ProblemForm({ problemId, problemData }:
 
                   <FormField
                     control={form.control}
-                    name="timeLimit"
+                    name="maxStepLimit"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Time Limit (ms)</FormLabel>
+                        <FormLabel>Maximum Step Limit</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -262,7 +262,7 @@ export function ProblemForm({ problemId, problemData }:
                             onChange={(e) => field.onChange(Number.parseInt(e.target.value) || 1)}
                           />
                         </FormControl>
-                        <FormDescription>Maximum execution time in milliseconds</FormDescription>
+                        <FormDescription>Maximum accumulated steps per test case</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}

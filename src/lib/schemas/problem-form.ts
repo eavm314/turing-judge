@@ -16,8 +16,8 @@ export const problemSchema = z.object({
   allowTM: z.boolean(),
   allowNonDet: z.boolean(),
   stateLimit: z.number().int().min(1),
-  stepLimit: z.number().int().min(1),
-  timeLimit: z.number().int().min(1),
+  depthLimit: z.number().int().min(1),
+  maxStepLimit: z.number().int().min(1),
   testCases: z.string().refine((text) => {
     const lines = text.split("\n");
     const trimmedLines = lines.map(line => line.trim()).filter(line => line.length > 0);

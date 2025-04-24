@@ -5,7 +5,7 @@ CREATE TABLE `users` (
     `image` VARCHAR(191) NULL,
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NULL,
-    `role` ENUM('USER', 'EDITOR') NOT NULL DEFAULT 'USER',
+    `role` ENUM('USER', 'EDITOR', 'ADMIN') NOT NULL DEFAULT 'USER',
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -28,7 +28,7 @@ CREATE TABLE `accounts` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `user_automata` (
+CREATE TABLE `projects` (
     `id` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NULL,
     `user_id` VARCHAR(191) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE `problems` (
     `id` VARCHAR(191) NOT NULL,
     `author_id` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
-    `difficulty` INTEGER NOT NULL,
+    `difficulty` ENUM('UNKNOWN', 'EASY', 'MEDIUM', 'HARD', 'EXPERT') NOT NULL,
     `statement` TEXT NOT NULL,
     `is_public` BOOLEAN NOT NULL,
     `allow_fsm` BOOLEAN NOT NULL,
@@ -54,9 +54,8 @@ CREATE TABLE `problems` (
     `allow_tm` BOOLEAN NOT NULL,
     `allow_non_deterministic` BOOLEAN NOT NULL,
     `state_limit` INTEGER NOT NULL,
-    `step_limit` INTEGER NOT NULL,
-    `time_limit` INTEGER NOT NULL,
-    `solution_automaton` JSON NOT NULL,
+    `depth_limit` INTEGER NOT NULL,
+    `max_step_limit` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 
@@ -68,7 +67,7 @@ CREATE TABLE `test_cases` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `problem_id` VARCHAR(191) NOT NULL,
     `input` VARCHAR(191) NOT NULL,
-    `expected_result` VARCHAR(191) NOT NULL,
+    `expected_result` BOOLEAN NOT NULL,
     `expected_output` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
@@ -79,10 +78,10 @@ CREATE TABLE `submissions` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `user_id` VARCHAR(191) NOT NULL,
     `problem_id` VARCHAR(191) NOT NULL,
-    `verdict` ENUM('ACCEPTED', 'WRONG_ANSWER', 'TIME_LIMIT_EXCEEDED', 'INVALID_FORMAT', 'UNKNOWN_ERROR') NULL,
+    `verdict` ENUM('ACCEPTED', 'WRONG_RESULT', 'WRONG_OUTPUT', 'STEP_LIMIT_EXCEEDED', 'INVALID_FORMAT', 'UNKNOWN_ERROR') NULL,
     `status` ENUM('PENDING', 'JUDGING', 'FINISHED') NOT NULL,
+    `message` VARCHAR(191) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -91,7 +90,7 @@ CREATE TABLE `submissions` (
 ALTER TABLE `accounts` ADD CONSTRAINT `accounts_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `user_automata` ADD CONSTRAINT `user_automata_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `projects` ADD CONSTRAINT `projects_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `problems` ADD CONSTRAINT `problems_author_id_fkey` FOREIGN KEY (`author_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
