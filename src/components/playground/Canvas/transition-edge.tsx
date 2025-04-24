@@ -10,7 +10,7 @@ import { useEffect, useRef } from 'react';
 
 export type TransitionEdgeType = Edge<{
   symbols: string[],
-  visited: boolean,
+  visited?: boolean,
 }>
 
 export function TransitionEdge({ id, source, target, style, data, selected }: EdgeProps<TransitionEdgeType>) {

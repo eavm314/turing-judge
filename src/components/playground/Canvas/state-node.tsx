@@ -47,7 +47,7 @@ const customHandleStyles = {
 export type StateNodeType = Node<{
   isInitial: boolean,
   isFinal: boolean,
-  visited: boolean,
+  visited?: boolean,
 }>
 
 export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {

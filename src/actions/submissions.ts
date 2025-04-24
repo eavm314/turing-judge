@@ -112,8 +112,8 @@ const verifySolution = async (submissionId: number, problemId: string, solution:
   let overallResult = true;
   let failedTestCase: typeof problemTestData.testCases[number] | null = null;
   for (const testCase of problemTestData.testCases) {
-    const result = AutomatonExecutor.execute(testCase.input, automaton.initial);
-    overallResult = overallResult && (result === testCase.expectedResult);
+    const result = AutomatonExecutor.execute(testCase.input);
+    overallResult = overallResult && (result.accepted === testCase.expectedResult);
     if (!overallResult) {
       failedTestCase = testCase;
       break;
