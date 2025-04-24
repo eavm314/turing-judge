@@ -50,7 +50,7 @@ export function SaveAutomaton() {
       return;
     }
     await createAutomaton({
-      title: userInput.title || null,
+      title: userInput.title.trim() || null,
       isPublic: userInput.isPublic,
       type: "FSM",
       automaton: automaton.toJson(),

@@ -38,7 +38,7 @@ export function PublicSelect({ isPublic }: { isPublic: boolean }) {
       value={isPublic ? 'public' : 'private'}
       onValueChange={handleSelectChange}
     >
-      <SelectTrigger className="w-28">
+      <SelectTrigger className="w-28 disabled:opacity-80">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

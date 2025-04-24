@@ -22,8 +22,6 @@ export const useCanvasHandlers = () => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
-  console.log(automaton)
-
   useEffect(() => {
     const { nodes: newNodes, edges: newEdges } = fsmToFlow(automaton, nodes);
     setNodes(newNodes);
