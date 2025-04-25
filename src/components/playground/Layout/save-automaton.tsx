@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
 import { useSession } from "@/providers/user-provider";
+import { useToast } from "@/hooks/use-toast";
 
 export function SaveAutomaton() {
   const { user, setOpenSignIn } = useSession();
@@ -26,8 +27,8 @@ export function SaveAutomaton() {
   const [openMenu, setOpenMenu] = useState(false);
 
   const { automatonId } = useParams<{ automatonId: string }>();
-
   const saveAutomatonPrompt = useSaveAutomatonPrompt();
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -73,6 +74,10 @@ export function SaveAutomaton() {
         automaton: automaton.toJson(),
       });
       saveChanges();
+      toast({
+        description: "Your automaton has been saved successfully.",
+        variant: "success",
+      });
     } else {
       handleSaveAs();
     }

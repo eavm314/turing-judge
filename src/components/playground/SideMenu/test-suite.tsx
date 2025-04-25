@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { useIsOwner, usePlaygroundMode } from "@/providers/playground-provider";
 import { useReactFlow } from "@xyflow/react";
+import { useToast } from "@/hooks/use-toast";
 
 export function TestSuite() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -15,6 +16,7 @@ export function TestSuite() {
   const { mode, setMode } = usePlaygroundMode();
   const isOwner = useIsOwner();
   const { updateNodeData, setNodes, updateEdgeData, setEdges } = useReactFlow();
+  const { toast } = useToast();
 
   const isSimulation = mode === 'simulation';
 
@@ -24,7 +26,17 @@ export function TestSuite() {
   const handleTest = () => {
     const input = inputRef.current!.value;
     const { accepted } = AutomatonExecutor.execute(input);
-    console.log('Accepted:', accepted);
+    if (accepted) {
+      toast({
+        title: "Accepted",
+        variant: "success",
+      });
+    } else {
+      toast({
+        title: "Rejected",
+        variant: "destructive",
+      });
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -55,7 +67,10 @@ export function TestSuite() {
     const input = inputRef.current!.value;
     const { accepted, path } = AutomatonExecutor.execute(input);
     if (!accepted) {
-      console.log('No solution found');
+      toast({
+        title: "Rejected",
+        variant: "destructive",
+      });
       setSimulating(false);
       return;
     }
@@ -67,6 +82,10 @@ export function TestSuite() {
     let transition = true;
     const interval = setInterval(() => {
       if (step >= path.length) {
+        toast({
+          title: "Accepted",
+          variant: "success",
+        });
         setSimulating(false);
         return;
       }

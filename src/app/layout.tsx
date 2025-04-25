@@ -7,6 +7,7 @@ import { SessionProvider } from "@/providers/user-provider";
 import { auth } from "@/lib/auth";
 import { ModalProvider } from "@/providers/modal-provider";
 import { appName } from "@/constants/app";
+import { Toaster } from "@/components/ui/toaster";
 
 const orbitron = Orbitron({
   variable: "--font-orbitron",
@@ -34,6 +35,7 @@ export default async function RootLayout({
           <ModalProvider>
             <SessionProvider user={session?.user}>
               {children}
+              <Toaster />
             </SessionProvider>
           </ModalProvider>
         </ThemeProvider>
