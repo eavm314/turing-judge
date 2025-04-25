@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useAutomaton } from "@/providers/playground-provider"
 import { ChevronDown } from "lucide-react"
 
 const automatonExamples = [
@@ -17,7 +16,6 @@ const automatonExamples = [
 ]
 
 export function ExamplesMenu() {
-  const { setExample } = useAutomaton();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -28,10 +26,7 @@ export function ExamplesMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         {automatonExamples.map((example) => (
-          <DropdownMenuItem key={example.key}
-            className="cursor-pointer"
-            onClick={() => setExample(example.key)}
-          >
+          <DropdownMenuItem key={example.key}>
             {example.name}
           </DropdownMenuItem>
         ))}

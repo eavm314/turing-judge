@@ -42,8 +42,9 @@ export const usePlaygroundStore = <T,>(
 
 export const useAutomaton = () => usePlaygroundStore(useShallow((state) => ({
   automaton: state.automaton,
+  unsavedChanges: state.unsavedChanges,
   updateAutomaton: state.updateAutomaton,
-  setExample: state.setExample,
+  saveChanges: state.saveChanges,
 })));
 
 export const usePlaygroundMode = () => usePlaygroundStore(useShallow((state) => ({

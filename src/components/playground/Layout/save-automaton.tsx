@@ -16,11 +16,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
 import { useSession } from "@/providers/user-provider";
-import { set } from "zod";
 
 export function SaveAutomaton() {
   const { user, setOpenSignIn } = useSession();
-  const { automaton } = useAutomaton();
+  const { automaton, unsavedChanges, saveChanges } = useAutomaton();
   const isOwner = useIsOwner();
 
   const [retry, setRetry] = useState(false);
@@ -29,6 +28,16 @@ export function SaveAutomaton() {
   const { automatonId } = useParams<{ automatonId: string }>();
 
   const saveAutomatonPrompt = useSaveAutomatonPrompt();
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (unsavedChanges) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [unsavedChanges]);
 
   useEffect(() => {
     if (user && retry) {
@@ -63,30 +72,34 @@ export function SaveAutomaton() {
         id: automatonId,
         automaton: automaton.toJson(),
       });
+      saveChanges();
     } else {
       handleSaveAs();
     }
   };
 
   return (
-    <div className="flex items-center">
-      <Button size="sm" variant="secondary"
-        className="rounded-r-none border-r-0 text-sm"
-        onClick={handleSave}
-      >
-        <Save size={18} />
-        Save
-      </Button>
-      <DropdownMenu open={openMenu} onOpenChange={setOpenMenu}>
-        <DropdownMenuTrigger asChild>
-          <Button variant="secondary" size="sm" className="rounded-l-none px-2 border-l border-background">
-            <ChevronDown className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-24">
-          <DropdownMenuItem onClick={handleSaveAs}>Save As...</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+    <div className="flex items-center gap-8">
+      <div className="flex items-center">
+        <Button size="sm" variant="secondary"
+          className="rounded-r-none border-r-0 text-sm"
+          onClick={handleSave}
+        >
+          <Save size={18} />
+          Save
+        </Button>
+        <DropdownMenu open={openMenu} onOpenChange={setOpenMenu}>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary" size="sm" className="rounded-l-none px-2 border-l border-background">
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-24">
+            <DropdownMenuItem onClick={handleSaveAs}>Save As...</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      {unsavedChanges && <span className="italic opacity-80">You have unsaved changes</span>}
     </div>
   );
 }
