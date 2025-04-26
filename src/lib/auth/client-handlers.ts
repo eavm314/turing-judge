@@ -1,9 +1,10 @@
-import { revalidateAll, signOut } from "@/actions/auth"
+import { revalidateAll, signIn, signOut } from "@/actions/auth";
 
 export const handleSignIn = (provider?: string) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
-      const popup = window.open(`/signin?provider=${provider}`, "Sign In", "width=480,height=600,top=100,left=460");
+      const url = await signIn(provider || 'google', { redirect: false, redirectTo: "/signin" });
+      const popup = window.open(url as string, "Sign In", "width=480,height=600,top=100,left=460");
       popup?.focus();
       const checkPopupClosed = setInterval(() => {
         if (!popup || popup.closed) {
