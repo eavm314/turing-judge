@@ -5,31 +5,34 @@
 @layer base {
   :root {
     --background: 50 100% 97%;
-    --foreground: 184 86% 20%;
+    --foreground: 184 86% 15%;
 
     --card: 47 100% 96%;
-    --card-foreground: 184 86% 25%;
+    --card-foreground: 184 86% 15%;
 
     --popover: 50 100% 97%;
-    --popover-foreground: 184 86% 25%;
+    --popover-foreground: 184 86% 15%;
 
-    --primary: 174 100% 30%;
+    --primary: 36 95% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 36 100% 52%;
+    --secondary: 174 100% 30%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 174 66% 90%;
-    --muted-foreground: 184 86% 30%;
+    --muted-foreground: 184 86% 25%;
 
     --accent: 174 66% 75%;
-    --accent-foreground: 184 86% 20%;
+    --accent-foreground: 184 86% 15%;
 
     --destructive: 10 90% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --success: 120 90% 32%;
     --success-foreground: 0 0% 100%;
+
+    --neutral: 0 0 98%;
+    --neutral-foreground: 0 0% 2%;
 
     --border: 184 86% 35%;
     --input: 184 96% 45%;
@@ -47,29 +50,32 @@
   }
 
   .dark {
-    --background: 240 18% 10%;
-    --foreground: 174 66% 60%;
+    --background: 240 18% 6%;
+    --foreground: 174 96% 70%;
 
-    --card: 240 18% 10%;
-    --card-foreground: 174 66% 60%;
+    --card: 240 18% 8%;
+    --card-foreground: 174 96% 70%;
 
     --popover: 240 18% 10%;
-    --popover-foreground: 174 66% 60%;
+    --popover-foreground: 174 96% 70%;
 
-    --primary: 174 100% 60%;
+    --primary: 36 100% 60%;
     --primary-foreground: 240 18% 10%;
 
-    --secondary: 36 100% 60%;
+    --secondary: 174 66% 60%;
     --secondary-foreground: 240 18% 10%;
 
     --muted: 240 25% 15%;
-    --muted-foreground: 174 66% 40%;
+    --muted-foreground: 174 86% 35%;
 
-    --accent: 174 66% 40%;
-    --accent-foreground: 240 18% 10%;
+    --accent: 240 18% 20%;
+    --accent-foreground: 174 86% 55%;
 
     --destructive: 0 85% 60%;
     --destructive-foreground: 0 0% 100%;
+
+    --neutral: 0 0 2%;
+    --neutral-foreground: 0 0% 98%;
 
     --border: 174 66% 40%;
     --input: 174 66% 20%;

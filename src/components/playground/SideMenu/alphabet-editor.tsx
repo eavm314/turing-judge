@@ -51,9 +51,9 @@ export function AlphabetEditor() {
 
   return (
     <div className="space-y-2 p-4">
-      <h2 className="text-lg font-bold">Alphabet</h2>
-      <Label htmlFor="alphabet-input" className="text-left text-sm text-muted-foreground">
-        Only alphanumeric characters.
+      <h2 className="text-lg font-bold text-neutral-foreground">Alphabet</h2>
+      <Label htmlFor="alphabet-input" className="text-muted-foreground">
+        Only alphanumeric characters
       </Label>
       <div className="flex gap-2 items-center">
         <Input
@@ -65,7 +65,7 @@ export function AlphabetEditor() {
           onKeyDown={handleKeyDown}
           disabled={!isOwner}
         />
-        <Button size="sm" onClick={handleAddToAlphabet} disabled={!isOwner}>Add</Button>
+        <Button variant="secondary" size="sm" onClick={handleAddToAlphabet} disabled={!isOwner}>Add</Button>
       </div>
       <div className="flex flex-wrap gap-2 font-mono">
         {!automaton.alphabet.includes(EPSILON) &&

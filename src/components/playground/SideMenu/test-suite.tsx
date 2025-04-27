@@ -9,6 +9,8 @@ import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { useIsOwner, usePlaygroundMode } from "@/providers/playground-provider";
 import { useReactFlow } from "@xyflow/react";
 import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
+import { EPSILON } from "@/constants/symbols";
 
 export function TestSuite() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -28,12 +30,12 @@ export function TestSuite() {
     const { accepted } = AutomatonExecutor.execute(input);
     if (accepted) {
       toast({
-        title: "Accepted",
+        title: "Accepted!",
         variant: "success",
       });
     } else {
       toast({
-        title: "Rejected",
+        title: "Rejected!",
         variant: "destructive",
       });
     }
@@ -68,7 +70,7 @@ export function TestSuite() {
     const { accepted, path } = AutomatonExecutor.execute(input);
     if (!accepted) {
       toast({
-        title: "Rejected",
+        title: "Rejected!",
         variant: "destructive",
       });
       setSimulating(false);
@@ -83,7 +85,7 @@ export function TestSuite() {
     const interval = setInterval(() => {
       if (step >= path.length) {
         toast({
-          title: "Accepted",
+          title: "Accepted!",
           variant: "success",
         });
         setSimulating(false);
@@ -105,19 +107,24 @@ export function TestSuite() {
   }, [simulating]);
 
   return (
-    <div className="p-4">
-      <h2 className="text-lg font-bold mb-2">Test Suite</h2>
+    <div className="p-4 space-y-1">
+      <h2 className="text-lg font-bold text-neutral-foreground">Test Suite</h2>
+      <Label htmlFor="test-input" className="text-muted-foreground">
+        Enter test string
+      </Label>
       <Input
+        id="test-input"
         ref={inputRef}
         type="text"
-        placeholder="Enter test string"
+        className="font-mono placeholder:font-mono"
+        placeholder={EPSILON}
         onKeyDown={handleKeyDown}
       />
-      <div className="flex gap-2 my-3">
-        <Button variant="secondary" className="w-full" onClick={handleTest}>
+      <div className="flex gap-2 py-2">
+        <Button className="w-full" onClick={handleTest}>
           Test
         </Button>
-        <Button variant={isSimulation ? 'destructive' : 'default'} className="w-full" onClick={switchSimulationMode}>
+        <Button variant={isSimulation ? 'destructive' : 'secondary'} className="w-full" onClick={switchSimulationMode}>
           {isSimulation ? 'Exit' : 'Simulate'}
         </Button>
       </div>

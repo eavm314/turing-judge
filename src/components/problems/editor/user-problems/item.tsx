@@ -18,7 +18,7 @@ interface ProblemItemProps {
 
 export default function ProblemEditorItem({ problem, onPublic, onDelete }: ProblemItemProps) {
   return (
-    <TableRow className="hover:bg-muted/50">
+    <TableRow className="hover:bg-muted/40">
       <TableCell className="w-2/5">
         <Link href={`/problems/editor/${problem.id}`} className="font-medium hover:underline">
           <span className="text-nowrap md:text-base">{problem.title}</span>

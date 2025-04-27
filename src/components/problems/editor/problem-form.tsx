@@ -279,7 +279,7 @@ export function ProblemForm({ problemId, problemData }:
                 {problemId && (
                   <div className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Modify Test Cases</FormLabel>
+                      <FormLabel>Modify Test Cases</FormLabel>
                       <FormDescription>Enabling this will replace all the existing test cases with the new ones.</FormDescription>
                     </div>
                     <div>
@@ -320,7 +320,7 @@ export function ProblemForm({ problemId, problemData }:
         </Tabs>
 
         <div className="flex justify-end">
-          <Button variant="secondary" type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {problemId ? "Save" : "Create"} Problem
           </Button>

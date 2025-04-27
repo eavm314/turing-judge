@@ -12,9 +12,7 @@ export default function ProblemContent({ problem }: { problem: ProblemView }) {
         <div className="flex gap-2 justify-between items-center">
           <DifficultyBadge difficulty={problem.difficulty} />
         </div>
-        <div className="prose prose-headings:my-4 prose-headings:p-0 max-w-none dark:prose-invert">
-          <MarkdownWrapper content={problem.statement} />
-        </div>
+        <MarkdownWrapper content={problem.statement} />
       </div>
 
       <div className="space-y-8">

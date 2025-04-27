@@ -16,12 +16,19 @@ import {
 import { handleSignOut } from "@/lib/auth/client-handlers";
 import { useSession } from "@/providers/user-provider";
 import { AvatarImage } from "@radix-ui/react-avatar";
+import { Library, LogIn, LogOut, PenLine } from "lucide-react";
 
 export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
   const [open, setOpen] = useState(false);
   const { user, setOpenSignIn } = useSession();
 
-  if (!user) return <Button variant={variant} onClick={() => setOpenSignIn(true)}>Sign In</Button>;
+  if (!user) return (
+    <Button variant={variant}
+      onClick={() => setOpenSignIn(true)}
+    >
+      Sign In <LogIn size={16} />
+    </Button>
+  )
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -32,23 +39,27 @@ export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-neutral-foreground">{user.email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => setOpen(false)}>
-          <Link href="/projects" className="cursor-pointer w-full">
-            My Projects
+          <Link href="/projects" className="flex items-center gap-2 cursor-pointer w-full">
+            <Library size={16} /> My Projects
           </Link>
         </DropdownMenuItem>
         {user.role === 'EDITOR' &&
           <DropdownMenuItem onClick={() => setOpen(false)}>
-            <Link href="/problems/editor" className="cursor-pointer w-full">
-              Problems Editor
+            <Link href="/problems/editor" className="flex items-center gap-2 cursor-pointer w-full">
+              <PenLine size={16} /> Problems Editor
             </Link>
           </DropdownMenuItem>
         }
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <button className="w-full text-left" onClick={handleSignOut}>Log Out</button>
+          <button className="flex items-center gap-2 w-full text-left"
+            onClick={handleSignOut}
+          >
+            <LogOut size={16} /> Log Out
+          </button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

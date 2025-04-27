@@ -86,7 +86,7 @@ export function SaveAutomaton() {
   return (
     <div className="flex items-center gap-8">
       <div className="flex items-center">
-        <Button size="sm" variant="secondary"
+        <Button size="sm"
           className="rounded-r-none border-r-0 text-sm"
           onClick={handleSave}
         >
@@ -95,7 +95,7 @@ export function SaveAutomaton() {
         </Button>
         <DropdownMenu open={openMenu} onOpenChange={setOpenMenu}>
           <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="sm" className="rounded-l-none px-2 border-l border-background">
+            <Button size="sm" className="rounded-l-none px-2 border-l border-background">
               <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -104,7 +104,7 @@ export function SaveAutomaton() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {unsavedChanges && <span className="italic opacity-80">You have unsaved changes</span>}
+      {unsavedChanges && <span className="italic text-neutral-foreground/80">You have unsaved changes</span>}
     </div>
   );
 }

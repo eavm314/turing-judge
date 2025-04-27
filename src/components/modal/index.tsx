@@ -76,7 +76,7 @@ export function Modal() {
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleCancel()}>
       <DialogContent className="sm:max-w-[425px]" onKeyDown={handleKeyDown}>
         <DialogHeader>
-          <DialogTitle>{options.title}</DialogTitle>
+          <DialogTitle className="text-neutral-foreground font-bold">{options.title}</DialogTitle>
         </DialogHeader>
 
         {options.message && <p className="text-sm text-muted-foreground">{options.message}</p>}
@@ -107,7 +107,7 @@ export function Modal() {
 
         {!options.hideFooter && (
           <DialogFooter>
-            <Button variant={options.destructive ? "destructive" : "secondary"} onClick={handleConfirm}>{options.confirmLabel || "OK"}</Button>
+            <Button variant={options.destructive ? "destructive" : "default"} onClick={handleConfirm}>{options.confirmLabel || "OK"}</Button>
             {(modalType === "confirm" || modalType === "prompt" || modalType === "custom") && (
               <Button variant="outline" onClick={handleCancel}>
                 {options.cancelLabel || "Cancel"}

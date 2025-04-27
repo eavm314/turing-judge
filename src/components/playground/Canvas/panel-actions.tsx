@@ -33,7 +33,7 @@ export const AddStateButton = () => {
   };
 
   return (
-    <Button onClick={handleAddState}>
+    <Button variant="secondary" onClick={handleAddState}>
       Add State
     </Button>
   )
@@ -49,14 +49,14 @@ export function SwitchMode() {
       {mode === 'simulation' ? (
         <button
           disabled
-          className="rounded-md border bg-background px-6 py-2 text-sm font-medium text-muted-foreground"
+          className="rounded-md border bg-accent text-accent-foreground px-6 py-2 text-sm font-medium"
         >
           Simulation
         </button>
       ) : mode === 'viewer' ? (
         <button
           disabled
-          className="rounded-md border bg-background px-6 py-2 text-sm font-medium text-muted-foreground"
+          className="rounded-md border bg-accent text-accent-foreground px-6 py-2 text-sm font-medium"
         >
           Only View
         </button>
@@ -66,7 +66,7 @@ export function SwitchMode() {
             onClick={() => setMode('states')}
             className={cn(
               "relative px-4 py-2 text-sm font-medium transition-colors",
-              mode === 'states' ? "bg-primary text-primary-foreground" : "bg-background text-foreground hover:bg-muted",
+              mode === 'states' ? "bg-secondary text-secondary-foreground" : "bg-background text-foreground hover:bg-muted",
             )}
           >
             States
@@ -75,7 +75,7 @@ export function SwitchMode() {
             onClick={() => setMode('transitions')}
             className={cn(
               "relative px-4 py-2 text-sm font-medium transition-colors",
-              mode === 'transitions' ? "bg-primary text-primary-foreground" : "bg-background text-foreground hover:bg-muted",
+              mode === 'transitions' ? "bg-secondary text-secondary-foreground" : "bg-background text-foreground hover:bg-muted",
             )}
           >
             Transitions
