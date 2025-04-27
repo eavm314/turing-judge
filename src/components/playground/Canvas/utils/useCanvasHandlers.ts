@@ -34,16 +34,15 @@ export const useCanvasHandlers = () => {
         updateAutomaton((auto) => {
           changes.forEach((change) => {
             if (change.type === 'position') {
-              const state = auto.states.get(change.id);
-              state?.setPosition(change.position!);
+              auto.moveState(Number(change.id), change.position!);
             }
           });
         });
       } else if (changes.some((change) => change.type === 'remove')) {
         updateAutomaton((auto) => {
           changes.forEach((change) => {
-            if (change.type === 'remove' && change.id !== auto.initial) {
-              auto.removeState(change.id);
+            if (change.type === 'remove' && Number(change.id) !== 0) {
+              auto.removeState(Number(change.id));
             }
           });
         });
@@ -61,7 +60,7 @@ export const useCanvasHandlers = () => {
           changes.forEach((change) => {
             if (change.type === 'remove') {
               const [source, target] = change.id.split('->');
-              auto.removeTransition(source, target);
+              auto.removeTransition(Number(source), Number(target));
             }
           });
         });
@@ -77,7 +76,7 @@ export const useCanvasHandlers = () => {
       const symbols = await addTransitionPrompt(automaton);
       if (!symbols) return;
       updateAutomaton((auto) => {
-        auto.addTransition(connection.source, connection.target, symbols);
+        auto.addTransition(Number(connection.source), Number(connection.target), symbols);
       });
     },
     [automaton, updateAutomaton],

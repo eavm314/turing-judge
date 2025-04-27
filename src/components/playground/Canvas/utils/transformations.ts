@@ -4,16 +4,17 @@ import { type TransitionEdgeType } from "../transition-edge";
 import { type Node } from "@xyflow/react";
 
 export const fsmToFlow = (fsm: FiniteStateMachine, prevNodes: Node[]) => {
-  const prevMap = new Map(prevNodes.filter(n => n.selected).map(n => [n.id, n]));
+  const prevMap = new Map(prevNodes.filter(n => n.selected).map(n => [Number(n.id), n]));
   const nodes: StateNodeType[] = fsm.states.values().map(st => {
     return {
-      id: st.name,
+      id: String(st.id),
       type: "state",
       position: st.position,
-      selected: prevMap.has(st.name),
+      selected: prevMap.has(st.id),
       data: {
+        name: st.name,
         isFinal: st.isFinal,
-        isInitial: st.name === fsm.initial,
+        isInitial: st.id === 0,
       }
     }
   }).toArray();
@@ -22,18 +23,18 @@ export const fsmToFlow = (fsm: FiniteStateMachine, prevNodes: Node[]) => {
   const edges: TransitionEdgeType[] = fsm.states.values().flatMap(st => {
     const obj = st.transitions.entries().reduce((acc, [symbol, targets]) => {
       targets.forEach(target => {
-        const key = `${st.name}->${target}`;
-        acc[key] = acc[key] ?
+        const key = `${st.id}->${target}`;
+        acc[key] = acc[key]?.data ?
           {
             id: key,
-            source: st.name,
-            target,
-            data: { symbols: [...acc[key].data!.symbols, symbol] }
+            source: String(st.id),
+            target: String(target),
+            data: { symbols: [...acc[key].data.symbols, symbol] }
           } :
           {
             id: key,
-            source: st.name,
-            target,
+            source: String(st.id),
+            target: String(target),
             data: { symbols: [symbol] }
           };
       });

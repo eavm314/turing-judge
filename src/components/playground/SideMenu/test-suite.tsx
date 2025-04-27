@@ -77,8 +77,7 @@ export function TestSuite() {
       return;
     }
 
-    const initialState = AutomatonExecutor.getAutomaton().initial;
-    updateNodeData(initialState, (data) => ({ ...data, visited: true }));
+    updateNodeData('0', (data) => ({ ...data, visited: true }));
 
     let step = 0;
     let transition = true;
@@ -93,11 +92,11 @@ export function TestSuite() {
       }
       const [from, to, symbol] = path[step];
       if (transition) {
-        updateNodeData(from, (data) => ({ ...data, visited: false }));
+        updateNodeData(String(from), (data) => ({ ...data, visited: false }));
         updateEdgeData(`${from}->${to}`, (data) => ({ ...data, visited: true }));
       } else {
         updateEdgeData(`${from}->${to}`, (data) => ({ ...data, visited: false }));
-        updateNodeData(to, (data) => ({ ...data, visited: true }));
+        updateNodeData(String(to), (data) => ({ ...data, visited: true }));
         step++;
       }
       transition = !transition;

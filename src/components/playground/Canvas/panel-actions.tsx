@@ -18,7 +18,7 @@ export const AddStateButton = () => {
       validator: (value) => {
         if (value.length < 1 || value.length > 3) return "State name must contain 1 to 3 characters";
         if (value.match(/[^a-zA-Z0-9]/)) return "State name can only contain letters and numbers";
-        if (automaton.states.has(value)) return "State name must be unique";
+        if (automaton.stateToIndex.has(value)) return "State name must be unique";
         return "";
       }
     });

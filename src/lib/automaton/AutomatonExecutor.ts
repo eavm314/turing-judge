@@ -2,7 +2,7 @@ import { EPSILON } from "@/constants/symbols";
 import { FiniteStateMachine } from "./FiniteStateMachine";
 import { State } from "./State";
 
-type TransitionStep = [string, string, string]; // [from, to, symbol]
+type TransitionStep = [number, number, string]; // [from, to, symbol]
 
 interface ExecutionResult {
   accepted: boolean;
@@ -38,13 +38,13 @@ class AutomatonExecutor {
     // Transitions that consume the current symbol
     const targets = state.transitions.get(inputSymbol) || [];
     for (const target of targets) {
-      consuming.push([state.name, target, inputSymbol]);
+      consuming.push([state.id, target, inputSymbol]);
     }
 
     // Epsilon transitions
     const epsilonTargets = state.transitions.get(EPSILON) || [];
     for (const target of epsilonTargets) {
-      epsilon.push([state.name, target, EPSILON]);
+      epsilon.push([state.id, target, EPSILON]);
     }
 
     return { consuming, epsilon };
@@ -53,18 +53,18 @@ class AutomatonExecutor {
   execute(input: string): ExecutionResult {
     this.steps = 0;
     const stack: {
-      stateName: string;
+      stateId: number;
       inputPos: number;
       path: TransitionStep[];
     }[] = [];
 
-    stack.push({ stateName: this.automaton.initial, inputPos: 0, path: [] });
+    stack.push({ stateId: 0, inputPos: 0, path: [] });
 
     let lastPath: TransitionStep[] = [];
 
     while (stack.length > 0) {
-      const { stateName, inputPos, path } = stack.pop()!;
-      const state = this.automaton.states.get(stateName)!;
+      const { stateId, inputPos, path } = stack.pop()!;
+      const state = this.automaton.states.get(stateId)!;
       lastPath = path;
 
       if (this.steps > this.maxSteps) {
@@ -82,7 +82,7 @@ class AutomatonExecutor {
       // First, push epsilon transitions (they don't consume input)
       for (const [from, to, transitionSymbol] of epsilon) {
         stack.push({
-          stateName: to,
+          stateId: to,
           inputPos: inputPos, // No change in position since epsilon doesn't consume input
           path: [...path, [from, to, transitionSymbol]],
         });
@@ -92,7 +92,7 @@ class AutomatonExecutor {
       for (const [from, to, transitionSymbol] of consuming) {
         const nextInputPos = inputPos + 1;
         stack.push({
-          stateName: to,
+          stateId: to,
           inputPos: nextInputPos,
           path: [...path, [from, to, transitionSymbol]],
         });
