@@ -73,9 +73,11 @@ export const useCanvasHandlers = () => {
 
   const onConnect: OnConnect = useCallback(
     async (connection) => {
-      const symbols = await addTransitionPrompt(automaton);
+      const initialSymbols = automaton.getTransition(Number(connection.source), Number(connection.target));
+      const symbols = await addTransitionPrompt({ alphabet: automaton.alphabet, initialSymbols });
       if (!symbols) return;
       updateAutomaton((auto) => {
+        auto.removeTransition(Number(connection.source), Number(connection.target));
         auto.addTransition(Number(connection.source), Number(connection.target), symbols);
       });
     },

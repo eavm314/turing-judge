@@ -4,13 +4,12 @@ import Link from "next/link"
 
 import { Trash2 } from "lucide-react"
 
-import { type AutomatonProjectItem } from "@/dtos"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { TableCell, TableRow } from "@/components/ui/table"
+import { type AutomatonProjectItem } from "@/dtos"
 import { cn } from "@/lib/ui/utils"
-import { formatDateTime } from "@/utils/date"
 import { AutomatonTypeBadge } from "@/utils/badges"
+import { formatDateTime } from "@/utils/date"
 
 interface AutomatonItemProps {
   item: AutomatonProjectItem
@@ -32,7 +31,7 @@ export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
       <TableCell className="text-sm text-muted-foreground">{formatDateTime(item.updatedAt)}</TableCell>
       <TableCell className="flex justify-end">
         <Button variant="ghost" size="icon"
-          className="size-8 text-destructive hover:bg-destructive"
+          className="size-8 text-destructive hover:bg-destructive hover:text-destructive-foreground"
           onClick={() => onDelete(item.id)}
         >
           <Trash2 className="size-4" />

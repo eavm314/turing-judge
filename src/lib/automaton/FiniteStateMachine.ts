@@ -28,16 +28,16 @@ export class FiniteStateMachine {
   constructor(json: JsonFSM = basicAutomata) {
     this.states = new Map();
     this.alphabet = json.alphabet;
-    
+
     // TODO: Validate JSON structure
-    
+
     // Convert JSON to Objects
     this.stateToIndex = new Map([[json.initial, 0]]);
     for (const name of Object.keys(json.states).filter((name) => name !== json.initial)) {
       const stateId = Math.max(...Object.values(this.stateToIndex)) + 1;
       this.stateToIndex.set(name, stateId);
     }
-    
+
     for (const [name, value] of Object.entries(json.states)) {
       const state = new State(this, name, value);
       const stateId = this.stateToIndex.get(name)!;
@@ -96,11 +96,32 @@ export class FiniteStateMachine {
   }
 
   addTransition(from: number, to: number, symbols: string[]) {
-    this.states.get(from)!.addTransition(symbols, [to]);
+    const symbSet = new Set(symbols);
+    const alphabetSet = new Set(this.alphabet);
+    if (symbSet.difference(alphabetSet).size > 0) throw new Error("Symbols not in alphabet");
+
+    const source = this.states.get(from);
+    if (!source) throw new Error("Source state does not exist");
+
+    source.addTransition(symbols, [to]);
   }
 
   removeTransition(from: number, to: number) {
-    this.states.get(from)!.removeTransition(to);
+    const source = this.states.get(from);
+    if (!source) throw new Error("Source state does not exist");
+    source.removeTransition(to);
+  }
+
+  getTransition(from: number, to: number): string[] {
+    const state = this.states.get(from);
+    if (!state) throw new Error("State does not exist");
+
+    const symbols = state.transitions.entries()
+      .filter(([_, targets]) => targets.includes(to))
+      .map(([symbol]) => symbol)
+      .toArray();
+
+    return symbols;
   }
 
   switchFinal(id: number) {

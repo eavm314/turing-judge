@@ -7,6 +7,8 @@ import {
 import { getPath } from './utils/graphics';
 import { cn } from '@/lib/ui/utils';
 import { useEffect, useRef } from 'react';
+import { useAddTransitionPrompt } from '@/components/modal/use-add-transition';
+import { useAutomaton } from '@/providers/playground-provider';
 
 export type TransitionEdgeType = Edge<{
   symbols: string[],
@@ -30,6 +32,19 @@ export function TransitionEdge({ id, source, target, style, data, selected }: Ed
   }
 
   const [edgePath, labelX, labelY] = getPath(sourceNode, targetNode);
+
+  const addTransitionPrompt = useAddTransitionPrompt();
+  const { automaton, updateAutomaton } = useAutomaton();
+
+  const handleEditTransition = async () => {
+    const initialSymbols = automaton.getTransition(Number(source), Number(target));
+    const symbols = await addTransitionPrompt({ alphabet: automaton.alphabet, initialSymbols });
+    if (!symbols) return;
+    updateAutomaton((auto) => {
+      auto.removeTransition(Number(source), Number(target));
+      auto.addTransition(Number(source), Number(target), symbols);
+    });
+  }
 
   return (
     <>
@@ -67,7 +82,9 @@ export function TransitionEdge({ id, source, target, style, data, selected }: Ed
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
             pointerEvents: 'all',
           }}
-          className={cn("nopan bg-background px-2 border rounded-md cursor-pointer font-mono", selected ? 'border-green-500' : 'border-foreground')}
+          className={cn("nopan bg-background px-2 border rounded-md cursor-pointer font-mono",
+            selected ? 'border-green-500' : 'border-foreground')}
+          onDoubleClick={handleEditTransition}
         >
           {data?.symbols.join(',')}
         </div>
