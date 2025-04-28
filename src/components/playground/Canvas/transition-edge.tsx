@@ -64,8 +64,7 @@ export function TransitionEdge({ id, source, target, style, data, selected }: Ed
       <path
         fill="none"
         id={id}
-        strokeWidth={2}
-        className={selected ? 'stroke-green-500' : 'stroke-foreground'}
+        className={selected ? 'stroke-green-500 stroke-[3px]' : 'stroke-foreground stroke-2'}
         d={edgePath}
         markerEnd={`url(#triangle-${id})`}
         style={style}

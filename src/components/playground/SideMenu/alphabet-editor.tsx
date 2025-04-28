@@ -9,12 +9,14 @@ import { Label } from "@/components/ui/label";
 import { EPSILON } from "@/constants/symbols";
 import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
 import { cn } from "@/lib/ui/utils";
+import { useToast } from "@/hooks/use-toast";
 
 export function AlphabetEditor() {
-  const { automaton, updateAutomaton } = useAutomaton();
   const inputRef = useRef<HTMLInputElement>(null);
-
+  
   const isOwner = useIsOwner();
+  const { automaton, updateAutomaton } = useAutomaton();
+  const { toast } = useToast();
 
   const handleAddToAlphabet = () => {
     const inputChar = inputRef.current!.value.trim();
@@ -37,6 +39,14 @@ export function AlphabetEditor() {
   }
 
   const handleRemoveFromAlphabet = (symbol: string) => {
+    if (automaton.getUsedSymbols().has(symbol)) {
+      toast({
+        title: "Cannot remove symbol",
+        description: `Symbol "${symbol}" is used in transitions`,
+        variant: "warning",
+      });
+      return;
+    }
     updateAutomaton(automaton => {
       automaton.setAlphabet(automaton.alphabet.filter((s) => s !== symbol));
     });

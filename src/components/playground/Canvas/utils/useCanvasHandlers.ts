@@ -88,6 +88,9 @@ export const useCanvasHandlers = () => {
     if (mode !== 'states') {
       setNodes(prev => prev.map(n => ({ ...n, selected: false })))
     }
+    if (mode === 'simulation') {
+      setEdges(prev => prev.map(e => ({ ...e, selected: false })))
+    }
   }, [mode]);
 
   return {

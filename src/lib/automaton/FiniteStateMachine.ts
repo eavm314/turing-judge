@@ -143,4 +143,14 @@ export class FiniteStateMachine {
     state.setName(name);
     this.stateToIndex.set(name, id);
   }
+
+  getUsedSymbols(): Set<string> {
+    const usedSymbols = new Set<string>();
+    for (const state of this.states.values()) {
+      for (const symbol of state.transitions.keys()) {
+        usedSymbols.add(symbol);
+      }
+    }
+    return usedSymbols;
+  }
 }
