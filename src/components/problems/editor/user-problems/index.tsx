@@ -4,14 +4,15 @@ import { useState } from "react"
 
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
 
+import { deleteProblem, updateProblem } from "@/actions/problems"
 import { EmptyTableRow, InputSearch, TableHeadButton } from "@/components/ui/my-table"
 import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { SortDirection } from "@/constants/table"
 import { type ProblemEditorItem as ProblemItem } from "@/dtos"
-import ProblemEditorItem from "./item"
+import { useToast } from "@/hooks/use-toast"
 import { useModal } from "@/providers/modal-provider"
-import { deleteProblem, updateProblem } from "@/actions/problems"
+import ProblemEditorItem from "./item"
 
 type TableColumn = keyof ProblemItem;
 
@@ -21,7 +22,8 @@ export default function UserProblems({ problems }: { problems: ProblemItem[] }) 
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.DESC);
 
   const { showConfirm } = useModal();
-  
+  const { toast } = useToast();
+
   const handleDeleteProblem = async (id: string) => {
     const confirmation = await showConfirm({
       title: "Delete Problem",
@@ -31,6 +33,7 @@ export default function UserProblems({ problems }: { problems: ProblemItem[] }) 
     });
     if (!confirmation) return;
     await deleteProblem(id);
+    toast({ title: "The problem has been deleted successfully!", variant: "success" });
   }
 
   const handlePublicProblem = async (id: string, value: boolean) => {
@@ -109,7 +112,7 @@ export default function UserProblems({ problems }: { problems: ProblemItem[] }) 
           <TableBody>
             {sortedProblems.length > 0 ?
               sortedProblems.map((problem) => (
-                <ProblemEditorItem key={problem.id} 
+                <ProblemEditorItem key={problem.id}
                   problem={problem}
                   onPublic={handlePublicProblem}
                   onDelete={handleDeleteProblem}

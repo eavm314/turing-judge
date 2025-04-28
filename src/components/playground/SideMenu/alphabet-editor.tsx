@@ -44,6 +44,7 @@ export function AlphabetEditor() {
         title: "Cannot remove symbol",
         description: `Symbol "${symbol}" is used in transitions`,
         variant: "warning",
+        duration: 4000,
       });
       return;
     }

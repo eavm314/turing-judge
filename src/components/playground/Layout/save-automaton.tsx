@@ -1,6 +1,6 @@
 "use client"
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { ChevronDown, Save } from "lucide-react";
@@ -29,6 +29,7 @@ export function SaveAutomaton() {
   const { automatonId } = useParams<{ automatonId: string }>();
   const saveAutomatonPrompt = useSaveAutomatonPrompt();
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -59,12 +60,17 @@ export function SaveAutomaton() {
     if (!userInput) {
       return;
     }
-    await createAutomaton({
+    const id = await createAutomaton({
       title: userInput.title.trim() || null,
       isPublic: userInput.isPublic,
       type: "FSM",
       automaton: automaton.toJson(),
     });
+    toast({
+      title: "Your automaton has been saved successfully!",
+      variant: "success",
+    });
+    router.push(`/playground/${id}`);
   }
 
   const handleSave = async () => {
@@ -75,7 +81,7 @@ export function SaveAutomaton() {
       });
       saveChanges();
       toast({
-        description: "Your automaton has been saved successfully.",
+        title: "Your automaton has been saved successfully!",
         variant: "success",
       });
     } else {

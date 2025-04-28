@@ -14,6 +14,7 @@ import { SortDirection } from "@/constants/table"
 import { type AutomatonProjectItem } from "@/dtos"
 import { useModal } from "@/providers/modal-provider"
 import ProjectItem from "./item"
+import { useToast } from "@/hooks/use-toast"
 
 type TableColumn = keyof AutomatonProjectItem;
 
@@ -24,6 +25,7 @@ export default function AutomatonProjects({ projectItems }: { projectItems: Auto
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.ASC);
 
   const { showConfirm } = useModal();
+  const { toast } = useToast();
 
   const handleDeleteAutomaton = async (id: string) => {
     const confirmation = await showConfirm({
@@ -34,6 +36,7 @@ export default function AutomatonProjects({ projectItems }: { projectItems: Auto
     });
     if (!confirmation) return;
     await deleteAutomaton(id);
+    toast({ title: "The project has been deleted successfully!", variant: "success" });
   }
 
   const handleSort = (column: TableColumn) => {

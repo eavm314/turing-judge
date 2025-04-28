@@ -79,7 +79,7 @@ export function Modal() {
           <DialogTitle className="text-neutral-foreground font-bold">{options.title}</DialogTitle>
         </DialogHeader>
 
-        {options.message && <p className="text-sm text-muted-foreground">{options.message}</p>}
+        {options.message && <p className="text-sm text-foreground">{options.message}</p>}
 
         {modalType === "prompt" && (
           <div>

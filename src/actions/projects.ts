@@ -64,9 +64,8 @@ export const createAutomaton = async (body: {
   const session = await auth();
   if (!session?.user?.id) redirect('/signin');
 
-  let savedAutomaton = null;
   try {
-    savedAutomaton = await prisma.project.create({
+    const savedAutomaton = await prisma.project.create({
       data: {
         userId: session.user.id,
         title: body.title,
@@ -76,11 +75,11 @@ export const createAutomaton = async (body: {
       },
     });
     revalidatePath('/library');
+    return savedAutomaton.id;
   } catch (error) {
     console.error("Error creating automaton:", error);
     return null;
   }
-  redirect(`/playground/${savedAutomaton.id}`);
 }
 
 export const updateAutomaton = async (body: {

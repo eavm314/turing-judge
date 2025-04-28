@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2 } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 
 import { createProblem, updateProblem } from "@/actions/problems"
@@ -16,11 +16,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { problemSchema, type ProblemSchema } from "@/lib/schemas/problem-form"
 import { MarkdownEditor } from "./markdown-editor"
+import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
 
 export function ProblemForm({ problemId, problemData }:
   { problemId?: string, problemData?: ProblemSchema }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [changeTestCases, setChangeTestCases] = useState(!problemId);
+
+  const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<ProblemSchema>({
     resolver: zodResolver(problemSchema),
@@ -40,14 +45,19 @@ export function ProblemForm({ problemId, problemData }:
   });
 
   async function onSubmit(data: ProblemSchema) {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     if (problemId) {
       const testCases = changeTestCases ? data.testCases : undefined;
       await updateProblem(problemId, { ...data, testCases });
     } else {
       await createProblem(data);
     }
-    setIsSubmitting(false)
+    setIsSubmitting(false);
+    router.push("/problems/editor");
+    toast({
+      title: `Problem ${problemId ? `updated` : 'created'} successfully!`,
+      variant: "success",
+    });
   }
 
   const basicErrors = form.formState.errors.title || form.formState.errors.statement;

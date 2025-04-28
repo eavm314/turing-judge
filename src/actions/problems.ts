@@ -104,11 +104,11 @@ export const createProblem = async (body: ProblemSchema) => {
     revalidatePath(`/problems/${result.id}`);
     revalidatePath('/problems/editor');
     revalidatePath(`/problems/editor/${result.id}`);
+    return true;
   } catch (error) {
     console.error("Error creating problem:", error);
     return false;
   }
-  redirect('/problems/editor');
 }
 
 export const updateProblem = async (problemId: string, body: Partial<ProblemUpdateSchema>) => {
@@ -159,11 +159,11 @@ export const updateProblem = async (problemId: string, body: Partial<ProblemUpda
     revalidatePath(`/problems/${problemId}`);
     revalidatePath('/problems/editor');
     revalidatePath(`/problems/editor/${problemId}`);
+    return true;
   } catch (error) {
     console.error("Error updating problem:", error);
     return false;
   }
-  redirect('/problems/editor');
 }
 
 export const getProblemEditable = async (id: string): Promise<ProblemSchema> => {
