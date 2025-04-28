@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { ChevronDown, Save } from "lucide-react";
 
 import { createAutomaton, updateAutomaton } from "@/actions/projects";
-import { useSaveAutomatonPrompt } from "@/components/modal/use-save-automaton";
+import { useSaveAutomatonPrompt } from "@/components/modal/save-automaton";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

@@ -1,4 +1,4 @@
-import { useAddTransitionPrompt } from "@/components/modal/use-add-transition";
+import { useAddTransitionPrompt } from "@/components/modal/add-transition";
 import { useAutomaton, usePlaygroundMode } from "@/providers/playground-provider";
 import {
   applyEdgeChanges,

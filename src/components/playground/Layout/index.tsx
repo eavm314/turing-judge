@@ -9,6 +9,7 @@ import { AutomatonTitle } from "./automaton-title";
 import { ExamplesMenu } from "./examples-menu";
 import { PublicSelect } from "./public-select";
 import { SaveAutomaton } from "./save-automaton";
+import { ImportExport } from "./import-export";
 
 export function PlaygroundLayout({ data }: { data?: Project }) {
   return (
@@ -25,6 +26,7 @@ export function PlaygroundLayout({ data }: { data?: Project }) {
       </nav>
       <nav className="ml-auto flex items-center gap-4 sm:gap-6">
         {/* <ExamplesMenu /> */}
+        <ImportExport />
         <DarkModeToggle />
         <AccountMenu variant="ghost" />
       </nav>

@@ -7,7 +7,7 @@ import {
 import { getPath } from './utils/graphics';
 import { cn } from '@/lib/ui/utils';
 import { useEffect, useRef } from 'react';
-import { useAddTransitionPrompt } from '@/components/modal/use-add-transition';
+import { useAddTransitionPrompt } from '@/components/modal/add-transition';
 import { useAutomaton } from '@/providers/playground-provider';
 
 export type TransitionEdgeType = Edge<{

@@ -3,7 +3,7 @@ import { MarkdownWrapper } from "@/components/ui/markdown-wrapper"
 import { type ProblemView } from "@/dtos"
 import { DifficultyBadge } from "@/utils/badges"
 import { Constraints } from "./constraints"
-import { SubmitSolution } from "./submit-solution"
+import { SubmitSolutionButton } from "./submit-solution-button"
 
 export default function ProblemContent({ problem }: { problem: ProblemView }) {
   return (
@@ -17,7 +17,7 @@ export default function ProblemContent({ problem }: { problem: ProblemView }) {
 
       <div className="space-y-8">
         <Constraints constraints={problem.constraints} />
-        <SubmitSolution />
+        <SubmitSolutionButton />
       </div>
     </div>
   )

@@ -9,6 +9,8 @@ type ModalType = "confirm" | "prompt" | "custom";
 export interface CustomContentProps<T, D = undefined> {
   value: T
   setValue: React.Dispatch<React.SetStateAction<T>>
+  errors: Record<string, string | undefined>
+  setErrors: React.Dispatch<React.SetStateAction<Record<string, string | undefined>>>
   data: D
 }
 
@@ -25,13 +27,13 @@ interface ModalOptions {
   onConfirm?: (value?: string) => void
   onCancel?: () => void
   destructive?: boolean
+  className?: string
 };
 
 interface CustomModalOptions<T, D> extends ModalOptions {
   customContent?: React.FC<CustomContentProps<T, D>>
   onSubmit?: (value: T) => void
   customComponentData?: D
-  hideFooter?: boolean
 }
 
 interface ModalContextType {
@@ -59,6 +61,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     return new Promise((resolve) => {
       setModalType("confirm");
       setOptions({
+        className: options.className,
         title: options.title || "Confirm",
         message: options.message || "",
         confirmLabel: options.confirmLabel || "OK",
@@ -83,6 +86,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     return new Promise((resolve) => {
       setModalType("prompt");
       setOptions({
+        className: options.className,
         title: options.title || "Prompt",
         message: options.message || "",
         confirmLabel: options.confirmLabel || "OK",
@@ -111,12 +115,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     return new Promise((resolve) => {
       setModalType("custom");
       setOptions({
+        className: options.className,
         title: options.title || "Custom Modal",
         confirmLabel: options.confirmLabel || "OK",
         cancelLabel: options.cancelLabel || "Cancel",
         customContent: options.customContent,
         customComponentData: options.customComponentData,
-        hideFooter: options.hideFooter,
         onSubmit: (value: T) => {
           closeModal()
           resolve(value as T)

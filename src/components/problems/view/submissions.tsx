@@ -4,15 +4,14 @@ import { useEffect, useState } from "react"
 
 import { RefreshCw } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { EmptyTableRow, TableHeadButton } from "@/components/ui/my-table"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table"
 import { type SubmissionItem } from "@/dtos"
 import { AutomatonTypeBadge, StatusBadge } from "@/utils/badges"
 import { formatDateTime } from "@/utils/date"
-import { SubmitSolution } from "./submit-solution"
-import { EmptyTableRow, TableHeadButton } from "@/components/ui/my-table"
+import { SubmitSolutionButton } from "./submit-solution-button"
 
 export default function Submissions({ problemId }: { problemId: string }) {
   const [submissions, setSubmissions] = useState<SubmissionItem[]>();
@@ -32,7 +31,7 @@ export default function Submissions({ problemId }: { problemId: string }) {
 
   return (
     <div className="space-y-6">
-      <SubmitSolution />
+      <SubmitSolutionButton />
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-medium mb-2">Summary</h3>
         <Button variant="outline" size="icon" onClick={handleRefresh}>

@@ -20,7 +20,6 @@ const AddTransitionPrompt = ({
   data,
 }: CustomContentProps<string[], TransitionData>) => {
   useEffect(() => {
-    ;
     setSelectedSymbols(data.initialSymbols);
   }, []);
 

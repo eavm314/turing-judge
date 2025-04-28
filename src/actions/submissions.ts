@@ -72,6 +72,8 @@ export const submitSolution = async (
   setTimeout(() => {
     verifySolution(submission.id, problemId, solutionCode)
   }, 5000);
+
+  return true;
 }
 
 const verifySolution = async (submissionId: number, problemId: string, solution: AutomatonCode) => {
