@@ -21,6 +21,9 @@ export function TransitionEdge({ id, source, target, style, data, selected }: Ed
 
   const animateRef = useRef<SVGAnimateMotionElement>(null);
 
+  const addTransitionPrompt = useAddTransitionPrompt();
+  const { automaton, updateAutomaton } = useAutomaton();
+
   useEffect(() => {
     if (data?.visited && animateRef.current) {
       animateRef.current.beginElement();
@@ -32,9 +35,6 @@ export function TransitionEdge({ id, source, target, style, data, selected }: Ed
   }
 
   const [edgePath, labelX, labelY] = getPath(sourceNode, targetNode);
-
-  const addTransitionPrompt = useAddTransitionPrompt();
-  const { automaton, updateAutomaton } = useAutomaton();
 
   const handleEditTransition = async () => {
     const initialSymbols = automaton.getTransition(Number(source), Number(target));
