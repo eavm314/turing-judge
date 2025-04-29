@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components
 import { type SubmissionItem } from "@/dtos"
 import { AutomatonTypeBadge, StatusBadge } from "@/utils/badges"
 import { formatDateTime } from "@/utils/date"
-import { SubmitSolutionButton } from "./submit-solution-button"
+import { SubmitSolution } from "./submit-solution"
 
 export default function Submissions({ problemId }: { problemId: string }) {
   const [submissions, setSubmissions] = useState<SubmissionItem[]>();
@@ -31,7 +31,7 @@ export default function Submissions({ problemId }: { problemId: string }) {
 
   return (
     <div className="space-y-6">
-      <SubmitSolutionButton />
+      <SubmitSolution />
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-medium mb-2">Summary</h3>
         <Button variant="outline" size="icon" onClick={handleRefresh}>
