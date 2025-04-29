@@ -1,3 +1,4 @@
+import { AutomatonCode } from "@/dtos";
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
 import { createStore } from 'zustand/vanilla';
@@ -12,6 +13,7 @@ export type PlaygroundState = {
 }
 
 export type PlaygroundActions = {
+  setAutomaton: (code: AutomatonCode) => void;
   updateAutomaton: (callback: (automaton: FiniteStateMachine) => void) => void;
   setMode: (newMode: PlaygroundMode) => void,
   saveChanges: () => void;
@@ -35,6 +37,10 @@ export const createPlaygroundStore = (initialState?: Partial<PlaygroundState>) =
   return createStore<PlaygroundStore>()((set) => ({
     ...initialStateWithDefaults,
     setMode: (newMode: PlaygroundMode) => set({ mode: newMode }),
+    setAutomaton: (code: AutomatonCode) => {
+      const automaton = new FiniteStateMachine(code.automaton);
+      set({ automaton, unsavedChanges: true });
+    },
     updateAutomaton: (callback) => {
       set((state) => {
         const newAutomaton = state.automaton.clone();

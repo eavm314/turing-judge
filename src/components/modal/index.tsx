@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -49,15 +49,14 @@ export function Modal() {
 
     setInputValue("");
     setCustomInputValue(null);
-    setErrors({ prompt: undefined });
-
+    setErrors({});
   }
 
   const handleCancel = () => {
     options.onCancel?.();
     setInputValue("");
     setCustomInputValue(null);
-    setErrors({ prompt: undefined });
+    setErrors({});
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -73,10 +72,10 @@ export function Modal() {
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleCancel()}>
       <DialogContent className={cn("max-w-[420px]", options.className)} onKeyDown={handleKeyDown}>
         <DialogHeader>
-          <DialogTitle className="text-neutral-foreground font-bold">{options.title}</DialogTitle>
+          <DialogTitle>{options.title}</DialogTitle>
         </DialogHeader>
 
-        {options.message && <p className="text-sm text-foreground">{options.message}</p>}
+        {options.message && <DialogDescription>{options.message}</DialogDescription>}
 
         {modalType === "prompt" && (
           <div>

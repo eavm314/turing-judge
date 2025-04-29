@@ -11,12 +11,12 @@ import { cn } from "@/lib/ui/utils"
 type CodeEditorMode = "editable" | "readonly" | "disabled";
 
 interface CodeEditorProps {
-  value: string
-  onChange: (value: string) => void
+  initialValue: string
+  onChange?: (value: string) => void
   mode?: CodeEditorMode
 }
 
-export function CodeEditor({ value, onChange, mode = "editable" }: CodeEditorProps) {
+export function CodeEditor({ initialValue, onChange, mode = "editable" }: CodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
   const viewRef = useRef<EditorView | null>(null)
 
@@ -34,7 +34,7 @@ export function CodeEditor({ value, onChange, mode = "editable" }: CodeEditorPro
       if (update.docChanged) {
         const doc = update.state.doc
         const value = doc.toString()
-        onChange(value)
+        onChange?.(value)
       }
     })
 
@@ -43,7 +43,7 @@ export function CodeEditor({ value, onChange, mode = "editable" }: CodeEditorPro
     const disabledExtension = EditorView.editable.of(mode !== "disabled");
 
     const state = EditorState.create({
-      doc: value,
+      doc: initialValue,
       extensions: [
         basicSetup,
         json(),
@@ -71,7 +71,7 @@ export function CodeEditor({ value, onChange, mode = "editable" }: CodeEditorPro
     return () => {
       view.destroy()
     }
-  }, [editorRef])
+  }, [editorRef, initialValue])
 
   return <div ref={editorRef} className={cn("w-full h-80", mode === 'disabled'? 'pointer-events-none select-none opacity-50': '')} />
 }

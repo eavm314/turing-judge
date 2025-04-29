@@ -26,6 +26,8 @@ interface SolutionData {
   automatonCode: string | null;
 }
 
+const initialCode = '{\n  "states": [],\n  "alphabet": [],\n  "transitions": {},\n  "initialState": "",\n  "acceptStates": []\n}';
+
 const SolutionForm = ({
   value,
   setValue,
@@ -34,9 +36,7 @@ const SolutionForm = ({
 }: CustomContentProps<SolutionData>) => {
   const [openCombo, setOpenCombo] = useState(false)
   const [selectedId, setSelectedId] = useState("")
-  const [code, setCode] = useState(
-    '{\n  "states": [],\n  "alphabet": [],\n  "transitions": {},\n  "initialState": "",\n  "acceptStates": []\n}',
-  )
+  const [code, setCode] = useState(initialCode)
   const [projects, setProjects] = useState<AutomatonProjectItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
@@ -123,7 +123,7 @@ const SolutionForm = ({
       <div className="space-y-2">
         <label className="text-sm font-medium">Solution Code (JSON)</label>
         <div className="border rounded-md">
-          <CodeEditor value={code} onChange={setCode} mode={selectedId ? 'disabled' : 'editable'} />
+          <CodeEditor initialValue={initialCode} onChange={setCode} mode={selectedId ? 'disabled' : 'editable'} />
         </div>
         {errors.code && <p className="text-xs text-destructive">{errors.code}</p>}
       </div>

@@ -6,10 +6,10 @@ import { Cpu } from "lucide-react";
 import { AccountMenu } from "@/components/layout/account-menu";
 import { DarkModeToggle } from "@/components/layout/dark-mode-toogle";
 import { AutomatonTitle } from "./automaton-title";
-import { ExamplesMenu } from "./examples-menu";
+import { ExportCode } from "./export-code";
+import { ImportCode } from "./import-code";
 import { PublicSelect } from "./public-select";
 import { SaveAutomaton } from "./save-automaton";
-import { ImportExport } from "./import-export";
 
 export function PlaygroundLayout({ data }: { data?: Project }) {
   return (
@@ -26,7 +26,10 @@ export function PlaygroundLayout({ data }: { data?: Project }) {
       </nav>
       <nav className="ml-auto flex items-center gap-4 sm:gap-6">
         {/* <ExamplesMenu /> */}
-        <ImportExport />
+        <div className="flex gap-2">
+          <ImportCode />
+          <ExportCode />
+        </div>
         <DarkModeToggle />
         <AccountMenu variant="ghost" />
       </nav>
