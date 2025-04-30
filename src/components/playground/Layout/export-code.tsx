@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { useAutomaton } from "@/providers/playground-provider";
 
-export function ExportCode() {
+export function ExportCode({ title }: { title?: string | null }) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
 
   const [copied, setCopied] = useState(false);
@@ -32,7 +32,7 @@ export function ExportCode() {
   const downloadJson = () => {
     const dataUri =
       "data:application/json;charset=utf-8," + encodeURIComponent(exportJson);
-    const exportFileDefaultName = `automaton-${new Date().toISOString().slice(0, 10)}.json`;
+    const exportFileDefaultName = `${title || "Untitled"}-${new Date().toISOString().slice(0, 10)}.json`;
 
     const linkElement = document.createElement("a");
     linkElement.setAttribute("href", dataUri);
@@ -71,7 +71,7 @@ export function ExportCode() {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-4 py-2">
           <CodeEditor initialValue={exportJson} mode="readonly" />
         </div>
 

@@ -27,7 +27,7 @@ export function AutomatonTitle({ title }: { title: string | null }) {
   };
   return (
     <Input
-      className="md:w-72 placeholder:italic disabled:opacity-80"
+      className="md:w-72 text-neutral-foreground placeholder:italic disabled:opacity-80"
       disabled={!isOwner}
       placeholder="Untitled"
       value={tempTitle ?? ""}

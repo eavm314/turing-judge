@@ -62,7 +62,7 @@ export function AlphabetEditor() {
 
   return (
     <div className="space-y-2 p-4">
-      <h2 className="text-lg font-bold text-neutral-foreground">Alphabet</h2>
+      <h2>Alphabet</h2>
       <Label htmlFor="alphabet-input" className="text-muted-foreground">
         Only alphanumeric characters
       </Label>

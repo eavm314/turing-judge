@@ -14,7 +14,7 @@ export default function ProblemSetItem({
 }) {
   return (
     <TableRow className="hover:bg-muted/50">
-      <TableCell className="w-1/2">
+      <TableCell className="w-2/5">
         <Link
           href={`/problems/${problem.id}`}
           className="font-medium hover:underline"

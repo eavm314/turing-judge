@@ -94,13 +94,13 @@ export const AutomatonTypeBadge = ({ type }: { type: AutomatonType }) => {
   let color;
   switch (type) {
     case AutomatonType.FSM:
-      color = "bg-blue-300 text-blue-900 hover:bg-blue-300/80";
+      color = "bg-orange-200 text-orange-900 hover:bg-orange-300/80";
       break;
     case AutomatonType.PDA:
-      color = "bg-purple-300 text-purple-900 hover:bg-purple-300/80";
+      color = "bg-sky-200 text-sky-900 hover:bg-blue-200/80";
       break;
     case AutomatonType.TM:
-      color = "bg-orange-300 text-orange-900 hover:bg-orange-300/80";
+      color = "bg-purple-300 text-purple-900 hover:bg-purple-300/80";
       break;
     default:
       color = "bg-gray-200 text-gray-800 hover:bg-gray-200/80";

@@ -130,7 +130,7 @@ export function TestSuite() {
 
   return (
     <div className="p-4 space-y-1">
-      <h2 className="text-lg font-bold text-neutral-foreground">Test Suite</h2>
+      <h2>Test Suite</h2>
       <Label htmlFor="test-input" className="text-muted-foreground">
         Enter test string
       </Label>

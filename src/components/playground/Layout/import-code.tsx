@@ -18,11 +18,13 @@ import {
 import { validateCode } from "@/lib/schemas/automaton-code";
 import { useAutomaton } from "@/providers/playground-provider";
 
+const initCode = "{}";
+
 export function ImportCode() {
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 
-  const [initialImportJson, setInitialImportJson] = useState("{}");
-  const [importJson, setImportJson] = useState("{}");
+  const [initialImportJson, setInitialImportJson] = useState(initCode);
+  const [importJson, setImportJson] = useState(initCode);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -36,7 +38,7 @@ export function ImportCode() {
     setAutomaton(parsed);
 
     setIsImportDialogOpen(false);
-    setInitialImportJson("{}");
+    setInitialImportJson(initCode);
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +77,7 @@ export function ImportCode() {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-4 py-2">
           <div className="flex items-center gap-4">
             <input
               type="file"
@@ -97,9 +99,6 @@ export function ImportCode() {
                 Choose File
               </Button>
             </label>
-            <span className="text-sm text-gray-500">
-              {importJson ? "File loaded" : "No file chosen"}
-            </span>
 
             <Button
               variant="outline"

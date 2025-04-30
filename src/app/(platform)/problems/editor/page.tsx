@@ -9,7 +9,7 @@ export default async function ProblemsEditorPage() {
   return (
     <main className="container flex-1 mx-auto py-10 px-4">
       <div className="flex justify-between mb-4">
-        <h1 className="text-2xl font-bold">Problems Editor</h1>
+        <h1>Problems Editor</h1>
         <Button asChild>
           <Link href="/problems/editor/new">
             <PlusCircle size={20} /> New Problem

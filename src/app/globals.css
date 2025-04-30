@@ -39,7 +39,7 @@
 
     --border: 184 86% 35%;
     --input: 184 96% 45%;
-    --ring: 184 86% 45%;
+    --ring: 184 86% 10%;
 
     --chart-1: 184 86% 25%;
     --chart-2: 36 97% 56%;
@@ -82,7 +82,7 @@
 
     --border: 174 66% 40%;
     --input: 174 66% 20%;
-    --ring: 174 66% 45%;
+    --ring: 174 66% 90%;
 
     --chart-1: 174 66% 60%;
     --chart-2: 36 97% 56%;
@@ -99,5 +99,18 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  h1,
+  h2 {
+    @apply font-bold text-neutral-foreground;
+  }
+
+  h1 {
+    @apply text-3xl;
+  }
+
+  h2 {
+    @apply text-xl;
   }
 }

@@ -12,12 +12,12 @@ export default async function HomePage() {
         <div className="container px-4 md:px-6 mx-auto">
           <div className="flex flex-col items-center space-y-8 text-center">
             <div>
-              <Cpu size={80} className="text-primary w-full" />
-              <h1 className="font-bold h-full text-2xl md:text-5xl font-orbitron">
+              <Cpu size={80} className="text-secondary w-full" />
+              <h1 className="h-full text-2xl md:text-5xl font-orbitron text-primary">
                 {appName}
               </h1>
             </div>
-            <h2 className="text-xl font-bold tracking-tighter md:text-3xl max-w-[800px]">
+            <h2 className="text-xl tracking-tighter md:text-3xl max-w-[800px]">
               Explore the world of formal languages and automata theory
             </h2>
             <div className="flex flex-col md:flex-row gap-4">

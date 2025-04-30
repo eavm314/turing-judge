@@ -30,7 +30,7 @@ export function PlaygroundLayout({ data }: { data?: Project }) {
         {/* <ExamplesMenu /> */}
         <div className="flex gap-2">
           <ImportCode />
-          <ExportCode />
+          <ExportCode title={data?.title} />
         </div>
         <DarkModeToggle />
         <AccountMenu variant="ghost" />
