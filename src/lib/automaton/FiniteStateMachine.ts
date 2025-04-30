@@ -1,11 +1,5 @@
-import { State, type JsonState } from "./State";
-
-export interface JsonFSM {
-  alphabet: string[];
-  states: Record<string, JsonState>;
-  initial: string;
-  finals: string[];
-}
+import { State } from "./State";
+import { type JsonFSM, type JsonState } from "@/lib/schemas/finite-state-machine";
 
 const basicAutomata: JsonFSM = {
   alphabet: ["0", "1"],

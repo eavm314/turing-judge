@@ -1,9 +1,5 @@
 import { FiniteStateMachine } from "./FiniteStateMachine";
-
-export interface JsonState {
-  position: { x: number; y: number };
-  transitions: Record<string, string[]>;
-}
+import { type JsonState } from "@/lib/schemas/finite-state-machine";
 
 export class State {
   id: number;
@@ -17,11 +13,11 @@ export class State {
     this.automaton = automaton;
     this.id = this.automaton.stateToIndex.get(name)!;
     this.name = name;
-    this.position = json.position;
+    this.position = json.position ?? { x: 0, y: 0 };
     this.isFinal = false;
     this.transitions = new Map();
 
-    for (const [symbol, targets] of Object.entries(json.transitions)) {
+    for (const [symbol, targets] of Object.entries(json.transitions ?? {})) {
       const targetIds = targets.map(
         (target) => automaton.stateToIndex.get(target)!,
       );

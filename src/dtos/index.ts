@@ -1,5 +1,5 @@
-import { JsonFSM } from "@/lib/automaton/FiniteStateMachine";
-import { ProblemSchema } from "@/lib/schemas/problem-form";
+import { type JsonFSM } from "@/lib/schemas/finite-state-machine";
+import { type ProblemSchema } from "@/lib/schemas/problem-form";
 import {
   type AutomatonType,
   type Problem,

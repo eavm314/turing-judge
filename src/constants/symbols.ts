@@ -1,1 +1,1 @@
-export const EPSILON = "ε";
+export const EPSILON = "\u03B5";

@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/dialog";
 import { validateCode } from "@/lib/schemas/automaton-code";
 import { useAutomaton } from "@/providers/playground-provider";
+import { useToast } from "@/hooks/use-toast";
 
-const initCode = "{}";
+const initCode = "";
 
 export function ImportCode() {
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
@@ -29,16 +30,23 @@ export function ImportCode() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { setAutomaton } = useAutomaton();
+  const { toast } = useToast();
 
   const codeError = validateCode(importJson);
 
   const handleImport = () => {
     if (codeError) return;
-    const parsed = JSON.parse(importJson);
-    setAutomaton(parsed);
-
-    setIsImportDialogOpen(false);
-    setInitialImportJson(initCode);
+    try {
+      const parsed = JSON.parse(importJson);
+      setAutomaton(parsed);
+      setInitialImportJson(initCode);
+      setIsImportDialogOpen(false);
+    } catch (error) {
+      toast({
+        title: "Invalid JSON for automaton",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,7 +135,7 @@ export function ImportCode() {
           >
             Cancel
           </Button>
-          <Button onClick={handleImport}>Import</Button>
+          <Button disabled={!!codeError} onClick={handleImport}>Import</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
