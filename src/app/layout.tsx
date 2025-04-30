@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Orbitron } from "next/font/google";
 import "./globals.css";
 
-import { ThemeProvider } from "@/providers/theme-provider"
+import { ThemeProvider } from "@/providers/theme-provider";
 import { SessionProvider } from "@/providers/user-provider";
 import { auth } from "@/lib/auth";
 import { ModalProvider } from "@/providers/modal-provider";
@@ -28,9 +28,7 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${orbitron.variable} antialiased`}
-      >
+      <body className={`${orbitron.variable} antialiased`}>
         <ThemeProvider>
           <ModalProvider>
             <SessionProvider user={session?.user}>
@@ -40,6 +38,6 @@ export default async function RootLayout({
           </ModalProvider>
         </ThemeProvider>
       </body>
-    </html >
+    </html>
   );
 }

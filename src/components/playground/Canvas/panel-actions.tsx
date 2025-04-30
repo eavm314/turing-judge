@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/ui/utils";
-import { useAutomaton, usePlaygroundMode } from "@/providers/playground-provider";
+import {
+  useAutomaton,
+  usePlaygroundMode,
+} from "@/providers/playground-provider";
 import { useModal } from "@/providers/modal-provider";
 
 export const AddStateButton = () => {
@@ -8,7 +11,7 @@ export const AddStateButton = () => {
   const { automaton, updateAutomaton } = useAutomaton();
   const { showPrompt } = useModal();
 
-  if (mode !== 'states') return null;
+  if (mode !== "states") return null;
 
   const handleAddState = async () => {
     const stateName = await showPrompt({
@@ -16,18 +19,21 @@ export const AddStateButton = () => {
       inputLabel: "Enter the name of the new state:",
       defaultValue: "",
       validator: (value) => {
-        if (value.length < 1 || value.length > 3) return "State name must contain 1 to 3 characters";
-        if (value.match(/[^a-zA-Z0-9]/)) return "State name can only contain letters and numbers";
-        if (automaton.stateToIndex.has(value)) return "State name must be unique";
+        if (value.length < 1 || value.length > 3)
+          return "State name must contain 1 to 3 characters";
+        if (value.match(/[^a-zA-Z0-9]/))
+          return "State name can only contain letters and numbers";
+        if (automaton.stateToIndex.has(value))
+          return "State name must be unique";
         return "";
-      }
+      },
     });
     if (!stateName) return;
 
     updateAutomaton((auto) => {
       auto.addState(stateName, {
         position: { x: 0, y: 0 },
-        transitions: {}
+        transitions: {},
       });
     });
   };
@@ -36,8 +42,8 @@ export const AddStateButton = () => {
     <Button variant="secondary" onClick={handleAddState}>
       Add State
     </Button>
-  )
-}
+  );
+};
 
 export function SwitchMode() {
   const { mode, setMode } = usePlaygroundMode();
@@ -46,14 +52,14 @@ export function SwitchMode() {
     <div>
       <div className="text-sm font-medium text-foreground mb-1">Mode:</div>
 
-      {mode === 'simulation' ? (
+      {mode === "simulation" ? (
         <button
           disabled
           className="rounded-md border bg-accent text-accent-foreground px-6 py-2 text-sm font-medium"
         >
           Simulation
         </button>
-      ) : mode === 'viewer' ? (
+      ) : mode === "viewer" ? (
         <button
           disabled
           className="rounded-md border bg-accent text-accent-foreground px-6 py-2 text-sm font-medium"
@@ -63,19 +69,23 @@ export function SwitchMode() {
       ) : (
         <div className="flex overflow-hidden rounded-md border bg-background">
           <button
-            onClick={() => setMode('states')}
+            onClick={() => setMode("states")}
             className={cn(
               "relative px-4 py-2 text-sm font-medium transition-colors",
-              mode === 'states' ? "bg-secondary text-secondary-foreground" : "bg-background text-foreground hover:bg-muted",
+              mode === "states"
+                ? "bg-secondary text-secondary-foreground"
+                : "bg-background text-foreground hover:bg-muted",
             )}
           >
             States
           </button>
           <button
-            onClick={() => setMode('transitions')}
+            onClick={() => setMode("transitions")}
             className={cn(
               "relative px-4 py-2 text-sm font-medium transition-colors",
-              mode === 'transitions' ? "bg-secondary text-secondary-foreground" : "bg-background text-foreground hover:bg-muted",
+              mode === "transitions"
+                ? "bg-secondary text-secondary-foreground"
+                : "bg-background text-foreground hover:bg-muted",
             )}
           >
             Transitions
@@ -83,5 +93,5 @@ export function SwitchMode() {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -27,9 +27,12 @@ class AutomatonExecutor {
     this.automaton = automaton;
   }
 
-  step(inputSymbol: string, state: State): {
+  step(
+    inputSymbol: string,
+    state: State,
+  ): {
     consuming: TransitionStep[]; // [from, to, symbol]
-    epsilon: TransitionStep[];   // [from, to, "ε"]
+    epsilon: TransitionStep[]; // [from, to, "ε"]
   } {
     this.steps++;
     const consuming: TransitionStep[] = [];

@@ -1,9 +1,8 @@
-
-import { MarkdownWrapper } from "@/components/ui/markdown-wrapper"
-import { type ProblemView } from "@/dtos"
-import { DifficultyBadge } from "@/utils/badges"
-import { Constraints } from "./constraints"
-import { SubmitSolution } from "./submit-solution"
+import { MarkdownWrapper } from "@/components/ui/markdown-wrapper";
+import { type ProblemView } from "@/dtos";
+import { DifficultyBadge } from "@/utils/badges";
+import { Constraints } from "./constraints";
+import { SubmitSolution } from "./submit-solution";
 
 export default function ProblemContent({ problem }: { problem: ProblemView }) {
   return (
@@ -20,6 +19,5 @@ export default function ProblemContent({ problem }: { problem: ProblemView }) {
         <SubmitSolution />
       </div>
     </div>
-  )
+  );
 }
-

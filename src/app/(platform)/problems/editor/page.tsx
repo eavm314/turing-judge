@@ -18,6 +18,5 @@ export default async function ProblemsEditorPage() {
       </div>
       <UserProblems problems={problems} />
     </main>
-  )
+  );
 }
-

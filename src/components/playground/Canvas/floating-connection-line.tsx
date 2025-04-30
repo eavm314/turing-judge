@@ -1,10 +1,10 @@
 import {
   type ConnectionLineComponentProps,
   type InternalNode,
-} from '@xyflow/react';
- 
-import { getPath } from './utils/graphics';
- 
+} from "@xyflow/react";
+
+import { getPath } from "./utils/graphics";
+
 export function FloatingConnectionLine({
   toX,
   toY,
@@ -12,15 +12,18 @@ export function FloatingConnectionLine({
   toNode,
 }: ConnectionLineComponentProps) {
   const temporalNode = {
-    id: 'temporal',
+    id: "temporal",
     measured: fromNode.measured,
     internals: {
       positionAbsolute: { x: toX, y: toY },
     },
   };
 
-  const [edgePath] = getPath(fromNode, toNode || temporalNode as InternalNode);
- 
+  const [edgePath] = getPath(
+    fromNode,
+    toNode || (temporalNode as InternalNode),
+  );
+
   return (
     <g>
       <path

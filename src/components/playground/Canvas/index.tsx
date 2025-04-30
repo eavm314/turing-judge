@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Background,
@@ -8,7 +8,7 @@ import {
   type ColorMode,
   type EdgeTypes,
   type FitViewOptions,
-  type NodeTypes
+  type NodeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useTheme } from "next-themes";
@@ -29,7 +29,7 @@ const edgeTypes: EdgeTypes = {
 };
 
 const defaultEdgeOpts = {
-  type: 'transition',
+  type: "transition",
 };
 
 const viewOptions: FitViewOptions = {
@@ -43,15 +43,10 @@ export default function Canvas() {
   const { theme } = useTheme();
   const { mode } = usePlaygroundMode();
 
-  const isInteractive = mode !== 'simulation' && mode !== 'viewer';
+  const isInteractive = mode !== "simulation" && mode !== "viewer";
 
-  const { 
-    nodes, 
-    edges, 
-    onConnect, 
-    onEdgesChange, 
-    onNodesChange, 
-  } = useCanvasHandlers();
+  const { nodes, edges, onConnect, onEdgesChange, onNodesChange } =
+    useCanvasHandlers();
 
   return (
     <div className="flex-1 h-full">
@@ -74,7 +69,7 @@ export default function Canvas() {
         elementsSelectable={isInteractive}
       >
         <Controls position="bottom-right" />
-        <Background color={theme === 'light' ? 'black' : 'white'} />
+        <Background color={theme === "light" ? "black" : "white"} />
         <Panel position="top-left">
           <SwitchMode />
         </Panel>
@@ -82,7 +77,6 @@ export default function Canvas() {
           <AddStateButton />
         </Panel>
       </ReactFlow>
-    </div >
-  )
+    </div>
+  );
 }
-

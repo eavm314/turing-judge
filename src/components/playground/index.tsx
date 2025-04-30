@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import dynamic from "next/dynamic";
 
@@ -7,7 +7,10 @@ import { Loader } from "lucide-react";
 
 import { PlaygroundLayout } from "@/components/playground/Layout";
 import SideMenu from "@/components/playground/SideMenu";
-import { FiniteStateMachine, type JsonFSM } from "@/lib/automaton/FiniteStateMachine";
+import {
+  FiniteStateMachine,
+  type JsonFSM,
+} from "@/lib/automaton/FiniteStateMachine";
 import { PlaygroundStoreProvider } from "@/providers/playground-provider";
 import { useSession } from "@/providers/user-provider";
 import { ReactFlowProvider } from "@xyflow/react";
@@ -27,8 +30,10 @@ export default function Playground({ data }: { data?: Project }) {
   const { user } = useSession();
   const isOwner = data ? user?.id === data.userId : true;
 
-  const automaton = new FiniteStateMachine(data?.automaton as unknown as JsonFSM | undefined)
-  const mode = isOwner ? 'states' : 'viewer';
+  const automaton = new FiniteStateMachine(
+    data?.automaton as unknown as JsonFSM | undefined,
+  );
+  const mode = isOwner ? "states" : "viewer";
 
   return (
     <PlaygroundStoreProvider initState={{ automaton, mode, isOwner }}>
@@ -42,5 +47,5 @@ export default function Playground({ data }: { data?: Project }) {
         </main>
       </div>
     </PlaygroundStoreProvider>
-  )
+  );
 }

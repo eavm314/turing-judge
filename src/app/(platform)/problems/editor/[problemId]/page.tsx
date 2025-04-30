@@ -1,8 +1,10 @@
 import { getProblemEditable } from "@/actions/problems";
-import { ProblemForm } from "@/components/problems/editor/problem-form"
+import { ProblemForm } from "@/components/problems/editor/problem-form";
 
-export default async function EditProblemPage({ params }: {
-  params: Promise<{ problemId: string }>,
+export default async function EditProblemPage({
+  params,
+}: {
+  params: Promise<{ problemId: string }>;
 }) {
   const { problemId } = await params;
   const problemData = await getProblemEditable(problemId);
@@ -13,6 +15,5 @@ export default async function EditProblemPage({ params }: {
         <ProblemForm problemId={problemId} problemData={problemData} />
       </div>
     </main>
-  )
+  );
 }
-

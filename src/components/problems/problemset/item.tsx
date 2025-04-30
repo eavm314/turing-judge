@@ -1,17 +1,24 @@
-"use client"
+"use client";
 
-import Link from "next/link"
+import Link from "next/link";
 
-import { TableCell, TableRow } from "@/components/ui/table"
-import { type ProblemSetItem } from "@/dtos"
-import { DifficultyBadge } from "@/utils/badges"
-import { formatDate } from "@/utils/date"
+import { TableCell, TableRow } from "@/components/ui/table";
+import { type ProblemSetItem } from "@/dtos";
+import { DifficultyBadge } from "@/utils/badges";
+import { formatDate } from "@/utils/date";
 
-export default function ProblemSetItem({ problem }: { problem: ProblemSetItem }) {
+export default function ProblemSetItem({
+  problem,
+}: {
+  problem: ProblemSetItem;
+}) {
   return (
     <TableRow className="hover:bg-muted/50">
       <TableCell className="w-1/2">
-        <Link href={`/problems/${problem.id}`} className="font-medium hover:underline">
+        <Link
+          href={`/problems/${problem.id}`}
+          className="font-medium hover:underline"
+        >
           <span className="text-nowrap md:text-base">{problem.title}</span>
         </Link>
       </TableCell>
@@ -20,5 +27,5 @@ export default function ProblemSetItem({ problem }: { problem: ProblemSetItem })
       </TableCell>
       <TableCell className="w-72">{formatDate(problem.updatedAt)}</TableCell>
     </TableRow>
-  )
+  );
 }

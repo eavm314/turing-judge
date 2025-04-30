@@ -1,4 +1,4 @@
-import { ProblemForm } from "@/components/problems/editor/problem-form"
+import { ProblemForm } from "@/components/problems/editor/problem-form";
 
 export default function CreateProblemPage() {
   return (
@@ -8,6 +8,5 @@ export default function CreateProblemPage() {
         <ProblemForm />
       </div>
     </main>
-  )
+  );
 }
-

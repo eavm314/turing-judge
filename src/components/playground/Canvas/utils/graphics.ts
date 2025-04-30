@@ -1,11 +1,12 @@
-import {
-  type InternalNode
-} from '@xyflow/react';
+import { type InternalNode } from "@xyflow/react";
 
 // this helper function returns the intersection points
 // of the line between the center of the intersectionNode and the target node
-function getNodeIntersections(sourceNode: InternalNode, targetNode: InternalNode) {
-  const isTemporal = targetNode.id === 'temporal';
+function getNodeIntersections(
+  sourceNode: InternalNode,
+  targetNode: InternalNode,
+) {
+  const isTemporal = targetNode.id === "temporal";
   const { width } = sourceNode.measured;
 
   const sPos = sourceNode.internals.positionAbsolute;
@@ -40,7 +41,9 @@ function getNodeIntersections(sourceNode: InternalNode, targetNode: InternalNode
   };
 }
 
-function getAutoConnectionPath(node: InternalNode): [path: string, labelX: number, labelY: number] {
+function getAutoConnectionPath(
+  node: InternalNode,
+): [path: string, labelX: number, labelY: number] {
   const { x, y } = node.internals.positionAbsolute;
   const { width, height } = node.measured;
   const nx = x + width! / 2;
@@ -51,7 +54,10 @@ function getAutoConnectionPath(node: InternalNode): [path: string, labelX: numbe
   return [path, labelX, labelY];
 }
 
-function getCurvedPath(source: InternalNode, target: InternalNode): [path: string, labelX: number, labelY: number] {
+function getCurvedPath(
+  source: InternalNode,
+  target: InternalNode,
+): [path: string, labelX: number, labelY: number] {
   const { sx, sy, cx, cy, tx, ty } = getNodeIntersections(source, target);
   const path = `M ${sx} ${sy} Q ${cx} ${cy} ${tx} ${ty}`;
   const labelX = 0.25 * sx + 0.5 * cx + 0.25 * tx;

@@ -1,14 +1,13 @@
-"use server"
+"use server";
 
 import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
-
 
 import {
   type ProblemUpdateSchema,
   type ProblemEditorItem,
   type ProblemSetItem,
-  type ProblemView
+  type ProblemView,
 } from "@/dtos";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
@@ -27,13 +26,16 @@ export const getProblemSet = async (): Promise<ProblemSetItem[]> => {
   });
 
   return results;
-}
+};
 
 export const getProblemView = async (id: string): Promise<ProblemView> => {
   const session = await auth();
   const problem = await prisma.problem.findUnique({ where: { id } });
 
-  if (!problem || (!problem.isPublic && problem.authorId !== (session?.user?.id))) {
+  if (
+    !problem ||
+    (!problem.isPublic && problem.authorId !== session?.user?.id)
+  ) {
     notFound();
   }
 
@@ -51,14 +53,14 @@ export const getProblemView = async (id: string): Promise<ProblemView> => {
       depthLimit: problem.depthLimit,
       maxStepLimit: problem.maxStepLimit,
     },
-  }
+  };
 
   return problemView;
-}
+};
 
 export const getUserProblems = async (): Promise<ProblemEditorItem[]> => {
   const session = await auth();
-  if (!session?.user?.id) redirect('/signin');
+  if (!session?.user?.id) redirect("/signin");
 
   const results = await prisma.problem.findMany({
     where: { authorId: session.user.id },
@@ -72,19 +74,21 @@ export const getUserProblems = async (): Promise<ProblemEditorItem[]> => {
   });
 
   return results;
-}
+};
 
 export const createProblem = async (body: ProblemSchema) => {
   const session = await auth();
-  if (!session?.user?.id) redirect('/signin');
-  if (session.user.role !== 'EDITOR') {
+  if (!session?.user?.id) redirect("/signin");
+  if (session.user.role !== "EDITOR") {
     console.error("User does not have permission to create problems.");
     return false;
   }
 
   const { testCases, ...fields } = body;
-  const testCasesArray = testCases.split("\n").map(line => {
-    const [input, accept, expectedOutput] = line.split(",").map(part => part.trim());
+  const testCasesArray = testCases.split("\n").map((line) => {
+    const [input, accept, expectedOutput] = line
+      .split(",")
+      .map((part) => part.trim());
     return { input, expectedOutput, expectedResult: Boolean(Number(accept)) };
   });
   try {
@@ -100,21 +104,24 @@ export const createProblem = async (body: ProblemSchema) => {
         },
       },
     });
-    revalidatePath('/problems');
+    revalidatePath("/problems");
     revalidatePath(`/problems/${result.id}`);
-    revalidatePath('/problems/editor');
+    revalidatePath("/problems/editor");
     revalidatePath(`/problems/editor/${result.id}`);
     return true;
   } catch (error) {
     console.error("Error creating problem:", error);
     return false;
   }
-}
+};
 
-export const updateProblem = async (problemId: string, body: Partial<ProblemUpdateSchema>) => {
+export const updateProblem = async (
+  problemId: string,
+  body: Partial<ProblemUpdateSchema>,
+) => {
   const session = await auth();
-  if (!session?.user?.id) redirect('/signin');
-  if (session.user.role !== 'EDITOR') {
+  if (!session?.user?.id) redirect("/signin");
+  if (session.user.role !== "EDITOR") {
     console.error("User does not have permission to update problems.");
     return false;
   }
@@ -136,9 +143,15 @@ export const updateProblem = async (problemId: string, body: Partial<ProblemUpda
     const { testCases, ...fields } = body;
     let testCasesQuery = undefined;
     if (testCases) {
-      const testCasesArray = testCases.split("\n").map(line => {
-        const [input, accept, expectedOutput] = line.split(",").map(part => part.trim());
-        return { input, expectedOutput, expectedResult: Boolean(Number(accept)) };
+      const testCasesArray = testCases.split("\n").map((line) => {
+        const [input, accept, expectedOutput] = line
+          .split(",")
+          .map((part) => part.trim());
+        return {
+          input,
+          expectedOutput,
+          expectedResult: Boolean(Number(accept)),
+        };
       });
       testCasesQuery = {
         deleteMany: {},
@@ -155,18 +168,20 @@ export const updateProblem = async (problemId: string, body: Partial<ProblemUpda
         testCases: testCasesQuery,
       },
     });
-    revalidatePath('/problems');
+    revalidatePath("/problems");
     revalidatePath(`/problems/${problemId}`);
-    revalidatePath('/problems/editor');
+    revalidatePath("/problems/editor");
     revalidatePath(`/problems/editor/${problemId}`);
     return true;
   } catch (error) {
     console.error("Error updating problem:", error);
     return false;
   }
-}
+};
 
-export const getProblemEditable = async (id: string): Promise<ProblemSchema> => {
+export const getProblemEditable = async (
+  id: string,
+): Promise<ProblemSchema> => {
   const session = await auth();
   const problem = await prisma.problem.findUnique({
     where: { id },
@@ -191,36 +206,38 @@ export const getProblemEditable = async (id: string): Promise<ProblemSchema> => 
           expectedResult: true,
         },
       },
-    }
+    },
   });
 
-  if (!problem || problem.authorId !== (session?.user?.id)) {
+  if (!problem || problem.authorId !== session?.user?.id) {
     notFound();
   }
 
-  const testCases = problem.testCases.map((testCase) => {
-    if (testCase.expectedOutput === null) {
-      return `${testCase.input}, ${Number(testCase.expectedResult)}`;
-    }
-    return `${testCase.input}, ${Number(testCase.expectedResult)}, ${testCase.expectedOutput}`;
-  }).join("\n");
+  const testCases = problem.testCases
+    .map((testCase) => {
+      if (testCase.expectedOutput === null) {
+        return `${testCase.input}, ${Number(testCase.expectedResult)}`;
+      }
+      return `${testCase.input}, ${Number(testCase.expectedResult)}, ${testCase.expectedOutput}`;
+    })
+    .join("\n");
 
   return { ...problem, testCases };
-}
+};
 
 export const deleteProblem = async (id: string) => {
   const session = await auth();
-  if (!session?.user?.id) redirect('/signin');
+  if (!session?.user?.id) redirect("/signin");
 
   try {
     await prisma.problem.delete({ where: { id, authorId: session.user.id } });
-    revalidatePath('/problems');
+    revalidatePath("/problems");
     revalidatePath(`/problems/${id}`);
-    revalidatePath('/problems/editor');
+    revalidatePath("/problems/editor");
     revalidatePath(`/problems/editor/${id}`);
     return true;
   } catch (error) {
     console.error("Error deleting problem:", error);
     return false;
   }
-}
+};

@@ -1,6 +1,10 @@
-import { type ProblemConstraints } from "@/dtos"
+import { type ProblemConstraints } from "@/dtos";
 
-export const Constraints = ({ constraints }: { constraints: ProblemConstraints }) => {
+export const Constraints = ({
+  constraints,
+}: {
+  constraints: ProblemConstraints;
+}) => {
   return (
     <div className="mt-4 p-4 rounded-md bg-accent text-neutral-foreground max-h-max">
       <h3 className="text-lg font-medium mb-3">Problem Constraints</h3>
@@ -46,17 +50,20 @@ export const Constraints = ({ constraints }: { constraints: ProblemConstraints }
           <h4 className="text-sm font-medium mb-2">Execution Limits:</h4>
           <ul className="space-y-1">
             <li className="flex items-center">
-              <span className="font-medium mr-2">State Limit:</span> {constraints.stateLimit} states
+              <span className="font-medium mr-2">State Limit:</span>{" "}
+              {constraints.stateLimit} states
             </li>
             <li className="flex items-center">
-              <span className="font-medium mr-2">Depth Limit:</span> {constraints.depthLimit} steps
+              <span className="font-medium mr-2">Depth Limit:</span>{" "}
+              {constraints.depthLimit} steps
             </li>
             <li className="flex items-center">
-              <span className="font-medium mr-2">Maximum Step Limit:</span> {constraints.maxStepLimit} steps
+              <span className="font-medium mr-2">Maximum Step Limit:</span>{" "}
+              {constraints.maxStepLimit} steps
             </li>
           </ul>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

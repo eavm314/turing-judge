@@ -9,5 +9,5 @@ export default function SideMenu() {
       <Separator className="bg-input" />
       <TestSuite />
     </div>
-  )
+  );
 }

@@ -1,5 +1,8 @@
 import { useAddTransitionPrompt } from "@/components/modal/add-transition";
-import { useAutomaton, usePlaygroundMode } from "@/providers/playground-provider";
+import {
+  useAutomaton,
+  usePlaygroundMode,
+} from "@/providers/playground-provider";
 import {
   applyEdgeChanges,
   applyNodeChanges,
@@ -7,7 +10,7 @@ import {
   type Node,
   type OnConnect,
   type OnEdgesChange,
-  type OnNodesChange
+  type OnNodesChange,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useCallback, useEffect, useState } from "react";
@@ -26,22 +29,24 @@ export const useCanvasHandlers = () => {
     const { nodes: newNodes, edges: newEdges } = fsmToFlow(automaton, nodes);
     setNodes(newNodes);
     setEdges(newEdges);
-  }, [automaton])
+  }, [automaton]);
 
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => {
-      if (changes.some((change) => change.type === 'position' && !change.dragging)) {
+      if (
+        changes.some((change) => change.type === "position" && !change.dragging)
+      ) {
         updateAutomaton((auto) => {
           changes.forEach((change) => {
-            if (change.type === 'position') {
+            if (change.type === "position") {
               auto.moveState(Number(change.id), change.position!);
             }
           });
         });
-      } else if (changes.some((change) => change.type === 'remove')) {
+      } else if (changes.some((change) => change.type === "remove")) {
         updateAutomaton((auto) => {
           changes.forEach((change) => {
-            if (change.type === 'remove' && Number(change.id) !== 0) {
+            if (change.type === "remove" && Number(change.id) !== 0) {
               auto.removeState(Number(change.id));
             }
           });
@@ -55,11 +60,11 @@ export const useCanvasHandlers = () => {
 
   const onEdgesChange: OnEdgesChange = useCallback(
     (changes) => {
-      if (changes.some((change) => change.type === 'remove')) {
+      if (changes.some((change) => change.type === "remove")) {
         updateAutomaton((auto) => {
           changes.forEach((change) => {
-            if (change.type === 'remove') {
-              const [source, target] = change.id.split('->');
+            if (change.type === "remove") {
+              const [source, target] = change.id.split("->");
               auto.removeTransition(Number(source), Number(target));
             }
           });
@@ -73,23 +78,36 @@ export const useCanvasHandlers = () => {
 
   const onConnect: OnConnect = useCallback(
     async (connection) => {
-      const initialSymbols = automaton.getTransition(Number(connection.source), Number(connection.target));
-      const symbols = await addTransitionPrompt({ alphabet: automaton.alphabet, initialSymbols });
+      const initialSymbols = automaton.getTransition(
+        Number(connection.source),
+        Number(connection.target),
+      );
+      const symbols = await addTransitionPrompt({
+        alphabet: automaton.alphabet,
+        initialSymbols,
+      });
       if (!symbols) return;
       updateAutomaton((auto) => {
-        auto.removeTransition(Number(connection.source), Number(connection.target));
-        auto.addTransition(Number(connection.source), Number(connection.target), symbols);
+        auto.removeTransition(
+          Number(connection.source),
+          Number(connection.target),
+        );
+        auto.addTransition(
+          Number(connection.source),
+          Number(connection.target),
+          symbols,
+        );
       });
     },
     [automaton, updateAutomaton],
   );
 
   useEffect(() => {
-    if (mode !== 'states') {
-      setNodes(prev => prev.map(n => ({ ...n, selected: false })))
+    if (mode !== "states") {
+      setNodes((prev) => prev.map((n) => ({ ...n, selected: false })));
     }
-    if (mode === 'simulation') {
-      setEdges(prev => prev.map(e => ({ ...e, selected: false })))
+    if (mode === "simulation") {
+      setEdges((prev) => prev.map((e) => ({ ...e, selected: false })));
     }
   }, [mode]);
 
@@ -99,5 +117,5 @@ export const useCanvasHandlers = () => {
     onNodesChange,
     onEdgesChange,
     onConnect,
-  }
-}
+  };
+};

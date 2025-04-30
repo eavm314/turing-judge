@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
 import { useSession } from "@/providers/user-provider";
@@ -37,8 +37,8 @@ export function SaveAutomaton() {
         e.preventDefault();
       }
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [unsavedChanges]);
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export function SaveAutomaton() {
       variant: "success",
     });
     router.push(`/playground/${id}`);
-  }
+  };
 
   const handleSave = async () => {
     if (automatonId && isOwner) {
@@ -92,7 +92,8 @@ export function SaveAutomaton() {
   return (
     <div className="flex items-center gap-8">
       <div className="flex items-center">
-        <Button size="sm"
+        <Button
+          size="sm"
           className="rounded-r-none border-r-0 text-sm"
           onClick={handleSave}
         >
@@ -101,16 +102,25 @@ export function SaveAutomaton() {
         </Button>
         <DropdownMenu open={openMenu} onOpenChange={setOpenMenu}>
           <DropdownMenuTrigger asChild>
-            <Button size="sm" className="rounded-l-none px-2 border-l border-background">
+            <Button
+              size="sm"
+              className="rounded-l-none px-2 border-l border-background"
+            >
               <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-24">
-            <DropdownMenuItem onClick={handleSaveAs}>Save As...</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSaveAs}>
+              Save As...
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {unsavedChanges && <span className="italic text-neutral-foreground/80">You have unsaved changes</span>}
+      {unsavedChanges && (
+        <span className="italic text-neutral-foreground/80">
+          You have unsaved changes
+        </span>
+      )}
     </div>
   );
 }

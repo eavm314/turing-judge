@@ -1,23 +1,23 @@
 import { State, type JsonState } from "./State";
 
 export interface JsonFSM {
-  alphabet: string[],
-  states: Record<string, JsonState>,
-  initial: string,
-  finals: string[],
+  alphabet: string[];
+  states: Record<string, JsonState>;
+  initial: string;
+  finals: string[];
 }
 
 const basicAutomata: JsonFSM = {
-  alphabet: ['0', '1'],
+  alphabet: ["0", "1"],
   states: {
-    "q0": {
+    q0: {
       position: { x: 0, y: 0 },
       transitions: {},
-    }
+    },
   },
   initial: "q0",
   finals: [],
-}
+};
 
 export class FiniteStateMachine {
   states: Map<number, State>;
@@ -33,7 +33,9 @@ export class FiniteStateMachine {
 
     // Convert JSON to Objects
     this.stateToIndex = new Map([[json.initial, 0]]);
-    for (const name of Object.keys(json.states).filter((name) => name !== json.initial)) {
+    for (const name of Object.keys(json.states).filter(
+      (name) => name !== json.initial,
+    )) {
       const stateId = Math.max(...Object.values(this.stateToIndex)) + 1;
       this.stateToIndex.set(name, stateId);
     }
@@ -55,12 +57,13 @@ export class FiniteStateMachine {
   }
 
   toJson(): JsonFSM {
-    const states = Object.fromEntries(this.states.values()
-      .map((state) => [state.name, state.toJson()]));
+    const states = Object.fromEntries(
+      this.states.values().map((state) => [state.name, state.toJson()]),
+    );
 
     const finals = Array.from(this.states.values())
-      .filter(state => state.isFinal)
-      .map(state => state.name);
+      .filter((state) => state.isFinal)
+      .map((state) => state.name);
 
     const initial = this.states.get(0)!.name;
 
@@ -98,7 +101,8 @@ export class FiniteStateMachine {
   addTransition(from: number, to: number, symbols: string[]) {
     const symbSet = new Set(symbols);
     const alphabetSet = new Set(this.alphabet);
-    if (symbSet.difference(alphabetSet).size > 0) throw new Error("Symbols not in alphabet");
+    if (symbSet.difference(alphabetSet).size > 0)
+      throw new Error("Symbols not in alphabet");
 
     const source = this.states.get(from);
     if (!source) throw new Error("Source state does not exist");
@@ -116,7 +120,8 @@ export class FiniteStateMachine {
     const state = this.states.get(from);
     if (!state) throw new Error("State does not exist");
 
-    const symbols = state.transitions.entries()
+    const symbols = state.transitions
+      .entries()
       .filter(([_, targets]) => targets.includes(to))
       .map(([symbol]) => symbol)
       .toArray();
@@ -129,7 +134,7 @@ export class FiniteStateMachine {
     state!.switchFinal();
   }
 
-  moveState(id: number, position: { x: number, y: number }) {
+  moveState(id: number, position: { x: number; y: number }) {
     const state = this.states.get(id);
     if (!state) throw new Error("State does not exist");
     state.setPosition(position);

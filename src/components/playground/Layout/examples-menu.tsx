@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { ChevronDown } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 const automatonExamples = [
   { name: "Empty Automaton", key: "" },
   { name: "Simple DFA", key: "dfa" },
   { name: "Simple NFA", key: "nfa" },
-]
+];
 
 export function ExamplesMenu() {
   return (
@@ -26,11 +26,9 @@ export function ExamplesMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         {automatonExamples.map((example) => (
-          <DropdownMenuItem key={example.key}>
-            {example.name}
-          </DropdownMenuItem>
+          <DropdownMenuItem key={example.key}>{example.name}</DropdownMenuItem>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

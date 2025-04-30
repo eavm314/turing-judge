@@ -8,6 +8,5 @@ export default async function ProjectsPage() {
       <h1 className="text-2xl font-bold mb-4">My Projects</h1>
       <AutomataLibrary projectItems={savedAutomata} />
     </main>
-  )
+  );
 }
-

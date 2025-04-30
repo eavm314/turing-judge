@@ -1,23 +1,23 @@
 import { AutomatonCode } from "@/dtos";
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
-import { createStore } from 'zustand/vanilla';
+import { createStore } from "zustand/vanilla";
 
 export type PlaygroundMode = "states" | "transitions" | "simulation" | "viewer";
 
 export type PlaygroundState = {
   automaton: FiniteStateMachine;
-  mode: PlaygroundMode,
-  isOwner: boolean,
-  unsavedChanges: boolean,
-}
+  mode: PlaygroundMode;
+  isOwner: boolean;
+  unsavedChanges: boolean;
+};
 
 export type PlaygroundActions = {
   setAutomaton: (code: AutomatonCode) => void;
   updateAutomaton: (callback: (automaton: FiniteStateMachine) => void) => void;
-  setMode: (newMode: PlaygroundMode) => void,
+  setMode: (newMode: PlaygroundMode) => void;
   saveChanges: () => void;
-}
+};
 
 export type PlaygroundStore = PlaygroundState & PlaygroundActions;
 
@@ -28,7 +28,9 @@ const defaultState: PlaygroundState = {
   unsavedChanges: false,
 };
 
-export const createPlaygroundStore = (initialState?: Partial<PlaygroundState>) => {
+export const createPlaygroundStore = (
+  initialState?: Partial<PlaygroundState>,
+) => {
   const initialStateWithDefaults = {
     ...defaultState,
     ...initialState,
@@ -51,4 +53,4 @@ export const createPlaygroundStore = (initialState?: Partial<PlaygroundState>) =
     },
     saveChanges: () => set({ unsavedChanges: false }),
   }));
-}
+};

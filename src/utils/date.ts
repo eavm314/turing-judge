@@ -3,8 +3,8 @@ export const formatDate = (date: Date) => {
     month: "short",
     day: "numeric",
     year: "numeric",
-  }).format(date)
-}
+  }).format(date);
+};
 
 export const formatDateTime = (stringDate: string | Date) => {
   const date = new Date(stringDate);
@@ -15,4 +15,4 @@ export const formatDateTime = (stringDate: string | Date) => {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
-}
+};

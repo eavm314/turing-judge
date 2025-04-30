@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect } from "react";
 
@@ -27,11 +27,11 @@ const AddTransitionPrompt = ({
 
   const handleSymbolToggle = (symbol: string, checked: boolean) => {
     if (checked) {
-      setSelectedSymbols((prev) => [...prev, symbol])
+      setSelectedSymbols((prev) => [...prev, symbol]);
     } else {
-      setSelectedSymbols((prev) => prev.filter((s) => s !== symbol))
+      setSelectedSymbols((prev) => prev.filter((s) => s !== symbol));
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -41,7 +41,11 @@ const AddTransitionPrompt = ({
           <span className="text-muted-foreground italic">None</span>
         ) : (
           selectedSymbols.map((symbol) => (
-            <Badge key={symbol} variant="outline" className="h-6 font-mono text-sm">
+            <Badge
+              key={symbol}
+              variant="outline"
+              className="h-6 font-mono text-sm"
+            >
               {symbol}
             </Badge>
           ))
@@ -55,7 +59,9 @@ const AddTransitionPrompt = ({
               <Checkbox
                 id={`symbol-${symbol}`}
                 checked={selectedSymbols.includes(symbol)}
-                onCheckedChange={(checked) => handleSymbolToggle(symbol, checked === true)}
+                onCheckedChange={(checked) =>
+                  handleSymbolToggle(symbol, checked === true)
+                }
               />
               <Label htmlFor={`symbol-${symbol}`} className="font-mono">
                 {symbol} {symbol === EPSILON && "(empty transition)"}
@@ -66,17 +72,19 @@ const AddTransitionPrompt = ({
       </ScrollArea>
     </div>
   );
-}
+};
 
 export const useAddTransitionPrompt = () => {
-  const { showCustomModal } = useModal()
+  const { showCustomModal } = useModal();
 
-  const saveAutomatonPrompt = (data: TransitionData) => showCustomModal<string[], TransitionData>({
-    title: data.initialSymbols.length > 0 ? "Edit Transition" : "Add Transition",
-    message: "Choose the symbols for the transition",
-    customContent: AddTransitionPrompt,
-    customComponentData: data,
-  });
+  const saveAutomatonPrompt = (data: TransitionData) =>
+    showCustomModal<string[], TransitionData>({
+      title:
+        data.initialSymbols.length > 0 ? "Edit Transition" : "Add Transition",
+      message: "Choose the symbols for the transition",
+      customContent: AddTransitionPrompt,
+      customComponentData: data,
+    });
 
   return saveAutomatonPrompt;
-}
+};

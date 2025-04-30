@@ -8,6 +8,5 @@ export default async function ProblemsPage() {
       <h1 className="text-2xl font-bold mb-4">Problem Set</h1>
       <ProblemSet problems={problems} />
     </main>
-  )
+  );
 }
-

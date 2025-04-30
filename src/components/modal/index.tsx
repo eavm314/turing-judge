@@ -1,12 +1,19 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { useModal } from "@/providers/modal-provider"
-import { cn } from "@/lib/ui/utils"
+import { useState, useEffect, useRef } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useModal } from "@/providers/modal-provider";
+import { cn } from "@/lib/ui/utils";
 
 export function Modal() {
   const { isOpen, modalType, options } = useModal();
@@ -21,7 +28,7 @@ export function Modal() {
       setInputValue(options.defaultValue || "");
       setTimeout(() => {
         inputRef.current?.focus();
-      }, 100)
+      }, 100);
     }
   }, [isOpen, modalType, options.defaultValue]);
 
@@ -32,7 +39,7 @@ export function Modal() {
       const error = options.validator(value);
       setErrors({ prompt: error });
     }
-  }
+  };
 
   const handleConfirm = () => {
     if (Object.values(errors).some((error) => error)) {
@@ -50,32 +57,37 @@ export function Modal() {
     setInputValue("");
     setCustomInputValue(null);
     setErrors({});
-  }
+  };
 
   const handleCancel = () => {
     options.onCancel?.();
     setInputValue("");
     setCustomInputValue(null);
     setErrors({});
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && modalType !== "custom") {
       e.preventDefault();
       handleConfirm();
     }
-  }
+  };
 
   const CustomContent = options.customContent;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleCancel()}>
-      <DialogContent className={cn("max-w-[420px]", options.className)} onKeyDown={handleKeyDown}>
+      <DialogContent
+        className={cn("max-w-[420px]", options.className)}
+        onKeyDown={handleKeyDown}
+      >
         <DialogHeader>
           <DialogTitle>{options.title}</DialogTitle>
         </DialogHeader>
 
-        {options.message && <DialogDescription>{options.message}</DialogDescription>}
+        {options.message && (
+          <DialogDescription>{options.message}</DialogDescription>
+        )}
 
         {modalType === "prompt" && (
           <div>
@@ -93,11 +105,13 @@ export function Modal() {
               onChange={handleInputChange}
               className="my-1"
             />
-            {errors.prompt && <p className="text-xs text-destructive">{errors.prompt}</p>}
+            {errors.prompt && (
+              <p className="text-xs text-destructive">{errors.prompt}</p>
+            )}
           </div>
         )}
 
-        {modalType === "custom" && CustomContent &&
+        {modalType === "custom" && CustomContent && (
           <CustomContent
             value={customInputValue}
             setValue={setCustomInputValue}
@@ -105,17 +119,24 @@ export function Modal() {
             errors={errors}
             setErrors={setErrors}
           />
-        }
+        )}
 
         <DialogFooter>
-          {(modalType === "confirm" || modalType === "prompt" || modalType === "custom") && (
+          {(modalType === "confirm" ||
+            modalType === "prompt" ||
+            modalType === "custom") && (
             <Button variant="outline" onClick={handleCancel}>
               {options.cancelLabel || "Cancel"}
             </Button>
           )}
-          <Button variant={options.destructive ? "destructive" : "default"} onClick={handleConfirm}>{options.confirmLabel || "OK"}</Button>
+          <Button
+            variant={options.destructive ? "destructive" : "default"}
+            onClick={handleConfirm}
+          >
+            {options.confirmLabel || "OK"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

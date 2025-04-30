@@ -24,7 +24,7 @@ export function AutomatonTitle({ title }: { title: string | null }) {
       });
     }, 1000);
     setTimer(newTimer);
-  }
+  };
   return (
     <Input
       className="md:w-72 placeholder:italic disabled:opacity-80"

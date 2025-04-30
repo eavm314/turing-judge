@@ -8,7 +8,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
 import { useModal } from "@/providers/modal-provider";
 import { useIsOwner } from "@/providers/playground-provider";
@@ -24,18 +24,19 @@ export function PublicSelect({ isPublic }: { isPublic: boolean }) {
       title: "Change Visibility",
       message: `Are you sure you want to change the visibility to ${value}?`,
       confirmLabel: "Yes",
-      cancelLabel: "No"
+      cancelLabel: "No",
     });
     if (!confirmation) return;
 
     await updateAutomaton({
       id: automatonId,
-      isPublic: value === 'public'
-    })
-  }
+      isPublic: value === "public",
+    });
+  };
   return (
-    <Select disabled={!isOwner}
-      value={isPublic ? 'public' : 'private'}
+    <Select
+      disabled={!isOwner}
+      value={isPublic ? "public" : "private"}
       onValueChange={handleSelectChange}
     >
       <SelectTrigger className="w-28 disabled:opacity-80">

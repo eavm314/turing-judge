@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { SignInModal } from "@/components/auth/signin-modal";
 import { type User } from "next-auth";
@@ -10,12 +10,14 @@ interface UserContextType {
   setOpenSignIn: (open: boolean) => void;
 }
 
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+export const UserContext = createContext<UserContextType | undefined>(
+  undefined,
+);
 
 interface SessionProviderProps {
-  children: React.ReactNode,
-  user?: User,
-};
+  children: React.ReactNode;
+  user?: User;
+}
 
 export const SessionProvider = ({ children, user }: SessionProviderProps) => {
   const [openSignIn, setOpenSignIn] = useState(false);
@@ -31,8 +33,8 @@ export const SessionProvider = ({ children, user }: SessionProviderProps) => {
       {children}
       <SignInModal />
     </UserContext.Provider>
-  )
-}
+  );
+};
 
 export function useSession() {
   const context = useContext(UserContext);

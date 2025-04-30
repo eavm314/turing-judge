@@ -1,5 +1,5 @@
-"use client"
-import { signIn } from "@/actions/auth"
+"use client";
+import { signIn } from "@/actions/auth";
 import { useSession } from "@/providers/user-provider";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -16,7 +16,7 @@ export default function SignInPage() {
       window.close();
       router.replace("/");
     } else {
-      signIn(searchParams.get('provider') || 'google');
+      signIn(searchParams.get("provider") || "google");
     }
   }, [user, searchParams]);
 

@@ -18,10 +18,12 @@ export function PlaygroundLayout({ data }: { data?: Project }) {
         <Link className="flex items-center justify-center" href="/">
           <Cpu className="size-8 text-primary" />
         </Link>
-        {data && (<>
-          <AutomatonTitle title={data.title} />
-          <PublicSelect isPublic={data.isPublic} />
-        </>)}
+        {data && (
+          <>
+            <AutomatonTitle title={data.title} />
+            <PublicSelect isPublic={data.isPublic} />
+          </>
+        )}
         <SaveAutomaton />
       </nav>
       <nav className="ml-auto flex items-center gap-4 sm:gap-6">
@@ -34,5 +36,5 @@ export function PlaygroundLayout({ data }: { data?: Project }) {
         <AccountMenu variant="ghost" />
       </nav>
     </header>
-  )
+  );
 }

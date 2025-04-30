@@ -5,4 +5,4 @@ export const validateCode = (code: string) => {
   } catch (error) {
     return "Invalid JSON format";
   }
-}
+};

@@ -1,13 +1,30 @@
 import { useState } from "react";
 
-import { Pause, PenLine, Play, RefreshCw, Shuffle, SkipBack } from "lucide-react";
+import {
+  Pause,
+  PenLine,
+  Play,
+  RefreshCw,
+  Shuffle,
+  SkipBack,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export function SimulationControls() {
-  const [simulationMode, setSimulationMode] = useState<"manual" | "auto" | null>(null);
-  const [autoSimulationType, setAutoSimulationType] = useState<"random" | "solution" | null>(null);
+  const [simulationMode, setSimulationMode] = useState<
+    "manual" | "auto" | null
+  >(null);
+  const [autoSimulationType, setAutoSimulationType] = useState<
+    "random" | "solution" | null
+  >(null);
 
   const possibleTransitions = [
     { state: "q1", symbol: "0" },
@@ -18,43 +35,42 @@ export function SimulationControls() {
     // setResult(null)
     // setIsSimulating(true)
     // setSimulationMode(null)
-
     // // Find initial state
     // const initialState = automaton.states.find((state) => state.isInitial)
     // setCurrentState(initialState?.id || null)
-  }
+  };
 
   const resetSimulation = () => {
     // setIsSimulating(false)
     // setSimulationMode(null)
     // setAutoSimulationType(null)
     // setCurrentState(null)
-  }
+  };
 
   const startManualSimulation = () => {
-    setSimulationMode("manual")
-  }
+    setSimulationMode("manual");
+  };
 
   const startAutoSimulation = (type: "random" | "solution") => {
     // setSimulationMode("auto")
     // setAutoSimulationType(type)
-  }
+  };
 
   const stopAutoSimulation = () => {
     // setSimulationMode("manual")
     // setAutoSimulationType(null)
-  }
+  };
 
   const goToPreviousState = () => {
     // This would be implemented with actual logic
     // console.log("Go to previous state")
-  }
+  };
 
   const goToNextState = (nextState: string, symbol: string) => {
     // This would be implemented with actual logic
     // setCurrentState(nextState)
     // console.log(`Transition to ${nextState} with symbol ${symbol}`)
-  }
+  };
 
   return (
     <>
@@ -62,7 +78,9 @@ export function SimulationControls() {
         <Card>
           <CardHeader className="p-4">
             <CardTitle className="text-md">Simulation Mode</CardTitle>
-            <CardDescription>Choose how to simulate the automaton</CardDescription>
+            <CardDescription>
+              Choose how to simulate the automaton
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 px-4 pb-4">
             <Button
@@ -73,14 +91,18 @@ export function SimulationControls() {
               <Play className="h-4 w-4" />
               Find Solution
             </Button>
-            <Button onClick={() => startAutoSimulation("random")}
-              className="w-full justify-start" variant="outline"
+            <Button
+              onClick={() => startAutoSimulation("random")}
+              className="w-full justify-start"
+              variant="outline"
             >
               <Shuffle className="h-4 w-4" />
               Random Steps
             </Button>
-            <Button onClick={() => startManualSimulation()}
-              className="w-full justify-start" variant="outline"
+            <Button
+              onClick={() => startManualSimulation()}
+              className="w-full justify-start"
+              variant="outline"
             >
               <PenLine className="h-4 w-4" />
               Manual Simulation
@@ -121,7 +143,9 @@ export function SimulationControls() {
                   {possibleTransitions.map((transition, index) => (
                     <Button
                       key={index}
-                      onClick={() => goToNextState(transition.state, transition.symbol)}
+                      onClick={() =>
+                        goToNextState(transition.state, transition.symbol)
+                      }
                       size="sm"
                       variant="secondary"
                     >
@@ -141,7 +165,9 @@ export function SimulationControls() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-md">
-              {autoSimulationType === "random" ? "Random Simulation" : "Processing Input"}
+              {autoSimulationType === "random"
+                ? "Random Simulation"
+                : "Processing Input"}
             </CardTitle>
             <CardDescription>
               Current State:{" "}
@@ -155,7 +181,11 @@ export function SimulationControls() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={stopAutoSimulation} className="w-full" variant="destructive">
+            <Button
+              onClick={stopAutoSimulation}
+              className="w-full"
+              variant="destructive"
+            >
               <Pause className="mr-2 h-4 w-4" />
               Stop Simulation
             </Button>
@@ -172,5 +202,5 @@ export function SimulationControls() {
         </Card>
       )}
     </>
-  )
+  );
 }

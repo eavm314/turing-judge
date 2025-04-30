@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { redirect } from "next/navigation";
 
@@ -20,11 +20,11 @@ export const getUserSubmissions = async (problemId: string) => {
       message: true,
       createdAt: true,
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
   });
 
   return results;
-}
+};
 
 export const submitSolution = async (
   problemId: string,
@@ -32,19 +32,19 @@ export const submitSolution = async (
   automatonCode: AutomatonCode | null,
 ) => {
   const session = await auth();
-  if (!session?.user?.id) redirect('/signin');
+  if (!session?.user?.id) redirect("/signin");
 
   let solutionCode: AutomatonCode;
   if (projectId !== null) {
     const project = await prisma.project.findUnique({
       where: {
         id: projectId,
-        userId: session.user.id
+        userId: session.user.id,
       },
       select: {
         automaton: true,
         type: true,
-      }
+      },
     });
     if (!project) {
       console.error("Project not found or user is not owner.");
@@ -70,13 +70,17 @@ export const submitSolution = async (
   });
 
   setTimeout(() => {
-    verifySolution(submission.id, problemId, solutionCode)
+    verifySolution(submission.id, problemId, solutionCode);
   }, 5000);
 
   return true;
-}
+};
 
-const verifySolution = async (submissionId: number, problemId: string, solution: AutomatonCode) => {
+const verifySolution = async (
+  submissionId: number,
+  problemId: string,
+  solution: AutomatonCode,
+) => {
   const problemTestData = (await prisma.problem.findUnique({
     where: { id: problemId },
     select: {
@@ -93,7 +97,7 @@ const verifySolution = async (submissionId: number, problemId: string, solution:
           expectedResult: true,
           expectedOutput: true,
         },
-      }
+      },
     },
   }))!;
 
@@ -112,10 +116,11 @@ const verifySolution = async (submissionId: number, problemId: string, solution:
   AutomatonExecutor.setAutomaton(automaton);
 
   let overallResult = true;
-  let failedTestCase: typeof problemTestData.testCases[number] | null = null;
+  let failedTestCase: (typeof problemTestData.testCases)[number] | null = null;
   for (const testCase of problemTestData.testCases) {
     const result = AutomatonExecutor.execute(testCase.input);
-    overallResult = overallResult && (result.accepted === testCase.expectedResult);
+    overallResult =
+      overallResult && result.accepted === testCase.expectedResult;
     if (!overallResult) {
       failedTestCase = testCase;
       break;
@@ -126,7 +131,9 @@ const verifySolution = async (submissionId: number, problemId: string, solution:
     data: {
       status: "FINISHED",
       verdict: overallResult ? "ACCEPTED" : "WRONG_RESULT",
-      message: failedTestCase ? `Failed test case: '${failedTestCase.input}'` : null,
-    }
+      message: failedTestCase
+        ? `Failed test case: '${failedTestCase.input}'`
+        : null,
+    },
   });
-}
+};

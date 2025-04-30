@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export function AlphabetEditor() {
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   const isOwner = useIsOwner();
   const { automaton, updateAutomaton } = useAutomaton();
   const { toast } = useToast();
@@ -22,21 +22,21 @@ export function AlphabetEditor() {
     const inputChar = inputRef.current!.value.trim();
     if (inputChar.match(/^[a-zA-Z0-9]$/)) {
       if (!automaton.alphabet.includes(inputChar)) {
-        updateAutomaton(automaton => {
+        updateAutomaton((automaton) => {
           automaton.setAlphabet([...automaton.alphabet, inputChar]);
         });
       }
       inputRef.current!.value = "";
     }
-  }
+  };
 
   const handleAddEpsilonToAlphabet = () => {
     if (!automaton.alphabet.includes(EPSILON)) {
-      updateAutomaton(automaton => {
+      updateAutomaton((automaton) => {
         automaton.setAlphabet([EPSILON, ...automaton.alphabet]);
       });
     }
-  }
+  };
 
   const handleRemoveFromAlphabet = (symbol: string) => {
     if (automaton.getUsedSymbols().has(symbol)) {
@@ -48,17 +48,17 @@ export function AlphabetEditor() {
       });
       return;
     }
-    updateAutomaton(automaton => {
+    updateAutomaton((automaton) => {
       automaton.setAlphabet(automaton.alphabet.filter((s) => s !== symbol));
     });
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleAddToAlphabet();
     }
-  }
+  };
 
   return (
     <div className="space-y-2 p-4">
@@ -76,23 +76,40 @@ export function AlphabetEditor() {
           onKeyDown={handleKeyDown}
           disabled={!isOwner}
         />
-        <Button variant="secondary" size="sm" onClick={handleAddToAlphabet} disabled={!isOwner}>Add</Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleAddToAlphabet}
+          disabled={!isOwner}
+        >
+          Add
+        </Button>
       </div>
       <div className="flex flex-wrap gap-2 font-mono">
-        {!automaton.alphabet.includes(EPSILON) &&
-          <Button variant="outline" size="default"
+        {!automaton.alphabet.includes(EPSILON) && (
+          <Button
+            variant="outline"
+            size="default"
             className="flex items-center gap-1 px-2 w-11 h-[30px]"
             onClick={handleAddEpsilonToAlphabet}
             disabled={!isOwner}
           >
             <span>{EPSILON}</span>
             <PlusCircle size={16} />
-          </Button>}
+          </Button>
+        )}
         {automaton.alphabet.map((symbol) => (
-          <Badge key={symbol} variant="outline" className="flex items-center gap-1 p-0 w-11">
+          <Badge
+            key={symbol}
+            variant="outline"
+            className="flex items-center gap-1 p-0 w-11"
+          >
             <span className="py-1 pl-2 pr-0 text-sm">{symbol}</span>
             <button
-              className={cn("p-2 pt-1 text-muted-foreground select-none", isOwner && 'hover:text-foreground')}
+              className={cn(
+                "p-2 pt-1 text-muted-foreground select-none",
+                isOwner && "hover:text-foreground",
+              )}
               onClick={() => handleRemoveFromAlphabet(symbol)}
               disabled={!isOwner}
             >
@@ -102,5 +119,5 @@ export function AlphabetEditor() {
         ))}
       </div>
     </div>
-  )
+  );
 }
