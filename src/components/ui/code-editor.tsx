@@ -82,7 +82,8 @@ export function CodeEditor({
       ref={editorRef}
       className={cn(
         "w-full h-80",
-        mode === "disabled" ? "pointer-events-none select-none opacity-50" : "",
+        mode === "disabled" &&
+          "pointer-events-none select-none opacity-50 caret-transparent",
       )}
     />
   );

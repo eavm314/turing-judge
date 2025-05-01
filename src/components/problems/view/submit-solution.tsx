@@ -1,6 +1,6 @@
 "use client";
 
-import { PlusCircle, X } from "lucide-react";
+import { Code, FileJson, PlusCircle, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,23 +31,23 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { AutomatonProjectItem } from "@/dtos";
+import { useToast } from "@/hooks/use-toast";
+import { validateCode } from "@/lib/schemas/automaton-code";
 import { cn } from "@/lib/ui/utils";
 import { useSession } from "@/providers/user-provider";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { validateCode } from "@/lib/schemas/automaton-code";
-import { useToast } from "@/hooks/use-toast";
+import { useEffect, useRef, useState } from "react";
 
-const initialCode =
-  '{\n  "states": [],\n  "alphabet": [],\n  "transitions": {},\n  "initialState": "",\n  "acceptStates": []\n}';
+const initCode = "";
 
-export function SubmitSolution() {
+export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [openCombo, setOpenCombo] = useState(false);
 
-  const [selectedId, setSelectedId] = useState("");
-  const [code, setCode] = useState(initialCode);
+  const [selectedId, setSelectedId] = useState(initCode);
+  const [initialCode, setInitialCode] = useState(initCode);
+  const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const [automatons, setAutomatons] = useState<AutomatonProjectItem[]>([]);
@@ -56,6 +56,8 @@ export function SubmitSolution() {
   const { problemId } = useParams();
   const { user, setOpenSignIn } = useSession();
   const { toast } = useToast();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchAutomatons = async () => {
@@ -96,6 +98,8 @@ export function SubmitSolution() {
       await submitSolution(problemId as string, null, parsedCode);
     }
 
+    onSubmit?.();
+
     toast({
       title: "Solution submitted successfully!",
       variant: "success",
@@ -106,6 +110,26 @@ export function SubmitSolution() {
     setSearchQuery("");
     setOpenDialog(false);
     setSubmitting(false);
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      setInitialCode(content);
+      setCode(content);
+    };
+    reader.readAsText(file);
+  };
+
+  const formatJson = () => {
+    try {
+      const parsed = JSON.parse(code);
+      setInitialCode(JSON.stringify(parsed, null, 2));
+    } catch (error) {}
   };
 
   const filteredAutomatons = automatons.filter(
@@ -130,7 +154,6 @@ export function SubmitSolution() {
         </DialogHeader>
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Select Automaton</label>
             <Popover open={openCombo} onOpenChange={setOpenCombo}>
               <div className="flex gap-4">
                 <PopoverTrigger asChild>
@@ -223,7 +246,38 @@ export function SubmitSolution() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Solution Code (JSON)</label>
+            <div className="flex items-center">
+              <input
+                type="file"
+                accept=".json"
+                id="file-upload"
+                className="hidden"
+                onChange={handleFileUpload}
+                ref={fileInputRef}
+              />
+              <label htmlFor="file-upload" className="cursor-pointer">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-1"
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <FileJson className="h-4 w-4" />
+                  Choose File
+                </Button>
+              </label>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-1 ml-auto"
+                onClick={formatJson}
+                disabled={!code}
+              >
+                <Code className="h-4 w-4" />
+                Format JSON
+              </Button>
+            </div>
             <div className="border rounded-md">
               <CodeEditor
                 initialValue={initialCode}
@@ -232,19 +286,19 @@ export function SubmitSolution() {
               />
             </div>
             {codeError && (
-              <p className="text-xs text-destructive">{codeError}</p>
+              <p className="text-sm text-destructive">{codeError}</p>
             )}
           </div>
         </div>
         <DialogFooter className="flex justify-end">
-          <Button onClick={handleSubmit} disabled={submitting || !!codeError}>
-            {submitting ? "Submitting..." : "Submit Solution"}
-          </Button>
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button type="button" variant="outline">
               Cancel
             </Button>
           </DialogClose>
+          <Button onClick={handleSubmit} disabled={submitting || !!codeError}>
+            {submitting ? "Submitting..." : "Submit Solution"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
