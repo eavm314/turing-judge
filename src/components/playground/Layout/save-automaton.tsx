@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 
 import { ChevronDown, Save } from "lucide-react";
 
@@ -31,15 +31,20 @@ export function SaveAutomaton() {
   const { toast } = useToast();
   const router = useRouter();
 
+  const unsavedChangesRef = useRef(unsavedChanges);
+  useEffect(() => {
+    unsavedChangesRef.current = unsavedChanges;
+  }, [unsavedChanges]);
+
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (unsavedChanges) {
+      if (unsavedChangesRef.current) {
         e.preventDefault();
       }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [unsavedChanges]);
+  }, []);
 
   useEffect(() => {
     if (user && retry) {

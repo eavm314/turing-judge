@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { createProblem, updateProblem } from "@/actions/problems";
@@ -28,10 +29,11 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { problemSchema, type ProblemSchema } from "@/lib/schemas/problem-form";
-import { MarkdownEditor } from "./markdown-editor";
+import { EPSILON } from "@/constants/symbols";
 import { useToast } from "@/hooks/use-toast";
+import { problemSchema, type ProblemSchema } from "@/lib/schemas/problem-form";
 import { useRouter } from "next/navigation";
+import { MarkdownEditor } from "./markdown-editor";
 
 export function ProblemForm({
   problemId,
@@ -62,6 +64,21 @@ export function ProblemForm({
       testCases: "",
     },
   });
+
+  const isDirtyRef = useRef(form.formState.isDirty);
+  useEffect(() => {
+    isDirtyRef.current = form.formState.isDirty;
+  }, [form.formState.isDirty]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirtyRef.current) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
 
   async function onSubmit(data: ProblemSchema) {
     setIsSubmitting(true);
@@ -390,16 +407,15 @@ export function ProblemForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Test Cases</FormLabel>
-                      <FormDescription>
-                        Add test cases to validate solutions against your
-                        problem.
+                      <FormDescription className="font-mono text-sm">
+                        Enter test cases in format: input,accept|reject,output?
+                        (One per line)
                       </FormDescription>
                       <FormControl>
                         <Textarea
                           disabled={!changeTestCases}
                           value={field.value}
                           onChange={field.onChange}
-                          placeholder="Enter test cases in format: input,accept|reject,output?"
                           className="min-h-[200px] font-mono"
                         />
                       </FormControl>
@@ -408,12 +424,17 @@ export function ProblemForm({
                   )}
                 />
                 <div className="bg-muted p-3 rounded-md">
-                  <h4 className="text-sm font-medium mb-2">Examples:</h4>
-                  <pre className="text-xs">
-                    {
-                      "FSM/PDA:\n 0101,1\n 1110,0\n\nTM:\n 0011,0\n 0101,1\n 0000,1,1111"
-                    }
-                  </pre>
+                  <h4 className="text-sm font-medium mb-2 text-neutral-foreground">
+                    Examples:
+                  </h4>
+                  <div className="flex divide-x-2">
+                    <pre className="text-xs pr-10">
+                      {`FSM/PDA:\n - 0101,1\n - abab,0\n - ,1 \t(${EPSILON} input)`}
+                    </pre>
+                    <pre className="text-xs pl-10">
+                      {"TM:\n - 0011,0\n - 0101,1\n - aaaa,1,bbbb"}
+                    </pre>
+                  </div>
                   <p className="text-xs text-muted-foreground mt-2">
                     1 = accept, 0 = reject
                   </p>

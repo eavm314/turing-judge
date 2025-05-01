@@ -25,14 +25,14 @@ export default function PlatformLayout({
             <Link
               href="/playground"
               target="_blank"
-              className="flex gap-1 hover:border-b hover:text-primary border-primary"
+              className="flex gap-1 hover:border-b text-neutral-foreground hover:text-secondary border-secondary"
             >
               <span>Playground</span>
               <ExternalLink size={19} className="mt-0.5" />
             </Link>
             <Link
               href="/problems"
-              className="hover:border-b hover:text-primary border-primary"
+              className="hover:border-b text-neutral-foreground hover:text-secondary border-secondary"
             >
               <span>Problem Set</span>
             </Link>

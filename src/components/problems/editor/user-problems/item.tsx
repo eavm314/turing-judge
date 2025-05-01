@@ -26,9 +26,9 @@ export default function ProblemEditorItem({
       <TableCell className="w-2/5">
         <Link
           href={`/problems/editor/${problem.id}`}
-          className="font-medium hover:underline"
+          className="font-medium hover:underline decoration-neutral-foreground"
         >
-          <span className="text-nowrap md:text-base">{problem.title}</span>
+          <span className="text-nowrap md:text-base text-neutral-foreground">{problem.title}</span>
         </Link>
       </TableCell>
       <TableCell>

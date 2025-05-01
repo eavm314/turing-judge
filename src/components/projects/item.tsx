@@ -22,11 +22,11 @@ export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
       <TableCell className="w-2/5">
         <Link
           href={`/playground/${item.id}`}
-          className="font-medium hover:underline"
+          className="font-medium hover:underline decoration-neutral-foreground"
         >
           <span
             className={cn(
-              "text-nowrap md:text-base",
+              "text-nowrap md:text-base text-neutral-foreground",
               !item.title && "italic opacity-60",
             )}
           >

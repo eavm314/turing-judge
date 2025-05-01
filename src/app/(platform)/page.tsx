@@ -12,7 +12,7 @@ export default async function HomePage() {
         <div className="container px-4 md:px-6 mx-auto">
           <div className="flex flex-col items-center space-y-8 text-center">
             <div>
-              <Cpu size={80} className="text-secondary w-full" />
+              <Cpu size={80} className="text-primary w-full" />
               <h1 className="h-full text-2xl md:text-5xl font-orbitron text-primary">
                 {appName}
               </h1>

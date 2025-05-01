@@ -9,9 +9,9 @@ export default async function EditProblemPage({
   const { problemId } = await params;
   const problemData = await getProblemEditable(problemId);
   return (
-    <main className="container py-10 flex-1">
+    <main className="container py-4 flex-1">
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-6">Edit Problem</h1>
+        <h1 className="mb-4">Edit Problem</h1>
         <ProblemForm problemId={problemId} problemData={problemData} />
       </div>
     </main>

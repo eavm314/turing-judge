@@ -48,32 +48,21 @@ export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
           {user.email}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setOpen(false)}>
-          <Link
-            href="/projects"
-            className="flex items-center gap-2 cursor-pointer w-full"
-          >
-            <Library size={16} /> My Projects
-          </Link>
-        </DropdownMenuItem>
-        {user.role === "EDITOR" && (
+        <Link href="/projects">
           <DropdownMenuItem onClick={() => setOpen(false)}>
-            <Link
-              href="/problems/editor"
-              className="flex items-center gap-2 cursor-pointer w-full"
-            >
-              <PenLine size={16} /> Problems Editor
-            </Link>
+            <Library size={16} /> My Projects
           </DropdownMenuItem>
+        </Link>
+        {user.role === "EDITOR" && (
+          <Link href="/problems/editor">
+            <DropdownMenuItem onClick={() => setOpen(false)}>
+              <PenLine size={16} /> Problems Editor
+            </DropdownMenuItem>
+          </Link>
         )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <button
-            className="flex items-center gap-2 w-full text-left"
-            onClick={handleSignOut}
-          >
-            <LogOut size={16} /> Log Out
-          </button>
+        <DropdownMenuItem onClick={handleSignOut}>
+          <LogOut size={16} /> Log Out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
