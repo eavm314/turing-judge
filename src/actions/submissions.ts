@@ -2,11 +2,11 @@
 
 import { redirect } from "next/navigation";
 
-import { type AutomatonCode } from "@/dtos";
 import { auth } from "@/lib/auth";
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
 import { prisma } from "@/lib/db/prisma";
+import { automatonCodeSchema, type AutomatonCode } from "@/lib/schemas/automaton-code";
 
 export const getUserSubmissions = async (problemId: string) => {
   const session = await auth();
@@ -34,7 +34,7 @@ export const submitSolution = async (
   const session = await auth();
   if (!session?.user?.id) redirect("/signin");
 
-  let solutionCode: AutomatonCode;
+  let solutionCode;
   if (projectId !== null) {
     const project = await prisma.project.findUnique({
       where: {
@@ -52,7 +52,7 @@ export const submitSolution = async (
     }
     solutionCode = {
       type: project.type,
-      automaton: project.automaton as unknown as AutomatonCode["automaton"],
+      automaton: project.automaton,
     };
   } else if (automatonCode !== null) {
     solutionCode = automatonCode;
@@ -61,6 +61,19 @@ export const submitSolution = async (
     return false;
   }
 
+  const result = automatonCodeSchema.safeParse(solutionCode);
+  if (!result.success) {
+    await prisma.submission.create({
+      data: {
+        userId: session.user.id,
+        problemId,
+        status: "FINISHED",
+        verdict: "INVALID_FORMAT",
+        message: "The provided code is not a valid automaton.",
+      },
+    });
+    return false;
+  }
   const submission = await prisma.submission.create({
     data: {
       userId: session.user.id,
@@ -70,7 +83,7 @@ export const submitSolution = async (
   });
 
   setTimeout(() => {
-    verifySolution(submission.id, problemId, solutionCode);
+    verifySolution(submission.id, problemId, result.data);
   }, 5000);
 
   return true;
@@ -81,7 +94,7 @@ const verifySolution = async (
   problemId: string,
   solution: AutomatonCode,
 ) => {
-  const problemTestData = (await prisma.problem.findUnique({
+  const problemTestData = await prisma.problem.findUnique({
     where: { id: problemId },
     select: {
       allowFSM: true,
@@ -99,9 +112,20 @@ const verifySolution = async (
         },
       },
     },
-  }))!;
+  });
 
-  if (!problemTestData.allowFSM) {
+  if (!problemTestData) {
+    await prisma.submission.update({
+      where: { id: submissionId },
+      data: {
+        status: "FINISHED",
+        verdict: "INVALID_FORMAT",
+        message: "Problem not found.",
+      },
+    });
+    return;
+  }
+  if (solution.type !== "FSM" && !problemTestData.allowFSM) {
     await prisma.submission.update({
       where: { id: submissionId },
       data: {
@@ -112,8 +136,33 @@ const verifySolution = async (
     });
     return;
   }
-  const automaton = new FiniteStateMachine(solution.automaton);
-  AutomatonExecutor.setAutomaton(automaton);
+  if (solution.type !== "PDA" && !problemTestData.allowPDA) {
+    await prisma.submission.update({
+      where: { id: submissionId },
+      data: {
+        status: "FINISHED",
+        verdict: "INVALID_FORMAT",
+        message: "This problem does not accept PDA solutions.",
+      },
+    });
+    return;
+  }
+  if (solution.type !== "TM" && !problemTestData.allowTM) {
+    await prisma.submission.update({
+      where: { id: submissionId },
+      data: {
+        status: "FINISHED",
+        verdict: "INVALID_FORMAT",
+        message: "This problem does not accept TM solutions.",
+      },
+    });
+    return;
+  }
+
+  if (solution.type === "FSM") {
+    const automaton = new FiniteStateMachine(solution.automaton);
+    AutomatonExecutor.setAutomaton(automaton);
+  }
 
   let overallResult = true;
   let failedTestCase: (typeof problemTestData.testCases)[number] | null = null;

@@ -1,7 +1,7 @@
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-import { updateAutomaton } from "@/actions/projects";
+import { updateProject } from "@/actions/projects";
 import { Input } from "@/components/ui/input";
 import { useIsOwner } from "@/providers/playground-provider";
 
@@ -18,8 +18,7 @@ export function AutomatonTitle({ title }: { title: string | null }) {
     const newTitle = e.target.value.trim() || null;
     if (title === newTitle) return;
     const newTimer = setTimeout(() => {
-      updateAutomaton({
-        id: automatonId,
+      updateProject(automatonId, {
         title: newTitle,
       });
     }, 1000);

@@ -4,14 +4,16 @@ import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 
 import {
-  type ProblemUpdateSchema,
   type ProblemEditorItem,
   type ProblemSetItem,
   type ProblemView,
-} from "@/dtos";
+} from "@/lib/schemas";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
-import { ProblemSchema } from "@/lib/schemas/problem-form";
+import {
+  type ProblemSchema,
+  type UpdateProblemSchema,
+} from "@/lib/schemas/problem-form";
 
 export const getProblemSet = async (): Promise<ProblemSetItem[]> => {
   const session = await auth();
@@ -117,7 +119,7 @@ export const createProblem = async (body: ProblemSchema) => {
 
 export const updateProblem = async (
   problemId: string,
-  body: Partial<ProblemUpdateSchema>,
+  body: UpdateProblemSchema,
 ) => {
   const session = await auth();
   if (!session?.user?.id) redirect("/signin");

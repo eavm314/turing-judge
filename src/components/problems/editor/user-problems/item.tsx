@@ -5,7 +5,7 @@ import Link from "next/link";
 import { TableCell, TableRow } from "@/components/ui/table";
 
 import { Trash2 } from "lucide-react";
-import { type ProblemEditorItem as ProblemItem } from "@/dtos";
+import { type ProblemEditorItem as ProblemItem } from "@/lib/schemas";
 import { formatDateTime } from "@/utils/date";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";

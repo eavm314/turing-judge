@@ -27,7 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SortDirection } from "@/constants/table";
-import { type AutomatonProjectItem } from "@/dtos";
+import { type AutomatonProjectItem } from "@/lib/schemas";
 import { useModal } from "@/providers/modal-provider";
 import ProjectItem from "./item";
 import { useToast } from "@/hooks/use-toast";

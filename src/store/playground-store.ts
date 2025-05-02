@@ -1,7 +1,8 @@
-import { AutomatonCode } from "@/dtos";
+import { createStore } from "zustand/vanilla";
+
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
-import { createStore } from "zustand/vanilla";
+import { AutomatonCode } from "@/lib/schemas/automaton-code";
 
 export type PlaygroundMode = "states" | "transitions" | "simulation" | "viewer";
 
@@ -40,6 +41,9 @@ export const createPlaygroundStore = (
     ...initialStateWithDefaults,
     setMode: (newMode: PlaygroundMode) => set({ mode: newMode }),
     setAutomaton: (code: AutomatonCode) => {
+      if (code.type !== "FSM") {
+        throw new Error("Automaton type not supported yet");
+      }
       const automaton = new FiniteStateMachine(code.automaton);
       set({ automaton, unsavedChanges: true });
     },

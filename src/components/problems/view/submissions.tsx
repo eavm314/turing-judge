@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { type SubmissionItem } from "@/dtos";
+import { type SubmissionItem } from "@/lib/schemas";
 import { AutomatonTypeBadge, StatusBadge } from "@/utils/badges";
 import { formatDateTime } from "@/utils/date";
 import { SubmitSolution } from "./submit-solution";

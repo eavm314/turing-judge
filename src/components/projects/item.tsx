@@ -6,7 +6,7 @@ import { Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { type AutomatonProjectItem } from "@/dtos";
+import { type AutomatonProjectItem } from "@/lib/schemas";
 import { cn } from "@/lib/ui/utils";
 import { AutomatonTypeBadge } from "@/utils/badges";
 import { formatDateTime } from "@/utils/date";

@@ -1,4 +1,4 @@
-import { type ProblemConstraints } from "@/dtos";
+import { type ProblemConstraints } from "@/lib/schemas";
 
 export const Constraints = ({
   constraints,

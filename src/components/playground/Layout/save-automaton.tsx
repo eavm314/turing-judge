@@ -5,7 +5,7 @@ import { use, useEffect, useRef, useState } from "react";
 
 import { ChevronDown, Save } from "lucide-react";
 
-import { createAutomaton, updateAutomaton } from "@/actions/projects";
+import { createAutomaton, updateProject } from "@/actions/projects";
 import { useSaveAutomatonPrompt } from "@/components/modal/save-automaton";
 import { Button } from "@/components/ui/button";
 import {
@@ -80,8 +80,7 @@ export function SaveAutomaton() {
 
   const handleSave = async () => {
     if (automatonId && isOwner) {
-      await updateAutomaton({
-        id: automatonId,
+      await updateProject(automatonId, {
         automaton: automaton.toJson(),
       });
       saveChanges();

@@ -5,7 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import { type AutomatonType, type Project } from "@prisma/client";
 import { type JsonObject } from "@prisma/client/runtime/library";
 
-import { type AutomatonProjectItem } from "@/dtos";
+import { type AutomatonProjectItem } from "@/lib/schemas";
 import { auth } from "@/lib/auth";
 import { type JsonFSM } from "@/lib/schemas/finite-state-machine";
 import { prisma } from "@/lib/db/prisma";
@@ -87,17 +87,19 @@ export const createAutomaton = async (body: {
   }
 };
 
-export const updateAutomaton = async (body: {
-  id: string;
-  title?: string | null;
-  type?: AutomatonType;
-  isPublic?: boolean;
-  automaton?: JsonFSM;
-}) => {
+export const updateProject = async (
+  projectId: string,
+  body: {
+    title?: string | null;
+    type?: AutomatonType;
+    isPublic?: boolean;
+    automaton?: JsonFSM;
+  },
+) => {
   const session = await auth();
   if (!session?.user?.id) redirect("/signin");
   const oldAutomaton = await prisma.project.findUnique({
-    where: { id: body.id },
+    where: { id: projectId },
     select: { id: true, userId: true },
   });
   if (!oldAutomaton) {
@@ -117,7 +119,7 @@ export const updateAutomaton = async (body: {
         automaton: body.automaton as unknown as JsonObject,
       },
     });
-    revalidatePath(`/playground/${body.id}`);
+    revalidatePath(`/playground/${projectId}`);
     return true;
   } catch (error) {
     console.error("Error updating automaton:", error);

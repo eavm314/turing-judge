@@ -1,23 +1,33 @@
 import { z } from "zod";
 import { fromZodIssue } from "zod-validation-error";
 
-import { AutomatonCode } from "@/dtos";
 import { fsmSchema } from "./finite-state-machine";
 
-const automatonCode = z.object({
-  type: z.enum(["FSM", "PDA", "TM"]),
-  automaton: z.any(),
-});
+export const automatonCodeSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("FSM"),
+    automaton: fsmSchema,
+  }),
+  z.object({
+    type: z.literal("PDA"),
+    automaton: z.object({}),
+  }),
+  z.object({
+    type: z.literal("TM"),
+    automaton: z.object({}),
+  }),
+]);
+
+export type AutomatonCode = z.infer<typeof automatonCodeSchema>;
 
 export const validateCode = (code: string) => {
   try {
-    const json = JSON.parse(code) as AutomatonCode;
-    const automaton = automatonCode.parse(json);
-    if (automaton.type === "FSM") {
-      fsmSchema.parse(automaton.automaton);
-      return "";
+    const json = JSON.parse(code);
+    const automaton = automatonCodeSchema.parse(json);
+    if (automaton.type !== "FSM") {
+      return "Automaton type not supported yet";
     }
-    return "Automaton type not supported yet";
+    return "";
   } catch (error) {
     if (error instanceof z.ZodError) {
       console.log(error);

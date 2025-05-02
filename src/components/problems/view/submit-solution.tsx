@@ -30,7 +30,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { AutomatonProjectItem } from "@/dtos";
+import { AutomatonProjectItem } from "@/lib/schemas";
 import { useToast } from "@/hooks/use-toast";
 import { validateCode } from "@/lib/schemas/automaton-code";
 import { cn } from "@/lib/ui/utils";

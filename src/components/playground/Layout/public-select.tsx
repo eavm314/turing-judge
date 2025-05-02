@@ -2,7 +2,7 @@ import { useParams } from "next/navigation";
 
 import { Lock, Unlock } from "lucide-react";
 
-import { updateAutomaton } from "@/actions/projects";
+import { updateProject } from "@/actions/projects";
 import {
   Select,
   SelectContent,
@@ -28,8 +28,7 @@ export function PublicSelect({ isPublic }: { isPublic: boolean }) {
     });
     if (!confirmation) return;
 
-    await updateAutomaton({
-      id: automatonId,
+    await updateProject(automatonId, {
       isPublic: value === "public",
     });
   };

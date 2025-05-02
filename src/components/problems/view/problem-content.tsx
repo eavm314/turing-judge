@@ -1,5 +1,5 @@
 import { MarkdownWrapper } from "@/components/ui/markdown-wrapper";
-import { type ProblemView } from "@/dtos";
+import { type ProblemView } from "@/lib/schemas";
 import { DifficultyBadge } from "@/utils/badges";
 import { Constraints } from "./constraints";
 import { SubmitSolution } from "./submit-solution";

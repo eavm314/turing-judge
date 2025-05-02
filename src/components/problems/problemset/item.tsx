@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 import { TableCell, TableRow } from "@/components/ui/table";
-import { type ProblemSetItem } from "@/dtos";
+import { type ProblemSetItem } from "@/lib/schemas";
 import { DifficultyBadge } from "@/utils/badges";
 import { formatDate } from "@/utils/date";
 

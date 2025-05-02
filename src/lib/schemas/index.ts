@@ -1,10 +1,7 @@
-import { type JsonFSM } from "@/lib/schemas/finite-state-machine";
-import { type ProblemSchema } from "@/lib/schemas/problem-form";
 import {
-  type AutomatonType,
   type Problem,
   type Project,
-  type Submission,
+  type Submission
 } from "@prisma/client";
 
 export type AutomatonProjectItem = Omit<Project, "automaton" | "userId">;
@@ -39,10 +36,3 @@ export type SubmissionItem = Pick<
   Submission,
   "status" | "verdict" | "message"
 > & { createdAt: string };
-
-export type AutomatonCode = {
-  type: AutomatonType;
-  automaton: JsonFSM;
-};
-
-export type ProblemUpdateSchema = ProblemSchema & { isPublic: boolean };

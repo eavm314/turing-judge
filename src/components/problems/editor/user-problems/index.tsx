@@ -19,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SortDirection } from "@/constants/table";
-import { type ProblemEditorItem as ProblemItem } from "@/dtos";
+import { type ProblemEditorItem as ProblemItem } from "@/lib/schemas";
 import { useToast } from "@/hooks/use-toast";
 import { useModal } from "@/providers/modal-provider";
 import ProblemEditorItem from "./item";

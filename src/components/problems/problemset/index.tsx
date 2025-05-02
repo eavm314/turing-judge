@@ -13,7 +13,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableHeader, TableRow } from "@/components/ui/table";
 import { SortDirection } from "@/constants/table";
-import { type ProblemSetItem as ProblemItem } from "@/dtos";
+import { type ProblemSetItem as ProblemItem } from "@/lib/schemas";
 import ProblemSetItem from "./item";
 
 type TableColumn = keyof ProblemItem;
