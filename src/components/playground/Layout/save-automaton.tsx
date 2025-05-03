@@ -73,7 +73,7 @@ export function SaveAutomaton() {
       type: "FSM",
       automaton: automaton.toJson(),
     });
-    id && router.push(`/playground/${id}`);
+    if (id) router.push(`/projects/${id}`);
   };
 
   const handleSave = async () => {
@@ -81,7 +81,7 @@ export function SaveAutomaton() {
       const result = await updateProject.execute(automatonId, {
         automaton: automaton.toJson(),
       });
-      result && saveChanges();
+      if (result) saveChanges();
     } else {
       handleSaveAs();
     }
