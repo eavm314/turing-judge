@@ -1,11 +1,11 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ChevronDown, Save } from "lucide-react";
 
-import { createAutomaton, updateProject } from "@/actions/projects";
+import { createProjectAction, updateProjectAction } from "@/actions/projects";
 import { useSaveAutomatonPrompt } from "@/components/modal/save-automaton";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +14,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useServerAction } from "@/hooks/use-server-action";
 import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
 import { useSession } from "@/providers/user-provider";
-import { useToast } from "@/hooks/use-toast";
 
 export function SaveAutomaton() {
   const { user, setOpenSignIn } = useSession();
@@ -28,8 +28,10 @@ export function SaveAutomaton() {
 
   const { automatonId } = useParams<{ automatonId: string }>();
   const saveAutomatonPrompt = useSaveAutomatonPrompt();
-  const { toast } = useToast();
   const router = useRouter();
+
+  const createProject = useServerAction(createProjectAction);
+  const updateProject = useServerAction(updateProjectAction);
 
   const unsavedChangesRef = useRef(unsavedChanges);
   useEffect(() => {
@@ -65,38 +67,33 @@ export function SaveAutomaton() {
     if (!userInput) {
       return;
     }
-    const id = await createAutomaton({
+    const id = await createProject.execute({
       title: userInput.title.trim() || null,
       isPublic: userInput.isPublic,
       type: "FSM",
       automaton: automaton.toJson(),
     });
-    toast({
-      title: "Your automaton has been saved successfully!",
-      variant: "success",
-    });
-    router.push(`/playground/${id}`);
+    id && router.push(`/playground/${id}`);
   };
 
   const handleSave = async () => {
     if (automatonId && isOwner) {
-      await updateProject(automatonId, {
+      const result = await updateProject.execute(automatonId, {
         automaton: automaton.toJson(),
       });
-      saveChanges();
-      toast({
-        title: "Your automaton has been saved successfully!",
-        variant: "success",
-      });
+      result && saveChanges();
     } else {
       handleSaveAs();
     }
   };
 
+  const loading = createProject.loading || updateProject.loading;
+
   return (
     <div className="flex items-center gap-8">
       <div className="flex items-center">
         <Button
+          disabled={loading}
           size="sm"
           className="rounded-r-none border-r-0 text-sm"
           onClick={handleSave}
@@ -107,6 +104,7 @@ export function SaveAutomaton() {
         <DropdownMenu open={openMenu} onOpenChange={setOpenMenu}>
           <DropdownMenuTrigger asChild>
             <Button
+              disabled={loading}
               size="sm"
               className="rounded-l-none px-2 border-l border-background"
             >

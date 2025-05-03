@@ -16,7 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { validateCode } from "@/lib/schemas/automaton-code";
-import { useAutomaton } from "@/providers/playground-provider";
+import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
 import { useToast } from "@/hooks/use-toast";
 
 const initCode = "";
@@ -30,6 +30,7 @@ export function ImportCode() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { setAutomaton } = useAutomaton();
+  const isOwner = useIsOwner();
   const { toast } = useToast();
 
   const codeError = validateCode(importJson);
@@ -72,7 +73,12 @@ export function ImportCode() {
   return (
     <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="flex items-center gap-1">
+        <Button
+          disabled={!isOwner}
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-1"
+        >
           <Download className="h-4 w-4" />
           Import
         </Button>
@@ -135,7 +141,9 @@ export function ImportCode() {
           >
             Cancel
           </Button>
-          <Button disabled={!!codeError} onClick={handleImport}>Import</Button>
+          <Button disabled={!!codeError} onClick={handleImport}>
+            Import
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

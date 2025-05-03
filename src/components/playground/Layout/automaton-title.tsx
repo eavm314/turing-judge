@@ -1,36 +1,53 @@
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-import { updateProject } from "@/actions/projects";
+import { updateProjectAction } from "@/actions/projects";
 import { Input } from "@/components/ui/input";
 import { useIsOwner } from "@/providers/playground-provider";
+import { useServerAction } from "@/hooks/use-server-action";
+import { Check, Loader, Loader2 } from "lucide-react";
 
 export function AutomatonTitle({ title }: { title: string | null }) {
   const [tempTitle, setTempTitle] = useState(title);
   const [timer, setTimer] = useState<NodeJS.Timeout>();
   const { automatonId } = useParams<{ automatonId: string }>();
+
+  const [editing, setEditing] = useState(false);
   const isOwner = useIsOwner();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditing(true);
     clearTimeout(timer);
-    setTempTitle(e.target.value);
+    const inputTitle = e.target.value.substring(0, 32);
+    setTempTitle(inputTitle);
 
-    const newTitle = e.target.value.trim() || null;
-    if (title === newTitle) return;
-    const newTimer = setTimeout(() => {
-      updateProject(automatonId, {
+    const newTitle = inputTitle.trim() || null;
+    if (title === newTitle) {
+      setEditing(false);
+      return;
+    }
+    const newTimer = setTimeout(async () => {
+      await updateProjectAction(automatonId, {
         title: newTitle,
       });
-    }, 1000);
+      setEditing(false);
+    }, 800);
     setTimer(newTimer);
   };
   return (
-    <Input
-      className="md:w-72 text-neutral-foreground placeholder:italic disabled:opacity-80"
-      disabled={!isOwner}
-      placeholder="Untitled"
-      value={tempTitle ?? ""}
-      onChange={isOwner ? handleChange : undefined}
-    />
+    <div className="relative flex-1">
+      {editing ? (
+        <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 text-neutral-foreground animate-spin" />
+      ) : (
+        <Check className="absolute right-2.5 top-2.5 h-4 w-4 text-green-500" />
+      )}
+      <Input
+        className="pr-8 md:w-72 text-neutral-foreground placeholder:italic disabled:opacity-100"
+        disabled={!isOwner}
+        placeholder="Untitled"
+        value={tempTitle ?? ""}
+        onChange={isOwner ? handleChange : undefined}
+      />
+    </div>
   );
 }

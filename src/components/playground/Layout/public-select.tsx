@@ -2,7 +2,7 @@ import { useParams } from "next/navigation";
 
 import { Lock, Unlock } from "lucide-react";
 
-import { updateProject } from "@/actions/projects";
+import { updateProjectAction } from "@/actions/projects";
 import {
   Select,
   SelectContent,
@@ -28,7 +28,7 @@ export function PublicSelect({ isPublic }: { isPublic: boolean }) {
     });
     if (!confirmation) return;
 
-    await updateProject(automatonId, {
+    await updateProjectAction(automatonId, {
       isPublic: value === "public",
     });
   };
@@ -38,7 +38,7 @@ export function PublicSelect({ isPublic }: { isPublic: boolean }) {
       value={isPublic ? "public" : "private"}
       onValueChange={handleSelectChange}
     >
-      <SelectTrigger className="w-28 disabled:opacity-80">
+      <SelectTrigger className="w-28 disabled:opacity-100">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
