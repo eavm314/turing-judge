@@ -241,6 +241,7 @@ export function ProblemForm({
                         </div>
                         <FormControl>
                           <Switch
+                            disabled
                             checked={field.value}
                             onCheckedChange={field.onChange}
                           />
@@ -262,6 +263,7 @@ export function ProblemForm({
                         </div>
                         <FormControl>
                           <Switch
+                            disabled
                             checked={field.value}
                             onCheckedChange={field.onChange}
                           />

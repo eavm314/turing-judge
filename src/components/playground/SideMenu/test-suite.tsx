@@ -29,8 +29,7 @@ export function TestSuite() {
   const isSimulation = mode === "simulation";
 
   const [simulating, setSimulating] = useState(false);
-  const [simulationInterval, setSimulationInterval] =
-    useState<NodeJS.Timeout>();
+  const simulationInterval = useRef<NodeJS.Timeout>(undefined);
 
   const handleTest = () => {
     const input = inputRef.current!.value;
@@ -61,25 +60,30 @@ export function TestSuite() {
       return;
     }
 
-    setSimulating(false);
+    stopSimulation();
     setMode(isOwner ? "states" : "viewer");
   };
 
-  useEffect(() => {
-    if (!simulating) {
-      clearInterval(simulationInterval);
-      setNodes((nodes) =>
-        nodes.map((node) => ({
-          ...node,
-          data: { ...node.data, visited: false },
-        })),
-      );
-      setEdges((edges) =>
-        edges.map((edge) => ({
-          ...edge,
-          data: { ...edge.data, visited: false },
-        })),
-      );
+  const stopSimulation = () => {
+    setSimulating(false);
+    clearInterval(simulationInterval.current);
+    setNodes((nodes) =>
+      nodes.map((node) => ({
+        ...node,
+        data: { ...node.data, visited: false },
+      })),
+    );
+    setEdges((edges) =>
+      edges.map((edge) => ({
+        ...edge,
+        data: { ...edge.data, visited: false },
+      })),
+    );
+  };
+
+  const handleSimulation = () => {
+    if (simulating) {
+      stopSimulation();
       return;
     }
 
@@ -87,24 +91,24 @@ export function TestSuite() {
     const { accepted, path } = AutomatonExecutor.execute(input);
     if (!accepted) {
       toast({
-        title: "Rejected!",
+        title: "No path found",
         variant: "destructive",
       });
-      setSimulating(false);
       return;
     }
 
+    setSimulating(true);
     updateNodeData("0", (data) => ({ ...data, visited: true }));
 
     let step = 0;
     let transition = true;
-    const interval = setInterval(() => {
+    simulationInterval.current = setInterval(() => {
       if (step >= path.length) {
         toast({
           title: "Accepted!",
           variant: "success",
         });
-        setSimulating(false);
+        stopSimulation();
         return;
       }
       const [from, to, symbol] = path[step];
@@ -124,9 +128,7 @@ export function TestSuite() {
       }
       transition = !transition;
     }, 800);
-
-    setSimulationInterval(interval);
-  }, [simulating]);
+  };
 
   return (
     <div className="p-4 space-y-1">
@@ -164,7 +166,7 @@ export function TestSuite() {
           </CardHeader>
           <CardContent className="space-y-2 px-4 pb-4">
             <Button
-              onClick={() => setSimulating((prev) => !prev)}
+              onClick={handleSimulation}
               className="w-full justify-start"
               variant={simulating ? "destructive" : "outline"}
             >
@@ -173,7 +175,7 @@ export function TestSuite() {
               ) : (
                 <Play className="h-4 w-4" />
               )}
-              {simulating ? "Stop" : "Find Solution"}
+              {simulating ? "Stop" : "Find Path"}
             </Button>
             {/* <Button className="w-full justify-start" variant="outline">
               <Shuffle className="h-4 w-4" />

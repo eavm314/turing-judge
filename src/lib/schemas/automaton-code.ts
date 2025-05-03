@@ -25,7 +25,7 @@ export const validateCode = (code: string) => {
     const json = JSON.parse(code);
     const automaton = automatonCodeSchema.parse(json);
     if (automaton.type !== "FSM") {
-      return "Automaton type not supported yet";
+      return "Automaton type not supported yet. Come back later!";
     }
     return "";
   } catch (error) {

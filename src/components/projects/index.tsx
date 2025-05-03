@@ -42,9 +42,9 @@ export default function AutomatonProjects({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("");
-  const [sortColumn, setSortColumn] = useState<TableColumn>("title");
+  const [sortColumn, setSortColumn] = useState<TableColumn>("updatedAt");
   const [sortDirection, setSortDirection] = useState<SortDirection>(
-    SortDirection.ASC,
+    SortDirection.DESC,
   );
 
   const { showConfirm } = useModal();
