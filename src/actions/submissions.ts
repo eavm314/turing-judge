@@ -1,12 +1,14 @@
 "use server";
 
-import { redirect } from "next/navigation";
-
+import { type ServerActionResult } from "@/hooks/use-server-action";
 import { auth } from "@/lib/auth";
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
 import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
 import { prisma } from "@/lib/db/prisma";
-import { automatonCodeSchema, type AutomatonCode } from "@/lib/schemas/automaton-code";
+import {
+  automatonCodeSchema,
+  type AutomatonCode,
+} from "@/lib/schemas/automaton-code";
 
 export const getUserSubmissions = async (problemId: string) => {
   const session = await auth();
@@ -26,13 +28,15 @@ export const getUserSubmissions = async (problemId: string) => {
   return results;
 };
 
-export const submitSolution = async (
+export const submitSolutionAction = async (
   problemId: string,
   projectId: string | null,
   automatonCode: AutomatonCode | null,
-) => {
+): Promise<ServerActionResult> => {
   const session = await auth();
-  if (!session?.user?.id) redirect("/signin");
+  if (!session?.user?.id) {
+    return { success: false, message: "User not authenticated" };
+  }
 
   let solutionCode;
   if (projectId !== null) {
@@ -47,8 +51,7 @@ export const submitSolution = async (
       },
     });
     if (!project) {
-      console.error("Project not found or user is not owner.");
-      return false;
+      return { success: false, message: "Project not found" };
     }
     solutionCode = {
       type: project.type,
@@ -57,8 +60,7 @@ export const submitSolution = async (
   } else if (automatonCode !== null) {
     solutionCode = automatonCode;
   } else {
-    console.error("No solution provided.");
-    return false;
+    return { success: false, message: "No automaton provided" };
   }
 
   const result = automatonCodeSchema.safeParse(solutionCode);
@@ -72,7 +74,7 @@ export const submitSolution = async (
         message: "The provided code is not a valid automaton.",
       },
     });
-    return false;
+    return { success: false, message: "Invalid automaton code" };
   }
   const submission = await prisma.submission.create({
     data: {
@@ -86,7 +88,7 @@ export const submitSolution = async (
     verifySolution(submission.id, problemId, result.data);
   }, 5000);
 
-  return true;
+  return { success: true, message: "Solution submitted successfully" };
 };
 
 const verifySolution = async (
@@ -125,7 +127,7 @@ const verifySolution = async (
     });
     return;
   }
-  if (solution.type !== "FSM" && !problemTestData.allowFSM) {
+  if (solution.type === "FSM" && !problemTestData.allowFSM) {
     await prisma.submission.update({
       where: { id: submissionId },
       data: {
@@ -136,7 +138,7 @@ const verifySolution = async (
     });
     return;
   }
-  if (solution.type !== "PDA" && !problemTestData.allowPDA) {
+  if (solution.type === "PDA" && !problemTestData.allowPDA) {
     await prisma.submission.update({
       where: { id: submissionId },
       data: {
@@ -147,7 +149,7 @@ const verifySolution = async (
     });
     return;
   }
-  if (solution.type !== "TM" && !problemTestData.allowTM) {
+  if (solution.type === "TM" && !problemTestData.allowTM) {
     await prisma.submission.update({
       where: { id: submissionId },
       data: {

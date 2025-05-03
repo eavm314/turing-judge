@@ -24,14 +24,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { submitSolution } from "@/actions/submissions";
+import { submitSolutionAction } from "@/actions/submissions";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useServerAction } from "@/hooks/use-server-action";
 import { AutomatonProjectItem } from "@/lib/schemas";
-import { useToast } from "@/hooks/use-toast";
 import { validateCode } from "@/lib/schemas/automaton-code";
 import { cn } from "@/lib/ui/utils";
 import { useSession } from "@/providers/user-provider";
@@ -48,14 +48,14 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
   const [selectedId, setSelectedId] = useState(initCode);
   const [initialCode, setInitialCode] = useState(initCode);
   const [code, setCode] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
   const [automatons, setAutomatons] = useState<AutomatonProjectItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   const { problemId } = useParams();
   const { user, setOpenSignIn } = useSession();
-  const { toast } = useToast();
+
+  const submitSolution = useServerAction(submitSolutionAction);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -89,27 +89,24 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
 
   const handleSubmit = async () => {
     if (codeError) return;
-    setSubmitting(true);
 
     if (selectedAutomaton) {
-      await submitSolution(problemId as string, selectedAutomaton.id, null);
+      await submitSolution.execute(
+        problemId as string,
+        selectedAutomaton.id,
+        null,
+      );
     } else {
       const parsedCode = JSON.parse(code);
-      await submitSolution(problemId as string, null, parsedCode);
+      await submitSolution.execute(problemId as string, null, parsedCode);
     }
 
     onSubmit?.();
-
-    toast({
-      title: "Solution submitted successfully!",
-      variant: "success",
-    });
 
     setSelectedId("");
     setCode(initialCode);
     setSearchQuery("");
     setOpenDialog(false);
-    setSubmitting(false);
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -296,8 +293,8 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
               Cancel
             </Button>
           </DialogClose>
-          <Button onClick={handleSubmit} disabled={submitting || !!codeError}>
-            {submitting ? "Submitting..." : "Submit Solution"}
+          <Button onClick={handleSubmit} disabled={submitSolution.loading || !!codeError}>
+            {submitSolution.loading ? "Submitting..." : "Submit Solution"}
           </Button>
         </DialogFooter>
       </DialogContent>

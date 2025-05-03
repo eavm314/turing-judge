@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import { createProblem, updateProblem } from "@/actions/problems";
+import { createProblemAction, updateProblemAction } from "@/actions/problems";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -30,7 +30,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { EPSILON } from "@/constants/symbols";
-import { useToast } from "@/hooks/use-toast";
+import { useServerAction } from "@/hooks/use-server-action";
 import { problemSchema, type ProblemSchema } from "@/lib/schemas/problem-form";
 import { useRouter } from "next/navigation";
 import { MarkdownEditor } from "./markdown-editor";
@@ -42,11 +42,11 @@ export function ProblemForm({
   problemId?: string;
   problemData?: ProblemSchema;
 }) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [changeTestCases, setChangeTestCases] = useState(!problemId);
-
-  const { toast } = useToast();
   const router = useRouter();
+
+  const createProblem = useServerAction(createProblemAction);
+  const updateProblem = useServerAction(updateProblemAction);
 
   const form = useForm<ProblemSchema>({
     resolver: zodResolver(problemSchema),
@@ -80,21 +80,19 @@ export function ProblemForm({
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
+  const newChanges = !problemId || form.formState.isDirty || changeTestCases;
+
   async function onSubmit(data: ProblemSchema) {
-    setIsSubmitting(true);
     if (problemId) {
       const testCases = changeTestCases ? data.testCases : undefined;
-      await updateProblem(problemId, { ...data, testCases });
+      await updateProblem.execute({ ...data, testCases, problemId });
     } else {
-      await createProblem(data);
+      await createProblem.execute(data);
     }
-    setIsSubmitting(false);
     router.push("/problems/editor");
-    toast({
-      title: `Problem ${problemId ? `updated` : "created"} successfully!`,
-      variant: "success",
-    });
   }
+
+  const isSubmitting = createProblem.loading || updateProblem.loading;
 
   const basicErrors =
     form.formState.errors.title || form.formState.errors.statement;
@@ -445,7 +443,7 @@ export function ProblemForm({
         </Tabs>
 
         <div className="flex justify-end">
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting || !newChanges}>
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {problemId ? "Save" : "Create"} Problem
           </Button>

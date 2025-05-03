@@ -123,16 +123,17 @@ export const updateProjectAction = async (
   return { success: true, message: "Automaton saved successfully" };
 };
 
-export const deleteAutomaton = async (id: string) => {
+export const deleteAutomatonAction = async (id: string): Promise<ServerActionResult> => {
   const session = await auth();
-  if (!session?.user?.id) redirect("/signin");
+  if (!session?.user?.id) {
+    return { success: false, message: "User not authenticated" };
+  };
 
   try {
     await prisma.project.delete({ where: { id, userId: session.user.id } });
     revalidatePath("/library");
-    return true;
+    return { success: true, message: "Automaton deleted successfully" };
   } catch (error) {
-    console.error("Error deleting automaton:", error);
-    return false;
+    return { success: false, message: "Automaton not found" };
   }
 };

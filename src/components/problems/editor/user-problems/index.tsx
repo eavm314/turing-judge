@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
-import { deleteProblem, updateProblem } from "@/actions/problems";
+import { deleteProblemAction, updateProblemAction } from "@/actions/problems";
 import {
   EmptyTableRow,
   InputSearch,
@@ -23,6 +23,7 @@ import { type ProblemEditorItem as ProblemItem } from "@/lib/schemas";
 import { useToast } from "@/hooks/use-toast";
 import { useModal } from "@/providers/modal-provider";
 import ProblemEditorItem from "./item";
+import { useServerAction } from "@/hooks/use-server-action";
 
 type TableColumn = keyof ProblemItem;
 
@@ -38,9 +39,11 @@ export default function UserProblems({
   );
 
   const { showConfirm } = useModal();
-  const { toast } = useToast();
 
-  const handleDeleteProblem = async (id: string) => {
+  const deleteProblem = useServerAction(deleteProblemAction);
+  const updateProblem = useServerAction(updateProblemAction);
+
+  const handleDeleteProblem = async (problemId: string) => {
     const confirmation = await showConfirm({
       title: "Delete Problem",
       message:
@@ -49,21 +52,17 @@ export default function UserProblems({
       destructive: true,
     });
     if (!confirmation) return;
-    await deleteProblem(id);
-    toast({
-      title: "The problem has been deleted successfully!",
-      variant: "success",
-    });
+    deleteProblem.execute(problemId);
   };
 
-  const handlePublicProblem = async (id: string, value: boolean) => {
+  const handlePublicProblem = async (problemId: string, value: boolean) => {
     const confirmation = await showConfirm({
       title: value ? "Make Problem Public" : "Make Problem Private",
       message: `Are you sure you want to make this problem ${value ? "public" : "private"}?`,
       confirmLabel: value ? "Make Public" : "Make Private",
     });
     if (!confirmation) return;
-    await updateProblem(id, { isPublic: value });
+    updateProblem.execute({ problemId, isPublic: value });
   };
 
   const handleSort = (field: TableColumn) => {

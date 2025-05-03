@@ -40,7 +40,8 @@ export const problemSchema = z.object({
 
 export const updateProblemSchema = problemSchema
   .extend({ isPublic: z.boolean() })
-  .partial();
+  .partial()
+  .extend({ problemId: z.string() });
 
 export type ProblemSchema = z.infer<typeof problemSchema>;
 

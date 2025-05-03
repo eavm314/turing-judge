@@ -5,7 +5,7 @@ import { useState } from "react";
 import { AutomatonType } from "@prisma/client";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
-import { deleteAutomaton } from "@/actions/projects";
+import { deleteAutomatonAction } from "@/actions/projects";
 import {
   EmptyTableRow,
   InputSearch,
@@ -31,6 +31,7 @@ import { type AutomatonProjectItem } from "@/lib/schemas";
 import { useModal } from "@/providers/modal-provider";
 import ProjectItem from "./item";
 import { useToast } from "@/hooks/use-toast";
+import { useServerAction } from "@/hooks/use-server-action";
 
 type TableColumn = keyof AutomatonProjectItem;
 
@@ -47,7 +48,7 @@ export default function AutomatonProjects({
   );
 
   const { showConfirm } = useModal();
-  const { toast } = useToast();
+  const deleteAutomaton = useServerAction(deleteAutomatonAction);
 
   const handleDeleteAutomaton = async (id: string) => {
     const confirmation = await showConfirm({
@@ -58,11 +59,7 @@ export default function AutomatonProjects({
       destructive: true,
     });
     if (!confirmation) return;
-    await deleteAutomaton(id);
-    toast({
-      title: "The project has been deleted successfully!",
-      variant: "success",
-    });
+    await deleteAutomaton.execute(id);
   };
 
   const handleSort = (column: TableColumn) => {
