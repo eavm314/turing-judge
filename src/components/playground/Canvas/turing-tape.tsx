@@ -9,14 +9,21 @@ const size = 50;
 const tapeSize = 11;
 
 export function TuringTape() {
-  const { word, position, translation, visitedSymbol, moveLeft, moveRight } =
-    useSimulationTape();
+  const {
+    word,
+    speed,
+    position,
+    translation,
+    visitedSymbol,
+    moveLeft,
+    moveRight,
+  } = useSimulationTape();
 
   const extraWord =
     " ".repeat((tapeSize + 1) / 2) + word + " ".repeat((tapeSize + 1) / 2);
 
   return (
-    <div className="flex flex-col items-center gap-4 pb-10">
+    <div className="flex flex-col items-center gap-4 pb-6">
       {visitedSymbol && (
         <div className="flex items-center justify-center text-3xl bg-background border border-border rounded-xl p-2 pl-4">
           {visitedSymbol}
@@ -29,13 +36,14 @@ export function TuringTape() {
       >
         <div
           className={cn(
-            "flex",
-            translation !== 0 &&
-              "transition-transform duration-1000 ease-in-out",
+            "flex transition-none",
+            translation !== 0 && "transition-transform ease-in-out",
           )}
           style={{
             width: `${(tapeSize + 2) * size}px`,
             transform: `translateX(${(translation - 1) * size}px)`,
+            transitionDuration: `${speed}ms`,
+            animationDuration: `${speed}ms`,
           }}
         >
           {extraWord

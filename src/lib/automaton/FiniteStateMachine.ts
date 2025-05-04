@@ -28,7 +28,7 @@ export class FiniteStateMachine {
     for (const name of Object.keys(json.states).filter(
       (name) => name !== json.initial,
     )) {
-      const stateId = Math.max(...Object.values(this.stateToIndex)) + 1;
+      const stateId = Math.max(...this.stateToIndex.values()) + 1;
       this.stateToIndex.set(name, stateId);
     }
 
@@ -73,7 +73,7 @@ export class FiniteStateMachine {
 
   addState(name: string, stateJson: JsonState) {
     if (this.stateToIndex.get(name)) throw new Error("State already exists");
-    const stateId = Math.max(...Object.values(this.stateToIndex)) + 1;
+    const stateId = Math.max(...this.stateToIndex.values()) + 1;
 
     this.stateToIndex.set(name, stateId);
     this.states.set(stateId, new State(this, name, stateJson));

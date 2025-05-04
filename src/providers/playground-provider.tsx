@@ -118,6 +118,7 @@ export const useSimulationTape = () =>
   usePlaygroundStore(
     useShallow((state) => ({
       translation: state.translation,
+      speed: state.simulationSpeed,
       word: state.simulationWord,
       position: state.simulationIndex,
       visitedSymbol: state.visitedSymbol,

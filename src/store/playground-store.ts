@@ -45,13 +45,15 @@ const defaultState: PlaygroundState = {
   unsavedChanges: false,
 
   translation: 0,
-  simulationSpeed: 1000,
+  simulationSpeed: 700,
   simulationWord: "",
   simulationIndex: 0,
   visitedState: null,
   visitedTransition: null,
   visitedSymbol: null,
 };
+
+let movementTimeout: NodeJS.Timeout | undefined = undefined;
 
 export const createPlaygroundStore = (
   initialState?: Partial<PlaygroundState>,
@@ -99,11 +101,8 @@ export const createPlaygroundStore = (
       set((state) => {
         const { simulationIndex, simulationWord } = state;
         if (simulationIndex >= simulationWord.length) return state;
-        setTimeout(() => {
-          set((s) => {
-            if (s.mode !== "simulation") return s;
-            return { translation: 0, simulationIndex: simulationIndex + 1 };
-          });
+        movementTimeout = setTimeout(() => {
+          set({ translation: 0, simulationIndex: simulationIndex + 1 });
         }, state.simulationSpeed);
         return { translation: -1 };
       }),
@@ -111,15 +110,13 @@ export const createPlaygroundStore = (
       set((state) => {
         const { simulationIndex } = state;
         if (simulationIndex <= 0) return state;
-        setTimeout(() => {
-          set((s) => {
-            if (s.mode !== "simulation") return s;
-            return { translation: 0, simulationIndex: simulationIndex - 1 };
-          });
+        movementTimeout = setTimeout(() => {
+          set({ translation: 0, simulationIndex: simulationIndex - 1 });
         }, state.simulationSpeed);
         return { translation: 1 };
       }),
-    stopSimulation: () =>
+    stopSimulation: () => {
+      clearTimeout(movementTimeout);
       set((state) => ({
         mode: state.isOwner ? "states" : "viewer",
         translation: 0,
@@ -127,6 +124,7 @@ export const createPlaygroundStore = (
         visitedState: null,
         visitedTransition: null,
         visitedSymbol: null,
-      })),
+      }));
+    },
   }));
 };

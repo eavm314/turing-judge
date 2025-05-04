@@ -73,7 +73,10 @@ export function SaveAutomaton() {
       type: "FSM",
       automaton: automaton.toJson(),
     });
-    if (id) router.push(`/projects/${id}`);
+    if (id) {
+      saveChanges();
+      router.push(`/playground/${id}`);
+    }
   };
 
   const handleSave = async () => {
