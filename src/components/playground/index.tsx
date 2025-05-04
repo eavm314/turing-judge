@@ -38,10 +38,8 @@ export default function Playground({ data }: { data?: Project }) {
       <div className="flex flex-col h-screen">
         <PlaygroundLayout data={data} />
         <main className="flex h-full">
-          <ReactFlowProvider>
-            <Canvas />
-            <SideMenu />
-          </ReactFlowProvider>
+          <Canvas />
+          <SideMenu />
         </main>
       </div>
     </PlaygroundStoreProvider>

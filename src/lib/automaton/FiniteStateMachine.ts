@@ -23,8 +23,6 @@ export class FiniteStateMachine {
     this.states = new Map();
     this.alphabet = json.alphabet;
 
-    // TODO: Validate JSON structure
-
     // Convert JSON to Objects
     this.stateToIndex = new Map([[json.initial, 0]]);
     for (const name of Object.keys(json.states).filter(

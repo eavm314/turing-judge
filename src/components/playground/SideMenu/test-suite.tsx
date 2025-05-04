@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
-import { PenLine, Play, Shuffle, CircleStop } from "lucide-react";
+import { CircleStop, Play } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,24 +11,35 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
-import { useIsOwner, usePlaygroundMode } from "@/providers/playground-provider";
-import { useReactFlow } from "@xyflow/react";
-import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { EPSILON } from "@/constants/symbols";
+import { useToast } from "@/hooks/use-toast";
+import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
+import {
+  useIsOwner,
+  usePlaygroundMode,
+  useSimulation,
+} from "@/providers/playground-provider";
 
 export function TestSuite() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { mode, setMode } = usePlaygroundMode();
   const isOwner = useIsOwner();
-  const { updateNodeData, setNodes, updateEdgeData, setEdges } = useReactFlow();
   const { toast } = useToast();
 
-  const isSimulation = mode === "simulation";
+  const isSimulationMode = mode === "simulation";
 
-  const [simulating, setSimulating] = useState(false);
+  const {
+    simulating,
+    simulationSpeed,
+    setSimulating,
+    setSimulationWord,
+    setVisitedState,
+    setVisitedTransition,
+    moveRight,
+    stopSimulation,
+  } = useSimulation();
   const simulationInterval = useRef<NodeJS.Timeout>(undefined);
 
   const handleTest = () => {
@@ -55,7 +66,7 @@ export function TestSuite() {
   };
 
   const switchSimulationMode = () => {
-    if (!isSimulation) {
+    if (!isSimulationMode) {
       setMode("simulation");
       return;
     }
@@ -64,25 +75,9 @@ export function TestSuite() {
     setMode(isOwner ? "states" : "viewer");
   };
 
-  const stopSimulation = () => {
-    setSimulating(false);
-    clearInterval(simulationInterval.current);
-    setNodes((nodes) =>
-      nodes.map((node) => ({
-        ...node,
-        data: { ...node.data, visited: false },
-      })),
-    );
-    setEdges((edges) =>
-      edges.map((edge) => ({
-        ...edge,
-        data: { ...edge.data, visited: false },
-      })),
-    );
-  };
-
   const handleSimulation = () => {
     if (simulating) {
+      clearInterval(simulationInterval.current);
       stopSimulation();
       return;
     }
@@ -98,7 +93,8 @@ export function TestSuite() {
     }
 
     setSimulating(true);
-    updateNodeData("0", (data) => ({ ...data, visited: true }));
+    setSimulationWord(input);
+    setVisitedState("0");
 
     let step = 0;
     let transition = true;
@@ -108,26 +104,20 @@ export function TestSuite() {
           title: "Accepted!",
           variant: "success",
         });
+        clearInterval(simulationInterval.current);
         stopSimulation();
         return;
       }
       const [from, to, symbol] = path[step];
       if (transition) {
-        updateNodeData(String(from), (data) => ({ ...data, visited: false }));
-        updateEdgeData(`${from}->${to}`, (data) => ({
-          ...data,
-          visited: true,
-        }));
+        setVisitedTransition(`${from}->${to}`, symbol);
+        moveRight();
       } else {
-        updateEdgeData(`${from}->${to}`, (data) => ({
-          ...data,
-          visited: false,
-        }));
-        updateNodeData(String(to), (data) => ({ ...data, visited: true }));
+        setVisitedState(String(to));
         step++;
       }
       transition = !transition;
-    }, 800);
+    }, simulationSpeed);
   };
 
   return (
@@ -139,6 +129,7 @@ export function TestSuite() {
       <Input
         id="test-input"
         ref={inputRef}
+        disabled={simulating}
         type="text"
         className="font-mono placeholder:font-mono"
         placeholder={EPSILON}
@@ -149,14 +140,14 @@ export function TestSuite() {
           Test
         </Button>
         <Button
-          variant={isSimulation ? "destructive" : "secondary"}
+          variant={isSimulationMode ? "destructive" : "secondary"}
           className="w-full"
           onClick={switchSimulationMode}
         >
-          {isSimulation ? "Exit" : "Simulate"}
+          {isSimulationMode ? "Exit" : "Simulate"}
         </Button>
       </div>
-      {isSimulation && (
+      {isSimulationMode && (
         <Card>
           <CardHeader className="p-4">
             <CardTitle className="text-md">Simulation Mode</CardTitle>

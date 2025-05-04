@@ -13,12 +13,16 @@ import {
 import "@xyflow/react/dist/style.css";
 import { useTheme } from "next-themes";
 
+import {
+  usePlaygroundMode,
+  useSimulation,
+} from "@/providers/playground-provider";
 import { FloatingConnectionLine } from "./floating-connection-line";
 import { AddStateButton, SwitchMode } from "./panel-actions";
 import { StateNode } from "./state-node";
 import { TransitionEdge } from "./transition-edge";
+import { TuringTape } from "./turing-tape";
 import { useCanvasHandlers } from "./utils/useCanvasHandlers";
-import { usePlaygroundMode } from "@/providers/playground-provider";
 
 const nodeTypes: NodeTypes = {
   state: StateNode,
@@ -42,6 +46,8 @@ const proOptions = { hideAttribution: true };
 export default function Canvas() {
   const { theme } = useTheme();
   const { mode } = usePlaygroundMode();
+
+  const { simulating } = useSimulation();
 
   const isInteractive = mode !== "simulation" && mode !== "viewer";
 
@@ -76,6 +82,11 @@ export default function Canvas() {
         <Panel position="top-center">
           <AddStateButton />
         </Panel>
+        {simulating && (
+          <Panel position="bottom-center">
+            <TuringTape />
+          </Panel>
+        )}
       </ReactFlow>
     </div>
   );

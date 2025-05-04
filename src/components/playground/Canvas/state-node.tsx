@@ -11,6 +11,7 @@ import { cn } from "@/lib/ui/utils";
 import {
   useAutomaton,
   usePlaygroundMode,
+  useVisitedState,
 } from "@/providers/playground-provider";
 import { useModal } from "@/providers/modal-provider";
 
@@ -54,13 +55,13 @@ export type StateNodeType = Node<{
   name: string;
   isInitial: boolean;
   isFinal: boolean;
-  visited?: boolean;
 }>;
 
 export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
   const { mode } = usePlaygroundMode();
   const { showPrompt } = useModal();
   const { automaton, updateAutomaton } = useAutomaton();
+  const { visitedState } = useVisitedState();
 
   const handleChangeName = async () => {
     const stateName = await showPrompt({
@@ -97,7 +98,7 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
           data.isFinal && "outline outline-2 -outline-offset-[12px]",
           selected &&
             "border-4 outline-4 -outline-offset-[14px] border-green-500 outline-green-500",
-          data.visited && "bg-amber-300 dark:bg-purple-900",
+          id === visitedState && "bg-amber-300 dark:bg-purple-900",
         )}
         onDoubleClick={handleChangeName}
       >

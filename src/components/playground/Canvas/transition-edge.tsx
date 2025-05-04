@@ -8,12 +8,12 @@ import { getPath } from "./utils/graphics";
 import { cn } from "@/lib/ui/utils";
 import { useEffect, useRef } from "react";
 import { useAddTransitionPrompt } from "@/components/modal/add-transition";
-import { useAutomaton } from "@/providers/playground-provider";
+import {
+  useAutomaton,
+  useVisitedTransition,
+} from "@/providers/playground-provider";
 
-export type TransitionEdgeType = Edge<{
-  symbols: string[];
-  visited?: boolean;
-}>;
+export type TransitionEdgeType = Edge<{ symbols: string[] }>;
 
 export function TransitionEdge({
   id,
@@ -30,12 +30,13 @@ export function TransitionEdge({
 
   const addTransitionPrompt = useAddTransitionPrompt();
   const { automaton, updateAutomaton } = useAutomaton();
+  const { visitedTransition, simulationSpeed } = useVisitedTransition();
 
   useEffect(() => {
-    if (data?.visited && animateRef.current) {
+    if (id === visitedTransition && animateRef.current) {
       animateRef.current.beginElement();
     }
-  }, [data?.visited]);
+  }, [visitedTransition]);
 
   if (!sourceNode || !targetNode) {
     return null;
@@ -90,11 +91,11 @@ export function TransitionEdge({
         markerEnd={`url(#triangle-${id})`}
         style={style}
       />
-      {data?.visited && (
+      {id === visitedTransition && (
         <circle r="8" className="fill-amber-400 dark:fill-purple-800">
           <animateMotion
             ref={animateRef}
-            dur="800ms"
+            dur={`${simulationSpeed}ms`}
             repeatCount={1}
             path={edgePath}
           />

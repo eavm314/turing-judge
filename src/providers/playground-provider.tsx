@@ -9,6 +9,7 @@ import {
   PlaygroundState,
   type PlaygroundStore,
 } from "@/store/playground-store";
+import { set } from "zod";
 
 type PlaygroundStoreApi = ReturnType<typeof createPlaygroundStore>;
 
@@ -72,3 +73,49 @@ export const usePlaygroundMode = () =>
   );
 
 export const useIsOwner = () => usePlaygroundStore((state) => state.isOwner);
+
+export const useVisitedState = () =>
+  usePlaygroundStore(
+    useShallow((state) => ({
+      visitedState: state.visitedState,
+      setVisitedState: state.setVisitedState,
+    })),
+  );
+
+export const useVisitedTransition = () =>
+  usePlaygroundStore(
+    useShallow((state) => ({
+      visitedTransition: state.visitedTransition,
+      visitedSymbol: state.visitedSymbol,
+      simulationSpeed: state.simulationSpeed,
+      setVisitedTransition: state.setVisitedTransition,
+    })),
+  );
+
+export const useSimulation = () =>
+  usePlaygroundStore(
+    useShallow((state) => ({
+      simulating: state.simulating,
+      simulationSpeed: state.simulationSpeed,
+      setSimulating: state.setSimulating,
+      setSimulationSpeed: state.setSimulationSpeed,
+      setSimulationWord: state.setSimulationWord,
+      stopSimulation: state.stopSimulation,
+      setVisitedState: state.setVisitedState,
+      setVisitedTransition: state.setVisitedTransition,
+      moveRight: state.moveRight,
+      moveLeft: state.moveLeft,
+    })),
+  );
+
+export const useSimulationTape = () =>
+  usePlaygroundStore(
+    useShallow((state) => ({
+      translation: state.translation,
+      word: state.simulationWord,
+      position: state.simulationIndex,
+      visitedSymbol: state.visitedSymbol,
+      moveRight: state.moveRight,
+      moveLeft: state.moveLeft,
+    })),
+  );

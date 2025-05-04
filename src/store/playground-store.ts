@@ -11,6 +11,15 @@ export type PlaygroundState = {
   mode: PlaygroundMode;
   isOwner: boolean;
   unsavedChanges: boolean;
+
+  simulating: boolean;
+  translation: number;
+  simulationSpeed: number;
+  simulationWord: string;
+  simulationIndex: number;
+  visitedState: string | null;
+  visitedTransition: string | null;
+  visitedSymbol: string | null;
 };
 
 export type PlaygroundActions = {
@@ -18,6 +27,15 @@ export type PlaygroundActions = {
   updateAutomaton: (callback: (automaton: FiniteStateMachine) => void) => void;
   setMode: (newMode: PlaygroundMode) => void;
   saveChanges: () => void;
+
+  setSimulating: (simulating: boolean) => void;
+  setSimulationSpeed: (speed: number) => void;
+  setSimulationWord: (word: string) => void;
+  setVisitedState: (state: string) => void;
+  setVisitedTransition: (transition: string, symbol: string) => void;
+  moveRight: () => void;
+  moveLeft: () => void;
+  stopSimulation: () => void;
 };
 
 export type PlaygroundStore = PlaygroundState & PlaygroundActions;
@@ -27,6 +45,15 @@ const defaultState: PlaygroundState = {
   automaton: new FiniteStateMachine(),
   isOwner: true,
   unsavedChanges: false,
+
+  simulating: false,
+  translation: 0,
+  simulationSpeed: 1000,
+  simulationWord: "",
+  simulationIndex: 0,
+  visitedState: null,
+  visitedTransition: null,
+  visitedSymbol: null,
 };
 
 export const createPlaygroundStore = (
@@ -56,5 +83,54 @@ export const createPlaygroundStore = (
       });
     },
     saveChanges: () => set({ unsavedChanges: false }),
+
+    setSimulating: (simulating: boolean) => set({ simulating }),
+    setSimulationSpeed: (speed: number) => set({ simulationSpeed: speed }),
+    setSimulationWord: (word: string) => set({ simulationWord: word }),
+    setVisitedState: (state: string) =>
+      set({
+        visitedState: state,
+        visitedTransition: null,
+        visitedSymbol: null,
+      }),
+    setVisitedTransition: (transition: string, symbol: string) =>
+      set({
+        visitedTransition: transition,
+        visitedSymbol: symbol,
+        visitedState: null,
+      }),
+    moveRight: () =>
+      set((state) => {
+        const { simulationIndex, simulationWord } = state;
+        if (simulationIndex >= simulationWord.length) return state;
+        setTimeout(() => {
+          set((s) => {
+            if (!s.simulating) return s;
+            return { translation: 0, simulationIndex: simulationIndex + 1 };
+          });
+        }, state.simulationSpeed);
+        return { translation: -1 };
+      }),
+    moveLeft: () =>
+      set((state) => {
+        const { simulationIndex } = state;
+        if (simulationIndex <= 0) return state;
+        setTimeout(() => {
+          set((s) => {
+            if (!s.simulating) return s;
+            return { translation: 0, simulationIndex: simulationIndex - 1 };
+          });
+        }, state.simulationSpeed);
+        return { translation: 1 };
+      }),
+    stopSimulation: () =>
+      set({
+        simulating: false,
+        translation: 0,
+        simulationIndex: 0,
+        visitedState: null,
+        visitedTransition: null,
+        visitedSymbol: null,
+      }),
   }));
 };
