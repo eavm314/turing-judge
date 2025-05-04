@@ -8,11 +8,10 @@ import { appName } from "@/constants/app";
 export default async function HomePage() {
   return (
     <main className="flex-1">
-      <section className="w-full py-12 md:py-24">
+      <section className="w-full py-16 md:py-36">
         <div className="container px-4 md:px-6 mx-auto">
           <div className="flex flex-col items-center space-y-8 text-center">
             <div>
-              <Cpu size={80} className="text-primary w-full" />
               <h1 className="h-full text-2xl md:text-5xl font-orbitron text-primary">
                 {appName}
               </h1>
@@ -50,7 +49,7 @@ export default async function HomePage() {
             <div className="flex flex-col items-center space-y-3 text-center">
               <Cpu className="h-12 w-12" />
               <h3 className="text-xl font-bold">Intuitive Design</h3>
-              <p className="text-muted-foreground">
+              <p className="text-accent-foreground">
                 Create Finite States Machines, Pushdown Automata, and Turing
                 Machines with our user-friendly interface.
               </p>
@@ -58,7 +57,7 @@ export default async function HomePage() {
             <div className="flex flex-col items-center space-y-3 text-center">
               <Save className="h-12 w-12" />
               <h3 className="text-xl font-bold">Save and Load</h3>
-              <p className="text-muted-foreground">
+              <p className="text-accent-foreground">
                 Store your automaton designs and load them anytime for further
                 editing or testing.
               </p>
@@ -66,7 +65,7 @@ export default async function HomePage() {
             <div className="flex flex-col items-center space-y-3 text-center">
               <PlayCircle className="h-12 w-12" />
               <h3 className="text-xl font-bold">Interactive Testing</h3>
-              <p className="text-muted-foreground">
+              <p className="text-accent-foreground">
                 Run your automatons with custom inputs and visualize the
                 step-by-step execution.
               </p>
