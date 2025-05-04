@@ -47,15 +47,13 @@ export default function Canvas() {
   const { theme } = useTheme();
   const { mode } = usePlaygroundMode();
 
-  const { simulating } = useSimulation();
-
   const isInteractive = mode !== "simulation" && mode !== "viewer";
 
   const { nodes, edges, onConnect, onEdgesChange, onNodesChange } =
     useCanvasHandlers();
 
   return (
-    <div className="flex-1 h-full">
+    <div className="flex-1">
       <ReactFlow
         colorMode={theme as ColorMode}
         nodes={nodes}
@@ -82,7 +80,7 @@ export default function Canvas() {
         <Panel position="top-center">
           <AddStateButton />
         </Panel>
-        {simulating && (
+        {mode === "simulation" && (
           <Panel position="bottom-center">
             <TuringTape />
           </Panel>

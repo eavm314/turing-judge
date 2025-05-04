@@ -12,7 +12,6 @@ export type PlaygroundState = {
   isOwner: boolean;
   unsavedChanges: boolean;
 
-  simulating: boolean;
   translation: number;
   simulationSpeed: number;
   simulationWord: string;
@@ -28,7 +27,6 @@ export type PlaygroundActions = {
   setMode: (newMode: PlaygroundMode) => void;
   saveChanges: () => void;
 
-  setSimulating: (simulating: boolean) => void;
   setSimulationSpeed: (speed: number) => void;
   setSimulationWord: (word: string) => void;
   setVisitedState: (state: string) => void;
@@ -46,7 +44,6 @@ const defaultState: PlaygroundState = {
   isOwner: true,
   unsavedChanges: false,
 
-  simulating: false,
   translation: 0,
   simulationSpeed: 1000,
   simulationWord: "",
@@ -84,7 +81,6 @@ export const createPlaygroundStore = (
     },
     saveChanges: () => set({ unsavedChanges: false }),
 
-    setSimulating: (simulating: boolean) => set({ simulating }),
     setSimulationSpeed: (speed: number) => set({ simulationSpeed: speed }),
     setSimulationWord: (word: string) => set({ simulationWord: word }),
     setVisitedState: (state: string) =>
@@ -105,7 +101,7 @@ export const createPlaygroundStore = (
         if (simulationIndex >= simulationWord.length) return state;
         setTimeout(() => {
           set((s) => {
-            if (!s.simulating) return s;
+            if (s.mode !== "simulation") return s;
             return { translation: 0, simulationIndex: simulationIndex + 1 };
           });
         }, state.simulationSpeed);
@@ -117,20 +113,20 @@ export const createPlaygroundStore = (
         if (simulationIndex <= 0) return state;
         setTimeout(() => {
           set((s) => {
-            if (!s.simulating) return s;
+            if (s.mode !== "simulation") return s;
             return { translation: 0, simulationIndex: simulationIndex - 1 };
           });
         }, state.simulationSpeed);
         return { translation: 1 };
       }),
     stopSimulation: () =>
-      set({
-        simulating: false,
+      set((state) => ({
+        mode: state.isOwner ? "states" : "viewer",
         translation: 0,
         simulationIndex: 0,
         visitedState: null,
         visitedTransition: null,
         visitedSymbol: null,
-      }),
+      })),
   }));
 };

@@ -9,7 +9,6 @@ import {
   PlaygroundState,
   type PlaygroundStore,
 } from "@/store/playground-store";
-import { set } from "zod";
 
 type PlaygroundStoreApi = ReturnType<typeof createPlaygroundStore>;
 
@@ -74,6 +73,14 @@ export const usePlaygroundMode = () =>
 
 export const useIsOwner = () => usePlaygroundStore((state) => state.isOwner);
 
+export const useSimulationWord = () =>
+  usePlaygroundStore(
+    useShallow((state) => ({
+      word: state.simulationWord,
+      setWord: state.setSimulationWord,
+    })),
+  );
+
 export const useVisitedState = () =>
   usePlaygroundStore(
     useShallow((state) => ({
@@ -95,11 +102,10 @@ export const useVisitedTransition = () =>
 export const useSimulation = () =>
   usePlaygroundStore(
     useShallow((state) => ({
-      simulating: state.simulating,
+      word: state.simulationWord,
       simulationSpeed: state.simulationSpeed,
-      setSimulating: state.setSimulating,
+      setWord: state.setSimulationWord,
       setSimulationSpeed: state.setSimulationSpeed,
-      setSimulationWord: state.setSimulationWord,
       stopSimulation: state.stopSimulation,
       setVisitedState: state.setVisitedState,
       setVisitedTransition: state.setVisitedTransition,

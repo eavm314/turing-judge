@@ -1,13 +1,19 @@
+"use client";
+
 import { Separator } from "@/components/ui/separator";
-import { AlphabetEditor } from "./alphabet-editor";
-import { TestSuite } from "./test-suite";
+import AlphabetMenu from "./alphabet-menu";
+import TestingMenu from "./testing-menu";
+import SimulationMenu from "./simulation-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function SideMenu() {
   return (
-    <div className="w-72 border-l border-input">
-      <AlphabetEditor />
+    <ScrollArea className="w-72 border-l border-input">
+      <AlphabetMenu />
       <Separator className="bg-input" />
-      <TestSuite />
-    </div>
+      <TestingMenu />
+      <Separator className="bg-input" />
+      <SimulationMenu />
+    </ScrollArea>
   );
 }

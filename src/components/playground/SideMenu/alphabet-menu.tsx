@@ -7,15 +7,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EPSILON } from "@/constants/symbols";
-import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
+import {
+  useAutomaton,
+  useIsOwner,
+  usePlaygroundMode,
+} from "@/providers/playground-provider";
 import { cn } from "@/lib/ui/utils";
 import { useToast } from "@/hooks/use-toast";
 
-export function AlphabetEditor() {
+export default function AlphabetMenu() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isOwner = useIsOwner();
   const { automaton, updateAutomaton } = useAutomaton();
+  const { mode } = usePlaygroundMode();
   const { toast } = useToast();
 
   const handleAddToAlphabet = () => {
@@ -60,8 +65,10 @@ export function AlphabetEditor() {
     }
   };
 
+  const disabled = mode === "simulation" || !isOwner;
+
   return (
-    <div className="space-y-2 p-4">
+    <div className="space-y-2 p-3">
       <h2>Alphabet</h2>
       <Label htmlFor="alphabet-input" className="text-muted-foreground">
         Only alphanumeric characters
@@ -74,13 +81,13 @@ export function AlphabetEditor() {
           maxLength={1}
           minLength={1}
           onKeyDown={handleKeyDown}
-          disabled={!isOwner}
+          disabled={disabled}
         />
         <Button
           variant="secondary"
           size="sm"
           onClick={handleAddToAlphabet}
-          disabled={!isOwner}
+          disabled={disabled}
         >
           Add
         </Button>
@@ -92,7 +99,7 @@ export function AlphabetEditor() {
             size="default"
             className="flex items-center gap-1 px-2 w-11 h-[30px]"
             onClick={handleAddEpsilonToAlphabet}
-            disabled={!isOwner}
+            disabled={disabled}
           >
             <span>{EPSILON}</span>
             <PlusCircle size={16} />
@@ -108,10 +115,10 @@ export function AlphabetEditor() {
             <button
               className={cn(
                 "p-2 pt-1 text-muted-foreground select-none",
-                isOwner && "hover:text-foreground",
+                !disabled && "hover:text-foreground",
               )}
               onClick={() => handleRemoveFromAlphabet(symbol)}
-              disabled={!isOwner}
+              disabled={disabled}
             >
               x
             </button>

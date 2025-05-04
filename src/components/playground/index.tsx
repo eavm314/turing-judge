@@ -11,7 +11,6 @@ import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
 import { type JsonFSM } from "@/lib/schemas/finite-state-machine";
 import { PlaygroundStoreProvider } from "@/providers/playground-provider";
 import { useSession } from "@/providers/user-provider";
-import { ReactFlowProvider } from "@xyflow/react";
 
 const LoadingCanvas = () => (
   <div className="flex-1 h-full flex items-center justify-center">
@@ -37,7 +36,7 @@ export default function Playground({ data }: { data?: Project }) {
     <PlaygroundStoreProvider initState={{ automaton, mode, isOwner }}>
       <div className="flex flex-col h-screen">
         <PlaygroundLayout data={data} />
-        <main className="flex h-full">
+        <main className="flex flex-1 overflow-hidden">
           <Canvas />
           <SideMenu />
         </main>

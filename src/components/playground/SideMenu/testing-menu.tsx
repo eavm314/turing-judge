@@ -1,0 +1,66 @@
+import { useRef } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { EPSILON } from "@/constants/symbols";
+import { useToast } from "@/hooks/use-toast";
+import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
+import {
+  usePlaygroundMode,
+  useSimulation,
+  useSimulationTape,
+  useSimulationWord,
+} from "@/providers/playground-provider";
+
+export default function TestingMenu() {
+  const { word, setWord } = useSimulationWord();
+  const { mode } = usePlaygroundMode();
+  const { toast } = useToast();
+
+  const handleTest = () => {
+    const { accepted } = AutomatonExecutor.execute(word);
+    if (accepted) {
+      toast({
+        title: "Accepted!",
+        variant: "success",
+      });
+    } else {
+      toast({
+        title: "Rejected!",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleTest();
+    }
+  };
+
+  return (
+    <div className="p-3 space-y-1">
+      <h2>Testing</h2>
+      <Label htmlFor="test-input" className="text-muted-foreground">
+        Enter input string
+      </Label>
+      <Input
+        id="test-input"
+        value={word}
+        onChange={(e) => setWord(e.target.value)}
+        disabled={mode === "simulation"}
+        type="text"
+        className="font-mono placeholder:font-mono disabled:opacity-100"
+        placeholder={EPSILON}
+        onKeyDown={handleKeyDown}
+      />
+      <div className="flex gap-2 pt-2">
+        <Button className="w-full text-base" onClick={handleTest}>
+          Test
+        </Button>
+      </div>
+    </div>
+  );
+}
