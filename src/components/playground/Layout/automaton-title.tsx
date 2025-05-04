@@ -4,8 +4,7 @@ import { useState } from "react";
 import { updateProjectAction } from "@/actions/projects";
 import { Input } from "@/components/ui/input";
 import { useIsOwner } from "@/providers/playground-provider";
-import { useServerAction } from "@/hooks/use-server-action";
-import { Check, Loader, Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 
 export function AutomatonTitle({ title }: { title: string | null }) {
   const [tempTitle, setTempTitle] = useState(title);
@@ -18,7 +17,7 @@ export function AutomatonTitle({ title }: { title: string | null }) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditing(true);
     clearTimeout(timer);
-    const inputTitle = e.target.value.substring(0, 32);
+    const inputTitle = e.target.value.substring(0, 30);
     setTempTitle(inputTitle);
 
     const newTitle = inputTitle.trim() || null;
@@ -42,7 +41,7 @@ export function AutomatonTitle({ title }: { title: string | null }) {
         <Check className="absolute right-2.5 top-2.5 h-4 w-4 text-green-500" />
       )}
       <Input
-        className="pr-8 md:w-72 text-neutral-foreground placeholder:italic disabled:opacity-100"
+        className="pr-8 md:w-72 md:text-base text-neutral-foreground placeholder:italic disabled:opacity-100"
         disabled={!isOwner}
         placeholder="Untitled"
         value={tempTitle ?? ""}
