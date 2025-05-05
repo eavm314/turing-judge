@@ -1,8 +1,3 @@
-import { useAddTransitionPrompt } from "@/components/modal/add-transition";
-import {
-  useAutomaton,
-  usePlaygroundMode,
-} from "@/providers/playground-provider";
 import {
   applyEdgeChanges,
   applyNodeChanges,
@@ -13,8 +8,16 @@ import {
   type OnNodesChange,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+
+import { useAddTransitionPrompt } from "@/components/modal/add-transition";
+import { useToast } from "@/hooks/use-toast";
+import {
+  useAutomaton,
+  usePlaygroundMode,
+} from "@/providers/playground-provider";
 import { useCallback, useEffect, useState } from "react";
 import { fsmToFlow } from "./transformations";
+import { TransitionEdgeType } from "../transition-edge";
 
 export const useCanvasHandlers = () => {
   const { automaton, updateAutomaton } = useAutomaton();
@@ -24,6 +27,8 @@ export const useCanvasHandlers = () => {
 
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
+
+  const { toast } = useToast();
 
   useEffect(() => {
     const { nodes: newNodes, edges: newEdges } = fsmToFlow(automaton, nodes);
@@ -46,8 +51,15 @@ export const useCanvasHandlers = () => {
       } else if (changes.some((change) => change.type === "remove")) {
         updateAutomaton((auto) => {
           changes.forEach((change) => {
-            if (change.type === "remove" && Number(change.id) !== 0) {
-              auto.removeState(Number(change.id));
+            if (change.type === "remove") {
+              if (Number(change.id) !== 0) {
+                auto.removeState(Number(change.id));
+              } else {
+                toast({
+                  title: "Initial state cannot be removed",
+                  variant: "warning",
+                });
+              }
             }
           });
         });
@@ -60,6 +72,7 @@ export const useCanvasHandlers = () => {
 
   const onEdgesChange: OnEdgesChange = useCallback(
     (changes) => {
+      debugger;
       if (changes.some((change) => change.type === "remove")) {
         updateAutomaton((auto) => {
           changes.forEach((change) => {
