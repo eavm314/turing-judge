@@ -1,5 +1,7 @@
 "use server";
 
+import { after } from "next/server";
+
 import { type ServerActionResult } from "@/hooks/use-server-action";
 import { auth } from "@/lib/auth";
 import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
@@ -9,7 +11,6 @@ import {
   automatonCodeSchema,
   type AutomatonCode,
 } from "@/lib/schemas/automaton-code";
-import { after } from "next/server";
 
 export const getUserSubmissions = async (problemId: string) => {
   const session = await auth();
