@@ -9,6 +9,7 @@ import {
   automatonCodeSchema,
   type AutomatonCode,
 } from "@/lib/schemas/automaton-code";
+import { after } from "next/server";
 
 export const getUserSubmissions = async (problemId: string) => {
   const session = await auth();
@@ -84,9 +85,9 @@ export const submitSolutionAction = async (
     },
   });
 
-  setTimeout(() => {
+  after(() => {
     verifySolution(submission.id, problemId, result.data);
-  }, 5000);
+  });
 
   return { success: true, message: "Solution submitted successfully" };
 };

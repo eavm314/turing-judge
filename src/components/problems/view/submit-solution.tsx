@@ -258,6 +258,7 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
                   size="sm"
                   className="flex items-center gap-1"
                   type="button"
+                  disabled={!!selectedId}
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <FileJson className="h-4 w-4" />
@@ -269,7 +270,7 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
                 size="sm"
                 className="flex items-center gap-1 ml-auto"
                 onClick={formatJson}
-                disabled={!code}
+                disabled={!code || !!selectedId}
               >
                 <Code className="h-4 w-4" />
                 Format JSON
