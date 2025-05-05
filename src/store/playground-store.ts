@@ -71,6 +71,7 @@ export const createPlaygroundStore = (
         throw new Error("Automaton type not supported yet");
       }
       const automaton = new FiniteStateMachine(code.automaton);
+      AutomatonExecutor.setAutomaton(automaton);
       set({ automaton, unsavedChanges: true });
     },
     updateAutomaton: (callback) => {
