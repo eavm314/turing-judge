@@ -18,11 +18,13 @@ import {
   useSimulation,
 } from "@/providers/playground-provider";
 import { FloatingConnectionLine } from "./floating-connection-line";
-import { AddStateButton, SwitchMode } from "./panel-actions";
+import { AddState } from "./add-state";
 import { StateNode } from "./state-node";
 import { TransitionEdge } from "./transition-edge";
 import { TuringTape } from "./turing-tape";
 import { useCanvasHandlers } from "./utils/useCanvasHandlers";
+import { PlaygroundMode } from "./playground-mode";
+import { ControlsHelp } from "./controls-help";
 
 const nodeTypes: NodeTypes = {
   state: StateNode,
@@ -75,10 +77,15 @@ export default function Canvas() {
         <Controls position="bottom-right" />
         <Background color={theme === "light" ? "black" : "white"} />
         <Panel position="top-left">
-          <SwitchMode />
+          <PlaygroundMode />
         </Panel>
-        <Panel position="top-center">
-          <AddStateButton />
+        {mode === "states" && (
+          <Panel position="top-center">
+            <AddState />
+          </Panel>
+        )}
+        <Panel position="top-right">
+          <ControlsHelp />
         </Panel>
         {mode === "simulation" && (
           <Panel position="bottom-center">
