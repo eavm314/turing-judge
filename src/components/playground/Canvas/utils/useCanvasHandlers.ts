@@ -72,7 +72,6 @@ export const useCanvasHandlers = () => {
 
   const onEdgesChange: OnEdgesChange = useCallback(
     (changes) => {
-      debugger;
       if (changes.some((change) => change.type === "remove")) {
         updateAutomaton((auto) => {
           changes.forEach((change) => {

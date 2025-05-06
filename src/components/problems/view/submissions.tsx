@@ -50,11 +50,11 @@ export default function Submissions({ problemId }: { problemId: string }) {
       <Table>
         <TableHeader>
           <TableRow className="md:text-base">
-            <TableHeadButton className="w-48 text-center">
+            <TableHeadButton className="text-center">
               Status
             </TableHeadButton>
-            <TableHeadButton className="w-32 text-center">Type</TableHeadButton>
-            <TableHeadButton className="w-1/2">Message</TableHeadButton>
+            {/* <TableHeadButton className="w-32 text-center">Type</TableHeadButton> */}
+            <TableHeadButton>Message</TableHeadButton>
             <TableHeadButton>Submitted</TableHeadButton>
           </TableRow>
         </TableHeader>
@@ -74,16 +74,16 @@ export default function Submissions({ problemId }: { problemId: string }) {
           ) : (
             submissions.map((submission, index) => (
               <TableRow key={index} className="hover:bg-muted/50">
-                <TableCell className="w-48 text-nowrap ml-4 text-center">
+                <TableCell className="w-56 text-nowrap ml-4 text-center">
                   <StatusBadge
                     verdict={submission.verdict}
                     status={submission.status}
                   />
                 </TableCell>
-                <TableCell className="w-32 text-center">
+                {/* <TableCell className="w-32 text-center">
                   <AutomatonTypeBadge type={"FSM"} />
-                </TableCell>
-                <TableCell width="50%" className="text-base truncate">
+                </TableCell> */}
+                <TableCell className="text-base truncate w-3/5">
                   {submission.message}
                 </TableCell>
                 <TableCell className="text-nowrap">
