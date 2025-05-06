@@ -19,15 +19,22 @@ export default function TestingMenu() {
   const { toast } = useToast();
 
   const handleTest = () => {
-    const { accepted } = AutomatonExecutor.execute(word);
+    const executionConfig = AutomatonExecutor.getConfig();
+    const { accepted, depthLimitReached, maxLimitReached } =
+      AutomatonExecutor.execute(word);
     if (accepted) {
       toast({
-        title: "Accepted!",
+        title: "Accepted",
         variant: "success",
       });
     } else {
       toast({
-        title: "Rejected!",
+        title: "Rejected",
+        description: maxLimitReached
+          ? `Reached the maximum of ${executionConfig.maxSteps} steps. Potential infinite loop.`
+          : depthLimitReached
+            ? `Explored the maximum depth of ${executionConfig.depthLimit}. Potential infinite loop.`
+            : undefined,
         variant: "destructive",
       });
     }

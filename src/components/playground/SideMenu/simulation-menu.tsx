@@ -35,7 +35,7 @@ export default function SimulationMenu() {
       return;
     }
 
-    const { accepted, path } = AutomatonExecutor.execute(word);
+    const { accepted, path } = AutomatonExecutor.execute(word, true);
     if (!accepted) {
       toast({
         title: "No path found",

@@ -1,5 +1,9 @@
+import { EPSILON } from "@/constants/symbols";
 import { State } from "./State";
-import { type JsonFSM, type JsonState } from "@/lib/schemas/finite-state-machine";
+import {
+  type JsonFSM,
+  type JsonState,
+} from "@/lib/schemas/finite-state-machine";
 
 const basicAutomata: JsonFSM = {
   alphabet: ["0", "1"],
@@ -149,5 +153,16 @@ export class FiniteStateMachine {
       }
     }
     return usedSymbols;
+  }
+
+  isDeterministic(): boolean {
+    for (const state of this.states.values()) {
+      const epsilonTransition = state.transitions.get(EPSILON);
+      if (epsilonTransition && epsilonTransition.length > 0) return false;
+      for (const targets of state.transitions.values()) {
+        if (targets.length > 1) return false;
+      }
+    }
+    return true;
   }
 }
