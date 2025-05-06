@@ -11,6 +11,7 @@ import {
   automatonCodeSchema,
   type AutomatonCode,
 } from "@/lib/schemas/automaton-code";
+import { Status, Verdict } from "@prisma/client";
 
 export const getUserSubmissions = async (problemId: string) => {
   const session = await auth();
@@ -82,23 +83,46 @@ export const submitSolutionAction = async (
     data: {
       userId: session.user.id,
       problemId,
-      status: "PENDING",
+      status: Status.PENDING,
     },
   });
 
   after(async () => {
-    await verifySolution(submission.id, problemId, result.data);
+    try {
+      await verifySolution(submission.id, problemId, result.data);
+    } catch (error) {
+      console.error("Error verifying solution:", error);
+      await prisma.submission.update({
+        where: { id: submission.id },
+        data: {
+          status: Status.FINISHED,
+          verdict: Verdict.UNKNOWN_ERROR,
+          message:
+            "An error occurred while verifying the solution. Contact support.",
+        },
+      });
+    }
   });
 
   return { success: true, message: "Solution submitted successfully" };
 };
 
+type FailedCaseData = {
+  input: string;
+  result: boolean;
+  expectedResult: boolean;
+  output?: string;
+  expectedOutput?: string;
+  depthLimitReached: boolean;
+  maxLimitReached: boolean;
+};
+
 const verifySolution = async (
-  submissionId: number,
+  id: number,
   problemId: string,
   solution: AutomatonCode,
 ) => {
-  const problemTestData = await prisma.problem.findUnique({
+  const problemTestData = (await prisma.problem.findUnique({
     where: { id: problemId },
     select: {
       allowFSM: true,
@@ -116,77 +140,101 @@ const verifySolution = async (
         },
       },
     },
-  });
+  }))!;
 
-  if (!problemTestData) {
-    await prisma.submission.update({
-      where: { id: submissionId },
-      data: {
-        status: "FINISHED",
-        verdict: "INVALID_FORMAT",
-        message: "Problem not found.",
-      },
-    });
-    return;
-  }
   if (solution.type === "FSM" && !problemTestData.allowFSM) {
-    await prisma.submission.update({
-      where: { id: submissionId },
-      data: {
-        status: "FINISHED",
-        verdict: "INVALID_FORMAT",
-        message: "This problem does not accept FSM solutions.",
-      },
-    });
+    await setInvalidFormat(id, "This problem does not accept FSM solutions.");
     return;
   }
   if (solution.type === "PDA" && !problemTestData.allowPDA) {
-    await prisma.submission.update({
-      where: { id: submissionId },
-      data: {
-        status: "FINISHED",
-        verdict: "INVALID_FORMAT",
-        message: "This problem does not accept PDA solutions.",
-      },
-    });
+    await setInvalidFormat(id, "This problem does not accept PDA solutions.");
     return;
   }
   if (solution.type === "TM" && !problemTestData.allowTM) {
-    await prisma.submission.update({
-      where: { id: submissionId },
-      data: {
-        status: "FINISHED",
-        verdict: "INVALID_FORMAT",
-        message: "This problem does not accept TM solutions.",
-      },
-    });
+    await setInvalidFormat(id, "This problem does not accept TM solutions.");
     return;
   }
 
   if (solution.type === "FSM") {
     const automaton = new FiniteStateMachine(solution.automaton);
+    if (!automaton.isDeterministic() && !problemTestData.allowNonDet) {
+      await setInvalidFormat(
+        id,
+        "This problem does not accept non-deterministic solutions.",
+      );
+      return;
+    }
+    if (automaton.states.size > problemTestData.stateLimit) {
+      await setInvalidFormat(id, "The automaton has more states than allowed.");
+      return;
+    }
     AutomatonExecutor.setAutomaton(automaton);
+    AutomatonExecutor.setConfig({
+      depthLimit: problemTestData.depthLimit,
+      maxSteps: problemTestData.maxStepLimit,
+    });
   }
 
-  let overallResult = true;
-  let failedTestCase: (typeof problemTestData.testCases)[number] | null = null;
+  const totalCases = problemTestData.testCases.length;
+  let passedCases = 0;
+
+  let finalVerdict: Verdict = Verdict.ACCEPTED;
+  let failedCaseData: FailedCaseData | null = null;
   for (const testCase of problemTestData.testCases) {
     const result = AutomatonExecutor.execute(testCase.input);
-    overallResult =
-      overallResult && result.accepted === testCase.expectedResult;
-    if (!overallResult) {
-      failedTestCase = testCase;
+    if (result.maxLimitReached) {
+      finalVerdict = Verdict.STEP_LIMIT_EXCEEDED;
+    }
+    if (result.accepted !== testCase.expectedResult) {
+      finalVerdict = Verdict.WRONG_RESULT;
+    }
+    if (finalVerdict !== Verdict.ACCEPTED) {
+      failedCaseData = {
+        input: testCase.input,
+        result: result.accepted,
+        expectedResult: testCase.expectedResult,
+        depthLimitReached: result.depthLimitReached,
+        maxLimitReached: result.maxLimitReached,
+      };
       break;
     }
+    passedCases++;
   }
+  await prisma.submission.update({
+    where: { id: id },
+    data: {
+      status: Status.FINISHED,
+      verdict: finalVerdict,
+      message: buildMessage(totalCases, passedCases, failedCaseData),
+    },
+  });
+};
+
+const buildMessage = (
+  totalCases: number,
+  passedCases: number,
+  failedCaseData: FailedCaseData | null,
+) => {
+  let message = `(${passedCases}/${totalCases})`;
+  if (failedCaseData) {
+    message += ` Failed test case: '${failedCaseData.input}'.`;
+    if (!failedCaseData.result && failedCaseData.depthLimitReached) {
+      message += " Depth limit reached.";
+    }
+    if (failedCaseData.maxLimitReached) {
+      message += " Max step limit reached.";
+    }
+  }
+  return message;
+};
+
+const setInvalidFormat = async (submissionId: number, message: string) => {
   await prisma.submission.update({
     where: { id: submissionId },
     data: {
-      status: "FINISHED",
-      verdict: overallResult ? "ACCEPTED" : "WRONG_RESULT",
-      message: failedTestCase
-        ? `Failed test case: '${failedTestCase.input}'`
-        : null,
+      status: Status.FINISHED,
+      verdict: Verdict.INVALID_FORMAT,
+      message,
     },
   });
 };

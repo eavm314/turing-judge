@@ -62,14 +62,26 @@ export const StatusBadge = ({
   switch (result) {
     case Verdict.ACCEPTED:
       values = {
-        color: "bg-green-100 text-green-800 hover:bg-green-100/80",
+        color: "bg-green-200 text-green-900 hover:bg-green-100/80",
         text: "Accepted",
       };
       break;
     case Verdict.WRONG_RESULT:
       values = {
-        color: "bg-red-100 text-red-800 hover:bg-red-100/80",
+        color: "bg-red-200 text-red-900 hover:bg-red-100/80",
         text: "Wrong Result",
+      };
+      break;
+    case Verdict.STEP_LIMIT_EXCEEDED:
+      values = {
+        color: "bg-red-200 text-red-900 hover:bg-red-100/80",
+        text: "Step Limit Exceeded",
+      };
+      break;
+    case Verdict.INVALID_FORMAT:
+      values = {
+        color: "bg-orange-200 text-amber-900 hover:bg-amber-100/80",
+        text: "Invalid Format",
       };
       break;
     case Status.PENDING:
