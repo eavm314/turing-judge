@@ -1,7 +1,7 @@
 import { cn } from "@/lib/ui/utils";
 import { usePlaygroundMode } from "@/providers/playground-provider";
 
-export function PlaygroundMode() {
+export default function PlaygroundMode() {
   const { mode, setMode } = usePlaygroundMode();
 
   return (

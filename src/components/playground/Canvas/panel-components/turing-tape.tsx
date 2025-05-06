@@ -8,7 +8,7 @@ import { ArrowRight } from "lucide-react";
 const size = 50;
 const tapeSize = 11;
 
-export function TuringTape() {
+export default function TuringTape() {
   const {
     word,
     speed,

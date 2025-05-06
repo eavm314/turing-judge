@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useModal } from "@/providers/modal-provider";
 import { useAutomaton } from "@/providers/playground-provider";
 
-export const AddState = () => {
+export default function AddState() {
   const { automaton, updateAutomaton } = useAutomaton();
   const { showPrompt } = useModal();
 

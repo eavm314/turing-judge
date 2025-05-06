@@ -13,18 +13,18 @@ import {
 import "@xyflow/react/dist/style.css";
 import { useTheme } from "next-themes";
 
-import {
-  usePlaygroundMode,
-  useSimulation,
-} from "@/providers/playground-provider";
+import { usePlaygroundMode } from "@/providers/playground-provider";
 import { FloatingConnectionLine } from "./floating-connection-line";
-import { AddState } from "./add-state";
+import {
+  AddState,
+  ControlsHelp,
+  PlaygroundMode,
+  TuringTape,
+  DeterminismBadge,
+} from "./panel-components";
 import { StateNode } from "./state-node";
 import { TransitionEdge } from "./transition-edge";
-import { TuringTape } from "./turing-tape";
 import { useCanvasHandlers } from "./utils/useCanvasHandlers";
-import { PlaygroundMode } from "./playground-mode";
-import { ControlsHelp } from "./controls-help";
 
 const nodeTypes: NodeTypes = {
   state: StateNode,
@@ -86,6 +86,9 @@ export default function Canvas() {
         )}
         <Panel position="top-right">
           <ControlsHelp />
+        </Panel>
+        <Panel position="bottom-left">
+          <DeterminismBadge />
         </Panel>
         {mode === "simulation" && (
           <Panel position="bottom-center">

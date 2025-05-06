@@ -1,18 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { HelpCircle, MousePointer, Move, GitBranch, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
-export function ControlsHelp() {
+import { GitBranch, HelpCircle, MousePointer, Move, X } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+export default function ControlsHelp() {
   const [isOpen, setIsOpen] = useState(false);
 
   if (!isOpen) {
