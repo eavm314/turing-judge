@@ -63,7 +63,7 @@ export default function TestingMenu() {
         placeholder={EPSILON}
         onKeyDown={handleKeyDown}
       />
-      <div className="flex gap-2 pt-2">
+      <div className="flex gap-2 pt-1">
         <Button className="w-full text-base" onClick={handleTest}>
           Test
         </Button>

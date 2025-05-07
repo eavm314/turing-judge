@@ -14,9 +14,9 @@ export default function ControlsHelp() {
   if (!isOpen) {
     return (
       <Button
-        variant="outline"
+        variant="ghost"
         size="icon"
-        className="rounded-full shadow-lg border-0 p-0"
+        className="rounded-full"
         onClick={() => setIsOpen(true)}
         aria-label="Show controls help"
       >

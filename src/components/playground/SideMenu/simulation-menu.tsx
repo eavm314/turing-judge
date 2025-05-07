@@ -82,7 +82,7 @@ export default function SimulationMenu() {
         <Button
           onClick={handleSimulation}
           className="w-full justify-start"
-          variant={simulating ? "destructive" : "outline"}
+          variant={simulating ? "destructive" : "secondary"}
         >
           {simulating ? (
             <CircleStop className="h-4 w-4" />
