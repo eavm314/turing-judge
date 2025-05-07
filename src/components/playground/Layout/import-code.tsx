@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 
-import { Code, Download, FileJson } from "lucide-react";
+import { Code, FileJson, Upload } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { CodeEditor } from "@/components/ui/code-editor";
@@ -15,9 +15,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 import { validateCode } from "@/lib/schemas/automaton-code";
 import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
-import { useToast } from "@/hooks/use-toast";
 
 const initCode = "";
 
@@ -79,7 +79,7 @@ export function ImportCode() {
           size="sm"
           className="flex items-center gap-1"
         >
-          <Download className="h-4 w-4" />
+          <Upload className="h-4 w-4" />
           Import
         </Button>
       </DialogTrigger>

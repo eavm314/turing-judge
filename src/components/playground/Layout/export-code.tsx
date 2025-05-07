@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { Check, Copy, Upload } from "lucide-react";
+import { Check, Copy, Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { CodeEditor } from "@/components/ui/code-editor";
@@ -59,7 +59,7 @@ export function ExportCode({ title }: { title?: string | null }) {
           className="flex items-center gap-1"
           onClick={() => setIsExportDialogOpen(true)}
         >
-          <Upload className="h-4 w-4" />
+          <Download className="h-4 w-4" />
           Export
         </Button>
       </DialogTrigger>

@@ -93,7 +93,7 @@ export function SaveAutomaton() {
   const loading = createProject.loading || updateProject.loading;
 
   return (
-    <div className="flex items-center gap-8">
+    <div className="flex items-center gap-6">
       <div className="flex items-center">
         <Button
           disabled={loading}

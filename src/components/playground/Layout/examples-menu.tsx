@@ -8,11 +8,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 
 const automatonExamples = [
-  { name: "Empty Automaton", key: "" },
-  { name: "Simple DFA", key: "dfa" },
-  { name: "Simple NFA", key: "nfa" },
+  { name: "Even Ones", id: "pilw80yiq2vnjy2w1gm8hi5q" },
+  { name: 'Ends with "01"', id: "q25bcbnu07apqx6iiv08qhx2" },
+  { name: "3-Char Palindrome", id: "h147pt8jj29gpztrpob0oeft" },
+  { name: "Divisible by 3", id: "bganvr3nc18rura47zpx46vi" },
+  { name: "Simple NFA", id: "x9h6i1odejrjr54mxe79a5n9" },
 ];
 
 export function ExamplesMenu() {
@@ -26,7 +29,9 @@ export function ExamplesMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         {automatonExamples.map((example) => (
-          <DropdownMenuItem key={example.key}>{example.name}</DropdownMenuItem>
+          <Link href={`/playground/${example.id}`} key={example.id} target="_blank">
+            <DropdownMenuItem>{example.name}</DropdownMenuItem>
+          </Link>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>

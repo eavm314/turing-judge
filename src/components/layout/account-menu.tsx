@@ -24,7 +24,7 @@ export function AccountMenu({ variant }: { variant?: ButtonProps["variant"] }) {
 
   if (!user)
     return (
-      <Button variant={variant} onClick={() => setOpenSignIn(true)}>
+      <Button className="px-3" variant={variant} onClick={() => setOpenSignIn(true)}>
         Sign In <LogIn size={16} />
       </Button>
     );
