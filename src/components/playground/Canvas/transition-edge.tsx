@@ -10,6 +10,8 @@ import { useEffect, useRef } from "react";
 import { useAddTransitionPrompt } from "@/components/modal/add-transition";
 import {
   useAutomaton,
+  useIsOwner,
+  usePlaygroundMode,
   useVisitedTransition,
 } from "@/providers/playground-provider";
 
@@ -31,6 +33,8 @@ export function TransitionEdge({
   const addTransitionPrompt = useAddTransitionPrompt();
   const { automaton, updateAutomaton } = useAutomaton();
   const { visitedTransition, simulationSpeed } = useVisitedTransition();
+  const { mode } = usePlaygroundMode();
+  const isInteractive = mode !== "simulation" && mode !== "viewer";
 
   useEffect(() => {
     if (id === visitedTransition && animateRef.current) {
@@ -45,6 +49,7 @@ export function TransitionEdge({
   const [edgePath, labelX, labelY] = getPath(sourceNode, targetNode);
 
   const handleEditTransition = async () => {
+    if (!isInteractive) return;
     const initialSymbols = automaton.getTransition(
       Number(source),
       Number(target),
@@ -106,7 +111,7 @@ export function TransitionEdge({
           style={{
             position: "absolute",
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-            pointerEvents: "all",
+            pointerEvents: isInteractive ? "all" : "none",
           }}
           className={cn(
             "nopan bg-background px-2 border rounded-md cursor-pointer font-mono",
