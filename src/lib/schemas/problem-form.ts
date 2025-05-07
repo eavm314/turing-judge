@@ -15,9 +15,9 @@ export const problemSchema = z.object({
   allowPDA: z.boolean(),
   allowTM: z.boolean(),
   allowNonDet: z.boolean(),
-  stateLimit: z.number().int().min(1),
-  depthLimit: z.number().int().min(1),
-  maxStepLimit: z.number().int().min(1),
+  stateLimit: z.number({ coerce: true }).int().min(1),
+  depthLimit: z.number({ coerce: true }).int().min(1),
+  maxStepLimit: z.number({ coerce: true }).int().min(1),
   testCases: z.string().refine(
     (text) => {
       const lines = text.split("\n");

@@ -306,13 +306,8 @@ export function ProblemForm({
                         <FormControl>
                           <Input
                             type="number"
-                            min={1}
                             {...field}
-                            onChange={(e) =>
-                              field.onChange(
-                                Number.parseInt(e.target.value) || 1,
-                              )
-                            }
+                            onChange={field.onChange}
                           />
                         </FormControl>
                         <FormDescription>
@@ -334,11 +329,7 @@ export function ProblemForm({
                             type="number"
                             min={1}
                             {...field}
-                            onChange={(e) =>
-                              field.onChange(
-                                Number.parseInt(e.target.value) || 1,
-                              )
-                            }
+                            onChange={field.onChange}
                           />
                         </FormControl>
                         <FormDescription>
@@ -361,11 +352,7 @@ export function ProblemForm({
                             type="number"
                             min={1}
                             {...field}
-                            onChange={(e) =>
-                              field.onChange(
-                                Number.parseInt(e.target.value) || 1,
-                              )
-                            }
+                            onChange={field.onChange}
                           />
                         </FormControl>
                         <FormDescription>
