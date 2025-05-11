@@ -1,4 +1,4 @@
-import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
+import { FiniteStateMachine } from "@/lib/automata/FiniteStateMachine";
 import { type StateNodeType } from "../state-node";
 import { type TransitionEdgeType } from "../transition-edge";
 import { type Node } from "@xyflow/react";

@@ -4,8 +4,8 @@ import { after } from "next/server";
 
 import { type ServerActionResult } from "@/hooks/use-server-action";
 import { auth } from "@/lib/auth";
-import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
-import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
+import AutomatonExecutor from "@/lib/automata/AutomatonExecutor";
+import { FiniteStateMachine } from "@/lib/automata/FiniteStateMachine";
 import { prisma } from "@/lib/db/prisma";
 import {
   automatonCodeSchema,

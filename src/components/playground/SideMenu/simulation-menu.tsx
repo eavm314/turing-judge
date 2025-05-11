@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { EPSILON } from "@/constants/symbols";
 import { useToast } from "@/hooks/use-toast";
-import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
+import AutomatonExecutor from "@/lib/automata/AutomatonExecutor";
 import {
   usePlaygroundMode,
   useSimulation,

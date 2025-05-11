@@ -1,7 +1,7 @@
 import { createStore } from "zustand/vanilla";
 
-import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
-import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
+import AutomatonExecutor from "@/lib/automata/AutomatonExecutor";
+import { FiniteStateMachine } from "@/lib/automata/FiniteStateMachine";
 import { AutomatonCode } from "@/lib/schemas/automaton-code";
 
 export type PlaygroundMode = "states" | "transitions" | "simulation" | "viewer";

@@ -7,7 +7,7 @@ import { Loader } from "lucide-react";
 
 import { PlaygroundLayout } from "@/components/playground/Layout";
 import SideMenu from "@/components/playground/SideMenu";
-import { FiniteStateMachine } from "@/lib/automaton/FiniteStateMachine";
+import { FiniteStateMachine } from "@/lib/automata/FiniteStateMachine";
 import { type JsonFSM } from "@/lib/schemas/finite-state-machine";
 import { PlaygroundStoreProvider } from "@/providers/playground-provider";
 import { useSession } from "@/providers/user-provider";
