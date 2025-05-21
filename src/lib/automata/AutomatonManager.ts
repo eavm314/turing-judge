@@ -7,8 +7,8 @@ import { createFSM } from "./finite-state-machine";
 class AutomatonManager {
   private currentAutomaton!: Automaton;
 
-  constructor() {
-    this.switchTo({ type: "FSM" });
+  constructor(initialCode: AutomatonCode) {
+    this.switchTo(initialCode);
   }
 
   switchTo(initialCode: AutomatonCode) {
@@ -16,17 +16,17 @@ class AutomatonManager {
       case "FSM":
         this.currentAutomaton = createFSM(initialCode.automaton);
         break;
-      // case 'pda': this.currentFactory = createPDA(); break;
-      // case 'tm': this.currentFactory = createTM(); break;
+      default:
+        throw new Error(`Not implemented automaton type: ${initialCode.type}`);
     }
   }
 
   getDesigner() {
-    return this.currentAutomaton.designer;
+    return this.currentAutomaton.getDesigner();
   }
 
   getExecutor() {
-    return this.currentAutomaton.executor;
+    return this.currentAutomaton.getExecutor();
   }
 
   getType() {
@@ -34,5 +34,5 @@ class AutomatonManager {
   }
 }
 
-const automatonManager = new AutomatonManager();
+const automatonManager = new AutomatonManager({ type: "FSM" });
 export default automatonManager;

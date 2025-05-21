@@ -1,77 +1,93 @@
 import { EPSILON } from "@/constants/symbols";
-import { FsmDesigner } from "./FsmDesigner";
-import { type AutomatonExecutor, type TransitionStep } from "../base/Executor";
-import { State } from "./State";
+import { type JsonFSM } from "@/lib/schemas/finite-state-machine";
+import {
+  BaseExecutor,
+  ExecutionConfig,
+  type TransitionStep,
+} from "../base/BaseExecutor";
 
 interface ExecutionNode {
-  stateId: number;
+  state: string;
   inputPos: number;
   path: TransitionStep[];
   depth: number;
 }
 
-export class FsmExecutor implements AutomatonExecutor {
-  private automaton: FsmDesigner;
+export class FsmExecutor extends BaseExecutor {
+  config: ExecutionConfig;
+  steps: number;
 
-  private config = { depthLimit: 500, maxSteps: 10000 };
+  initial: string;
+  finals: Set<string>;
+  states: Map<string, Map<string, string[]>>;
 
-  private steps = 0;
+  constructor(initialAutomaton?: JsonFSM) {
+    super();
+    this.config = { depthLimit: 500, maxSteps: 10000 };
+    this.steps = 0;
+    this.states = new Map<string, Map<string, string[]>>();
+    this.initial = "";
+    this.finals = new Set<string>();
 
-  constructor() {
-    this.automaton = new FsmDesigner();
+    if (initialAutomaton) {
+      this.startAutomaton(initialAutomaton);
+    }
   }
 
-  getAutomaton() {
-    return this.automaton.toJson();
+  startAutomaton(automaton: JsonFSM): void {
+    this.initial = automaton.initial;
+    this.finals = new Set(automaton.finals);
+    for (const [name, state] of Object.entries(automaton.states)) {
+      const transitions = new Map<string, string[]>();
+      for (const [target, symbols] of Object.entries(state.transitions ?? {})) {
+        for (const symbol of symbols) {
+          if (!transitions.has(symbol)) {
+            transitions.set(symbol, []);
+          }
+          transitions.get(symbol)!.push(target);
+        }
+      }
+      this.states.set(name, transitions);
+    }
   }
 
-  setAutomaton(automaton: FsmDesigner) {
-    this.automaton = automaton;
-  }
-
-  getConfig() {
-    return this.config;
-  }
-
-  setConfig(config: typeof this.config) {
-    this.config = config;
-  }
-
-  step(inputSymbol: string, state: State) {
+  step(inputSymbol: string, stateName: string) {
     this.steps++;
     const consuming: TransitionStep[] = [];
     const epsilon: TransitionStep[] = [];
 
+    const state = this.states.get(stateName);
+    if (!state) throw new Error(`State ${stateName} not found`);
+
     // Transitions that consume the current symbol
-    const targets = state.transitions.get(inputSymbol) || [];
+    const targets = state.get(inputSymbol) || [];
     for (const target of targets) {
-      consuming.push([state.id, target, inputSymbol]);
+      consuming.push([stateName, target, inputSymbol]);
     }
 
     // Epsilon transitions
-    const epsilonTargets = state.transitions.get(EPSILON) || [];
+    const epsilonTargets = state.get(EPSILON) || [];
     for (const target of epsilonTargets) {
-      epsilon.push([state.id, target, EPSILON]);
+      epsilon.push([stateName, target, EPSILON]);
     }
 
     return { consuming, epsilon };
   }
 
-  execute(input: string, savePath: boolean = false){
+  execute(input: string, savePath: boolean = false) {
     this.steps = 0;
     let depthLimitReached = false;
 
     const stack: ExecutionNode[] = [];
-    stack.push({ stateId: 0, inputPos: 0, path: [], depth: 0 });
+    stack.push({ state: this.initial, inputPos: 0, path: [], depth: 0 });
 
     let lastPath: TransitionStep[] = [];
 
     while (stack.length > 0) {
-      const { stateId, inputPos, path, depth } = stack.pop()!;
-      const state = this.automaton.states.get(stateId)!;
+      const { state, inputPos, path, depth } = stack.pop()!;
       lastPath = path;
 
-      if (inputPos === input.length && state.isFinal) {
+      if (inputPos === input.length && this.finals.has(state)) {
         return {
           accepted: true,
           depthLimitReached,
@@ -100,7 +116,7 @@ export class FsmExecutor implements AutomatonExecutor {
       // First, push epsilon transitions (they don't consume input)
       for (const [from, to, transitionSymbol] of epsilon) {
         stack.push({
-          stateId: to,
+          state: to,
           inputPos: inputPos, // No change in position since epsilon doesn't consume input
           path: savePath ? [...path, [from, to, transitionSymbol]] : [],
           depth: depth + 1,
@@ -111,7 +127,7 @@ export class FsmExecutor implements AutomatonExecutor {
       for (const [from, to, transitionSymbol] of consuming) {
         const nextInputPos = inputPos + 1;
         stack.push({
-          stateId: to,
+          state: to,
           inputPos: nextInputPos,
           path: savePath ? [...path, [from, to, transitionSymbol]] : [],
           depth: depth + 1,

@@ -1,30 +1,21 @@
 import { EPSILON } from "@/constants/symbols";
-import { State } from "./State";
+import { FsmState } from "./FsmState";
 import {
   type JsonFSM,
   type JsonState,
 } from "@/lib/schemas/finite-state-machine";
-import { AutomatonDesigner } from "../base/Designer";
+import { BaseDesigner } from "../base/BaseDesigner";
+import { StateNodeType } from "@/components/playground/Canvas/state-node";
+import { TransitionEdgeType } from "@/components/playground/Canvas/transition-edge";
 
-const basicAutomata: JsonFSM = {
-  alphabet: ["0", "1"],
-  states: {
-    q0: {
-      position: { x: 0, y: 0 },
-      transitions: {},
-    },
-  },
-  initial: "q0",
-  finals: [],
-};
-
-export class FsmDesigner implements AutomatonDesigner {
-  states: Map<number, State>;
+export class FsmDesigner extends BaseDesigner {
+  states: Map<number, FsmState>;
   alphabet: string[];
 
   stateToIndex: Map<string, number>;
 
-  constructor(json: JsonFSM = basicAutomata) {
+  constructor(json: JsonFSM) {
+    super();
     this.states = new Map();
     this.alphabet = json.alphabet;
 
@@ -38,7 +29,7 @@ export class FsmDesigner implements AutomatonDesigner {
     }
 
     for (const [name, value] of Object.entries(json.states)) {
-      const state = new State(this, name, value);
+      const state = new FsmState(this, name, value);
       const stateId = this.stateToIndex.get(name)!;
       this.states.set(stateId, state);
     }
@@ -74,11 +65,11 @@ export class FsmDesigner implements AutomatonDesigner {
     return {
       type: "FSM" as const,
       automaton,
-    }
+    };
   }
 
-  clone(): FsmDesigner {
-    return Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+  getDesign(): { nodes: StateNodeType[]; edges: TransitionEdgeType[] } {
+    throw new Error("Method not implemented.");
   }
 
   addState(name: string, stateJson: JsonState) {
@@ -86,18 +77,7 @@ export class FsmDesigner implements AutomatonDesigner {
     const stateId = Math.max(...this.stateToIndex.values()) + 1;
 
     this.stateToIndex.set(name, stateId);
-    this.states.set(stateId, new State(this, name, stateJson));
-  }
-
-  removeState(id: number) {
-    if (id === 0) throw new Error("Cannot remove initial state");
-    const stateToRemove = this.states.get(id);
-    if (!stateToRemove) throw new Error("State does not exist");
-    this.states.delete(id);
-    for (const state of this.states.values()) {
-      state.removeTransition(id);
-    }
-    this.stateToIndex.delete(stateToRemove.name);
+    this.states.set(stateId, new FsmState(this, name, stateJson));
   }
 
   addTransition(from: number, to: number, symbols: string[]) {
@@ -109,66 +89,29 @@ export class FsmDesigner implements AutomatonDesigner {
     const source = this.states.get(from);
     if (!source) throw new Error("Source state does not exist");
 
-    source.addTransition(symbols, [to]);
-  }
-
-  removeTransition(from: number, to: number) {
-    const source = this.states.get(from);
-    if (!source) throw new Error("Source state does not exist");
-    source.removeTransition(to);
-  }
-
-  getTransition(from: number, to: number): string[] {
-    const state = this.states.get(from);
-    if (!state) throw new Error("State does not exist");
-
-    const symbols = state.transitions
-      .entries()
-      .filter(([_, targets]) => targets.includes(to))
-      .map(([symbol]) => symbol)
-      .toArray();
-
-    return symbols;
-  }
-
-  switchFinal(id: number) {
-    const state = this.states.get(id);
-    state!.switchFinal();
-  }
-
-  moveState(id: number, position: { x: number; y: number }) {
-    const state = this.states.get(id);
-    if (!state) throw new Error("State does not exist");
-    state.setPosition(position);
-  }
-
-  renameState(id: number, name: string) {
-    const state = this.states.get(id);
-    if (!state) throw new Error("State does not exist");
-    if (this.stateToIndex.get(name)) throw new Error("State already exists");
-    this.stateToIndex.delete(state.name);
-    state.setName(name);
-    this.stateToIndex.set(name, id);
+    source.addTransition(to, symbols);
   }
 
   getUsedSymbols(): Set<string> {
-    const usedSymbols = new Set<string>();
-    for (const state of this.states.values()) {
-      for (const [symbol, target] of state.transitions.entries()) {
-        if (target.length > 0) {
-          usedSymbols.add(symbol);
-        }
-      }
-    }
-    return usedSymbols;
+    const usedSymbols = this.states
+      .values()
+      .flatMap((state) =>
+        state.transitions.values().flatMap((symbols) => symbols),
+      )
+      .toArray();
+    return new Set(usedSymbols);
   }
 
   isDeterministic(): boolean {
     for (const state of this.states.values()) {
-      const epsilonTransition = state.transitions.get(EPSILON);
-      if (epsilonTransition && epsilonTransition.length > 0) return false;
-      for (const targets of state.transitions.values()) {
-        if (targets.length > 1) return false;
+      const seenSymbols = new Set<string>();
+
+      for (const symbols of state.transitions.values()) {
+        for (const symbol of symbols) {
+          if (symbol === EPSILON) return false;
+          if (seenSymbols.has(symbol)) return false;
+          seenSymbols.add(symbol);
+        }
       }
     }
     return true;

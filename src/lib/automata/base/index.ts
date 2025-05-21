@@ -1,9 +1,9 @@
 import { type AutomatonType } from "@prisma/client";
-import { type AutomatonDesigner } from "./Designer";
-import { type AutomatonExecutor } from "./Executor";
+import { type BaseDesigner } from "./BaseDesigner";
+import { type BaseExecutor } from "./BaseExecutor";
 
 export interface Automaton {
   type: AutomatonType;
-  designer: AutomatonDesigner;
-  executor: AutomatonExecutor;
+  getDesigner: () => BaseDesigner;
+  getExecutor: () => BaseExecutor;
 }

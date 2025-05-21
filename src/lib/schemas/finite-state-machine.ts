@@ -38,10 +38,10 @@ export const fsmSchema = z
     { required_error: "Required at 'automaton'" },
   )
   .superRefine((data, ctx) => {
-    const stateKeys = Object.keys(data.states);
+    const stateKeys = new Set(Object.keys(data.states));
     const alphabetSet = new Set(data.alphabet);
 
-    if (!stateKeys.includes(data.initial)) {
+    if (!stateKeys.has(data.initial)) {
       ctx.addIssue({
         path: ["initial"],
         message: `Initial state "${data.initial}" is not defined in states.`,
@@ -50,7 +50,7 @@ export const fsmSchema = z
     }
 
     for (const finalState of data.finals) {
-      if (!stateKeys.includes(finalState)) {
+      if (!stateKeys.has(finalState)) {
         ctx.addIssue({
           path: ["finals"],
           message: `Final state "${finalState}" is not defined in states.`,
@@ -61,22 +61,22 @@ export const fsmSchema = z
 
     // Check transitions
     for (const [stateName, state] of Object.entries(data.states)) {
-      for (const [symbol, destinations] of Object.entries(
+      for (const [target, symbols] of Object.entries(
         state.transitions ?? {},
       )) {
-        if (!alphabetSet.has(symbol)) {
+        if (!stateKeys.has(target)) {
           ctx.addIssue({
-            path: ["states", stateName, "transitions", symbol],
-            message: `Symbol "${symbol}" in transitions is not in the alphabet.`,
+            path: ["states", stateName, "transitions", target],
+            message: `Target state "${target}" does not exist.`,
             code: z.ZodIssueCode.custom,
           });
         }
-
-        for (const target of destinations) {
-          if (!stateKeys.includes(target)) {
+        
+        for (const symbol of symbols) {
+          if (!alphabetSet.has(symbol)) {
             ctx.addIssue({
-              path: ["states", stateName, "transitions", symbol],
-              message: `Target state "${target}" does not exist.`,
+              path: ["states", stateName, "transitions", target],
+              message: `Symbol "${symbol}" in transitions is not in the alphabet.`,
               code: z.ZodIssueCode.custom,
             });
           }
