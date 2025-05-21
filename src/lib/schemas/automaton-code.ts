@@ -6,7 +6,7 @@ import { fsmSchema } from "./finite-state-machine";
 export const automatonCodeSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("FSM"),
-    automaton: fsmSchema,
+    automaton: fsmSchema.optional(),
   }),
   z.object({
     type: z.literal("PDA"),
