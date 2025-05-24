@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import Link from 'next/link';
 
-import { Trash2 } from "lucide-react";
+import { Trash2 } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { TableCell, TableRow } from "@/components/ui/table";
-import { type AutomatonProjectItem } from "@/lib/schemas";
-import { cn } from "@/lib/ui/utils";
-import { AutomatonTypeBadge } from "@/utils/badges";
-import { formatDateTime } from "@/utils/date";
+import { Button } from '@/components/ui/button';
+import { TableCell, TableRow } from '@/components/ui/table';
+import { type AutomatonProjectItem } from '@/lib/schemas';
+import { cn } from '@/lib/ui/utils';
+import { AutomatonTypeBadge } from '@/utils/badges';
+import { formatDateTime } from '@/utils/date';
 
 interface AutomatonItemProps {
   item: AutomatonProjectItem;
@@ -26,11 +26,11 @@ export default function ProjectItem({ item, onDelete }: AutomatonItemProps) {
         >
           <span
             className={cn(
-              "text-nowrap md:text-base text-neutral-foreground",
-              !item.title && "italic opacity-60",
+              'text-nowrap md:text-base text-neutral-foreground',
+              !item.title && 'italic opacity-60',
             )}
           >
-            {item.title || "Untitled"}
+            {item.title || 'Untitled'}
           </span>
         </Link>
       </TableCell>

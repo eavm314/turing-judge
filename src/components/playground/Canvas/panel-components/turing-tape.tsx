@@ -1,26 +1,18 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/ui/utils";
-import { useSimulationTape } from "@/providers/playground-provider";
-import { ArrowRight } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/ui/utils';
+import { useSimulationTape } from '@/providers/playground-provider';
+import { ArrowRight } from 'lucide-react';
 
 const size = 50;
 const tapeSize = 11;
 
 export default function TuringTape() {
-  const {
-    word,
-    speed,
-    position,
-    translation,
-    visitedSymbol,
-    moveLeft,
-    moveRight,
-  } = useSimulationTape();
+  const { word, speed, position, translation, visitedSymbol, moveLeft, moveRight } =
+    useSimulationTape();
 
-  const extraWord =
-    " ".repeat((tapeSize + 1) / 2) + word + " ".repeat((tapeSize + 1) / 2);
+  const extraWord = ' '.repeat((tapeSize + 1) / 2) + word + ' '.repeat((tapeSize + 1) / 2);
 
   return (
     <div className="flex flex-col items-center gap-4 pb-6">
@@ -36,8 +28,8 @@ export default function TuringTape() {
       >
         <div
           className={cn(
-            "flex transition-none",
-            translation !== 0 && "transition-transform ease-in-out",
+            'flex transition-none',
+            translation !== 0 && 'transition-transform ease-in-out',
           )}
           style={{
             width: `${(tapeSize + 2) * size}px`,
@@ -47,14 +39,14 @@ export default function TuringTape() {
           }}
         >
           {extraWord
-            .split("")
+            .split('')
             .slice(position, position + tapeSize + 2)
             .map((symbol, index) => (
               <div
                 key={index + position}
                 className={cn(
-                  "flex items-center justify-center border border-muted",
-                  symbol !== " " && "bg-background",
+                  'flex items-center justify-center border border-muted',
+                  symbol !== ' ' && 'bg-background',
                 )}
                 style={{
                   width: `${size}px`,

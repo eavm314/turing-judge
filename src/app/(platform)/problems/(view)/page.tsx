@@ -1,5 +1,5 @@
-import { getProblemSet } from "@/actions/problems";
-import ProblemSet from "@/components/problems/problemset";
+import { getProblemSet } from '@/actions/problems';
+import ProblemSet from '@/components/problems/problemset';
 
 export default async function ProblemsPage() {
   const problems = await getProblemSet();

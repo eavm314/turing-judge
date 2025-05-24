@@ -1,9 +1,9 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { ArrowRight, Cpu, PlayCircle, Save } from "lucide-react";
+import { ArrowRight, Cpu, PlayCircle, Save } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { appName } from "@/constants/app";
+import { Button } from '@/components/ui/button';
+import { appName } from '@/constants/app';
 
 export default async function HomePage() {
   return (
@@ -12,35 +12,25 @@ export default async function HomePage() {
         <div className="container px-4 md:px-6 mx-auto">
           <div className="flex flex-col items-center space-y-8 text-center">
             <div>
-              <h1 className="h-full text-2xl md:text-5xl font-orbitron text-primary">
-                {appName}
-              </h1>
+              <h1 className="h-full text-2xl md:text-5xl font-orbitron text-primary">{appName}</h1>
             </div>
             <h2 className="text-xl tracking-tighter md:text-3xl max-w-[800px]">
               Explore the world of formal languages and automata theory
             </h2>
             <div className="flex flex-col md:flex-row gap-4">
-              <Button
-                variant="secondary"
-                className="text-base md:text-lg h-10"
-                asChild
-              >
+              <Button variant="secondary" className="text-base md:text-lg h-10" asChild>
                 <Link href="/problems">Explore Problems</Link>
               </Button>
               <Button className="text-base md:text-lg h-10" asChild>
                 <Link href="/playground">
-                  Go to Playground{" "}
-                  <ArrowRight size={22} className="ml-2 mt-0.5" />
+                  Go to Playground <ArrowRight size={22} className="ml-2 mt-0.5" />
                 </Link>
               </Button>
             </div>
           </div>
         </div>
       </section>
-      <section
-        id="features"
-        className="w-full py-12 md:py-24 lg:py-32 bg-muted"
-      >
+      <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
         <div className="container px-4 md:px-6 mx-auto">
           <h2 className="text-2xl font-bold tracking-tighter md:text-5xl text-center mb-12">
             Main Features
@@ -50,24 +40,22 @@ export default async function HomePage() {
               <Cpu className="h-12 w-12" />
               <h3 className="text-xl font-bold">Intuitive Design</h3>
               <p className="text-accent-foreground">
-                Create Finite States Machines, Pushdown Automata, and Turing
-                Machines with our user-friendly interface.
+                Create Finite States Machines, Pushdown Automata, and Turing Machines with our
+                user-friendly interface.
               </p>
             </div>
             <div className="flex flex-col items-center space-y-3 text-center">
               <Save className="h-12 w-12" />
               <h3 className="text-xl font-bold">Save and Load</h3>
               <p className="text-accent-foreground">
-                Store your automaton designs and load them anytime for further
-                editing or testing.
+                Store your automaton designs and load them anytime for further editing or testing.
               </p>
             </div>
             <div className="flex flex-col items-center space-y-3 text-center">
               <PlayCircle className="h-12 w-12" />
               <h3 className="text-xl font-bold">Interactive Testing</h3>
               <p className="text-accent-foreground">
-                Run your automatons with custom inputs and visualize the
-                step-by-step execution.
+                Run your automatons with custom inputs and visualize the step-by-step execution.
               </p>
             </div>
           </div>

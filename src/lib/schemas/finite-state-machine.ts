@@ -1,12 +1,12 @@
-import { EPSILON } from "@/constants/symbols";
-import { z } from "zod";
+import { EPSILON } from '@/constants/symbols';
+import { z } from 'zod';
 
 const alphabetSchema = z.array(
   z
     .string()
     .min(1)
     .max(1)
-    .refine((symbol) => /^[a-zA-Z0-9]+$/.test(symbol) || symbol === EPSILON, {
+    .refine(symbol => /^[a-zA-Z0-9]+$/.test(symbol) || symbol === EPSILON, {
       message: `Symbols must be alphanumeric or "${EPSILON}"`,
     }),
 );
@@ -43,7 +43,7 @@ export const fsmSchema = z
 
     if (!stateKeys.includes(data.initial)) {
       ctx.addIssue({
-        path: ["initial"],
+        path: ['initial'],
         message: `Initial state "${data.initial}" is not defined in states.`,
         code: z.ZodIssueCode.custom,
       });
@@ -52,7 +52,7 @@ export const fsmSchema = z
     for (const finalState of data.finals) {
       if (!stateKeys.includes(finalState)) {
         ctx.addIssue({
-          path: ["finals"],
+          path: ['finals'],
           message: `Final state "${finalState}" is not defined in states.`,
           code: z.ZodIssueCode.custom,
         });
@@ -61,12 +61,10 @@ export const fsmSchema = z
 
     // Check transitions
     for (const [stateName, state] of Object.entries(data.states)) {
-      for (const [symbol, destinations] of Object.entries(
-        state.transitions ?? {},
-      )) {
+      for (const [symbol, destinations] of Object.entries(state.transitions ?? {})) {
         if (!alphabetSet.has(symbol)) {
           ctx.addIssue({
-            path: ["states", stateName, "transitions", symbol],
+            path: ['states', stateName, 'transitions', symbol],
             message: `Symbol "${symbol}" in transitions is not in the alphabet.`,
             code: z.ZodIssueCode.custom,
           });
@@ -75,7 +73,7 @@ export const fsmSchema = z
         for (const target of destinations) {
           if (!stateKeys.includes(target)) {
             ctx.addIssue({
-              path: ["states", stateName, "transitions", symbol],
+              path: ['states', stateName, 'transitions', symbol],
               message: `Target state "${target}" does not exist.`,
               code: z.ZodIssueCode.custom,
             });

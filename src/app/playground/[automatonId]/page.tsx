@@ -1,5 +1,5 @@
-import { getAutomatonById } from "@/actions/projects";
-import Playground from "@/components/playground";
+import { getAutomatonById } from '@/actions/projects';
+import Playground from '@/components/playground';
 
 export default async function PlaygroundPageById({
   params,

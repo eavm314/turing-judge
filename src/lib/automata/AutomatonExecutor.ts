@@ -1,6 +1,6 @@
-import { EPSILON } from "@/constants/symbols";
-import { FiniteStateMachine } from "./FiniteStateMachine";
-import { State } from "./State";
+import { EPSILON } from '@/constants/symbols';
+import { FiniteStateMachine } from './FiniteStateMachine';
+import { State } from './State';
 
 type TransitionStep = [number, number, string]; // [from, to, symbol]
 
@@ -108,7 +108,7 @@ class AutomatonExecutor {
         continue;
       }
 
-      const symbol = input[inputPos] ?? "";
+      const symbol = input[inputPos] ?? '';
       const { consuming, epsilon } = this.step(symbol, state);
 
       // First, push epsilon transitions (they don't consume input)

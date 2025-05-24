@@ -1,18 +1,16 @@
-"use client";
+'use client';
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from 'react';
 
-import { Modal } from "@/components/modal";
+import { Modal } from '@/components/modal';
 
-type ModalType = "confirm" | "prompt" | "custom";
+type ModalType = 'confirm' | 'prompt' | 'custom';
 
 export interface CustomContentProps<T, D = undefined> {
   value: T;
   setValue: React.Dispatch<React.SetStateAction<T>>;
   errors: Record<string, string | undefined>;
-  setErrors: React.Dispatch<
-    React.SetStateAction<Record<string, string | undefined>>
-  >;
+  setErrors: React.Dispatch<React.SetStateAction<Record<string, string | undefined>>>;
   data: D;
 }
 
@@ -44,9 +42,7 @@ interface ModalContextType {
   options: CustomModalOptions<unknown, unknown>;
   showConfirm: (options: ModalOptions) => Promise<boolean>;
   showPrompt: (options: ModalOptions) => Promise<string | null>;
-  showCustomModal: <T, D = undefined>(
-    options: CustomModalOptions<T, D>,
-  ) => Promise<T | null>;
+  showCustomModal: <T, D = undefined>(options: CustomModalOptions<T, D>) => Promise<T | null>;
   closeModal: () => void;
 }
 
@@ -54,7 +50,7 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [modalType, setModalType] = useState<ModalType>("confirm");
+  const [modalType, setModalType] = useState<ModalType>('confirm');
   const [options, setOptions] = useState<CustomModalOptions<any, any>>({});
 
   const closeModal = () => {
@@ -62,14 +58,14 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   };
 
   const showConfirm = (options: ModalOptions): Promise<boolean> => {
-    return new Promise((resolve) => {
-      setModalType("confirm");
+    return new Promise(resolve => {
+      setModalType('confirm');
       setOptions({
         className: options.className,
-        title: options.title || "Confirm",
-        message: options.message || "",
-        confirmLabel: options.confirmLabel || "OK",
-        cancelLabel: options.cancelLabel || "Cancel",
+        title: options.title || 'Confirm',
+        message: options.message || '',
+        confirmLabel: options.confirmLabel || 'OK',
+        cancelLabel: options.cancelLabel || 'Cancel',
         destructive: options.destructive,
         onConfirm: () => {
           closeModal();
@@ -87,20 +83,20 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   };
 
   const showPrompt = (options: ModalOptions): Promise<string | null> => {
-    return new Promise((resolve) => {
-      setModalType("prompt");
+    return new Promise(resolve => {
+      setModalType('prompt');
       setOptions({
         className: options.className,
-        title: options.title || "Prompt",
-        message: options.message || "",
-        confirmLabel: options.confirmLabel || "OK",
-        cancelLabel: options.cancelLabel || "Cancel",
+        title: options.title || 'Prompt',
+        message: options.message || '',
+        confirmLabel: options.confirmLabel || 'OK',
+        cancelLabel: options.cancelLabel || 'Cancel',
         inputLabel: options.inputLabel,
-        inputPlaceholder: options.inputPlaceholder || "",
-        defaultValue: options.defaultValue || "",
-        inputType: options.inputType || "text",
+        inputPlaceholder: options.inputPlaceholder || '',
+        defaultValue: options.defaultValue || '',
+        inputType: options.inputType || 'text',
         validator: options.validator,
-        onConfirm: (value) => {
+        onConfirm: value => {
           closeModal();
           resolve(value!);
           options.onConfirm?.(value);
@@ -115,16 +111,14 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const showCustomModal = <T, D>(
-    options: CustomModalOptions<T, D>,
-  ): Promise<T | null> => {
-    return new Promise((resolve) => {
-      setModalType("custom");
+  const showCustomModal = <T, D>(options: CustomModalOptions<T, D>): Promise<T | null> => {
+    return new Promise(resolve => {
+      setModalType('custom');
       setOptions({
         className: options.className,
-        title: options.title || "Custom Modal",
-        confirmLabel: options.confirmLabel || "OK",
-        cancelLabel: options.cancelLabel || "Cancel",
+        title: options.title || 'Custom Modal',
+        confirmLabel: options.confirmLabel || 'OK',
+        cancelLabel: options.cancelLabel || 'Cancel',
         customContent: options.customContent,
         customComponentData: options.customComponentData,
         onSubmit: (value: T) => {
@@ -163,7 +157,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 export function useModal() {
   const context = useContext(ModalContext);
   if (context === undefined) {
-    throw new Error("useModal must be used within a ModalProvider");
+    throw new Error('useModal must be used within a ModalProvider');
   }
   return context;
 }

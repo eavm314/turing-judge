@@ -1,17 +1,13 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import Link from 'next/link';
 
-import { TableCell, TableRow } from "@/components/ui/table";
-import { type ProblemSetItem } from "@/lib/schemas";
-import { DifficultyBadge } from "@/utils/badges";
-import { formatDate } from "@/utils/date";
+import { TableCell, TableRow } from '@/components/ui/table';
+import { type ProblemSetItem } from '@/lib/schemas';
+import { DifficultyBadge } from '@/utils/badges';
+import { formatDate } from '@/utils/date';
 
-export default function ProblemSetItem({
-  problem,
-}: {
-  problem: ProblemSetItem;
-}) {
+export default function ProblemSetItem({ problem }: { problem: ProblemSetItem }) {
   return (
     <TableRow className="hover:bg-muted/50">
       <TableCell className="w-2/5">

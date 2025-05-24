@@ -1,20 +1,17 @@
-import { useRef } from "react";
+import { useRef } from 'react';
 
-import { CircleStop, PenLine, Play, Shuffle } from "lucide-react";
+import { CircleStop, PenLine, Play, Shuffle } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { EPSILON } from "@/constants/symbols";
-import { useToast } from "@/hooks/use-toast";
-import AutomatonExecutor from "@/lib/automata/AutomatonExecutor";
-import {
-  usePlaygroundMode,
-  useSimulation,
-} from "@/providers/playground-provider";
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { EPSILON } from '@/constants/symbols';
+import { useToast } from '@/hooks/use-toast';
+import AutomatonExecutor from '@/lib/automata/AutomatonExecutor';
+import { usePlaygroundMode, useSimulation } from '@/providers/playground-provider';
 
 export default function SimulationMenu() {
   const { mode, setMode } = usePlaygroundMode();
-  const simulating = mode === "simulation";
+  const simulating = mode === 'simulation';
 
   const {
     word,
@@ -38,22 +35,22 @@ export default function SimulationMenu() {
     const { accepted, path } = AutomatonExecutor.execute(word, true);
     if (!accepted) {
       toast({
-        title: "No path found",
-        variant: "destructive",
+        title: 'No path found',
+        variant: 'destructive',
       });
       return;
     }
 
-    setMode("simulation");
-    setVisitedState("0");
+    setMode('simulation');
+    setVisitedState('0');
 
     let step = 0;
     let transition = true;
     simulationInterval.current = setInterval(() => {
       if (step >= path.length) {
         toast({
-          title: "Accepted!",
-          variant: "success",
+          title: 'Accepted!',
+          variant: 'success',
         });
         clearInterval(simulationInterval.current);
         stopSimulation();
@@ -75,21 +72,15 @@ export default function SimulationMenu() {
   return (
     <div className="space-y-2 p-3">
       <h2>Simulation</h2>
-      <Label className="text-muted-foreground">
-        Choose how to simulate the automaton
-      </Label>
+      <Label className="text-muted-foreground">Choose how to simulate the automaton</Label>
       <div className="space-y-2">
         <Button
           onClick={handleSimulation}
           className="w-full justify-start"
-          variant={simulating ? "destructive" : "secondary"}
+          variant={simulating ? 'destructive' : 'secondary'}
         >
-          {simulating ? (
-            <CircleStop className="h-4 w-4" />
-          ) : (
-            <Play className="h-4 w-4" />
-          )}
-          {simulating ? "Stop" : "Find Accepted Path"}
+          {simulating ? <CircleStop className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+          {simulating ? 'Stop' : 'Find Accepted Path'}
         </Button>
         <Button disabled className="w-full justify-start" variant="outline">
           <Shuffle className="h-4 w-4" />

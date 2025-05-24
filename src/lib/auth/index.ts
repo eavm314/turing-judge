@@ -1,8 +1,8 @@
-import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
-import PrismaAdapter from "./adapter";
-import { type Role } from "@prisma/client";
-import { prisma } from "@/lib/db/prisma";
+import NextAuth from 'next-auth';
+import Google from 'next-auth/providers/google';
+import PrismaAdapter from './adapter';
+import { type Role } from '@prisma/client';
+import { prisma } from '@/lib/db/prisma';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   // @ts-expect-error: Using the overridden adapter
@@ -19,7 +19,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { email: token.email },
         });
 
-        if (!user) throw new Error("User is not in the database");
+        if (!user) throw new Error('User is not in the database');
 
         token.id = user.id;
         token.role = user.role;
@@ -33,9 +33,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   pages: {
-    signIn: "/signin",
+    signIn: '/signin',
   },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
 });

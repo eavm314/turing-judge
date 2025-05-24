@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic';
 
-import { type Project } from "@prisma/client";
-import { Loader } from "lucide-react";
+import { type Project } from '@prisma/client';
+import { Loader } from 'lucide-react';
 
-import { PlaygroundLayout } from "@/components/playground/Layout";
-import SideMenu from "@/components/playground/SideMenu";
-import { FiniteStateMachine } from "@/lib/automata/FiniteStateMachine";
-import { type JsonFSM } from "@/lib/schemas/finite-state-machine";
-import { PlaygroundStoreProvider } from "@/providers/playground-provider";
-import { useSession } from "@/providers/user-provider";
+import { PlaygroundLayout } from '@/components/playground/Layout';
+import SideMenu from '@/components/playground/SideMenu';
+import { FiniteStateMachine } from '@/lib/automata/FiniteStateMachine';
+import { type JsonFSM } from '@/lib/schemas/finite-state-machine';
+import { PlaygroundStoreProvider } from '@/providers/playground-provider';
+import { useSession } from '@/providers/user-provider';
 
 const LoadingCanvas = () => (
   <div className="flex-1 h-full flex items-center justify-center">
@@ -18,7 +18,7 @@ const LoadingCanvas = () => (
   </div>
 );
 
-const Canvas = dynamic(() => import("@/components/playground/Canvas"), {
+const Canvas = dynamic(() => import('@/components/playground/Canvas'), {
   ssr: false,
   loading: LoadingCanvas,
 });
@@ -27,10 +27,8 @@ export default function Playground({ data }: { data?: Project }) {
   const { user } = useSession();
   const isOwner = data ? user?.id === data.userId : true;
 
-  const automaton = new FiniteStateMachine(
-    data?.automaton as unknown as JsonFSM | undefined,
-  );
-  const mode = isOwner ? "states" : "viewer";
+  const automaton = new FiniteStateMachine(data?.automaton as unknown as JsonFSM | undefined);
+  const mode = isOwner ? 'states' : 'viewer';
 
   return (
     <PlaygroundStoreProvider initState={{ automaton, mode, isOwner }}>

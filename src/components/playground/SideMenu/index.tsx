@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Separator } from "@/components/ui/separator";
-import AlphabetMenu from "./alphabet-menu";
-import TestingMenu from "./testing-menu";
-import SimulationMenu from "./simulation-menu";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from '@/components/ui/separator';
+import AlphabetMenu from './alphabet-menu';
+import TestingMenu from './testing-menu';
+import SimulationMenu from './simulation-menu';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function SideMenu() {
   return (

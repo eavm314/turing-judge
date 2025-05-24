@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Code, FileJson, PlusCircle, X } from "lucide-react";
+import { Code, FileJson, PlusCircle, X } from 'lucide-react';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { CodeEditor } from "@/components/ui/code-editor";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { CodeEditor } from '@/components/ui/code-editor';
 import {
   Command,
   CommandEmpty,
@@ -12,7 +12,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 import {
   Dialog,
   DialogClose,
@@ -22,24 +22,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 
-import { submitSolutionAction } from "@/actions/submissions";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useServerAction } from "@/hooks/use-server-action";
-import { AutomatonProjectItem } from "@/lib/schemas";
-import { validateCode } from "@/lib/schemas/automaton-code";
-import { cn } from "@/lib/ui/utils";
-import { useSession } from "@/providers/user-provider";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { submitSolutionAction } from '@/actions/submissions';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useServerAction } from '@/hooks/use-server-action';
+import { AutomatonProjectItem } from '@/lib/schemas';
+import { validateCode } from '@/lib/schemas/automaton-code';
+import { cn } from '@/lib/ui/utils';
+import { useSession } from '@/providers/user-provider';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
-const initCode = "";
+const initCode = '';
 
 export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
   const [openDialog, setOpenDialog] = useState(false);
@@ -47,10 +43,10 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
 
   const [selectedId, setSelectedId] = useState(initCode);
   const [initialCode, setInitialCode] = useState(initCode);
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState('');
 
   const [automatons, setAutomatons] = useState<AutomatonProjectItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { problemId } = useParams();
   const { user, setOpenSignIn } = useSession();
@@ -76,26 +72,20 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
       setOpenSignIn(true);
     }
     if (!open) {
-      setSelectedId("");
+      setSelectedId('');
       setCode(initialCode);
-      setSearchQuery("");
+      setSearchQuery('');
     }
   };
 
-  const selectedAutomaton = automatons.find(
-    (automaton) => automaton.id === selectedId,
-  );
-  const codeError = selectedAutomaton ? "" : validateCode(code);
+  const selectedAutomaton = automatons.find(automaton => automaton.id === selectedId);
+  const codeError = selectedAutomaton ? '' : validateCode(code);
 
   const handleSubmit = async () => {
     if (codeError) return;
 
     if (selectedAutomaton) {
-      await submitSolution.execute(
-        problemId as string,
-        selectedAutomaton.id,
-        null,
-      );
+      await submitSolution.execute(problemId as string, selectedAutomaton.id, null);
     } else {
       const parsedCode = JSON.parse(code);
       await submitSolution.execute(problemId as string, null, parsedCode);
@@ -103,9 +93,9 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
 
     onSubmit?.();
 
-    setSelectedId("");
+    setSelectedId('');
     setCode(initialCode);
-    setSearchQuery("");
+    setSearchQuery('');
     setOpenDialog(false);
   };
 
@@ -114,7 +104,7 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = e => {
       const content = e.target?.result as string;
       setInitialCode(content);
       setCode(content);
@@ -130,16 +120,14 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
   };
 
   const filteredAutomatons = automatons.filter(
-    (auto) =>
-      !searchQuery ||
-      auto.title?.toLowerCase().includes(searchQuery.toLowerCase()),
+    auto => !searchQuery || auto.title?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
     <Dialog open={openDialog} onOpenChange={handleOpen}>
       <DialogTrigger asChild>
         <Button>
-          <PlusCircle size={20} /> Submit Solution{" "}
+          <PlusCircle size={20} /> Submit Solution{' '}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[540px]">
@@ -166,26 +154,18 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
                           {selectedAutomaton.type}
                         </Badge>
                         <span
-                          className={
-                            !selectedAutomaton.title
-                              ? "italic opacity-60"
-                              : undefined
-                          }
+                          className={!selectedAutomaton.title ? 'italic opacity-60' : undefined}
                         >
-                          {selectedAutomaton.title || "Untitled"}
+                          {selectedAutomaton.title || 'Untitled'}
                         </span>
                       </div>
                     ) : (
-                      "Select automaton..."
+                      'Select automaton...'
                     )}
                     <ChevronsUpDown className="ml-2 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setSelectedId("")}
-                >
+                <Button variant="outline" size="icon" onClick={() => setSelectedId('')}>
                   <X className="text-destructive" />
                 </Button>
               </div>
@@ -199,14 +179,12 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
                   <CommandList>
                     <CommandEmpty>No automaton found.</CommandEmpty>
                     <CommandGroup>
-                      {filteredAutomatons.map((automaton) => (
+                      {filteredAutomatons.map(automaton => (
                         <CommandItem
                           key={automaton.id}
                           value={automaton.id}
-                          onSelect={(currentValue) => {
-                            setSelectedId(
-                              currentValue === selectedId ? "" : currentValue,
-                            );
+                          onSelect={currentValue => {
+                            setSelectedId(currentValue === selectedId ? '' : currentValue);
                             setOpenCombo(false);
                           }}
                           className="flex items-center justify-between"
@@ -215,22 +193,14 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
                             <Badge variant="outline" className="mr-2">
                               {automaton.type}
                             </Badge>
-                            <span
-                              className={
-                                !automaton.title
-                                  ? "italic opacity-60"
-                                  : undefined
-                              }
-                            >
-                              {automaton.title || "Untitled"}
+                            <span className={!automaton.title ? 'italic opacity-60' : undefined}>
+                              {automaton.title || 'Untitled'}
                             </span>
                           </div>
                           <Check
                             className={cn(
-                              "ml-auto h-4 w-4",
-                              selectedId === automaton.id
-                                ? "opacity-100"
-                                : "opacity-0",
+                              'ml-auto h-4 w-4',
+                              selectedId === automaton.id ? 'opacity-100' : 'opacity-0',
                             )}
                           />
                         </CommandItem>
@@ -280,12 +250,10 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
               <CodeEditor
                 initialValue={initialCode}
                 onChange={setCode}
-                mode={selectedId ? "disabled" : "editable"}
+                mode={selectedId ? 'disabled' : 'editable'}
               />
             </div>
-            {codeError && (
-              <p className="text-sm text-destructive">{codeError}</p>
-            )}
+            {codeError && <p className="text-sm text-destructive">{codeError}</p>}
           </div>
         </div>
         <DialogFooter className="flex justify-end">
@@ -295,7 +263,7 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
             </Button>
           </DialogClose>
           <Button onClick={handleSubmit} disabled={submitSolution.loading || !!codeError}>
-            {submitSolution.loading ? "Submitting..." : "Submit Solution"}
+            {submitSolution.loading ? 'Submitting...' : 'Submit Solution'}
           </Button>
         </DialogFooter>
       </DialogContent>

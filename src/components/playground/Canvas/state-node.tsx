@@ -1,25 +1,15 @@
-import {
-  Handle,
-  NodeToolbar,
-  Position,
-  type Node,
-  type NodeProps,
-} from "@xyflow/react";
+import { Handle, NodeToolbar, Position, type Node, type NodeProps } from '@xyflow/react';
 
-import { Toggle } from "@/components/ui/toggle";
-import { cn } from "@/lib/ui/utils";
-import {
-  useAutomaton,
-  usePlaygroundMode,
-  useVisitedState,
-} from "@/providers/playground-provider";
-import { useModal } from "@/providers/modal-provider";
+import { Toggle } from '@/components/ui/toggle';
+import { cn } from '@/lib/ui/utils';
+import { useAutomaton, usePlaygroundMode, useVisitedState } from '@/providers/playground-provider';
+import { useModal } from '@/providers/modal-provider';
 
 function CustomToolbar({ nodeId, final }: { nodeId: string; final: boolean }) {
   const { updateAutomaton } = useAutomaton();
 
   const handleClick = () => {
-    updateAutomaton((auto) => {
+    updateAutomaton(auto => {
       auto.switchFinal(Number(nodeId));
     });
   };
@@ -27,12 +17,7 @@ function CustomToolbar({ nodeId, final }: { nodeId: string; final: boolean }) {
   return (
     <NodeToolbar className="nopan -top-1" position={Position.Bottom}>
       <div className="flex gap-1">
-        <Toggle
-          className="p-2"
-          variant="outline"
-          pressed={final}
-          onPressedChange={handleClick}
-        >
+        <Toggle className="p-2" variant="outline" pressed={final} onPressedChange={handleClick}>
           Final
         </Toggle>
       </div>
@@ -41,13 +26,13 @@ function CustomToolbar({ nodeId, final }: { nodeId: string; final: boolean }) {
 }
 
 const customHandleStyles = {
-  width: "100%",
-  height: "100%",
+  width: '100%',
+  height: '100%',
   top: 0,
   left: 0,
   borderRadius: 0,
-  transform: "none",
-  border: "none",
+  transform: 'none',
+  border: 'none',
   opacity: 0,
 };
 
@@ -65,22 +50,21 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
 
   const handleChangeName = async () => {
     const stateName = await showPrompt({
-      title: "Update State",
-      inputLabel: "Enter the new name of the state:",
+      title: 'Update State',
+      inputLabel: 'Enter the new name of the state:',
       defaultValue: data.name,
-      validator: (value) => {
+      validator: value => {
         if (value.length < 1 || value.length > 3)
-          return "State name must contain 1 to 3 characters";
-        if (value.match(/[^a-zA-Z0-9]/))
-          return "State name can only contain letters and numbers";
+          return 'State name must contain 1 to 3 characters';
+        if (value.match(/[^a-zA-Z0-9]/)) return 'State name can only contain letters and numbers';
         if (value !== data.name && automaton.stateToIndex.has(value))
-          return "State name must be unique";
-        return "";
+          return 'State name must be unique';
+        return '';
       },
     });
     if (!stateName || stateName === data.name) return;
 
-    updateAutomaton((auto) => {
+    updateAutomaton(auto => {
       auto.renameState(Number(id), stateName);
     });
   };
@@ -94,21 +78,17 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
       )}
       <div
         className={cn(
-          "relative grid rounded-full size-full border-2 bg-muted/80 border-foreground outline-foreground",
-          data.isFinal && "outline outline-2 -outline-offset-[12px]",
+          'relative grid rounded-full size-full border-2 bg-muted/80 border-foreground outline-foreground',
+          data.isFinal && 'outline outline-2 -outline-offset-[12px]',
           selected &&
-            "border-4 outline-4 -outline-offset-[14px] border-green-500 outline-green-500",
-          id === visitedState && "bg-amber-300 dark:bg-purple-900",
+            'border-4 outline-4 -outline-offset-[14px] border-green-500 outline-green-500',
+          id === visitedState && 'bg-amber-300 dark:bg-purple-900',
         )}
         onDoubleClick={handleChangeName}
       >
         <div className="m-auto text-2xl">{data.name}</div>
-        {mode === "transitions" && (
-          <Handle
-            style={customHandleStyles}
-            type="source"
-            position={Position.Top}
-          />
+        {mode === 'transitions' && (
+          <Handle style={customHandleStyles} type="source" position={Position.Top} />
         )}
         <Handle
           style={customHandleStyles}

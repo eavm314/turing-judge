@@ -1,5 +1,5 @@
-import { FiniteStateMachine } from "./FiniteStateMachine";
-import { type JsonState } from "@/lib/schemas/finite-state-machine";
+import { FiniteStateMachine } from './FiniteStateMachine';
+import { type JsonState } from '@/lib/schemas/finite-state-machine';
 
 export class State {
   id: number;
@@ -18,9 +18,7 @@ export class State {
     this.transitions = new Map();
 
     for (const [symbol, targets] of Object.entries(json.transitions ?? {})) {
-      const targetIds = targets.map(
-        (target) => automaton.stateToIndex.get(target)!,
-      );
+      const targetIds = targets.map(target => automaton.stateToIndex.get(target)!);
       this.addTransition([symbol], targetIds);
     }
   }
@@ -28,9 +26,7 @@ export class State {
   toJson(): JsonState {
     const transitions = this.transitions.entries().reduce(
       (acc, [symbol, targets]) => {
-        acc[symbol] = targets.map(
-          (target) => this.automaton.states.get(target)!.name,
-        ); // Convert target IDs back to names
+        acc[symbol] = targets.map(target => this.automaton.states.get(target)!.name); // Convert target IDs back to names
         return acc;
       },
       {} as Record<string, string[]>,
@@ -55,7 +51,7 @@ export class State {
   }
 
   addTransition(symbols: string[], targets: number[]) {
-    symbols.forEach((symbol) => {
+    symbols.forEach(symbol => {
       if (this.transitions.has(symbol)) {
         this.transitions.get(symbol)!.push(...targets);
       } else {
@@ -68,7 +64,7 @@ export class State {
     this.transitions.forEach((targets, symbol) => {
       this.transitions.set(
         symbol,
-        targets.filter((target) => target !== to),
+        targets.filter(target => target !== to),
       );
     });
   }

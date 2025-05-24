@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import { EditorView, basicSetup } from "codemirror";
-import { EditorState } from "@codemirror/state";
-import { json } from "@codemirror/lang-json";
-import { oneDark } from "@codemirror/theme-one-dark";
-import { useTheme } from "next-themes";
-import { cn } from "@/lib/ui/utils";
+import { useEffect, useRef } from 'react';
+import { EditorView, basicSetup } from 'codemirror';
+import { EditorState } from '@codemirror/state';
+import { json } from '@codemirror/lang-json';
+import { oneDark } from '@codemirror/theme-one-dark';
+import { useTheme } from 'next-themes';
+import { cn } from '@/lib/ui/utils';
 
-type CodeEditorMode = "editable" | "readonly" | "disabled";
+type CodeEditorMode = 'editable' | 'readonly' | 'disabled';
 
 interface CodeEditorProps {
   initialValue: string;
@@ -16,11 +16,7 @@ interface CodeEditorProps {
   mode?: CodeEditorMode;
 }
 
-export function CodeEditor({
-  initialValue,
-  onChange,
-  mode = "editable",
-}: CodeEditorProps) {
+export function CodeEditor({ initialValue, onChange, mode = 'editable' }: CodeEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
 
@@ -34,7 +30,7 @@ export function CodeEditor({
       viewRef.current.destroy();
     }
 
-    const updateListener = EditorView.updateListener.of((update) => {
+    const updateListener = EditorView.updateListener.of(update => {
       if (update.docChanged) {
         const doc = update.state.doc;
         const value = doc.toString();
@@ -42,9 +38,9 @@ export function CodeEditor({
       }
     });
 
-    const themeExtension = theme === "dark" ? oneDark : [];
-    const readOnlyExtension = EditorState.readOnly.of(mode === "readonly");
-    const disabledExtension = EditorView.editable.of(mode !== "disabled");
+    const themeExtension = theme === 'dark' ? oneDark : [];
+    const readOnlyExtension = EditorState.readOnly.of(mode === 'readonly');
+    const disabledExtension = EditorView.editable.of(mode !== 'disabled');
 
     const state = EditorState.create({
       doc: initialValue,
@@ -54,9 +50,9 @@ export function CodeEditor({
         EditorView.lineWrapping,
         updateListener,
         EditorView.theme({
-          "&": {
-            height: "100%",
-            fontSize: "14px",
+          '&': {
+            height: '100%',
+            fontSize: '14px',
           },
         }),
         themeExtension,
@@ -81,9 +77,8 @@ export function CodeEditor({
     <div
       ref={editorRef}
       className={cn(
-        "w-full h-80",
-        mode === "disabled" &&
-          "pointer-events-none select-none opacity-50 caret-transparent",
+        'w-full h-80',
+        mode === 'disabled' && 'pointer-events-none select-none opacity-50 caret-transparent',
       )}
     />
   );

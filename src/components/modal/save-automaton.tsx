@@ -1,23 +1,20 @@
-"use client";
+'use client';
 
-import { type CustomContentProps, useModal } from "@/providers/modal-provider";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { useEffect } from "react";
+import { type CustomContentProps, useModal } from '@/providers/modal-provider';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { useEffect } from 'react';
 
 type SaveAutomatonValues = {
   title: string;
   isPublic: boolean;
 };
 
-const SaveAutomatonPrompt = ({
-  value,
-  setValue,
-}: CustomContentProps<SaveAutomatonValues>) => {
+const SaveAutomatonPrompt = ({ value, setValue }: CustomContentProps<SaveAutomatonValues>) => {
   useEffect(() => {
     setValue({
-      title: "",
+      title: '',
       isPublic: true,
     });
   }, []);
@@ -32,9 +29,7 @@ const SaveAutomatonPrompt = ({
           id="title"
           value={value.title}
           placeholder="Untitled"
-          onChange={(e) =>
-            setValue((prev) => ({ ...prev, title: e.target.value }))
-          }
+          onChange={e => setValue(prev => ({ ...prev, title: e.target.value }))}
         />
       </div>
       <div className="flex items-center space-x-4">
@@ -42,9 +37,7 @@ const SaveAutomatonPrompt = ({
         <Switch
           id="public"
           checked={value.isPublic}
-          onCheckedChange={(checked) =>
-            setValue((prev) => ({ ...prev, isPublic: checked }))
-          }
+          onCheckedChange={checked => setValue(prev => ({ ...prev, isPublic: checked }))}
         />
       </div>
     </div>
@@ -56,11 +49,11 @@ export const useSaveAutomatonPrompt = () => {
 
   const saveAutomatonPrompt = () =>
     showCustomModal<SaveAutomatonValues>({
-      title: "Save Automaton",
-      message: "Are you sure you want to save this automaton?",
-      confirmLabel: "Save",
-      cancelLabel: "Cancel",
-      inputLabel: "Title",
+      title: 'Save Automaton',
+      message: 'Are you sure you want to save this automaton?',
+      confirmLabel: 'Save',
+      cancelLabel: 'Cancel',
+      inputLabel: 'Title',
       customContent: SaveAutomatonPrompt,
     });
 

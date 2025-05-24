@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { MarkdownWrapper } from "@/components/ui/markdown-wrapper";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+import { MarkdownWrapper } from '@/components/ui/markdown-wrapper';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 
 interface MarkdownEditorProps {
   value: string;
@@ -12,16 +12,11 @@ interface MarkdownEditorProps {
 }
 
 export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
-  const [activeTab, setActiveTab] = useState<string>("write");
+  const [activeTab, setActiveTab] = useState<string>('write');
 
   return (
     <div className="w-full rounded-md border">
-      <Tabs
-        defaultValue="write"
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="w-full"
-      >
+      <Tabs defaultValue="write" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex items-center justify-between border-b px-4">
           <TabsList className="h-8 my-1">
             <TabsTrigger value="write">Write</TabsTrigger>
@@ -31,10 +26,8 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
         <TabsContent value="write" className="p-0">
           <Textarea
             value={value}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={
-              "Write your problem statement using Markdown...\nAt least 20 characters."
-            }
+            onChange={e => onChange(e.target.value)}
+            placeholder={'Write your problem statement using Markdown...\nAt least 20 characters.'}
             className="min-h-[300px] resize-y border-0 p-4 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         </TabsContent>

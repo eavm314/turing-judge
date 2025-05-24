@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { Check, Copy, Download } from "lucide-react";
+import { Check, Copy, Download } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { CodeEditor } from "@/components/ui/code-editor";
+import { Button } from '@/components/ui/button';
+import { CodeEditor } from '@/components/ui/code-editor';
 import {
   Dialog,
   DialogContent,
@@ -14,8 +14,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { useAutomaton } from "@/providers/playground-provider";
+} from '@/components/ui/dialog';
+import { useAutomaton } from '@/providers/playground-provider';
 
 export function ExportCode({ title }: { title?: string | null }) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
@@ -23,20 +23,15 @@ export function ExportCode({ title }: { title?: string | null }) {
   const [copied, setCopied] = useState(false);
   const { automaton } = useAutomaton();
 
-  const exportJson = JSON.stringify(
-    { type: "FSM", automaton: automaton.toJson() },
-    null,
-    2,
-  );
+  const exportJson = JSON.stringify({ type: 'FSM', automaton: automaton.toJson() }, null, 2);
 
   const downloadJson = () => {
-    const dataUri =
-      "data:application/json;charset=utf-8," + encodeURIComponent(exportJson);
-    const exportFileDefaultName = `${title || "Untitled"}-${new Date().toISOString().slice(0, 10)}.json`;
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(exportJson);
+    const exportFileDefaultName = `${title || 'Untitled'}-${new Date().toISOString().slice(0, 10)}.json`;
 
-    const linkElement = document.createElement("a");
-    linkElement.setAttribute("href", dataUri);
-    linkElement.setAttribute("download", exportFileDefaultName);
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
   };
 
@@ -46,7 +41,7 @@ export function ExportCode({ title }: { title?: string | null }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Failed to copy text: ", err);
+      console.error('Failed to copy text: ', err);
     }
   };
 
@@ -76,17 +71,10 @@ export function ExportCode({ title }: { title?: string | null }) {
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => setIsExportDialogOpen(false)}
-          >
+          <Button variant="outline" onClick={() => setIsExportDialogOpen(false)}>
             Cancel
           </Button>
-          <Button
-            variant="outline"
-            className="flex items-center gap-1"
-            onClick={copyToClipboard}
-          >
+          <Button variant="outline" className="flex items-center gap-1" onClick={copyToClipboard}>
             {copied ? (
               <>
                 <Check className="h-4 w-4" />

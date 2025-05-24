@@ -1,22 +1,18 @@
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
-import { notFound, redirect } from "next/navigation";
+import { revalidatePath } from 'next/cache';
+import { notFound, redirect } from 'next/navigation';
 
-import {
-  type ProblemEditorItem,
-  type ProblemSetItem,
-  type ProblemView,
-} from "@/lib/schemas";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/db/prisma";
+import { type ProblemEditorItem, type ProblemSetItem, type ProblemView } from '@/lib/schemas';
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/db/prisma';
 import {
   problemSchema,
   updateProblemSchema,
   type ProblemSchema,
   type UpdateProblemSchema,
-} from "@/lib/schemas/problem-form";
-import { type ServerActionResult } from "@/hooks/use-server-action";
+} from '@/lib/schemas/problem-form';
+import { type ServerActionResult } from '@/hooks/use-server-action';
 
 export const getProblemSet = async (): Promise<ProblemSetItem[]> => {
   const session = await auth();
@@ -37,10 +33,7 @@ export const getProblemView = async (id: string): Promise<ProblemView> => {
   const session = await auth();
   const problem = await prisma.problem.findUnique({ where: { id } });
 
-  if (
-    !problem ||
-    (!problem.isPublic && problem.authorId !== session?.user?.id)
-  ) {
+  if (!problem || (!problem.isPublic && problem.authorId !== session?.user?.id)) {
     notFound();
   }
 
@@ -65,7 +58,7 @@ export const getProblemView = async (id: string): Promise<ProblemView> => {
 
 export const getUserProblems = async (): Promise<ProblemEditorItem[]> => {
   const session = await auth();
-  if (!session?.user?.id) redirect("/signin");
+  if (!session?.user?.id) redirect('/signin');
 
   const results = await prisma.problem.findMany({
     where: { authorId: session.user.id },
@@ -81,27 +74,23 @@ export const getUserProblems = async (): Promise<ProblemEditorItem[]> => {
   return results;
 };
 
-export const createProblemAction = async (
-  body: ProblemSchema,
-): Promise<ServerActionResult> => {
+export const createProblemAction = async (body: ProblemSchema): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: "User not authenticated" };
+    return { success: false, message: 'User not authenticated' };
   }
-  if (session.user.role !== "EDITOR") {
-    return { success: false, message: "Permission denied" };
+  if (session.user.role !== 'EDITOR') {
+    return { success: false, message: 'Permission denied' };
   }
 
   const parsedBody = problemSchema.safeParse(body);
   if (!parsedBody.success) {
-    return { success: false, message: "Invalid problem data" };
+    return { success: false, message: 'Invalid problem data' };
   }
 
   const { testCases, ...fields } = parsedBody.data;
-  const testCasesArray = testCases.split("\n").map((line) => {
-    const [input, accept, expectedOutput] = line
-      .split(",")
-      .map((part) => part.trim());
+  const testCasesArray = testCases.split('\n').map(line => {
+    const [input, accept, expectedOutput] = line.split(',').map(part => part.trim());
     return { input, expectedOutput, expectedResult: Boolean(Number(accept)) };
   });
 
@@ -117,11 +106,11 @@ export const createProblemAction = async (
       },
     },
   });
-  revalidatePath("/problems");
+  revalidatePath('/problems');
   revalidatePath(`/problems/${result.id}`);
-  revalidatePath("/problems/editor");
+  revalidatePath('/problems/editor');
   revalidatePath(`/problems/editor/${result.id}`);
-  return { success: true, message: "Problem created successfully" };
+  return { success: true, message: 'Problem created successfully' };
 };
 
 export const updateProblemAction = async (
@@ -129,15 +118,15 @@ export const updateProblemAction = async (
 ): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: "User not authenticated" };
+    return { success: false, message: 'User not authenticated' };
   }
-  if (session.user.role !== "EDITOR") {
-    return { success: false, message: "Permission denied" };
+  if (session.user.role !== 'EDITOR') {
+    return { success: false, message: 'Permission denied' };
   }
 
   const parsedBody = updateProblemSchema.safeParse(body);
   if (!parsedBody.success) {
-    return { success: false, message: "Invalid problem data" };
+    return { success: false, message: 'Invalid problem data' };
   }
 
   const { problemId, testCases, ...fields } = parsedBody.data;
@@ -151,15 +140,13 @@ export const updateProblemAction = async (
     notFound();
   }
   if (oldProblem.authorId !== session.user.id) {
-    return { success: false, message: "Permission denied" };
+    return { success: false, message: 'Permission denied' };
   }
 
   let testCasesQuery = undefined;
   if (testCases) {
-    const testCasesArray = testCases.split("\n").map((line) => {
-      const [input, accept, expectedOutput] = line
-        .split(",")
-        .map((part) => part.trim());
+    const testCasesArray = testCases.split('\n').map(line => {
+      const [input, accept, expectedOutput] = line.split(',').map(part => part.trim());
       return {
         input,
         expectedOutput,
@@ -181,16 +168,14 @@ export const updateProblemAction = async (
       testCases: testCasesQuery,
     },
   });
-  revalidatePath("/problems");
+  revalidatePath('/problems');
   revalidatePath(`/problems/${problemId}`);
-  revalidatePath("/problems/editor");
+  revalidatePath('/problems/editor');
   revalidatePath(`/problems/editor/${problemId}`);
-  return { success: true, message: "Problem updated successfully" };
+  return { success: true, message: 'Problem updated successfully' };
 };
 
-export const getProblemEditable = async (
-  id: string,
-): Promise<ProblemSchema> => {
+export const getProblemEditable = async (id: string): Promise<ProblemSchema> => {
   const session = await auth();
   const problem = await prisma.problem.findUnique({
     where: { id },
@@ -223,31 +208,29 @@ export const getProblemEditable = async (
   }
 
   const testCases = problem.testCases
-    .map((testCase) => {
+    .map(testCase => {
       if (testCase.expectedOutput === null) {
         return `${testCase.input}, ${Number(testCase.expectedResult)}`;
       }
       return `${testCase.input}, ${Number(testCase.expectedResult)}, ${testCase.expectedOutput}`;
     })
-    .join("\n");
+    .join('\n');
 
   return { ...problem, testCases };
 };
 
-export const deleteProblemAction = async (
-  id: string,
-): Promise<ServerActionResult> => {
+export const deleteProblemAction = async (id: string): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: "User not authenticated" };
+    return { success: false, message: 'User not authenticated' };
   }
 
   try {
     await prisma.problem.delete({ where: { id, authorId: session.user.id } });
-    revalidatePath("/problems");
-    revalidatePath("/problems/editor");
-    return { success: true, message: "Problem deleted successfully" };
+    revalidatePath('/problems');
+    revalidatePath('/problems/editor');
+    return { success: true, message: 'Problem deleted successfully' };
   } catch (error) {
-    return { success: false, message: "Problem not found" };
+    return { success: false, message: 'Problem not found' };
   }
 };
