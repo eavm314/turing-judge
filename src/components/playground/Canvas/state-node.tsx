@@ -77,6 +77,7 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
         </div>
       )}
       <div
+        data-testid={`state-${data.name}`}
         className={cn(
           'relative grid rounded-full size-full border-2 bg-muted/80 border-foreground outline-foreground',
           data.isFinal && 'outline outline-2 -outline-offset-[12px]',
