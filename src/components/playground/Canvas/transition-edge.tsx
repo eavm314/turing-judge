@@ -3,7 +3,7 @@ import { cn } from '@/lib/ui/utils';
 import {
   useAutomaton,
   usePlaygroundMode,
-  useVisitedTransition
+  useVisitedTransition,
 } from '@/providers/playground-provider';
 import { EdgeLabelRenderer, useInternalNode, type Edge, type EdgeProps } from '@xyflow/react';
 import { useEffect, useRef } from 'react';
@@ -56,6 +56,8 @@ export function TransitionEdge({
     });
   };
 
+  const testId = `${sourceNode.data.name}->${targetNode.data.name}`;
+
   return (
     <>
       <defs>
@@ -95,6 +97,7 @@ export function TransitionEdge({
       )}
       <EdgeLabelRenderer>
         <div
+          data-testid={testId}
           style={{
             position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,

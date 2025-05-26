@@ -72,6 +72,7 @@ export default function AlphabetMenu() {
       <div className="flex gap-2 items-center">
         <Input
           id="alphabet-input"
+          data-testid="alphabet-input"
           ref={inputRef}
           className="w-12"
           maxLength={1}
@@ -97,7 +98,7 @@ export default function AlphabetMenu() {
           </Button>
         )}
         {automaton.alphabet.map(symbol => (
-          <Badge key={symbol} variant="outline" className="flex items-center gap-1 p-0 w-11">
+          <Badge  ge key={symbol} variant="outline" className="flex items-center gap-1 p-0 w-11">
             <span className="py-1 pl-2 pr-0 text-sm">{symbol}</span>
             <button
               className={cn(

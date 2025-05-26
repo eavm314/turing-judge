@@ -42,8 +42,12 @@ export function Modal() {
   };
 
   const handleConfirm = () => {
-    if (Object.values(errors).some(error => error)) {
-      return;
+    if (Object.values(errors).some(error => error)) return;
+
+    if (options.validator) {
+      const error = options.validator(inputValue);
+      setErrors({ prompt: error });
+      if (error) return;
     }
 
     if (modalType === 'custom') {
@@ -93,6 +97,7 @@ export function Modal() {
             )}
             <Input
               id="modal-input"
+              data-testid="modal-input"
               ref={inputRef}
               type={options.inputType || 'text'}
               placeholder={options.inputPlaceholder}

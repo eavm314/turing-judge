@@ -54,6 +54,7 @@ export default function TestingMenu() {
       </Label>
       <Input
         id="test-input"
+        data-testid="test-input"
         value={word}
         onChange={e => setWord(e.target.value)}
         disabled={mode === 'simulation'}
