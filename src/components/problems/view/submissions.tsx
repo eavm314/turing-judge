@@ -1,23 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { RefreshCw } from "lucide-react";
+import { RefreshCw } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { EmptyTableRow, TableHeadButton } from "@/components/ui/my-table";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { type SubmissionItem } from "@/lib/schemas";
-import { AutomatonTypeBadge, StatusBadge } from "@/utils/badges";
-import { formatDateTime } from "@/utils/date";
-import { SubmitSolution } from "./submit-solution";
+import { Button } from '@/components/ui/button';
+import { EmptyTableRow, TableHeadButton } from '@/components/ui/my-table';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
+import { type SubmissionItem } from '@/lib/schemas';
+import { AutomatonTypeBadge, StatusBadge } from '@/utils/badges';
+import { formatDateTime } from '@/utils/date';
+import { SubmitSolution } from './submit-solution';
 
 export default function Submissions({ problemId }: { problemId: string }) {
   const [submissions, setSubmissions] = useState<SubmissionItem[]>();
@@ -41,18 +35,13 @@ export default function Submissions({ problemId }: { problemId: string }) {
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-medium mb-2">Summary</h3>
         <Button variant="outline" size="icon" onClick={handleRefresh}>
-          <RefreshCw
-            size={20}
-            className={loading ? "animate-spin" : undefined}
-          />
+          <RefreshCw size={20} className={loading ? 'animate-spin' : undefined} />
         </Button>
       </div>
       <Table>
         <TableHeader>
           <TableRow className="md:text-base">
-            <TableHeadButton className="text-center">
-              Status
-            </TableHeadButton>
+            <TableHeadButton className="text-center">Status</TableHeadButton>
             {/* <TableHeadButton className="w-32 text-center">Type</TableHeadButton> */}
             <TableHeadButton>Message</TableHeadButton>
             <TableHeadButton>Submitted</TableHeadButton>
@@ -75,17 +64,12 @@ export default function Submissions({ problemId }: { problemId: string }) {
             submissions.map((submission, index) => (
               <TableRow key={index} className="hover:bg-muted/50">
                 <TableCell className="w-56 text-nowrap ml-4 text-center">
-                  <StatusBadge
-                    verdict={submission.verdict}
-                    status={submission.status}
-                  />
+                  <StatusBadge verdict={submission.verdict} status={submission.status} />
                 </TableCell>
                 {/* <TableCell className="w-32 text-center">
                   <AutomatonTypeBadge type={"FSM"} />
                 </TableCell> */}
-                <TableCell className="text-base truncate w-3/5">
-                  {submission.message}
-                </TableCell>
+                <TableCell className="text-base truncate w-3/5">{submission.message}</TableCell>
                 <TableCell className="text-nowrap">
                   {formatDateTime(submission.createdAt)}
                 </TableCell>

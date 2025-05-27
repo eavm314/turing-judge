@@ -1,7 +1,7 @@
-import { getProblemView } from "@/actions/problems";
-import { ProblemContent, Submissions } from "@/components/problems/view";
-import { SetSection } from "@/components/problems/view/set-section";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getProblemView } from '@/actions/problems';
+import { ProblemContent, Submissions } from '@/components/problems/view';
+import { SetSection } from '@/components/problems/view/set-section';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default async function ProblemPage({
   params,
@@ -13,7 +13,7 @@ export default async function ProblemPage({
   const { problemId } = await params;
   const { section } = await searchParams;
 
-  const currentTab = section === "submissions" ? "submissions" : "statement";
+  const currentTab = section === 'submissions' ? 'submissions' : 'statement';
 
   const problem = await getProblemView(problemId);
 

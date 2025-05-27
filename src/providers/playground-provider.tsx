@@ -1,35 +1,27 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useMemo, useRef } from "react";
-import { useStore } from "zustand";
-import { useShallow } from "zustand/react/shallow";
+import { createContext, useContext, useMemo, useRef } from 'react';
+import { useStore } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 
 import {
   createPlaygroundStore,
   PlaygroundState,
   type PlaygroundStore,
-} from "@/store/playground-store";
+} from '@/store/playground-store';
 
 type PlaygroundStoreApi = ReturnType<typeof createPlaygroundStore>;
 
-export const PlaygroundStoreContext = createContext<
-  PlaygroundStoreApi | undefined
->(undefined);
+export const PlaygroundStoreContext = createContext<PlaygroundStoreApi | undefined>(undefined);
 
 interface PlaygroundProviderProps {
   children: React.ReactNode;
   initState?: Partial<PlaygroundState>;
 }
 
-export const PlaygroundStoreProvider = ({
-  children,
-  initState,
-}: PlaygroundProviderProps) => {
+export const PlaygroundStoreProvider = ({ children, initState }: PlaygroundProviderProps) => {
   const storeRef = useRef<PlaygroundStoreApi | null>(null);
-  storeRef.current = useMemo(
-    () => createPlaygroundStore(initState),
-    [initState?.isOwner],
-  );
+  storeRef.current = useMemo(() => createPlaygroundStore(initState), [initState?.isOwner]);
 
   return (
     <PlaygroundStoreContext.Provider value={storeRef.current}>
@@ -38,15 +30,11 @@ export const PlaygroundStoreProvider = ({
   );
 };
 
-export const usePlaygroundStore = <T,>(
-  selector: (store: PlaygroundStore) => T,
-): T => {
+export const usePlaygroundStore = <T,>(selector: (store: PlaygroundStore) => T): T => {
   const context = useContext(PlaygroundStoreContext);
 
   if (!context) {
-    throw new Error(
-      `usePlaygroundStore must be used within PlaygroundStoreProvider`,
-    );
+    throw new Error(`usePlaygroundStore must be used within PlaygroundStoreProvider`);
   }
 
   return useStore(context, selector);
@@ -54,7 +42,7 @@ export const usePlaygroundStore = <T,>(
 
 export const useAutomaton = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       automaton: state.automaton,
       unsavedChanges: state.unsavedChanges,
       setAutomaton: state.setAutomaton,
@@ -65,17 +53,17 @@ export const useAutomaton = () =>
 
 export const usePlaygroundMode = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       mode: state.mode,
       setMode: state.setMode,
     })),
   );
 
-export const useIsOwner = () => usePlaygroundStore((state) => state.isOwner);
+export const useIsOwner = () => usePlaygroundStore(state => state.isOwner);
 
 export const useSimulationWord = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       word: state.simulationWord,
       setWord: state.setSimulationWord,
     })),
@@ -83,7 +71,7 @@ export const useSimulationWord = () =>
 
 export const useVisitedState = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       visitedState: state.visitedState,
       setVisitedState: state.setVisitedState,
     })),
@@ -91,7 +79,7 @@ export const useVisitedState = () =>
 
 export const useVisitedTransition = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       visitedTransition: state.visitedTransition,
       visitedSymbol: state.visitedSymbol,
       simulationSpeed: state.simulationSpeed,
@@ -101,7 +89,7 @@ export const useVisitedTransition = () =>
 
 export const useSimulation = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       word: state.simulationWord,
       simulationSpeed: state.simulationSpeed,
       setWord: state.setSimulationWord,
@@ -116,7 +104,7 @@ export const useSimulation = () =>
 
 export const useSimulationTape = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       translation: state.translation,
       speed: state.simulationSpeed,
       word: state.simulationWord,

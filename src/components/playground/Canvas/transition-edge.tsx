@@ -1,19 +1,13 @@
-import {
-  EdgeLabelRenderer,
-  useInternalNode,
-  type Edge,
-  type EdgeProps,
-} from "@xyflow/react";
-import { getPath } from "./utils/graphics";
-import { cn } from "@/lib/ui/utils";
-import { useEffect, useRef } from "react";
-import { useAddTransitionPrompt } from "@/components/modal/add-transition";
+import { useAddTransitionPrompt } from '@/components/modal/add-transition';
+import { cn } from '@/lib/ui/utils';
 import {
   useAutomaton,
-  useIsOwner,
   usePlaygroundMode,
   useVisitedTransition,
-} from "@/providers/playground-provider";
+} from '@/providers/playground-provider';
+import { EdgeLabelRenderer, useInternalNode, type Edge, type EdgeProps } from '@xyflow/react';
+import { useEffect, useRef } from 'react';
+import { getPath } from './utils/graphics';
 
 export type TransitionEdgeType = Edge<{ symbols: string[] }>;
 
@@ -34,7 +28,7 @@ export function TransitionEdge({
   const { automaton, updateAutomaton } = useAutomaton();
   const { visitedTransition, simulationSpeed } = useVisitedTransition();
   const { mode } = usePlaygroundMode();
-  const isInteractive = mode !== "simulation" && mode !== "viewer";
+  const isInteractive = mode !== 'simulation' && mode !== 'viewer';
 
   useEffect(() => {
     if (id === visitedTransition && animateRef.current) {
@@ -50,20 +44,19 @@ export function TransitionEdge({
 
   const handleEditTransition = async () => {
     if (!isInteractive) return;
-    const initialSymbols = automaton.getTransition(
-      Number(source),
-      Number(target),
-    );
+    const initialSymbols = automaton.getTransition(Number(source), Number(target));
     const symbols = await addTransitionPrompt({
       alphabet: automaton.alphabet,
       initialSymbols,
     });
     if (!symbols) return;
-    updateAutomaton((auto) => {
+    updateAutomaton(auto => {
       auto.removeTransition(Number(source), Number(target));
       auto.addTransition(Number(source), Number(target), symbols);
     });
   };
+
+  const testId = `${sourceNode.data.name}->${targetNode.data.name}`;
 
   return (
     <>
@@ -80,18 +73,14 @@ export function TransitionEdge({
         >
           <path
             d="M 0 0 L 10 5 L 0 10"
-            className={selected ? "fill-green-500" : "fill-foreground"}
+            className={selected ? 'fill-green-500' : 'fill-foreground'}
           />
         </marker>
       </defs>
       <path
         fill="none"
         id={id}
-        className={
-          selected
-            ? "stroke-green-500 stroke-[3px]"
-            : "stroke-foreground stroke-2"
-        }
+        className={selected ? 'stroke-green-500 stroke-[3px]' : 'stroke-foreground stroke-2'}
         d={edgePath}
         markerEnd={`url(#triangle-${id})`}
         style={style}
@@ -108,18 +97,19 @@ export function TransitionEdge({
       )}
       <EdgeLabelRenderer>
         <div
+          data-testid={testId}
           style={{
-            position: "absolute",
+            position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-            pointerEvents: isInteractive ? "all" : "none",
+            pointerEvents: isInteractive ? 'all' : 'none',
           }}
           className={cn(
-            "nopan bg-background px-2 border rounded-md cursor-pointer font-mono",
-            selected ? "border-green-500" : "border-foreground",
+            'nopan bg-background px-2 border rounded-md cursor-pointer font-mono',
+            selected ? 'border-green-500' : 'border-foreground',
           )}
           onDoubleClick={handleEditTransition}
         >
-          {data?.symbols.join(",")}
+          {data?.symbols.join(',')}
         </div>
       </EdgeLabelRenderer>
     </>

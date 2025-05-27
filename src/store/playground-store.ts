@@ -1,10 +1,10 @@
-import { createStore } from "zustand/vanilla";
+import { createStore } from 'zustand/vanilla';
 
-import AutomatonExecutor from "@/lib/automata/AutomatonExecutor";
-import { FiniteStateMachine } from "@/lib/automata/FiniteStateMachine";
-import { AutomatonCode } from "@/lib/schemas/automaton-code";
+import AutomatonExecutor from '@/lib/automata/AutomatonExecutor';
+import { FiniteStateMachine } from '@/lib/automata/FiniteStateMachine';
+import { AutomatonCode } from '@/lib/schemas/automaton-code';
 
-export type PlaygroundMode = "states" | "transitions" | "simulation" | "viewer";
+export type PlaygroundMode = 'states' | 'transitions' | 'simulation' | 'viewer';
 
 export type PlaygroundState = {
   automaton: FiniteStateMachine;
@@ -39,14 +39,14 @@ export type PlaygroundActions = {
 export type PlaygroundStore = PlaygroundState & PlaygroundActions;
 
 const defaultState: PlaygroundState = {
-  mode: "states",
+  mode: 'states',
   automaton: new FiniteStateMachine(),
   isOwner: true,
   unsavedChanges: false,
 
   translation: 0,
   simulationSpeed: 700,
-  simulationWord: "",
+  simulationWord: '',
   simulationIndex: 0,
   visitedState: null,
   visitedTransition: null,
@@ -55,27 +55,25 @@ const defaultState: PlaygroundState = {
 
 let movementTimeout: NodeJS.Timeout | undefined = undefined;
 
-export const createPlaygroundStore = (
-  initialState?: Partial<PlaygroundState>,
-) => {
+export const createPlaygroundStore = (initialState?: Partial<PlaygroundState>) => {
   const initialStateWithDefaults = {
     ...defaultState,
     ...initialState,
   };
   AutomatonExecutor.setAutomaton(initialStateWithDefaults.automaton);
-  return createStore<PlaygroundStore>()((set) => ({
+  return createStore<PlaygroundStore>()(set => ({
     ...initialStateWithDefaults,
     setMode: (newMode: PlaygroundMode) => set({ mode: newMode }),
     setAutomaton: (code: AutomatonCode) => {
-      if (code.type !== "FSM") {
-        throw new Error("Automaton type not supported yet");
+      if (code.type !== 'FSM') {
+        throw new Error('Automaton type not supported yet');
       }
       const automaton = new FiniteStateMachine(code.automaton);
       AutomatonExecutor.setAutomaton(automaton);
       set({ automaton, unsavedChanges: true });
     },
-    updateAutomaton: (callback) => {
-      set((state) => {
+    updateAutomaton: callback => {
+      set(state => {
         const newAutomaton = state.automaton.clone();
         callback(newAutomaton);
         AutomatonExecutor.setAutomaton(newAutomaton);
@@ -99,7 +97,7 @@ export const createPlaygroundStore = (
         visitedState: null,
       }),
     moveRight: () =>
-      set((state) => {
+      set(state => {
         const { simulationIndex, simulationWord } = state;
         if (simulationIndex >= simulationWord.length) return state;
         movementTimeout = setTimeout(() => {
@@ -108,7 +106,7 @@ export const createPlaygroundStore = (
         return { translation: -1 };
       }),
     moveLeft: () =>
-      set((state) => {
+      set(state => {
         const { simulationIndex } = state;
         if (simulationIndex <= 0) return state;
         movementTimeout = setTimeout(() => {
@@ -118,8 +116,8 @@ export const createPlaygroundStore = (
       }),
     stopSimulation: () => {
       clearTimeout(movementTimeout);
-      set((state) => ({
-        mode: state.isOwner ? "states" : "viewer",
+      set(state => ({
+        mode: state.isOwner ? 'states' : 'viewer',
         translation: 0,
         simulationIndex: 0,
         visitedState: null,

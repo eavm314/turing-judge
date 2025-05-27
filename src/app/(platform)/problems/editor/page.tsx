@@ -1,8 +1,8 @@
-import { getUserProblems } from "@/actions/problems";
-import UserProblems from "@/components/problems/editor/user-problems";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
-import Link from "next/link";
+import { getUserProblems } from '@/actions/problems';
+import UserProblems from '@/components/problems/editor/user-problems';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function ProblemsEditorPage() {
   const problems = await getUserProblems();

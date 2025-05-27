@@ -1,16 +1,16 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { type Project } from "@prisma/client";
-import { Cpu } from "lucide-react";
+import { type Project } from '@prisma/client';
+import { Cpu } from 'lucide-react';
 
-import { AccountMenu } from "@/components/layout/account-menu";
-import { DarkModeToggle } from "@/components/layout/dark-mode-toogle";
-import { AutomatonTitle } from "./automaton-title";
-import { ExportCode } from "./export-code";
-import { ImportCode } from "./import-code";
-import { PublicSelect } from "./public-select";
-import { SaveAutomaton } from "./save-automaton";
-import { ExamplesMenu } from "./examples-menu";
+import { AccountMenu } from '@/components/layout/account-menu';
+import { DarkModeToggle } from '@/components/layout/dark-mode-toogle';
+import { AutomatonTitle } from './automaton-title';
+import { ExportCode } from './export-code';
+import { ImportCode } from './import-code';
+import { PublicSelect } from './public-select';
+import { SaveAutomaton } from './save-automaton';
+import { ExamplesMenu } from './examples-menu';
 
 export function PlaygroundLayout({ data }: { data?: Project }) {
   return (

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { SignInModal } from "@/components/auth/signin-modal";
-import { type User } from "next-auth";
-import { createContext, useContext, useEffect, useState } from "react";
+import { SignInModal } from '@/components/auth/signin-modal';
+import { type User } from 'next-auth';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 interface UserContextType {
   user?: User;
@@ -10,9 +10,7 @@ interface UserContextType {
   setOpenSignIn: (open: boolean) => void;
 }
 
-export const UserContext = createContext<UserContextType | undefined>(
-  undefined,
-);
+export const UserContext = createContext<UserContextType | undefined>(undefined);
 
 interface SessionProviderProps {
   children: React.ReactNode;
@@ -39,7 +37,7 @@ export const SessionProvider = ({ children, user }: SessionProviderProps) => {
 export function useSession() {
   const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error("useSession must be used within a UserContext");
+    throw new Error('useSession must be used within a UserContext');
   }
   return context;
 }

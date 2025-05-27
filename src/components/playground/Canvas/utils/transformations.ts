@@ -1,18 +1,16 @@
-import { FiniteStateMachine } from "@/lib/automata/FiniteStateMachine";
-import { type StateNodeType } from "../state-node";
-import { type TransitionEdgeType } from "../transition-edge";
-import { type Node } from "@xyflow/react";
+import { FiniteStateMachine } from '@/lib/automata/FiniteStateMachine';
+import { type StateNodeType } from '../state-node';
+import { type TransitionEdgeType } from '../transition-edge';
+import { type Node } from '@xyflow/react';
 
 export const fsmToFlow = (fsm: FiniteStateMachine, prevNodes: Node[]) => {
-  const prevMap = new Map(
-    prevNodes.filter((n) => n.selected).map((n) => [Number(n.id), n]),
-  );
+  const prevMap = new Map(prevNodes.filter(n => n.selected).map(n => [Number(n.id), n]));
   const nodes: StateNodeType[] = fsm.states
     .values()
-    .map((st) => {
+    .map(st => {
       return {
         id: String(st.id),
-        type: "state",
+        type: 'state',
         position: st.position,
         selected: prevMap.has(st.id),
         data: {
@@ -26,10 +24,10 @@ export const fsmToFlow = (fsm: FiniteStateMachine, prevNodes: Node[]) => {
 
   const edges: TransitionEdgeType[] = fsm.states
     .values()
-    .flatMap((st) => {
+    .flatMap(st => {
       const obj = st.transitions.entries().reduce(
         (acc, [symbol, targets]) => {
-          targets.forEach((target) => {
+          targets.forEach(target => {
             const key = `${st.id}->${target}`;
             acc[key] = acc[key]?.data
               ? {

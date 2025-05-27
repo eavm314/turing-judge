@@ -1,1 +1,1 @@
-export const appName = "TuringJudge";
+export const appName = 'TuringJudge';

@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
-import { notFound } from "next/navigation";
+import { auth } from '@/lib/auth';
+import { notFound } from 'next/navigation';
 
 export default async function RootLayout({
   children,
@@ -7,7 +7,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  if (session?.user?.role !== "EDITOR") {
+  if (session?.user?.role !== 'EDITOR') {
     notFound();
   }
 

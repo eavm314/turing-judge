@@ -1,5 +1,5 @@
-import { getProblemEditable } from "@/actions/problems";
-import { ProblemForm } from "@/components/problems/editor/problem-form";
+import { getProblemEditable } from '@/actions/problems';
+import { ProblemForm } from '@/components/problems/editor/problem-form';
 
 export default async function EditProblemPage({
   params,

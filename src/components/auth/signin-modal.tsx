@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { GoogleIcon } from "@/components/ui/icons";
-import { handleSignIn } from "@/lib/auth/client-handlers";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useSession } from "@/providers/user-provider";
+import { Button } from '@/components/ui/button';
+import { GoogleIcon } from '@/components/ui/icons';
+import { handleSignIn } from '@/lib/auth/client-handlers';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { useSession } from '@/providers/user-provider';
 
 export function SignInModal() {
   const { openSignIn, setOpenSignIn } = useSession();
@@ -24,7 +24,7 @@ export function SignInModal() {
               className="w-60"
               variant="outline"
               type="button"
-              onClick={() => handleSignIn("google")}
+              onClick={() => handleSignIn('google')}
             >
               <GoogleIcon className="mr-2 h-4 w-4" />
               Google

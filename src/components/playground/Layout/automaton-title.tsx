@@ -1,10 +1,10 @@
-import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useParams } from 'next/navigation';
+import { useState } from 'react';
 
-import { updateProjectAction } from "@/actions/projects";
-import { Input } from "@/components/ui/input";
-import { useIsOwner } from "@/providers/playground-provider";
-import { Check, Loader2 } from "lucide-react";
+import { updateProjectAction } from '@/actions/projects';
+import { Input } from '@/components/ui/input';
+import { useIsOwner } from '@/providers/playground-provider';
+import { Check, Loader2 } from 'lucide-react';
 
 export function AutomatonTitle({ title }: { title: string | null }) {
   const [tempTitle, setTempTitle] = useState(title);
@@ -44,7 +44,7 @@ export function AutomatonTitle({ title }: { title: string | null }) {
         className="pr-8 md:w-72 md:text-base text-neutral-foreground placeholder:italic disabled:opacity-100"
         disabled={!isOwner}
         placeholder="Untitled"
-        value={tempTitle ?? ""}
+        value={tempTitle ?? ''}
         onChange={isOwner ? handleChange : undefined}
       />
     </div>

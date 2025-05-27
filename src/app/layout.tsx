@@ -1,23 +1,23 @@
-import type { Metadata } from "next";
-import { Orbitron } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Orbitron } from 'next/font/google';
+import './globals.css';
 
-import { ThemeProvider } from "@/providers/theme-provider";
-import { SessionProvider } from "@/providers/user-provider";
-import { auth } from "@/lib/auth";
-import { ModalProvider } from "@/providers/modal-provider";
-import { appName } from "@/constants/app";
-import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from '@/providers/theme-provider';
+import { SessionProvider } from '@/providers/user-provider';
+import { auth } from '@/lib/auth';
+import { ModalProvider } from '@/providers/modal-provider';
+import { appName } from '@/constants/app';
+import { Toaster } from '@/components/ui/toaster';
 
 const orbitron = Orbitron({
-  variable: "--font-orbitron",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  variable: '--font-orbitron',
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
 });
 
 export const metadata: Metadata = {
   title: appName,
-  description: "Automaton Designer",
+  description: 'Automaton Designer',
 };
 
 export default async function RootLayout({

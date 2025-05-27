@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
-import { ChevronDown, Save } from "lucide-react";
+import { ChevronDown, Save } from 'lucide-react';
 
-import { createProjectAction, updateProjectAction } from "@/actions/projects";
-import { useSaveAutomatonPrompt } from "@/components/modal/save-automaton";
-import { Button } from "@/components/ui/button";
+import { createProjectAction, updateProjectAction } from '@/actions/projects';
+import { useSaveAutomatonPrompt } from '@/components/modal/save-automaton';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useServerAction } from "@/hooks/use-server-action";
-import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
-import { useSession } from "@/providers/user-provider";
+} from '@/components/ui/dropdown-menu';
+import { useServerAction } from '@/hooks/use-server-action';
+import { useAutomaton, useIsOwner } from '@/providers/playground-provider';
+import { useSession } from '@/providers/user-provider';
 
 export function SaveAutomaton() {
   const { user, setOpenSignIn } = useSession();
@@ -44,8 +44,8 @@ export function SaveAutomaton() {
         e.preventDefault();
       }
     };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export function SaveAutomaton() {
     const id = await createProject.execute({
       title: userInput.title.trim() || null,
       isPublic: userInput.isPublic,
-      type: "FSM",
+      type: 'FSM',
       automaton: automaton.toJson(),
     });
     if (id) {
@@ -115,16 +115,12 @@ export function SaveAutomaton() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-24">
-            <DropdownMenuItem onClick={handleSaveAs}>
-              Save As...
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSaveAs}>Save As...</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
       {unsavedChanges && (
-        <span className="italic text-neutral-foreground/80">
-          You have unsaved changes
-        </span>
+        <span className="italic text-neutral-foreground/80">You have unsaved changes</span>
       )}
     </div>
   );

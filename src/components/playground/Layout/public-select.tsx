@@ -1,17 +1,17 @@
-import { useParams } from "next/navigation";
+import { useParams } from 'next/navigation';
 
-import { Lock, Unlock } from "lucide-react";
+import { Lock, Unlock } from 'lucide-react';
 
-import { updateProjectAction } from "@/actions/projects";
+import { updateProjectAction } from '@/actions/projects';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useModal } from "@/providers/modal-provider";
-import { useIsOwner } from "@/providers/playground-provider";
+} from '@/components/ui/select';
+import { useModal } from '@/providers/modal-provider';
+import { useIsOwner } from '@/providers/playground-provider';
 
 export function PublicSelect({ isPublic }: { isPublic: boolean }) {
   const { automatonId } = useParams<{ automatonId: string }>();
@@ -21,21 +21,21 @@ export function PublicSelect({ isPublic }: { isPublic: boolean }) {
 
   const handleSelectChange = async (value: string) => {
     const confirmation = await showConfirm({
-      title: "Change Visibility",
+      title: 'Change Visibility',
       message: `Are you sure you want to change the visibility to ${value}?`,
-      confirmLabel: "Yes",
-      cancelLabel: "No",
+      confirmLabel: 'Yes',
+      cancelLabel: 'No',
     });
     if (!confirmation) return;
 
     await updateProjectAction(automatonId, {
-      isPublic: value === "public",
+      isPublic: value === 'public',
     });
   };
   return (
     <Select
       disabled={!isOwner}
-      value={isPublic ? "public" : "private"}
+      value={isPublic ? 'public' : 'private'}
       onValueChange={handleSelectChange}
     >
       <SelectTrigger className="w-28 disabled:opacity-100">

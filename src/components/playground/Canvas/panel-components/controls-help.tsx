@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { GitBranch, HelpCircle, MousePointer, Move, X } from "lucide-react";
+import { GitBranch, HelpCircle, MousePointer, Move, X } from 'lucide-react';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function ControlsHelp() {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,9 +40,7 @@ export default function ControlsHelp() {
                 <Move className="h-4 w-4 text-blue-500" />
                 <span className="font-medium">States</span>
               </div>
-              <p className="text-xs text-center text-muted-foreground">
-                Add and move states
-              </p>
+              <p className="text-xs text-center text-muted-foreground">Add and move states</p>
             </div>
             <div className="flex flex-col items-center gap-1 p-2 border rounded-md">
               <div className="flex items-center gap-1">
