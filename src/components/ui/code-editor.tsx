@@ -80,6 +80,12 @@ export function CodeEditor({ initialValue, onChange, mode = 'editable' }: CodeEd
         'w-full h-80',
         mode === 'disabled' && 'pointer-events-none select-none opacity-50 caret-transparent',
       )}
-    />
+    >
+      {process.env.NEXT_PUBLIC_ENV === 'test' && (
+        <div data-testid="editor-content" className="hidden">
+          {initialValue}
+        </div>
+      )}
+    </div>
   );
 }

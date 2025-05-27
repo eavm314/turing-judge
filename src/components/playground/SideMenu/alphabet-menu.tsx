@@ -98,7 +98,7 @@ export default function AlphabetMenu() {
           </Button>
         )}
         {automaton.alphabet.map(symbol => (
-          <Badge  ge key={symbol} variant="outline" className="flex items-center gap-1 p-0 w-11">
+          <Badge key={symbol} variant="outline" className="flex items-center gap-1 p-0 w-11">
             <span className="py-1 pl-2 pr-0 text-sm">{symbol}</span>
             <button
               className={cn(
