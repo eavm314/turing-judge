@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 
 import { PlusCircle } from 'lucide-react';
 
@@ -7,40 +7,37 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { EPSILON } from '@/constants/symbols';
-import { useAutomaton, useIsOwner, usePlaygroundMode } from '@/providers/playground-provider';
-import { cn } from '@/lib/ui/utils';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/ui/utils';
+import { useAutomatonDesign, useIsOwner, usePlaygroundMode } from '@/providers/playground-provider';
 
 export default function AlphabetMenu() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isOwner = useIsOwner();
-  const { automaton, updateAutomaton } = useAutomaton();
+  const { automaton, updateDesign } = useAutomatonDesign();
   const { mode } = usePlaygroundMode();
   const { toast } = useToast();
 
   const handleAddToAlphabet = () => {
     const inputChar = inputRef.current!.value.trim();
     if (inputChar.match(/^[a-zA-Z0-9]$/)) {
-      if (!automaton.alphabet.includes(inputChar)) {
-        updateAutomaton(automaton => {
-          automaton.setAlphabet([...automaton.alphabet, inputChar]);
-        });
-      }
+      updateDesign(automaton => {
+        automaton.addSymbol(inputChar);
+      });
       inputRef.current!.value = '';
     }
   };
 
   const handleAddEpsilonToAlphabet = () => {
-    if (!automaton.alphabet.includes(EPSILON)) {
-      updateAutomaton(automaton => {
-        automaton.setAlphabet([EPSILON, ...automaton.alphabet]);
-      });
-    }
+    updateDesign(automaton => {
+      automaton.addSymbol(EPSILON);
+    });
   };
 
   const handleRemoveFromAlphabet = (symbol: string) => {
-    if (automaton.getUsedSymbols().has(symbol)) {
+    const usedSymbols = new Set(automaton.edges.flatMap(edge => edge.data!.transition.map(t => t.inputSymbol)));
+    if (usedSymbols.has(symbol)) {
       toast({
         title: 'Cannot remove symbol',
         description: `Symbol "${symbol}" is used in transitions`,
@@ -49,8 +46,8 @@ export default function AlphabetMenu() {
       });
       return;
     }
-    updateAutomaton(automaton => {
-      automaton.setAlphabet(automaton.alphabet.filter(s => s !== symbol));
+    updateDesign(automaton => {
+      automaton.removeSymbol(symbol);
     });
   };
 

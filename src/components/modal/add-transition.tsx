@@ -1,48 +1,56 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EPSILON } from '@/constants/symbols';
+import AutomatonManager from '@/lib/automata/AutomatonManager';
+import { type TransitionData } from '@/lib/automata/base/BaseState';
 import { type CustomContentProps, useModal } from '@/providers/modal-provider';
 
-interface TransitionData {
-  alphabet: string[];
-  initialSymbols: string[];
+interface AddTransitionProps {
+  source: number;
+  target: number;
 }
 
-const AddTransitionPrompt = ({
-  value: selectedSymbols,
-  setValue: setSelectedSymbols,
+const AddFsmTransition = ({
+  value: transitionData,
+  setValue: setTransitionData,
   data,
-}: CustomContentProps<string[], TransitionData>) => {
+}: CustomContentProps<TransitionData[], AddTransitionProps>) => {
+  const [alphabet, setAlphabet] = useState<string[]>([]);
+
   useEffect(() => {
-    setSelectedSymbols(data.initialSymbols);
+    const designer = AutomatonManager.getDesigner();
+    const { source, target } = data;
+    const transition = designer.getTransition(source, target);
+    setTransitionData(transition);
+    setAlphabet(Array.from(designer.getAlphabet()));
   }, []);
 
-  if (selectedSymbols === null) return null;
-
-  const handleSymbolToggle = (symbol: string, checked: boolean) => {
+  const handleSymbolToggle = (inputSymbol: string, checked: boolean) => {
     if (checked) {
-      setSelectedSymbols(prev => [...prev, symbol]);
+      setTransitionData(prev => [...prev, { inputSymbol }]);
     } else {
-      setSelectedSymbols(prev => prev.filter(s => s !== symbol));
+      setTransitionData(prev => prev.filter(s => s.inputSymbol !== inputSymbol));
     }
   };
+
+  if (transitionData === null) return null;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2 mb-2 items-center">
         <Label>Selected:</Label>
-        {selectedSymbols.length === 0 ? (
+        {transitionData.length === 0 ? (
           <span className="text-muted-foreground italic">None</span>
         ) : (
-          selectedSymbols.map(symbol => (
-            <Badge key={symbol} variant="outline" className="h-6 font-mono text-sm">
-              {symbol}
+          transitionData.map(data => (
+            <Badge key={data.inputSymbol} variant="outline" className="h-6 font-mono text-sm">
+              {data.inputSymbol}
             </Badge>
           ))
         )}
@@ -50,11 +58,11 @@ const AddTransitionPrompt = ({
 
       <ScrollArea className="h-[200px] pr-4">
         <div className="space-y-3">
-          {data.alphabet.map(symbol => (
+          {alphabet.map(symbol => (
             <div key={symbol} className="flex items-center space-x-2">
               <Checkbox
                 id={`symbol-${symbol}`}
-                checked={selectedSymbols.includes(symbol)}
+                checked={transitionData.map(t => t.inputSymbol).includes(symbol)}
                 onCheckedChange={checked => handleSymbolToggle(symbol, checked === true)}
               />
               <Label htmlFor={`symbol-${symbol}`} className="font-mono">
@@ -71,13 +79,13 @@ const AddTransitionPrompt = ({
 export const useAddTransitionPrompt = () => {
   const { showCustomModal } = useModal();
 
-  const saveAutomatonPrompt = (data: TransitionData) =>
-    showCustomModal<string[], TransitionData>({
-      title: data.initialSymbols.length > 0 ? 'Edit Transition' : 'Add Transition',
+  const addTransition = (data: AddTransitionProps) =>
+    showCustomModal<TransitionData[], AddTransitionProps>({
+      title: 'Add Transition',
       message: 'Choose the symbols for the transition',
-      customContent: AddTransitionPrompt,
+      customContent: AddFsmTransition,
       customComponentData: data,
     });
 
-  return saveAutomatonPrompt;
+  return addTransition;
 };

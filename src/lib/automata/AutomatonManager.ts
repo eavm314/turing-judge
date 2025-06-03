@@ -1,6 +1,6 @@
-import { AutomatonCode } from "../schemas/automaton-code";
-import { type Automaton } from "./base";
-import { createFSM } from "./finite-state-machine";
+import { AutomatonCode } from '../schemas/automaton-code';
+import { type Automaton } from './base';
+import { createFSM } from './finite-state-machine';
 // import { createPDA } from './pushdown-automaton';
 // import { createTM } from './turing-machine';
 
@@ -13,11 +13,11 @@ class AutomatonManager {
 
   switchTo(initialCode: AutomatonCode) {
     switch (initialCode.type) {
-      case "FSM":
+      case 'FSM':
         this.currentAutomaton = createFSM(initialCode.automaton);
         break;
       default:
-        throw new Error(`Not implemented automaton type: ${initialCode.type}`);
+        throw new Error(`Automaton type not supported yet: ${initialCode.type}`);
     }
   }
 
@@ -34,5 +34,4 @@ class AutomatonManager {
   }
 }
 
-const automatonManager = new AutomatonManager({ type: "FSM" });
-export default automatonManager;
+export default new AutomatonManager({ type: 'FSM' });

@@ -15,14 +15,14 @@ export const evenOnes: JsonFSM = {
   states: {
     q0: {
       transitions: {
-        '0': ['q0'],
-        '1': ['q1'],
+        q0: ['0'],
+        q1: ['1'],
       },
     },
     q1: {
       transitions: {
-        '0': ['q1'],
-        '1': ['q0'],
+        q1: ['0'],
+        q0: ['1'],
       },
     },
   },
@@ -35,20 +35,20 @@ export const endsWith01: JsonFSM = {
   states: {
     q0: {
       transitions: {
-        '0': ['q1'],
-        '1': ['q0'],
+        q1: ['0'],
+        q0: ['1'],
       },
     },
     q1: {
       transitions: {
-        '0': ['q1'],
-        '1': ['q2'],
+        q1: ['0'],
+        q2: ['1'],
       },
     },
     q2: {
       transitions: {
-        '0': ['q1'],
-        '1': ['q0'],
+        q1: ['0'],
+        q0: ['1'],
       },
     },
   },
@@ -61,8 +61,8 @@ export const simpleNonDet: JsonFSM = {
   states: {
     q0: {
       transitions: {
-        '0': ['q0'],
-        '1': ['q0', 'q2'],
+        q0: ['0', '1'],
+        q2: ['1'],
       },
     },
     q2: {},
@@ -72,31 +72,32 @@ export const simpleNonDet: JsonFSM = {
 };
 
 export const epsilonTransitions: JsonFSM = {
-  alphabet: [EPSILON, '0', '1'],
+  alphabet: ['0', '1', EPSILON],
   states: {
     q0: {
       transitions: {
-        [EPSILON]: ['q1', 'q2'],
+        q1:[EPSILON],
+        q2:[EPSILON],
       },
     },
     q1: {
       transitions: {
-        '0': ['q4'],
+        q4: ['0'],
       },
     },
     q2: {
       transitions: {
-        '0': ['q3'],
+        q3: ['0'],
       },
     },
     q3: {
       transitions: {
-        [EPSILON]: ['q2'],
+        q2:[EPSILON],
       },
     },
     q4: {
       transitions: {
-        '1': ['q5'],
+        q5: ['1'],
       },
     },
     q5: {},

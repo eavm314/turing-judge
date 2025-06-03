@@ -18,13 +18,13 @@ import { FloatingConnectionLine } from './floating-connection-line';
 import {
   AddState,
   ControlsHelp,
+  DeterminismBadge,
   PlaygroundMode,
   TuringTape,
-  DeterminismBadge,
 } from './panel-components';
 import { StateNode } from './state-node';
 import { TransitionEdge } from './transition-edge';
-import { useCanvasHandlers } from './utils/useCanvasHandlers';
+import { useCanvasHandlers } from './utils/use-canvas-handlers';
 
 const nodeTypes: NodeTypes = {
   state: StateNode,

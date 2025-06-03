@@ -1,6 +1,7 @@
-import { type JsonState } from "@/lib/schemas/finite-state-machine";
+import { type JsonState } from '@/lib/schemas/finite-state-machine';
+import { FsmTransitionData } from '../finite-state-machine/FsmState';
 
-export type TransitionData = string;
+export type TransitionData = FsmTransitionData;
 
 export abstract class BaseState {
   abstract id: number;

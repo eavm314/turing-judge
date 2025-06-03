@@ -1,15 +1,11 @@
-import { useRef } from 'react';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { EPSILON } from '@/constants/symbols';
 import { useToast } from '@/hooks/use-toast';
-import AutomatonExecutor from '@/lib/automata/AutomatonExecutor';
+import AutomatonManager from '@/lib/automata/AutomatonManager';
 import {
   usePlaygroundMode,
-  useSimulation,
-  useSimulationTape,
   useSimulationWord,
 } from '@/providers/playground-provider';
 
@@ -19,8 +15,9 @@ export default function TestingMenu() {
   const { toast } = useToast();
 
   const handleTest = () => {
-    const executionConfig = AutomatonExecutor.getConfig();
-    const { accepted, depthLimitReached, maxLimitReached } = AutomatonExecutor.execute(word);
+    const executor = AutomatonManager.getExecutor();
+    const executionConfig = executor.getConfig();
+    const { accepted, depthLimitReached, maxLimitReached } = executor.execute(word);
     if (accepted) {
       toast({
         title: 'Accepted',

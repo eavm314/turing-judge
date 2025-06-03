@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { validateCode } from '@/lib/schemas/automaton-code';
-import { useAutomaton, useIsOwner } from '@/providers/playground-provider';
+import { useAutomatonDesign, useIsOwner } from '@/providers/playground-provider';
 
 const initCode = '';
 
@@ -29,7 +29,7 @@ export function ImportCode() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { setAutomaton } = useAutomaton();
+  const { setAutomaton } = useAutomatonDesign();
   const isOwner = useIsOwner();
   const { toast } = useToast();
 

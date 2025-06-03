@@ -30,7 +30,6 @@ export const validateCode = (code: string) => {
     return '';
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log(error);
       const message = fromZodIssue(error.issues[0]).toString();
       return message.substring(18);
     }

@@ -1,17 +1,23 @@
-import { type JsonState } from "@/lib/schemas/finite-state-machine";
-import { type FsmDesigner } from "./FsmDesigner";
-import { BaseState } from "../base/BaseState";
+import { type JsonState } from '@/lib/schemas/finite-state-machine';
+import { type FsmDesigner } from './FsmDesigner';
+import { BaseState } from '../base/BaseState';
+
+export type FsmTransitionData = {
+  inputSymbol: string;
+};
 
 export class FsmState extends BaseState {
   id: number;
   name: string;
   position: { x: number; y: number };
   isFinal: boolean;
-  transitions: Map<number, string[]>;
+  transitions: Map<number, FsmTransitionData[]>;
   automaton: FsmDesigner;
+  selected: boolean;
 
   constructor(automaton: FsmDesigner, name: string, json: JsonState) {
     super();
+    this.selected = false;
     this.automaton = automaton;
     this.id = this.automaton.stateToIndex.get(name)!;
     this.name = name;
@@ -21,15 +27,18 @@ export class FsmState extends BaseState {
 
     for (const [target, symbols] of Object.entries(json.transitions ?? {})) {
       const targetId = automaton.stateToIndex.get(target)!;
-      this.addTransition(targetId, symbols);
+      this.addTransition(
+        targetId,
+        symbols.map(symbol => ({ inputSymbol: symbol })),
+      );
     }
   }
 
   toJson(): JsonState {
     const transitions = this.transitions.entries().reduce(
-      (acc, [target, symbols]) => {
-        const tagetName = this.automaton.states.get(target)!.name;
-        acc[tagetName] = symbols;
+      (acc, [target, transition]) => {
+        const targetName = this.automaton.getState(target).name;
+        acc[targetName] = transition.map(data => data.inputSymbol);
         return acc;
       },
       {} as Record<string, string[]>,

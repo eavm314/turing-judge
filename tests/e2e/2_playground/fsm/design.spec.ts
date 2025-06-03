@@ -75,7 +75,7 @@ test.describe('Non-deterministic FSM Design', () => {
     await compareJsonExport(page, simpleNonDet);
   });
 
-  test('should create non-det FSM for "(0*)+(01)"', async ({ page }) => {
+  test('should create non-det FSM for "0* u 01"', async ({ page }) => {
     await moveState(page, 'q0', -200, 0);
     await addState(page, 'q1');
     await moveState(page, 'q1', -100, 100);

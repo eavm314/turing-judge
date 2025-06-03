@@ -2,11 +2,15 @@ import { Handle, NodeToolbar, Position, type Node, type NodeProps } from '@xyflo
 
 import { Toggle } from '@/components/ui/toggle';
 import { cn } from '@/lib/ui/utils';
-import { useAutomaton, usePlaygroundMode, useVisitedState } from '@/providers/playground-provider';
+import {
+  useAutomatonDesign,
+  usePlaygroundMode,
+  useVisitedState,
+} from '@/providers/playground-provider';
 import { useModal } from '@/providers/modal-provider';
 
 function CustomToolbar({ nodeId, final }: { nodeId: string; final: boolean }) {
-  const { updateAutomaton } = useAutomaton();
+  const { updateDesign: updateAutomaton } = useAutomatonDesign();
 
   const handleClick = () => {
     updateAutomaton(auto => {
@@ -45,7 +49,7 @@ export type StateNodeType = Node<{
 export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
   const { mode } = usePlaygroundMode();
   const { showPrompt } = useModal();
-  const { automaton, updateAutomaton } = useAutomaton();
+  const { automaton, updateDesign } = useAutomatonDesign();
   const { visitedState } = useVisitedState();
 
   const handleChangeName = async () => {
@@ -57,14 +61,14 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
         if (value.length < 1 || value.length > 3)
           return 'State name must contain 1 to 3 characters';
         if (value.match(/[^a-zA-Z0-9]/)) return 'State name can only contain letters and numbers';
-        if (value !== data.name && automaton.stateToIndex.has(value))
+        if (automaton.nodes.filter(node => node.data.name === value).length > 0)
           return 'State name must be unique';
         return '';
       },
     });
     if (!stateName || stateName === data.name) return;
 
-    updateAutomaton(auto => {
+    updateDesign(auto => {
       auto.renameState(Number(id), stateName);
     });
   };

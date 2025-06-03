@@ -7,8 +7,7 @@ import { Loader } from 'lucide-react';
 
 import { PlaygroundLayout } from '@/components/playground/Layout';
 import SideMenu from '@/components/playground/SideMenu';
-import { FiniteStateMachine } from '@/lib/automata/FiniteStateMachine';
-import { type JsonFSM } from '@/lib/schemas/finite-state-machine';
+import { automatonCodeSchema } from '@/lib/schemas/automaton-code';
 import { PlaygroundStoreProvider } from '@/providers/playground-provider';
 import { useSession } from '@/providers/user-provider';
 
@@ -27,11 +26,22 @@ export default function Playground({ data }: { data?: Project }) {
   const { user } = useSession();
   const isOwner = data ? user?.id === data.userId : true;
 
-  const automaton = new FiniteStateMachine(data?.automaton as unknown as JsonFSM | undefined);
-  const mode = isOwner ? 'states' : 'viewer';
+  let automatonCode = null;
+  if (data) {
+    const parsedCode = automatonCodeSchema.safeParse({
+      type: data.type,
+      automaton: data.automaton,
+    });
+    if (parsedCode.success) {
+      automatonCode = parsedCode.data;
+    } else {
+      console.error('Invalid automaton code:', parsedCode.error);
+      console.log('Resetting to default Automaton...');
+    }
+  }
 
   return (
-    <PlaygroundStoreProvider initState={{ automaton, mode, isOwner }}>
+    <PlaygroundStoreProvider initialCode={automatonCode} isOwner={isOwner}>
       <div className="flex flex-col h-screen">
         <PlaygroundLayout data={data} />
         <main className="flex flex-1 overflow-hidden">

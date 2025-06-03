@@ -4,11 +4,8 @@ import { createContext, useContext, useMemo, useRef } from 'react';
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
-import {
-  createPlaygroundStore,
-  PlaygroundState,
-  type PlaygroundStore,
-} from '@/store/playground-store';
+import { type AutomatonCode } from '@/lib/schemas/automaton-code';
+import { createPlaygroundStore, type PlaygroundStore } from '@/store/playground-store';
 
 type PlaygroundStoreApi = ReturnType<typeof createPlaygroundStore>;
 
@@ -16,12 +13,17 @@ export const PlaygroundStoreContext = createContext<PlaygroundStoreApi | undefin
 
 interface PlaygroundProviderProps {
   children: React.ReactNode;
-  initState?: Partial<PlaygroundState>;
+  isOwner: boolean;
+  initialCode: AutomatonCode | null;
 }
 
-export const PlaygroundStoreProvider = ({ children, initState }: PlaygroundProviderProps) => {
+export const PlaygroundStoreProvider = ({
+  children,
+  initialCode,
+  isOwner,
+}: PlaygroundProviderProps) => {
   const storeRef = useRef<PlaygroundStoreApi | null>(null);
-  storeRef.current = useMemo(() => createPlaygroundStore(initState), [initState?.isOwner]);
+  storeRef.current = useMemo(() => createPlaygroundStore(initialCode, isOwner), [isOwner]);
 
   return (
     <PlaygroundStoreContext.Provider value={storeRef.current}>
@@ -40,13 +42,13 @@ export const usePlaygroundStore = <T,>(selector: (store: PlaygroundStore) => T):
   return useStore(context, selector);
 };
 
-export const useAutomaton = () =>
+export const useAutomatonDesign = () =>
   usePlaygroundStore(
     useShallow(state => ({
       automaton: state.automaton,
       unsavedChanges: state.unsavedChanges,
       setAutomaton: state.setAutomaton,
-      updateAutomaton: state.updateAutomaton,
+      updateDesign: state.updateDesign,
       saveChanges: state.saveChanges,
     })),
   );

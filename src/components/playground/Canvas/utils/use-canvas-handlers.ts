@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useState } from 'react';
+
 import {
   applyEdgeChanges,
   applyNodeChanges,
@@ -8,35 +10,34 @@ import {
   type OnNodesChange,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import '@xyflow/react/dist/style.css';
 
 import { useAddTransitionPrompt } from '@/components/modal/add-transition';
 import { useToast } from '@/hooks/use-toast';
-import { useAutomaton, usePlaygroundMode } from '@/providers/playground-provider';
-import { useCallback, useEffect, useState } from 'react';
-import { fsmToFlow } from './transformations';
-import { TransitionEdgeType } from '../transition-edge';
+import { useAutomatonDesign, usePlaygroundMode } from '@/providers/playground-provider';
 
 export const useCanvasHandlers = () => {
-  const { automaton, updateAutomaton } = useAutomaton();
+  const { automaton, updateDesign } = useAutomatonDesign();
   const { mode } = usePlaygroundMode();
 
   const addTransitionPrompt = useAddTransitionPrompt();
+  const { toast } = useToast();
 
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
-  const { toast } = useToast();
-
   useEffect(() => {
-    const { nodes: newNodes, edges: newEdges } = fsmToFlow(automaton, nodes);
-    setNodes(newNodes);
-    setEdges(newEdges);
+    setNodes(prev => {
+      const selected = new Set(prev.filter(node => node.selected).map(node => node.id));
+      return automaton.nodes.map(node => ({ ...node, selected: selected.has(node.id) }));
+    });
+    setEdges(automaton.edges);
   }, [automaton]);
 
   const onNodesChange: OnNodesChange = useCallback(
     changes => {
       if (changes.some(change => change.type === 'position' && !change.dragging)) {
-        updateAutomaton(auto => {
+        updateDesign(auto => {
           changes.forEach(change => {
             if (change.type === 'position') {
               auto.moveState(Number(change.id), change.position!);
@@ -44,7 +45,7 @@ export const useCanvasHandlers = () => {
           });
         });
       } else if (changes.some(change => change.type === 'remove')) {
-        updateAutomaton(auto => {
+        updateDesign(auto => {
           changes.forEach(change => {
             if (change.type === 'remove') {
               if (Number(change.id) !== 0) {
@@ -62,17 +63,17 @@ export const useCanvasHandlers = () => {
         setNodes(nds => applyNodeChanges(changes, nds));
       }
     },
-    [setNodes, updateAutomaton],
+    [setNodes, updateDesign],
   );
 
   const onEdgesChange: OnEdgesChange = useCallback(
     changes => {
       if (changes.some(change => change.type === 'remove')) {
-        updateAutomaton(auto => {
+        updateDesign(auto => {
           changes.forEach(change => {
             if (change.type === 'remove') {
-              const [source, target] = change.id.split('->');
-              auto.removeTransition(Number(source), Number(target));
+              const [source, target] = change.id.split('->').map(Number);
+              auto.removeTransition(source, target);
             }
           });
         });
@@ -80,35 +81,26 @@ export const useCanvasHandlers = () => {
         setEdges(eds => applyEdgeChanges(changes, eds));
       }
     },
-    [setEdges, updateAutomaton],
+    [setEdges, updateDesign],
   );
 
   const onConnect: OnConnect = useCallback(
     async connection => {
-      const initialSymbols = automaton.getTransition(
-        Number(connection.source),
-        Number(connection.target),
-      );
-      const symbols = await addTransitionPrompt({
-        alphabet: automaton.alphabet,
-        initialSymbols,
-      });
-      if (!symbols) return;
-      updateAutomaton(auto => {
-        auto.removeTransition(Number(connection.source), Number(connection.target));
-        auto.addTransition(Number(connection.source), Number(connection.target), symbols);
+      const source = Number(connection.source);
+      const target = Number(connection.target);
+      const transitionData = await addTransitionPrompt({ source, target });
+      if (!transitionData) return;
+      updateDesign(auto => {
+        auto.removeTransition(source, target);
+        auto.addTransition(source, target, transitionData);
       });
     },
-    [automaton, updateAutomaton],
+    [updateDesign],
   );
 
   useEffect(() => {
-    if (mode !== 'states') {
-      setNodes(prev => prev.map(n => ({ ...n, selected: false })));
-    }
-    if (mode === 'simulation') {
-      setEdges(prev => prev.map(e => ({ ...e, selected: false })));
-    }
+    setNodes(prev => prev.map(n => ({ ...n, selected: false })));
+    setEdges(prev => prev.map(e => ({ ...e, selected: false })));
   }, [mode]);
 
   return {

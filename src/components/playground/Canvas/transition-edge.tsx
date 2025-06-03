@@ -1,31 +1,32 @@
 import { useAddTransitionPrompt } from '@/components/modal/add-transition';
 import { cn } from '@/lib/ui/utils';
 import {
-  useAutomaton,
+  useAutomatonDesign,
   usePlaygroundMode,
   useVisitedTransition,
 } from '@/providers/playground-provider';
 import { EdgeLabelRenderer, useInternalNode, type Edge, type EdgeProps } from '@xyflow/react';
 import { useEffect, useRef } from 'react';
 import { getPath } from './utils/graphics';
+import { type TransitionData } from '@/lib/automata/base/BaseState';
 
-export type TransitionEdgeType = Edge<{ symbols: string[] }>;
+export type TransitionEdgeType = Edge<{ transition: TransitionData[] }>;
 
 export function TransitionEdge({
   id,
-  source,
-  target,
+  source: sourceId,
+  target: targetId,
   style,
   data,
   selected,
 }: EdgeProps<TransitionEdgeType>) {
-  const sourceNode = useInternalNode(source);
-  const targetNode = useInternalNode(target);
+  const sourceNode = useInternalNode(sourceId);
+  const targetNode = useInternalNode(targetId);
 
   const animateRef = useRef<SVGAnimateMotionElement>(null);
 
   const addTransitionPrompt = useAddTransitionPrompt();
-  const { automaton, updateAutomaton } = useAutomaton();
+  const { automaton, updateDesign } = useAutomatonDesign();
   const { visitedTransition, simulationSpeed } = useVisitedTransition();
   const { mode } = usePlaygroundMode();
   const isInteractive = mode !== 'simulation' && mode !== 'viewer';
@@ -44,15 +45,13 @@ export function TransitionEdge({
 
   const handleEditTransition = async () => {
     if (!isInteractive) return;
-    const initialSymbols = automaton.getTransition(Number(source), Number(target));
-    const symbols = await addTransitionPrompt({
-      alphabet: automaton.alphabet,
-      initialSymbols,
-    });
-    if (!symbols) return;
-    updateAutomaton(auto => {
-      auto.removeTransition(Number(source), Number(target));
-      auto.addTransition(Number(source), Number(target), symbols);
+    const source = Number(sourceId);
+    const target = Number(targetId);
+    const transitionData = await addTransitionPrompt({ source, target });
+    if (!transitionData) return;
+    updateDesign(auto => {
+      auto.removeTransition(source, target);
+      auto.addTransition(source, target, transitionData);
     });
   };
 
@@ -109,7 +108,7 @@ export function TransitionEdge({
           )}
           onDoubleClick={handleEditTransition}
         >
-          {data?.symbols.join(',')}
+          {data?.transition.map(t => t.inputSymbol).join(',')}
         </div>
       </EdgeLabelRenderer>
     </>

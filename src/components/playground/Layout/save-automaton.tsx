@@ -15,12 +15,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useServerAction } from '@/hooks/use-server-action';
-import { useAutomaton, useIsOwner } from '@/providers/playground-provider';
+import { useAutomatonDesign, useIsOwner } from '@/providers/playground-provider';
 import { useSession } from '@/providers/user-provider';
 
 export function SaveAutomaton() {
   const { user, setOpenSignIn } = useSession();
-  const { automaton, unsavedChanges, saveChanges } = useAutomaton();
+  const { automaton, unsavedChanges, saveChanges } = useAutomatonDesign();
   const isOwner = useIsOwner();
 
   const [retry, setRetry] = useState(false);

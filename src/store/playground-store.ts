@@ -1,13 +1,13 @@
 import { createStore } from 'zustand/vanilla';
 
-import AutomatonExecutor from '@/lib/automata/AutomatonExecutor';
-import { FiniteStateMachine } from '@/lib/automata/FiniteStateMachine';
-import { AutomatonCode } from '@/lib/schemas/automaton-code';
+import AutomatonManager from '@/lib/automata/AutomatonManager';
+import { type AutomatonDesign, type BaseDesigner } from '@/lib/automata/base/BaseDesigner';
+import { type AutomatonCode } from '@/lib/schemas/automaton-code';
 
 export type PlaygroundMode = 'states' | 'transitions' | 'simulation' | 'viewer';
 
 export type PlaygroundState = {
-  automaton: FiniteStateMachine;
+  automaton: AutomatonDesign;
   mode: PlaygroundMode;
   isOwner: boolean;
   unsavedChanges: boolean;
@@ -23,7 +23,7 @@ export type PlaygroundState = {
 
 export type PlaygroundActions = {
   setAutomaton: (code: AutomatonCode) => void;
-  updateAutomaton: (callback: (automaton: FiniteStateMachine) => void) => void;
+  updateDesign: (callback: (designer: BaseDesigner) => void) => void;
   setMode: (newMode: PlaygroundMode) => void;
   saveChanges: () => void;
 
@@ -40,7 +40,7 @@ export type PlaygroundStore = PlaygroundState & PlaygroundActions;
 
 const defaultState: PlaygroundState = {
   mode: 'states',
-  automaton: new FiniteStateMachine(),
+  automaton: AutomatonManager.getDesigner().getDesign(),
   isOwner: true,
   unsavedChanges: false,
 
@@ -55,30 +55,29 @@ const defaultState: PlaygroundState = {
 
 let movementTimeout: NodeJS.Timeout | undefined = undefined;
 
-export const createPlaygroundStore = (initialState?: Partial<PlaygroundState>) => {
-  const initialStateWithDefaults = {
+export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner: boolean) => {
+  if (initialCode) AutomatonManager.switchTo(initialCode);
+
+  const initialState: PlaygroundState = {
     ...defaultState,
-    ...initialState,
+    isOwner,
+    mode: isOwner ? 'states' : 'viewer',
   };
-  AutomatonExecutor.setAutomaton(initialStateWithDefaults.automaton);
+
   return createStore<PlaygroundStore>()(set => ({
-    ...initialStateWithDefaults,
+    ...initialState,
     setMode: (newMode: PlaygroundMode) => set({ mode: newMode }),
     setAutomaton: (code: AutomatonCode) => {
-      if (code.type !== 'FSM') {
-        throw new Error('Automaton type not supported yet');
-      }
-      const automaton = new FiniteStateMachine(code.automaton);
-      AutomatonExecutor.setAutomaton(automaton);
-      set({ automaton, unsavedChanges: true });
-    },
-    updateAutomaton: callback => {
-      set(state => {
-        const newAutomaton = state.automaton.clone();
-        callback(newAutomaton);
-        AutomatonExecutor.setAutomaton(newAutomaton);
-        return { automaton: newAutomaton, unsavedChanges: true };
+      AutomatonManager.switchTo(code);
+      set({
+        automaton: AutomatonManager.getDesigner().getDesign(),
+        unsavedChanges: true,
       });
+    },
+    updateDesign: callback => {
+      const designer = AutomatonManager.getDesigner();
+      callback(designer);
+      set({ automaton: designer.getDesign(), unsavedChanges: true });
     },
     saveChanges: () => set({ unsavedChanges: false }),
 

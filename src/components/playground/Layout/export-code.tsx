@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Check, Copy, Download } from 'lucide-react';
 
@@ -15,15 +15,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useAutomaton } from '@/providers/playground-provider';
+import AutomatonManager from '@/lib/automata/AutomatonManager';
 
 export function ExportCode({ title }: { title?: string | null }) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
-
+  const [exportJson, setExportJson] = useState('');
   const [copied, setCopied] = useState(false);
-  const { automaton } = useAutomaton();
 
-  const exportJson = JSON.stringify({ type: 'FSM', automaton: automaton.toJson() }, null, 2);
+  useEffect(() => {
+    if (!isExportDialogOpen) return;
+    const json = JSON.stringify(AutomatonManager.getDesigner().toJson(), null, 2);
+    setExportJson(json);
+  }, [isExportDialogOpen]);
 
   const downloadJson = () => {
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(exportJson);

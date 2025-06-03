@@ -33,5 +33,5 @@ export abstract class BaseExecutor {
 
   abstract step(input: StepInput, stateName: string): StepResult;
 
-  abstract execute(inputString: string): ExecutionResult;
+  abstract execute(inputString: string, savePath?: boolean): ExecutionResult;
 }
