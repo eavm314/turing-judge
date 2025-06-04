@@ -1,14 +1,14 @@
 import { EPSILON } from '@/constants/symbols';
 import { FsmState, FsmTransitionData } from './FsmState';
-import { type JsonFSM, type JsonState } from '@/lib/schemas/finite-state-machine';
-import { AutomatonDesign, BaseDesigner } from '../base/BaseDesigner';
+import { type JsonFsm, type JsonFsmState } from '@/lib/schemas/finite-state-machine';
+import { AutomatonDesign, BaseDesigner } from '@/lib/automata/base/BaseDesigner';
 import { StateNodeType } from '@/components/playground/Canvas/state-node';
 import { TransitionEdgeType } from '@/components/playground/Canvas/transition-edge';
 
 export class FsmDesigner extends BaseDesigner {
   protected states: Map<number, FsmState>;
 
-  constructor(json: JsonFSM) {
+  constructor(json: JsonFsm) {
     super();
     this.states = new Map();
     this.alphabet = new Set(json.alphabet);
@@ -95,7 +95,7 @@ export class FsmDesigner extends BaseDesigner {
     return design;
   }
 
-  addState(name: string, stateJson: JsonState) {
+  addState(name: string, stateJson: JsonFsmState) {
     if (this.stateToIndex.get(name)) throw new Error('State already exists');
     const stateId = Math.max(...this.stateToIndex.values()) + 1;
 

@@ -1,4 +1,4 @@
-import { type JsonState } from '@/lib/schemas/finite-state-machine';
+import { type JsonFsmState } from '@/lib/schemas/finite-state-machine';
 import { FsmTransitionData } from '../finite-state-machine/FsmState';
 
 export type TransitionData = FsmTransitionData;
@@ -30,5 +30,5 @@ export abstract class BaseState {
     this.transitions.set(target, data);
   }
 
-  abstract toJson(): JsonState;
+  abstract toJson(): JsonFsmState;
 }

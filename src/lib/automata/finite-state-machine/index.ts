@@ -1,8 +1,8 @@
-import { type JsonFSM } from "@/lib/schemas/finite-state-machine";
+import { type JsonFsm } from "@/lib/schemas/finite-state-machine";
 import { FsmDesigner } from "./FsmDesigner";
 import { FsmExecutor } from "./FsmExecutor";
 
-const basicAutomata: JsonFSM = {
+const basicAutomata: JsonFsm = {
   alphabet: ["0", "1"],
   states: {
     q0: {
@@ -14,7 +14,7 @@ const basicAutomata: JsonFSM = {
   finals: [],
 };
 
-export const createFSM = (initialCode: JsonFSM = basicAutomata) => {
+export const createFSM = (initialCode: JsonFsm = basicAutomata) => {
   let designer: FsmDesigner | undefined;
   let executor: FsmExecutor;
   return {

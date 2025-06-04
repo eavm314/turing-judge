@@ -7,7 +7,7 @@ import { type JsonObject } from '@prisma/client/runtime/library';
 
 import { type AutomatonProjectItem } from '@/lib/schemas';
 import { auth } from '@/lib/auth';
-import { type JsonFSM } from '@/lib/schemas/finite-state-machine';
+import { type JsonFsm } from '@/lib/schemas/finite-state-machine';
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
 import { ServerActionResult } from '@/hooks/use-server-action';
@@ -60,7 +60,7 @@ export const createProjectAction = async (body: {
   title: string | null;
   type: AutomatonType;
   isPublic: boolean;
-  automaton: JsonFSM;
+  automaton: JsonFsm;
 }): Promise<ServerActionResult<string>> => {
   const session = await auth();
   if (!session?.user?.id) {
@@ -90,7 +90,7 @@ export const updateProjectAction = async (
     title?: string | null;
     type?: AutomatonType;
     isPublic?: boolean;
-    automaton?: JsonFSM;
+    automaton?: JsonFsm;
   },
 ): Promise<ServerActionResult> => {
   const session = await auth();

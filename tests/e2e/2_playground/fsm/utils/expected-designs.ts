@@ -1,7 +1,7 @@
 import { EPSILON } from '@/constants/symbols';
-import { type JsonFSM } from '@/lib/schemas/finite-state-machine';
+import { type JsonFsm } from '@/lib/schemas/finite-state-machine';
 
-export const basicAutomata: JsonFSM = {
+export const basicAutomata: JsonFsm = {
   alphabet: ['0', '1'],
   states: {
     q0: {},
@@ -10,7 +10,7 @@ export const basicAutomata: JsonFSM = {
   finals: [],
 };
 
-export const evenOnes: JsonFSM = {
+export const evenOnes: JsonFsm = {
   alphabet: ['0', '1'],
   states: {
     q0: {
@@ -30,7 +30,7 @@ export const evenOnes: JsonFSM = {
   finals: ['q0'],
 };
 
-export const endsWith01: JsonFSM = {
+export const endsWith01: JsonFsm = {
   alphabet: ['0', '1'],
   states: {
     q0: {
@@ -56,7 +56,7 @@ export const endsWith01: JsonFSM = {
   finals: ['q2'],
 };
 
-export const simpleNonDet: JsonFSM = {
+export const simpleNonDet: JsonFsm = {
   alphabet: ['0', '1'],
   states: {
     q0: {
@@ -71,7 +71,7 @@ export const simpleNonDet: JsonFSM = {
   finals: ['q2'],
 };
 
-export const epsilonTransitions: JsonFSM = {
+export const epsilonTransitions: JsonFsm = {
   alphabet: ['0', '1', EPSILON],
   states: {
     q0: {

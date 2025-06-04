@@ -1,4 +1,4 @@
-import { type JsonState } from '@/lib/schemas/finite-state-machine';
+import { type JsonFsmState } from '@/lib/schemas/finite-state-machine';
 import { type FsmDesigner } from './FsmDesigner';
 import { BaseState } from '../base/BaseState';
 
@@ -15,7 +15,7 @@ export class FsmState extends BaseState {
   automaton: FsmDesigner;
   selected: boolean;
 
-  constructor(automaton: FsmDesigner, name: string, json: JsonState) {
+  constructor(automaton: FsmDesigner, name: string, json: JsonFsmState) {
     super();
     this.selected = false;
     this.automaton = automaton;
@@ -34,7 +34,7 @@ export class FsmState extends BaseState {
     }
   }
 
-  toJson(): JsonState {
+  toJson(): JsonFsmState {
     const transitions = this.transitions.entries().reduce(
       (acc, [target, transition]) => {
         const targetName = this.automaton.getState(target).name;

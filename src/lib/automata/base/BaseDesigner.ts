@@ -1,7 +1,7 @@
 import { type StateNodeType } from '@/components/playground/Canvas/state-node';
 import { type TransitionEdgeType } from '@/components/playground/Canvas/transition-edge';
 import { type AutomatonCode } from '@/lib/schemas/automaton-code';
-import { type JsonState } from '@/lib/schemas/finite-state-machine';
+import { type JsonFsmState } from '@/lib/schemas/finite-state-machine';
 import { type BaseState, type TransitionData } from './BaseState';
 
 export interface AutomatonDesign {
@@ -85,7 +85,7 @@ export abstract class BaseDesigner {
 
   abstract getDesign(): AutomatonDesign;
 
-  abstract addState(name: string, stateJson: JsonState): void;
+  abstract addState(name: string, stateJson: JsonFsmState): void;
 
   abstract addTransition(from: number, to: number, data: TransitionData[]): void;
 

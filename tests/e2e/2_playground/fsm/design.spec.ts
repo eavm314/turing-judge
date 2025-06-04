@@ -1,5 +1,5 @@
 import { EPSILON } from '@/constants/symbols';
-import { type JsonFSM } from '@/lib/schemas/finite-state-machine';
+import { type JsonFsm } from '@/lib/schemas/finite-state-machine';
 import { expect, type Page, test } from '@playwright/test';
 import { addState, addTransition, moveState, switchFinal } from './utils/actions';
 import {
@@ -10,7 +10,7 @@ import {
   simpleNonDet,
 } from './utils/expected-designs';
 
-const compareJsonExport = async (page: Page, expected: JsonFSM) => {
+const compareJsonExport = async (page: Page, expected: JsonFsm) => {
   await page.getByRole('button', { name: 'Export' }).click();
 
   const jsonString = await page.getByTestId('editor-content').textContent();

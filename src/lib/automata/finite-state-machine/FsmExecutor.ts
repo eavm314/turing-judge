@@ -1,5 +1,5 @@
 import { EPSILON } from "@/constants/symbols";
-import { type JsonFSM } from "@/lib/schemas/finite-state-machine";
+import { type JsonFsm } from "@/lib/schemas/finite-state-machine";
 import {
   BaseExecutor,
   ExecutionConfig,
@@ -21,7 +21,7 @@ export class FsmExecutor extends BaseExecutor {
   finals: Set<string>;
   states: Map<string, Map<string, string[]>>;
 
-  constructor(initialAutomaton?: JsonFSM) {
+  constructor(initialAutomaton?: JsonFsm) {
     super();
     this.config = { depthLimit: 500, maxSteps: 10000 };
     this.steps = 0;
@@ -34,7 +34,7 @@ export class FsmExecutor extends BaseExecutor {
     }
   }
 
-  startAutomaton(automaton: JsonFSM): void {
+  startAutomaton(automaton: JsonFsm): void {
     this.initial = automaton.initial;
     this.finals = new Set(automaton.finals);
     for (const [name, state] of Object.entries(automaton.states)) {
