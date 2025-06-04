@@ -1,7 +1,7 @@
 import { AutomatonCode } from '../schemas/automaton-code';
 import { type Automaton } from './base';
 import { createFSM } from './finite-state-machine';
-// import { createPDA } from './pushdown-automaton';
+import { createPDA } from './pushdown-automaton';
 // import { createTM } from './turing-machine';
 
 class AutomatonManager {
@@ -15,6 +15,9 @@ class AutomatonManager {
     switch (initialCode.type) {
       case 'FSM':
         this.currentAutomaton = createFSM(initialCode.automaton);
+        break;
+      case 'PDA':
+        this.currentAutomaton = createPDA(initialCode.automaton);
         break;
       default:
         throw new Error(`Automaton type not supported yet: ${initialCode.type}`);

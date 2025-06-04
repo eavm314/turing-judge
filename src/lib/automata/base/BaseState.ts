@@ -1,7 +1,10 @@
 import { type JsonFsmState } from '@/lib/schemas/finite-state-machine';
-import { FsmTransitionData } from '../finite-state-machine/FsmState';
+import { type FsmTransitionData } from '../finite-state-machine/FsmState';
+import { type PdaTransitionData } from '../pushdown-automaton/PdaState';
+import { type JsonPdaState } from '@/lib/schemas/pushdown-automata';
 
-export type TransitionData = FsmTransitionData;
+export type JsonState = JsonFsmState | JsonPdaState;
+export type TransitionData = FsmTransitionData | PdaTransitionData;
 
 export abstract class BaseState {
   abstract id: number;
@@ -30,5 +33,5 @@ export abstract class BaseState {
     this.transitions.set(target, data);
   }
 
-  abstract toJson(): JsonFsmState;
+  abstract toJson(): JsonState;
 }
