@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { fromZodIssue } from 'zod-validation-error';
 
 import { fsmSchema } from './finite-state-machine';
+import { pdaSchema } from './pushdown-automata';
 
 export const automatonCodeSchema = z.discriminatedUnion('type', [
   z.object({
@@ -10,7 +11,7 @@ export const automatonCodeSchema = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal('PDA'),
-    automaton: z.object({}),
+    automaton: pdaSchema.optional(),
   }),
   z.object({
     type: z.literal('TM'),
@@ -24,7 +25,7 @@ export const validateCode = (code: string) => {
   try {
     const json = JSON.parse(code);
     const automaton = automatonCodeSchema.parse(json);
-    if (automaton.type !== 'FSM') {
+    if (automaton.type === 'TM') {
       return 'Automaton type not supported yet. Come back later!';
     }
     return '';
