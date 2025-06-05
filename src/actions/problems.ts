@@ -3,27 +3,43 @@
 import { revalidatePath } from 'next/cache';
 import { notFound, redirect } from 'next/navigation';
 
-import { type ProblemEditorItem, type ProblemSetItem, type ProblemView } from '@/lib/schemas';
+import { type ServerActionResult } from '@/hooks/use-server-action';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
+import { type ProblemEditorItem, type ProblemSetItem, type ProblemView } from '@/lib/schemas';
 import {
   problemSchema,
   updateProblemSchema,
   type ProblemSchema,
   type UpdateProblemSchema,
 } from '@/lib/schemas/problem-form';
-import { type ServerActionResult } from '@/hooks/use-server-action';
+import { ProblemSetOptions } from '@/lib/schemas/problem-set';
 
-export const getProblemSet = async (): Promise<ProblemSetItem[]> => {
-  const session = await auth();
+export const getProblemSet = async ({
+  take,
+  page,
+  sortKey,
+  direction,
+  search,
+  difficulty,
+}: ProblemSetOptions): Promise<ProblemSetItem[]> => {
   const results = await prisma.problem.findMany({
-    where: { OR: [{ isPublic: true }, { authorId: session?.user?.id }] },
+    where: {
+      isPublic: true,
+      difficulty,
+      title: {
+        contains: search,
+      },
+    },
     select: {
       id: true,
       title: true,
       difficulty: true,
       updatedAt: true,
     },
+    take,
+    skip: (page - 1) * take,
+    orderBy: { [sortKey]: direction },
   });
 
   return results;
