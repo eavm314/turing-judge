@@ -2,7 +2,7 @@ import { ProblemDifficulty } from '@prisma/client';
 import { z } from 'zod';
 
 export const optionsSchema = z.object({
-  take: z.coerce.number().min(1).max(40).catch(10).default(10),
+  take: z.coerce.number().min(1).max(40).catch(20).default(20),
   page: z.coerce.number().min(1).catch(1).default(1),
   sortKey: z.enum(['title', 'difficulty', 'updatedAt']).catch('updatedAt').default('updatedAt'),
   direction: z.enum(['asc', 'desc']).catch('desc').default('desc'),

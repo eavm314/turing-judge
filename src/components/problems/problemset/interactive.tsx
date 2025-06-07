@@ -5,8 +5,17 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 
 import { InputSearch, TableHeadButton } from '@/components/ui/my-table';
-
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
 import { TableRow } from '@/components/ui/table';
+import { cn } from '@/lib/ui/utils';
 
 export const ProblemsInputSearch = () => {
   const searchParams = useSearchParams();
@@ -14,7 +23,7 @@ export const ProblemsInputSearch = () => {
   const { replace } = useRouter();
 
   const handleSearch = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams();
     params.set('search', value);
     replace(`${pathname}?${params.toString()}`);
   };
@@ -62,5 +71,50 @@ export const SortableTableHeader = ({
         Published On {getSortIcon('updatedAt')}
       </TableHeadButton>
     </TableRow>
+  );
+};
+
+export const ProblemsPagination = ({ page, maxPages }: { page: number; maxPages: number }) => {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  const goTo = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', String(newPage));
+    replace(`${pathname}?${params.toString()}`);
+    // scrollTo(0, 100);
+  };
+
+  const pagesArray = [page - 1, page, page + 1].filter(p => p > 0 && p <= maxPages);
+
+  return (
+    <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious onClick={() => goTo(page - 1)} disabled={page <= 1} />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationEllipsis className={cn(pagesArray[0] <= 1 && 'hidden')} />
+        </PaginationItem>
+        {pagesArray.map(p => (
+          <PaginationItem key={p}>
+            <PaginationLink onClick={p === page ? undefined : () => goTo(p)} isActive={p === page}>
+              {p}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
+        <PaginationItem>
+          <PaginationEllipsis
+            className={cn(
+              (pagesArray.length == 0 || pagesArray[pagesArray.length - 1] >= maxPages) && 'hidden',
+            )}
+          />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext onClick={() => goTo(page + 1)} disabled={page >= maxPages} />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
   );
 };

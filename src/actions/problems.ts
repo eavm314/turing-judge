@@ -15,6 +15,22 @@ import {
 } from '@/lib/schemas/problem-form';
 import { ProblemSetOptions } from '@/lib/schemas/problem-set';
 
+export const getProblemsCount = async (
+  search: string,
+  difficulty: ProblemSetOptions['difficulty'],
+): Promise<number> => {
+  const count = await prisma.problem.count({
+    where: {
+      isPublic: true,
+      difficulty,
+      title: {
+        contains: search,
+      },
+    },
+  });
+  return count;
+};
+
 export const getProblemSet = async ({
   take,
   page,
@@ -23,7 +39,7 @@ export const getProblemSet = async ({
   search,
   difficulty,
 }: ProblemSetOptions): Promise<ProblemSetItem[]> => {
-  const results = await prisma.problem.findMany({
+  const problems = await prisma.problem.findMany({
     where: {
       isPublic: true,
       difficulty,
@@ -42,7 +58,7 @@ export const getProblemSet = async ({
     orderBy: { [sortKey]: direction },
   });
 
-  return results;
+  return problems;
 };
 
 export const getProblemView = async (id: string): Promise<ProblemView> => {
