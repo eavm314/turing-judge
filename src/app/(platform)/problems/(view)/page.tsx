@@ -1,6 +1,6 @@
 import { getProblemsCount, getProblemSet } from '@/actions/problems';
 import {
-  ProblemsInputSearch,
+  FiltersBar,
   ProblemsPagination,
   SortableTableHeader,
 } from '@/components/problems/problemset/interactive';
@@ -23,13 +23,9 @@ export default async function ProblemsPage({
   return (
     <main className="container flex-1 mx-auto py-6 px-4 scroll-smooth">
       <h1 className="mb-4">Problem Set</h1>
-      <div className="space-y-4">
-        <div>
-          <ProblemsInputSearch />
-        </div>
-
+      <div className="space-y-3">
+        <FiltersBar search={options.search} difficulty={options.difficulty ?? ''} />
         <Separator />
-
         <div className="text-sm text-muted-foreground">{problemsCount} problems found</div>
         <Table>
           <TableHeader>

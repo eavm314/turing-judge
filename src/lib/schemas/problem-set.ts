@@ -6,7 +6,7 @@ export const optionsSchema = z.object({
   page: z.coerce.number().min(1).catch(1).default(1),
   sortKey: z.enum(['title', 'difficulty', 'updatedAt']).catch('updatedAt').default('updatedAt'),
   direction: z.enum(['asc', 'desc']).catch('desc').default('desc'),
-  search: z.string().optional().catch(undefined).default(undefined),
+  search: z.string().catch('').default(''),
   difficulty: z
     .string()
     .transform(diff => ProblemDifficulty[diff.toUpperCase() as keyof typeof ProblemDifficulty])

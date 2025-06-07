@@ -1,9 +1,11 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, Eraser } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import { InputSearch, TableHeadButton } from '@/components/ui/my-table';
 import {
   Pagination,
@@ -14,21 +16,68 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/ui/utils';
+import { ProblemDifficulty } from '@prisma/client';
+import { DifficultyBadge } from '@/utils/badges';
 
-export const ProblemsInputSearch = () => {
-  const searchParams = useSearchParams();
+export const FiltersBar = ({ search, difficulty }: { search: string; difficulty: string }) => {
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const handleSearch = (value: string) => {
+  const [localSearch, setLocalSearch] = useState(search);
+  const [localDifficulty, setLocalDifficulty] = useState(difficulty);
+
+  useEffect(() => {
+    setLocalSearch(search);
+    setLocalDifficulty(difficulty);
+  }, [search, difficulty]);
+
+  const updateParams = (newSearch: string, newDiff: string) => {
     const params = new URLSearchParams();
-    params.set('search', value);
+    if (newSearch) params.set('search', newSearch);
+    if (newDiff) params.set('difficulty', newDiff);
     replace(`${pathname}?${params.toString()}`);
   };
+
   return (
-    <InputSearch defaultValue={searchParams.get('search')?.toString()} onEnter={handleSearch} />
+    <div className="flex flex-col sm:flex-row gap-4">
+      <InputSearch
+        value={localSearch}
+        onChange={e => setLocalSearch(e.target.value)}
+        onEnter={() => updateParams(localSearch, localDifficulty)}
+      />
+      <Select
+        value={localDifficulty || 'all'}
+        onValueChange={val => {
+          const newDiff = val === 'all' ? '' : val;
+          setLocalDifficulty(newDiff);
+          updateParams(localSearch, newDiff);
+        }}
+      >
+        <SelectTrigger className="w-[130px]">
+          {difficulty ? difficulty.at(0) + difficulty.slice(1).toLowerCase() : 'All'}
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All</SelectItem>
+          {Object.values(ProblemDifficulty).map(diff => (
+            <SelectItem key={diff} value={diff} textValue="aa">
+              <DifficultyBadge difficulty={diff} />
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Button variant="outline" size="icon" onClick={() => replace(pathname)}>
+        <Eraser size={16} />
+      </Button>
+    </div>
   );
 };
 
@@ -83,7 +132,6 @@ export const ProblemsPagination = ({ page, maxPages }: { page: number; maxPages:
     const params = new URLSearchParams(searchParams.toString());
     params.set('page', String(newPage));
     replace(`${pathname}?${params.toString()}`);
-    // scrollTo(0, 100);
   };
 
   const pagesArray = [page - 1, page, page + 1].filter(p => p > 0 && p <= maxPages);
