@@ -1,6 +1,7 @@
-import { getProblemSet } from '@/actions/problems';
+import { getProblemsCount, getProblemSet } from '@/actions/problems';
 import {
   ProblemsInputSearch,
+  ProblemsPagination,
   SortableTableHeader,
 } from '@/components/problems/problemset/interactive';
 import ProblemSetItem from '@/components/problems/problemset/item';
@@ -16,8 +17,11 @@ export default async function ProblemsPage({
 }) {
   const options = optionsSchema.parse(await searchParams);
 
+  const problemsCount = await getProblemsCount(options.search, options.difficulty);
+  const maxPages = Math.ceil(problemsCount / options.take);
+
   return (
-    <main className="container flex-1 mx-auto py-10 px-4">
+    <main className="container flex-1 mx-auto py-6 px-4 scroll-smooth">
       <h1 className="mb-4">Problem Set</h1>
       <div className="space-y-4">
         <div>
@@ -26,17 +30,16 @@ export default async function ProblemsPage({
 
         <Separator />
 
-        <div className="space-y-2">
-          {/* <div className="text-sm text-muted-foreground">{problems.length} problems found</div> */}
-          <Table>
-            <TableHeader>
-              <SortableTableHeader currentKey={options.sortKey} currentDir={options.direction} />
-            </TableHeader>
-            <TableBody>
-              <ProblemItems options={options} />
-            </TableBody>
-          </Table>
-        </div>
+        <div className="text-sm text-muted-foreground">{problemsCount} problems found</div>
+        <Table>
+          <TableHeader>
+            <SortableTableHeader currentKey={options.sortKey} currentDir={options.direction} />
+          </TableHeader>
+          <TableBody>
+            <ProblemItems options={options} />
+          </TableBody>
+        </Table>
+        <ProblemsPagination page={options.page} maxPages={maxPages} />
       </div>
     </main>
   );
