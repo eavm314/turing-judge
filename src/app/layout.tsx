@@ -6,7 +6,7 @@ import { ThemeProvider } from '@/providers/theme-provider';
 import { SessionProvider } from '@/providers/user-provider';
 import { auth } from '@/lib/auth';
 import { ModalProvider } from '@/providers/modal-provider';
-import { appName } from '@/constants/app';
+import { APP_NAME } from '@/constants/app';
 import { Toaster } from '@/components/ui/toaster';
 
 const orbitron = Orbitron({
@@ -16,7 +16,7 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  title: appName,
+  title: APP_NAME,
   description: 'Automaton Designer',
 };
 
