@@ -1,11 +1,6 @@
-import { EPSILON } from "@/constants/symbols";
-import { type JsonFsm } from "@/lib/schemas/finite-state-machine";
-import {
-  BaseExecutor,
-  ExecutionConfig,
-  type TransitionStep,
-} from "../base/BaseExecutor";
-import { type JsonPda } from "@/lib/schemas/pushdown-automata";
+import { EPSILON } from '@/constants/symbols';
+import { type JsonPda } from '@/lib/schemas/pushdown-automata';
+import { BaseExecutor, type TransitionStep } from '../base/BaseExecutor';
 
 interface ExecutionNode {
   state: string;
@@ -15,24 +10,28 @@ interface ExecutionNode {
 }
 
 export class PdaExecutor extends BaseExecutor {
-  config: ExecutionConfig;
   steps: number;
 
   initial: string;
   finals: Set<string>;
   states: Map<string, Map<string, string[]>>;
 
-  constructor(initialAutomaton?: JsonPda) {
+  constructor(initialAutomaton: JsonPda) {
     super();
-    this.config = { depthLimit: 500, maxSteps: 10000 };
     this.steps = 0;
     this.states = new Map<string, Map<string, string[]>>();
-    this.initial = "";
+    this.initial = '';
     this.finals = new Set<string>();
 
-    if (initialAutomaton) {
-      this.startAutomaton(initialAutomaton);
-    }
+    this.startAutomaton(initialAutomaton);
+  }
+
+  countStates(): number {
+    return this.states.size;
+  }
+
+  isDeterministic(): boolean {
+    return true;
   }
 
   startAutomaton(automaton: JsonPda): void {
@@ -76,6 +75,7 @@ export class PdaExecutor extends BaseExecutor {
   }
 
   execute(input: string, savePath: boolean = false) {
+    const config = this.getConfig();
     this.steps = 0;
     let depthLimitReached = false;
 
@@ -97,7 +97,7 @@ export class PdaExecutor extends BaseExecutor {
         };
       }
 
-      if (this.steps > this.config.maxSteps) {
+      if (this.steps > config.maxSteps) {
         return {
           accepted: false,
           depthLimitReached,
@@ -106,12 +106,12 @@ export class PdaExecutor extends BaseExecutor {
         };
       }
 
-      if (depth > this.config.depthLimit) {
+      if (depth > config.depthLimit) {
         depthLimitReached = true;
         continue;
       }
 
-      const symbol = input[inputPos] ?? "";
+      const symbol = input[inputPos] ?? '';
       const { consuming, epsilon } = this.step(symbol, state);
 
       // First, push epsilon transitions (they don't consume input)

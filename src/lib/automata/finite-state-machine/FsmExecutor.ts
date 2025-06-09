@@ -1,10 +1,6 @@
-import { EPSILON } from "@/constants/symbols";
-import { type JsonFsm } from "@/lib/schemas/finite-state-machine";
-import {
-  BaseExecutor,
-  ExecutionConfig,
-  type TransitionStep,
-} from "../base/BaseExecutor";
+import { EPSILON } from '@/constants/symbols';
+import { type JsonFsm } from '@/lib/schemas/finite-state-machine';
+import { BaseExecutor, type TransitionStep } from '../base/BaseExecutor';
 
 interface ExecutionNode {
   state: string;
@@ -14,24 +10,35 @@ interface ExecutionNode {
 }
 
 export class FsmExecutor extends BaseExecutor {
-  config: ExecutionConfig;
-  steps: number;
+  private steps: number;
 
-  initial: string;
-  finals: Set<string>;
-  states: Map<string, Map<string, string[]>>;
+  private initial: string;
+  private finals: Set<string>;
+  private states: Map<string, Map<string, string[]>>;
 
-  constructor(initialAutomaton?: JsonFsm) {
+  constructor(initialAutomaton: JsonFsm) {
     super();
-    this.config = { depthLimit: 500, maxSteps: 10000 };
     this.steps = 0;
     this.states = new Map<string, Map<string, string[]>>();
-    this.initial = "";
+    this.initial = '';
     this.finals = new Set<string>();
 
-    if (initialAutomaton) {
-      this.startAutomaton(initialAutomaton);
+    this.startAutomaton(initialAutomaton);
+  }
+
+  countStates(): number {
+    return this.states.size;
+  }
+
+  isDeterministic(): boolean {
+    for (const transitions of this.states.values()) {
+      for (const [symbol, targets] of transitions.entries()) {
+        if (symbol === EPSILON || targets.length > 1) {
+          return false;
+        }
+      }
     }
+    return true;
   }
 
   startAutomaton(automaton: JsonFsm): void {
@@ -75,6 +82,7 @@ export class FsmExecutor extends BaseExecutor {
   }
 
   execute(input: string, savePath: boolean = false) {
+    const config = this.getConfig();
     this.steps = 0;
     let depthLimitReached = false;
 
@@ -96,7 +104,7 @@ export class FsmExecutor extends BaseExecutor {
         };
       }
 
-      if (this.steps > this.config.maxSteps) {
+      if (this.steps > config.maxSteps) {
         return {
           accepted: false,
           depthLimitReached,
@@ -105,12 +113,12 @@ export class FsmExecutor extends BaseExecutor {
         };
       }
 
-      if (depth > this.config.depthLimit) {
+      if (depth > config.depthLimit) {
         depthLimitReached = true;
         continue;
       }
 
-      const symbol = input[inputPos] ?? "";
+      const symbol = input[inputPos] ?? '';
       const { consuming, epsilon } = this.step(symbol, state);
 
       // First, push epsilon transitions (they don't consume input)

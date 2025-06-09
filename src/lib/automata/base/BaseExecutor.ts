@@ -1,4 +1,3 @@
-
 export type TransitionStep = [string, string, string]; // [from, to, symbol]
 
 export interface ExecutionResult {
@@ -21,7 +20,11 @@ export type ExecutionConfig = {
 export type StepInput = string;
 
 export abstract class BaseExecutor {
-  abstract config: ExecutionConfig;
+  private config: ExecutionConfig;
+
+  constructor() {
+    this.config = { depthLimit: 500, maxSteps: 10000 };
+  }
 
   getConfig() {
     return this.config;
@@ -30,6 +33,10 @@ export abstract class BaseExecutor {
   setConfig(config: ExecutionConfig) {
     this.config = config;
   }
+
+  abstract countStates(): number;
+
+  abstract isDeterministic(): boolean;
 
   abstract step(input: StepInput, stateName: string): StepResult;
 

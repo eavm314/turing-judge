@@ -4,12 +4,11 @@ import { after } from 'next/server';
 
 import { type ServerActionResult } from '@/hooks/use-server-action';
 import { auth } from '@/lib/auth';
-import AutomatonExecutor from '@/lib/automata/AutomatonExecutor';
-import { FiniteStateMachine } from '@/lib/automata/FiniteStateMachine';
 import { prisma } from '@/lib/db/prisma';
 import { automatonCodeSchema, type AutomatonCode } from '@/lib/schemas/automaton-code';
 import { Status, Verdict } from '@prisma/client';
 import { rateLimiter } from '@/utils/rate-limit';
+import { AutomatonManager } from '@/lib/automata/AutomatonManager';
 
 export const getUserSubmissions = async (problemId: string) => {
   const session = await auth();
@@ -159,22 +158,21 @@ const verifySolution = async (id: number, problemId: string, solution: Automaton
     return;
   }
 
-  if (solution.type === 'FSM') {
-    const automaton = new FiniteStateMachine(solution.automaton);
-    if (!automaton.isDeterministic() && !problemTestData.allowNonDet) {
-      await setInvalidFormat(id, 'This problem does not accept non-deterministic solutions.');
-      return;
-    }
-    if (automaton.states.size > problemTestData.stateLimit) {
-      await setInvalidFormat(id, 'The automaton has more states than allowed.');
-      return;
-    }
-    AutomatonExecutor.setAutomaton(automaton);
-    AutomatonExecutor.setConfig({
-      depthLimit: problemTestData.depthLimit,
-      maxSteps: problemTestData.maxStepLimit,
-    });
+  const manager = new AutomatonManager(solution);
+  const executor = manager.getExecutor();
+
+  if (!executor.isDeterministic() && !problemTestData.allowNonDet) {
+    await setInvalidFormat(id, 'This problem does not accept non-deterministic solutions.');
+    return;
   }
+  if (executor.countStates() > problemTestData.stateLimit) {
+    await setInvalidFormat(id, 'The automaton has too many states.');
+    return;
+  }
+  executor.setConfig({
+    depthLimit: problemTestData.depthLimit,
+    maxSteps: problemTestData.maxStepLimit,
+  });
 
   const totalCases = problemTestData.testCases.length;
   let passedCases = 0;
@@ -182,7 +180,7 @@ const verifySolution = async (id: number, problemId: string, solution: Automaton
   let finalVerdict: Verdict = Verdict.ACCEPTED;
   let failedCaseData: FailedCaseData | null = null;
   for (const testCase of problemTestData.testCases) {
-    const result = AutomatonExecutor.execute(testCase.input);
+    const result = executor.execute(testCase.input);
     if (result.maxLimitReached) {
       finalVerdict = Verdict.STEP_LIMIT_EXCEEDED;
     }
