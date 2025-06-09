@@ -17,10 +17,11 @@ import {
 import { useServerAction } from '@/hooks/use-server-action';
 import { useAutomatonDesign, useIsOwner } from '@/providers/playground-provider';
 import { useSession } from '@/providers/user-provider';
+import { automatonManager } from '@/store/playground-store';
 
 export function SaveAutomaton() {
   const { user, setOpenSignIn } = useSession();
-  const { automaton, unsavedChanges, saveChanges } = useAutomatonDesign();
+  const { unsavedChanges, saveChanges } = useAutomatonDesign();
   const isOwner = useIsOwner();
 
   const [retry, setRetry] = useState(false);
@@ -67,11 +68,11 @@ export function SaveAutomaton() {
     if (!userInput) {
       return;
     }
+
     const id = await createProject.execute({
       title: userInput.title.trim() || null,
       isPublic: userInput.isPublic,
-      type: 'FSM',
-      automaton: automaton.toJson(),
+      automatonCode: automatonManager.getDesigner().toJson(),
     });
     if (id) {
       saveChanges();
@@ -82,7 +83,7 @@ export function SaveAutomaton() {
   const handleSave = async () => {
     if (automatonId && isOwner) {
       const result = await updateProject.execute(automatonId, {
-        automaton: automaton.toJson(),
+        automatonCode: automatonManager.getDesigner().toJson(),
       });
       if (result) saveChanges();
     } else {

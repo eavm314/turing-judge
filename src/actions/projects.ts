@@ -1,17 +1,17 @@
 'use server';
 
 import { notFound, redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
-import { type AutomatonType, type Project } from '@prisma/client';
+import { type Project } from '@prisma/client';
 import { type JsonObject } from '@prisma/client/runtime/library';
 
-import { type AutomatonProjectItem } from '@/lib/schemas';
-import { auth } from '@/lib/auth';
-import { type JsonFsm } from '@/lib/schemas/finite-state-machine';
-import { prisma } from '@/lib/db/prisma';
-import { revalidatePath } from 'next/cache';
-import { ServerActionResult } from '@/hooks/use-server-action';
 import { PROJECTS_LIMIT } from '@/constants/app';
+import { ServerActionResult } from '@/hooks/use-server-action';
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/db/prisma';
+import { type AutomatonProjectItem } from '@/lib/schemas';
+import { type AutomatonCode } from '@/lib/schemas/automaton-code';
 
 export const getAutomatonById = async (id: string): Promise<Project> => {
   const session = await auth();
@@ -59,9 +59,8 @@ export const getUserProjectsLight = async (): Promise<Partial<AutomatonProjectIt
 
 export const createProjectAction = async (body: {
   title: string | null;
-  type: AutomatonType;
   isPublic: boolean;
-  automaton: JsonFsm;
+  automatonCode: AutomatonCode;
 }): Promise<ServerActionResult<string>> => {
   const session = await auth();
   if (!session?.user?.id) {
@@ -84,9 +83,9 @@ export const createProjectAction = async (body: {
     data: {
       userId: session.user.id,
       title: body.title,
-      type: body.type,
+      type: body.automatonCode.type,
       isPublic: body.isPublic,
-      automaton: body.automaton as unknown as JsonObject,
+      automaton: body.automatonCode.automaton as unknown as JsonObject,
     },
   });
   revalidatePath('/library');
@@ -101,9 +100,8 @@ export const updateProjectAction = async (
   projectId: string,
   body: {
     title?: string | null;
-    type?: AutomatonType;
     isPublic?: boolean;
-    automaton?: JsonFsm;
+    automatonCode?: AutomatonCode;
   },
 ): Promise<ServerActionResult> => {
   const session = await auth();
@@ -122,9 +120,9 @@ export const updateProjectAction = async (
     where: { id: oldAutomaton.id },
     data: {
       title: body.title?.substring(0, 32),
-      type: body.type,
+      type: body.automatonCode?.type,
       isPublic: body.isPublic,
-      automaton: body.automaton as unknown as JsonObject,
+      automaton: body.automatonCode?.automaton as unknown as JsonObject,
     },
   });
   revalidatePath(`/playground/${projectId}`);
