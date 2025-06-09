@@ -4,7 +4,7 @@ import { createFSM } from './finite-state-machine';
 import { createPDA } from './pushdown-automaton';
 // import { createTM } from './turing-machine';
 
-class AutomatonManager {
+export class AutomatonManager {
   private currentAutomaton!: Automaton;
 
   constructor(initialCode: AutomatonCode) {
@@ -36,5 +36,3 @@ class AutomatonManager {
     return this.currentAutomaton.type;
   }
 }
-
-export default new AutomatonManager({ type: 'FSM' });

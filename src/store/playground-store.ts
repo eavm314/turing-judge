@@ -1,6 +1,6 @@
 import { createStore } from 'zustand/vanilla';
 
-import AutomatonManager from '@/lib/automata/AutomatonManager';
+import { AutomatonManager } from '@/lib/automata/AutomatonManager';
 import { type AutomatonDesign, type BaseDesigner } from '@/lib/automata/base/BaseDesigner';
 import { type AutomatonCode } from '@/lib/schemas/automaton-code';
 
@@ -38,9 +38,11 @@ export type PlaygroundActions = {
 
 export type PlaygroundStore = PlaygroundState & PlaygroundActions;
 
+export const automatonManager = new AutomatonManager({ type: 'FSM' });
+
 const defaultState: PlaygroundState = {
   mode: 'states',
-  automaton: AutomatonManager.getDesigner().getDesign(),
+  automaton: automatonManager.getDesigner().getDesign(),
   isOwner: true,
   unsavedChanges: false,
 
@@ -56,7 +58,7 @@ const defaultState: PlaygroundState = {
 let movementTimeout: NodeJS.Timeout | undefined = undefined;
 
 export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner: boolean) => {
-  if (initialCode) AutomatonManager.switchTo(initialCode);
+  if (initialCode) automatonManager.switchTo(initialCode);
 
   const initialState: PlaygroundState = {
     ...defaultState,
@@ -68,14 +70,14 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
     ...initialState,
     setMode: (newMode: PlaygroundMode) => set({ mode: newMode }),
     setAutomaton: (code: AutomatonCode) => {
-      AutomatonManager.switchTo(code);
+      automatonManager.switchTo(code);
       set({
-        automaton: AutomatonManager.getDesigner().getDesign(),
+        automaton: automatonManager.getDesigner().getDesign(),
         unsavedChanges: true,
       });
     },
     updateDesign: callback => {
-      const designer = AutomatonManager.getDesigner();
+      const designer = automatonManager.getDesigner();
       callback(designer);
       set({ automaton: designer.getDesign(), unsavedChanges: true });
     },

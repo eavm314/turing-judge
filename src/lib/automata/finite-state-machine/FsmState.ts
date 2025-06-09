@@ -3,7 +3,7 @@ import { type FsmDesigner } from './FsmDesigner';
 import { BaseState } from '../base/BaseState';
 
 export type FsmTransitionData = {
-  inputSymbol: string;
+  input: string;
 };
 
 export class FsmState extends BaseState {
@@ -29,7 +29,7 @@ export class FsmState extends BaseState {
       const targetId = automaton.stateToIndex.get(target)!;
       this.addTransition(
         targetId,
-        symbols.map(symbol => ({ inputSymbol: symbol })),
+        symbols.map(symbol => ({ input: symbol })),
       );
     }
   }
@@ -38,7 +38,7 @@ export class FsmState extends BaseState {
     const transitions = this.transitions.entries().reduce(
       (acc, [target, transition]) => {
         const targetName = this.automaton.getState(target).name;
-        acc[targetName] = transition.map(data => data.inputSymbol);
+        acc[targetName] = transition.map(data => data.input);
         return acc;
       },
       {} as Record<string, string[]>,

@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EPSILON } from '@/constants/symbols';
-import AutomatonManager from '@/lib/automata/AutomatonManager';
+import { automatonManager } from '@/store/playground-store';
 import { type TransitionData } from '@/lib/automata/base/BaseState';
 import { type CustomContentProps, useModal } from '@/providers/modal-provider';
 
@@ -24,7 +24,7 @@ const AddFsmTransition = ({
   const [alphabet, setAlphabet] = useState<string[]>([]);
 
   useEffect(() => {
-    const designer = AutomatonManager.getDesigner();
+    const designer = automatonManager.getDesigner();
     const { source, target } = data;
     const transition = designer.getTransition(source, target);
     setTransitionData(transition);
@@ -33,9 +33,9 @@ const AddFsmTransition = ({
 
   const handleSymbolToggle = (inputSymbol: string, checked: boolean) => {
     if (checked) {
-      setTransitionData(prev => [...prev, { inputSymbol }]);
+      setTransitionData(prev => [...prev, { input: inputSymbol }]);
     } else {
-      setTransitionData(prev => prev.filter(s => s.inputSymbol !== inputSymbol));
+      setTransitionData(prev => prev.filter(s => s.input !== inputSymbol));
     }
   };
 
@@ -49,8 +49,8 @@ const AddFsmTransition = ({
           <span className="text-muted-foreground italic">None</span>
         ) : (
           transitionData.map(data => (
-            <Badge key={data.inputSymbol} variant="outline" className="h-6 font-mono text-sm">
-              {data.inputSymbol}
+            <Badge key={data.input} variant="outline" className="h-6 font-mono text-sm">
+              {data.input}
             </Badge>
           ))
         )}
@@ -62,7 +62,7 @@ const AddFsmTransition = ({
             <div key={symbol} className="flex items-center space-x-2">
               <Checkbox
                 id={`symbol-${symbol}`}
-                checked={transitionData.map(t => t.inputSymbol).includes(symbol)}
+                checked={transitionData.map(t => t.input).includes(symbol)}
                 onCheckedChange={checked => handleSymbolToggle(symbol, checked === true)}
               />
               <Label htmlFor={`symbol-${symbol}`} className="font-mono">

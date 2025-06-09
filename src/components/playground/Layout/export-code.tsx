@@ -15,7 +15,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import AutomatonManager from '@/lib/automata/AutomatonManager';
+import { automatonManager } from '@/store/playground-store';
+
 
 export function ExportCode({ title }: { title?: string | null }) {
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
@@ -24,7 +25,7 @@ export function ExportCode({ title }: { title?: string | null }) {
 
   useEffect(() => {
     if (!isExportDialogOpen) return;
-    const json = JSON.stringify(AutomatonManager.getDesigner().toJson(), null, 2);
+    const json = JSON.stringify(automatonManager.getDesigner().toJson(), null, 2);
     setExportJson(json);
   }, [isExportDialogOpen]);
 

@@ -108,7 +108,7 @@ export function TransitionEdge({
           )}
           onDoubleClick={handleEditTransition}
         >
-          {data?.transition.map(t => t.inputSymbol).join(',')}
+          {data?.transition.map(t => t.input).join(',')}
         </div>
       </EdgeLabelRenderer>
     </>

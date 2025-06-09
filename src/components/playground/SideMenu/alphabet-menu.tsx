@@ -36,7 +36,7 @@ export default function AlphabetMenu() {
   };
 
   const handleRemoveFromAlphabet = (symbol: string) => {
-    const usedSymbols = new Set(automaton.edges.flatMap(edge => edge.data!.transition.map(t => t.inputSymbol)));
+    const usedSymbols = new Set(automaton.edges.flatMap(edge => edge.data!.transition.map(t => t.input)));
     if (usedSymbols.has(symbol)) {
       toast({
         title: 'Cannot remove symbol',

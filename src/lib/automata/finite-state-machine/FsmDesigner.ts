@@ -104,7 +104,7 @@ export class FsmDesigner extends BaseDesigner {
   }
 
   addTransition(from: number, to: number, data: FsmTransitionData[]) {
-    const symbSet = new Set(data.map(d => d.inputSymbol));
+    const symbSet = new Set(data.map(d => d.input));
     if (symbSet.difference(this.alphabet).size > 0) throw new Error('Symbols not in alphabet');
 
     const source = this.states.get(from);
@@ -118,7 +118,7 @@ export class FsmDesigner extends BaseDesigner {
       const seenSymbols = new Set<string>();
 
       for (const data of state.transitions.values()) {
-        for (const symbol of data.map(d => d.inputSymbol)) {
+        for (const symbol of data.map(d => d.input)) {
           if (symbol === EPSILON) return false;
           if (seenSymbols.has(symbol)) return false;
           seenSymbols.add(symbol);

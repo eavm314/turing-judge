@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { EPSILON } from '@/constants/symbols';
 import { useToast } from '@/hooks/use-toast';
-import AutomatonManager from '@/lib/automata/AutomatonManager';
+import { automatonManager } from '@/store/playground-store';
 import { usePlaygroundMode, useSimulation } from '@/providers/playground-provider';
 
 export default function SimulationMenu() {
@@ -32,7 +32,7 @@ export default function SimulationMenu() {
       return;
     }
 
-    const executor = AutomatonManager.getExecutor();
+    const executor = automatonManager.getExecutor();
     const { accepted, path } = executor.execute(word, true);
     if (!accepted) {
       toast({
