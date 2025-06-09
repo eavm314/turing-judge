@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ArrowRight, Cpu, PlayCircle, Save } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { APP_NAME } from '@/constants/app';
+import { appName } from '@/constants/app';
 
 export default async function HomePage() {
   return (
@@ -12,7 +12,7 @@ export default async function HomePage() {
         <div className="container px-4 md:px-6 mx-auto">
           <div className="flex flex-col items-center space-y-8 text-center">
             <div>
-              <h1 className="h-full text-2xl md:text-5xl font-orbitron text-primary">{APP_NAME}</h1>
+              <h1 className="h-full text-2xl md:text-5xl font-orbitron text-primary">{appName}</h1>
             </div>
             <h2 className="text-xl tracking-tighter md:text-3xl max-w-[800px]">
               Explore the world of formal languages and automata theory

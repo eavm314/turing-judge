@@ -30,15 +30,14 @@ export default function Submissions({ problemId }: { problemId: string }) {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
       <SubmitSolution onSubmit={handleRefresh} />
       <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-medium">Summary</h3>
+        <h3 className="text-2xl font-medium mb-2">Summary</h3>
         <Button variant="outline" size="icon" onClick={handleRefresh}>
           <RefreshCw size={20} className={loading ? 'animate-spin' : undefined} />
         </Button>
       </div>
-      <div className="text-sm text-muted-foreground">Last 50 submissions</div>
       <Table>
         <TableHeader>
           <TableRow className="md:text-base">

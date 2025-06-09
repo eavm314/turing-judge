@@ -3,62 +3,30 @@
 import { revalidatePath } from 'next/cache';
 import { notFound, redirect } from 'next/navigation';
 
-import { type ServerActionResult } from '@/hooks/use-server-action';
+import { type ProblemEditorItem, type ProblemSetItem, type ProblemView } from '@/lib/schemas';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
-import { type ProblemEditorItem, type ProblemSetItem, type ProblemView } from '@/lib/schemas';
 import {
   problemSchema,
   updateProblemSchema,
   type ProblemSchema,
   type UpdateProblemSchema,
 } from '@/lib/schemas/problem-form';
-import { ProblemSetOptions } from '@/lib/schemas/problem-set';
+import { type ServerActionResult } from '@/hooks/use-server-action';
 
-export const getProblemsCount = async (
-  search: string,
-  difficulty: ProblemSetOptions['difficulty'],
-): Promise<number> => {
-  const count = await prisma.problem.count({
-    where: {
-      isPublic: true,
-      difficulty,
-      title: {
-        contains: search,
-      },
-    },
-  });
-  return count;
-};
-
-export const getProblemSet = async ({
-  take,
-  page,
-  sortKey,
-  direction,
-  search,
-  difficulty,
-}: ProblemSetOptions): Promise<ProblemSetItem[]> => {
-  const problems = await prisma.problem.findMany({
-    where: {
-      isPublic: true,
-      difficulty,
-      title: {
-        contains: search,
-      },
-    },
+export const getProblemSet = async (): Promise<ProblemSetItem[]> => {
+  const session = await auth();
+  const results = await prisma.problem.findMany({
+    where: { OR: [{ isPublic: true }, { authorId: session?.user?.id }] },
     select: {
       id: true,
       title: true,
       difficulty: true,
       updatedAt: true,
     },
-    take,
-    skip: (page - 1) * take,
-    orderBy: { [sortKey]: direction },
   });
 
-  return problems;
+  return results;
 };
 
 export const getProblemView = async (id: string): Promise<ProblemView> => {

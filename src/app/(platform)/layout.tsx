@@ -4,7 +4,7 @@ import { Cpu, ExternalLink } from 'lucide-react';
 
 import { AccountMenu } from '@/components/layout/account-menu';
 import { DarkModeToggle } from '@/components/layout/dark-mode-toogle';
-import { APP_NAME } from '@/constants/app';
+import { appName } from '@/constants/app';
 
 export default function PlatformLayout({
   children,
@@ -17,7 +17,7 @@ export default function PlatformLayout({
         <nav className="mr-auto flex items-center">
           <Link className="flex items-center justify-center mr-8" href="/">
             <Cpu className="size-8 mr-2 text-primary" />
-            <span className="font-bold h-full text-xl font-orbitron text-primary">{APP_NAME}</span>
+            <span className="font-bold h-full text-xl font-orbitron text-primary">{appName}</span>
           </Link>
           <div className="flex items-center gap-6">
             <Link
@@ -43,7 +43,7 @@ export default function PlatformLayout({
       </header>
       {children}
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6">
-        <p className="text-xs text-muted-foreground">© 2025 {APP_NAME}</p>
+        <p className="text-xs text-muted-foreground">© 2025 {appName}</p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           {/* <Link className="text-xs hover:underline underline-offset-4" href="#">
             Terms of Service

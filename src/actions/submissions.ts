@@ -9,7 +9,6 @@ import { FiniteStateMachine } from '@/lib/automata/FiniteStateMachine';
 import { prisma } from '@/lib/db/prisma';
 import { automatonCodeSchema, type AutomatonCode } from '@/lib/schemas/automaton-code';
 import { Status, Verdict } from '@prisma/client';
-import { rateLimiter } from '@/utils/rate-limit';
 
 export const getUserSubmissions = async (problemId: string) => {
   const session = await auth();
@@ -24,16 +23,10 @@ export const getUserSubmissions = async (problemId: string) => {
       createdAt: true,
     },
     orderBy: { createdAt: 'desc' },
-    take: 50,
   });
 
   return results;
 };
-
-const submitLimiter = rateLimiter({
-  interval: 30 * 1000,
-  limit: 2,
-});
 
 export const submitSolutionAction = async (
   problemId: string,
@@ -43,11 +36,6 @@ export const submitSolutionAction = async (
   const session = await auth();
   if (!session?.user?.id) {
     return { success: false, message: 'User not authenticated' };
-  }
-
-  const canSubmit = submitLimiter(session.user.id);
-  if (!canSubmit) {
-    return { success: false, message: 'Please wait some seconds before submitting again.' };
   }
 
   let solutionCode;

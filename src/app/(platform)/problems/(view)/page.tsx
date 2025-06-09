@@ -1,52 +1,12 @@
-import { getProblemsCount, getProblemSet } from '@/actions/problems';
-import {
-  FiltersBar,
-  ProblemsPagination,
-  SortableTableHeader,
-} from '@/components/problems/problemset/interactive';
-import ProblemSetItem from '@/components/problems/problemset/item';
-import { EmptyTableRow } from '@/components/ui/my-table';
-import { Separator } from '@/components/ui/separator';
-import { Table, TableBody, TableHeader } from '@/components/ui/table';
-import { optionsSchema, type ProblemSetOptions } from '@/lib/schemas/problem-set';
+import { getProblemSet } from '@/actions/problems';
+import ProblemSet from '@/components/problems/problemset';
 
-export default async function ProblemsPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string>>;
-}) {
-  const options = optionsSchema.parse(await searchParams);
-
-  const problemsCount = await getProblemsCount(options.search, options.difficulty);
-  const maxPages = Math.ceil(problemsCount / options.take);
-
+export default async function ProblemsPage() {
+  const problems = await getProblemSet();
   return (
-    <main className="container flex-1 mx-auto py-6 px-4 scroll-smooth">
+    <main className="container flex-1 mx-auto py-10 px-4">
       <h1 className="mb-4">Problem Set</h1>
-      <div className="space-y-3">
-        <FiltersBar search={options.search} difficulty={options.difficulty ?? ''} />
-        <Separator />
-        <div className="text-sm text-muted-foreground">{problemsCount} problems found</div>
-        <Table>
-          <TableHeader>
-            <SortableTableHeader currentKey={options.sortKey} currentDir={options.direction} />
-          </TableHeader>
-          <TableBody>
-            <ProblemItems options={options} />
-          </TableBody>
-        </Table>
-        <ProblemsPagination page={options.page} maxPages={maxPages} />
-      </div>
+      <ProblemSet problems={problems} />
     </main>
-  );
-}
-
-async function ProblemItems({ options }: { options: ProblemSetOptions }) {
-  const problems = await getProblemSet(options);
-
-  return problems.length > 0 ? (
-    problems.map(problem => <ProblemSetItem key={problem.id} problem={problem} />)
-  ) : (
-    <EmptyTableRow colSpan={3} text="No problems found." />
   );
 }
