@@ -27,15 +27,33 @@ export const TableHeadButton = ({
 export const InputSearch = ({
   value,
   onChange,
+  onEnter,
+  defaultValue,
 }: {
-  value: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-}) => (
-  <div className="relative flex-1">
-    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-    <Input placeholder="Search..." className="pl-8" value={value} onChange={onChange} />
-  </div>
-);
+  value?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onEnter?: (value: string) => void;
+  defaultValue?: string;
+}) => {
+  const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+    if (e.key === 'Enter') {
+      onEnter?.(e.currentTarget.value);
+    }
+  };
+  return (
+    <div className="relative flex-1">
+      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <Input
+        placeholder="Search..."
+        className="pl-8"
+        value={value}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        defaultValue={defaultValue}
+      />
+    </div>
+  );
+};
 
 export const EmptyTableRow = ({ colSpan, text }: { colSpan: number; text: string }) => (
   <TableRow className="h-14 text-center text-muted-foreground">
