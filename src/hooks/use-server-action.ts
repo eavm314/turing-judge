@@ -29,6 +29,7 @@ export function useServerAction<Args extends any[], T>(
             title: 'Error',
             description: result.message,
             variant: 'destructive',
+            duration: 6000,
           });
           return false;
         }

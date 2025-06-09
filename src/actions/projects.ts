@@ -11,6 +11,7 @@ import { type JsonFSM } from '@/lib/schemas/finite-state-machine';
 import { prisma } from '@/lib/db/prisma';
 import { revalidatePath } from 'next/cache';
 import { ServerActionResult } from '@/hooks/use-server-action';
+import { PROJECTS_LIMIT } from '@/constants/app';
 
 export const getAutomatonById = async (id: string): Promise<Project> => {
   const session = await auth();
@@ -65,6 +66,18 @@ export const createProjectAction = async (body: {
   const session = await auth();
   if (!session?.user?.id) {
     return { success: false, message: 'User not authenticated' };
+  }
+
+  const limit = PROJECTS_LIMIT[session.user.role];
+  const count = await prisma.project.count({
+    where: { userId: session.user.id },
+  });
+
+  if (count >= limit) {
+    return {
+      success: false,
+      message: `You have reached the limit of ${limit} projects.`,
+    };
   }
 
   const savedAutomaton = await prisma.project.create({

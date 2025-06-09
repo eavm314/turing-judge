@@ -22,6 +22,8 @@ import { useModal } from '@/providers/modal-provider';
 import ProjectItem from './item';
 import { useToast } from '@/hooks/use-toast';
 import { useServerAction } from '@/hooks/use-server-action';
+import { useSession } from '@/providers/user-provider';
+import { PROJECTS_LIMIT } from '@/constants/app';
 
 type TableColumn = keyof AutomatonProjectItem;
 
@@ -37,6 +39,8 @@ export default function AutomatonProjects({
 
   const { showConfirm } = useModal();
   const deleteAutomaton = useServerAction(deleteAutomatonAction);
+
+  const { user } = useSession();
 
   const handleDeleteAutomaton = async (id: string) => {
     const confirmation = await showConfirm({
@@ -94,7 +98,7 @@ export default function AutomatonProjects({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex flex-col sm:flex-row gap-4">
         <InputSearch value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
         <Select
@@ -117,6 +121,7 @@ export default function AutomatonProjects({
 
       <Separator />
 
+      <div className="text-sm text-muted-foreground">{projectItems.length} / {PROJECTS_LIMIT[user!.role]} Projects</div>
       <Table>
         <TableHeader>
           <TableRow>
