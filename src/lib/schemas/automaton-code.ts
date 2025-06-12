@@ -15,7 +15,7 @@ export const automatonCodeSchema = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal('TM'),
-    automaton: z.object({}),
+    automaton: z.object({}).optional(),
   }),
 ]);
 

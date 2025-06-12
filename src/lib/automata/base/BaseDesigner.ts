@@ -4,6 +4,7 @@ import { type AutomatonCode } from '@/lib/schemas/automaton-code';
 import { type BaseState, type JsonState, type TransitionData } from './BaseState';
 
 export interface AutomatonDesign {
+  type: AutomatonCode['type'];
   nodes: StateNodeType[];
   edges: TransitionEdgeType[];
   alphabet: string[];

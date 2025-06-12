@@ -87,6 +87,7 @@ export class FsmDesigner extends BaseDesigner {
       .toArray();
 
     const design = {
+      type: 'FSM' as const,
       nodes,
       edges,
       alphabet: Array.from(this.alphabet).sort(),

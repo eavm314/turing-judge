@@ -89,6 +89,7 @@ export class PdaDesigner extends BaseDesigner {
       .toArray();
 
     const design = {
+      type: 'PDA' as const,
       nodes,
       edges,
       alphabet: Array.from(this.alphabet).sort(),
