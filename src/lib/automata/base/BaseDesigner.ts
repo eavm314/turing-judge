@@ -8,6 +8,7 @@ export interface AutomatonDesign {
   nodes: StateNodeType[];
   edges: TransitionEdgeType[];
   alphabet: string[];
+  stackAlphabet?: string[];
   isDeterministic: boolean;
 }
 

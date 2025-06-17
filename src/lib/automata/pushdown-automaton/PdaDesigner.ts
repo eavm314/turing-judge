@@ -1,6 +1,6 @@
 import { StateNodeType } from '@/components/playground/Canvas/state-node';
 import { TransitionEdgeType } from '@/components/playground/Canvas/transition-edge';
-import { EPSILON } from '@/constants/symbols';
+import { BOTTOM, EPSILON } from '@/constants/symbols';
 import { AutomatonDesign, BaseDesigner } from '@/lib/automata/base/BaseDesigner';
 import { type JsonPda, type JsonPdaState } from '@/lib/schemas/pushdown-automata';
 import { PdaState, type PdaTransitionData } from './PdaState';
@@ -92,7 +92,12 @@ export class PdaDesigner extends BaseDesigner {
       type: 'PDA' as const,
       nodes,
       edges,
-      alphabet: Array.from(this.alphabet).sort(),
+      alphabet: Array.from(this.alphabet).sort((a, b) =>
+        a === EPSILON ? -1 : b === EPSILON ? 1 : a.localeCompare(b),
+      ),
+      stackAlphabet: Array.from(this.stackAlphabet).sort((a, b) =>
+        a === BOTTOM ? -1 : b === BOTTOM ? 1 : a.localeCompare(b),
+      ),
       isDeterministic: this.isDeterministic(),
     };
     return design;
@@ -127,7 +132,7 @@ export class PdaDesigner extends BaseDesigner {
       for (const data of state.transitions.values()) {
         for (const transition of data) {
           if (transition.input === EPSILON) return false;
-          
+
           const pairKey = `${transition.input}|${transition.top}`;
           if (seenPairs.has(pairKey)) return false;
           seenPairs.add(pairKey);
@@ -135,5 +140,14 @@ export class PdaDesigner extends BaseDesigner {
       }
     }
     return true;
+  }
+
+  addStackSymbol(symbol: string) {
+    this.stackAlphabet.add(symbol);
+  }
+
+  removeStackSymbol(symbol: string) {
+    if (symbol === BOTTOM) return;
+    this.stackAlphabet.delete(symbol);
   }
 }

@@ -5,8 +5,7 @@ import { EPSILON } from '@/constants/symbols';
 export const alphabetSchema = z.array(
   z
     .string()
-    .min(1)
-    .max(1)
+    .length(1)
     .refine(symbol => /^[a-zA-Z0-9]+$/.test(symbol) || symbol === EPSILON, {
       message: `Symbols must be alphanumeric or "${EPSILON}"`,
     }),
