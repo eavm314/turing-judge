@@ -37,8 +37,8 @@
     --neutral: 0 0 98%;
     --neutral-foreground: 0 0% 2%;
 
-    --border: 184 86% 35%;
-    --input: 184 96% 45%;
+    --border: 184 86% 30%;
+    --input: 184 86% 38%;
     --ring: 184 86% 10%;
 
     --chart-1: 184 86% 25%;
@@ -80,7 +80,7 @@
     --neutral: 0 0 2%;
     --neutral-foreground: 0 0% 98%;
 
-    --border: 174 66% 40%;
+    --border: 174 66% 32%;
     --input: 174 66% 20%;
     --ring: 174 66% 90%;
 

@@ -15,7 +15,7 @@ import { SwitchType } from './switch-type';
 
 export function PlaygroundLayout({ data }: { data?: Project }) {
   return (
-    <header className="px-4 lg:px-6 min-h-12 flex items-center border-b border-input">
+    <header className="px-4 lg:px-6 min-h-12 flex items-center border-b">
       <nav className="mr-auto flex items-center gap-3">
         <Link className="flex items-center justify-center" href="/">
           <Cpu className="size-8 text-primary" />
