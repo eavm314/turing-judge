@@ -89,7 +89,7 @@ export function Modal() {
         {options.message && <DialogDescription>{options.message}</DialogDescription>}
 
         {modalType === 'prompt' && (
-          <div>
+          <div className='mb-2'>
             {options.inputLabel && (
               <Label htmlFor="modal-input" className="text-left font-light">
                 {options.inputLabel}

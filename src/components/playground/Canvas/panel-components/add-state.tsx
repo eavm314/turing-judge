@@ -11,6 +11,7 @@ export default function AddState() {
       title: 'Add State',
       inputLabel: 'Enter the name of the new state:',
       defaultValue: '',
+      className: 'gap-1',
       validator: value => {
         if (value.length < 1 || value.length > 3)
           return 'State name must contain 1 to 3 characters';

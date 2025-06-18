@@ -77,12 +77,15 @@ export class FsmDesigner extends BaseDesigner {
     const edges: TransitionEdgeType[] = this.states
       .values()
       .flatMap(state =>
-        state.transitions.entries().map(([target, transition]) => ({
-          id: `${state.id}->${target}`,
-          source: String(state.id),
-          target: String(target),
-          data: { transition },
-        })),
+        state.transitions
+          .entries()
+          .filter(([, tr]) => tr.length > 0)
+          .map(([target, transition]) => ({
+            id: `${state.id}->${target}`,
+            source: String(state.id),
+            target: String(target),
+            data: { transition },
+          })),
       )
       .toArray();
 
