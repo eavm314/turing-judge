@@ -36,7 +36,7 @@ export default function StackAlphabetMenu() {
       automaton.edges.flatMap(edge =>
         edge.data!.transition.flatMap(t => {
           const pt = t as PdaTransitionData;
-          return [pt.top, ...pt.push];
+          return [pt.pop, ...pt.push];
         }),
       ),
     );

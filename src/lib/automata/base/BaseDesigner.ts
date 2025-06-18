@@ -2,6 +2,7 @@ import { type StateNodeType } from '@/components/playground/Canvas/state-node';
 import { type TransitionEdgeType } from '@/components/playground/Canvas/transition-edge';
 import { type AutomatonCode } from '@/lib/schemas/automaton-code';
 import { type BaseState, type JsonState, type TransitionData } from './BaseState';
+import { EPSILON } from '@/constants/symbols';
 
 export interface AutomatonDesign {
   type: AutomatonCode['type'];
@@ -24,8 +25,10 @@ export abstract class BaseDesigner {
     return state;
   }
 
-  getAlphabet(): Set<string> {
-    return this.alphabet;
+  getAlphabet(): string[] {
+    return Array.from(this.alphabet).sort((a, b) =>
+      a === EPSILON ? -1 : b === EPSILON ? 1 : a.localeCompare(b),
+    );
   }
 
   addSymbol(symbol: string) {

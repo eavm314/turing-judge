@@ -21,7 +21,7 @@ const transitionsSchema = z
     z.array(
       z.object({
         input: z.string(),
-        top: z.string(),
+        pop: z.string(),
         push: z.array(z.string()).optional(),
       }),
     ),
@@ -85,10 +85,10 @@ export const pdaSchema = z
               code: z.ZodIssueCode.custom,
             });
           }
-          if (!stackAphabetSet.has(transition.top)) {
+          if (!stackAphabetSet.has(transition.pop)) {
             ctx.addIssue({
               path: ['states', stateName, 'transitions', target, 'top'],
-              message: `Symbol "${transition.top}" is not in the stack alphabet.`,
+              message: `Symbol "${transition.pop}" is not in the stack alphabet.`,
               code: z.ZodIssueCode.custom,
             });
           }

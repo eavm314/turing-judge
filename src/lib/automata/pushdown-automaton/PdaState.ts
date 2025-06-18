@@ -4,7 +4,7 @@ import { type PdaDesigner } from './PdaDesigner';
 
 export type PdaTransitionData = {
   input: string;
-  top: string;
+  pop: string;
   push: string[];
 };
 

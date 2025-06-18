@@ -4,6 +4,7 @@ import { BOTTOM, EPSILON } from '@/constants/symbols';
 import { AutomatonDesign, BaseDesigner } from '@/lib/automata/base/BaseDesigner';
 import { type JsonPda, type JsonPdaState } from '@/lib/schemas/pushdown-automata';
 import { PdaState, type PdaTransitionData } from './PdaState';
+import { TransitionData } from '../base/BaseState';
 
 export class PdaDesigner extends BaseDesigner {
   protected states: Map<number, PdaState>;
@@ -48,8 +49,8 @@ export class PdaDesigner extends BaseDesigner {
     const initial = this.states.get(0)!.name;
 
     const automaton = {
-      alphabet: Array.from(this.alphabet),
-      stackAlphabet: Array.from(this.stackAlphabet),
+      alphabet: this.getAlphabet(),
+      stackAlphabet: this.getStackAlphabet(),
       states,
       initial,
       finals,
@@ -92,12 +93,8 @@ export class PdaDesigner extends BaseDesigner {
       type: 'PDA' as const,
       nodes,
       edges,
-      alphabet: Array.from(this.alphabet).sort((a, b) =>
-        a === EPSILON ? -1 : b === EPSILON ? 1 : a.localeCompare(b),
-      ),
-      stackAlphabet: Array.from(this.stackAlphabet).sort((a, b) =>
-        a === BOTTOM ? -1 : b === BOTTOM ? 1 : a.localeCompare(b),
-      ),
+      alphabet: this.getAlphabet(),
+      stackAlphabet: this.getStackAlphabet(),
       isDeterministic: this.isDeterministic(),
     };
     return design;
@@ -113,7 +110,7 @@ export class PdaDesigner extends BaseDesigner {
 
   addTransition(from: number, to: number, data: PdaTransitionData[]) {
     const symbSet = new Set(data.map(d => d.input));
-    const stackSymbSet = new Set([...data.map(d => d.top), ...data.flatMap(d => d.push)]);
+    const stackSymbSet = new Set([...data.map(d => d.pop), ...data.flatMap(d => d.push)]);
     if (symbSet.difference(this.alphabet).size > 0) throw new Error('Symbols not in alphabet');
     if (stackSymbSet.difference(this.stackAlphabet).size > 0) {
       throw new Error('Stack symbols not in stack alphabet');
@@ -133,13 +130,19 @@ export class PdaDesigner extends BaseDesigner {
         for (const transition of data) {
           if (transition.input === EPSILON) return false;
 
-          const pairKey = `${transition.input}|${transition.top}`;
+          const pairKey = `${transition.input}|${transition.pop}`;
           if (seenPairs.has(pairKey)) return false;
           seenPairs.add(pairKey);
         }
       }
     }
     return true;
+  }
+
+  getStackAlphabet() {
+    return Array.from(this.stackAlphabet).sort((a, b) =>
+      a === BOTTOM ? -1 : b === BOTTOM ? 1 : a.localeCompare(b),
+    );
   }
 
   addStackSymbol(symbol: string) {
@@ -149,5 +152,9 @@ export class PdaDesigner extends BaseDesigner {
   removeStackSymbol(symbol: string) {
     if (symbol === BOTTOM) return;
     this.stackAlphabet.delete(symbol);
+  }
+
+  getTransition(from: number, to: number): PdaTransitionData[] {
+    return super.getTransition(from, to) as PdaTransitionData[];
   }
 }

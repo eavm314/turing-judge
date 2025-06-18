@@ -46,7 +46,7 @@ export class FsmDesigner extends BaseDesigner {
     const initial = this.states.get(0)!.name;
 
     const automaton = {
-      alphabet: Array.from(this.alphabet),
+      alphabet: this.getAlphabet(),
       states,
       initial,
       finals,
@@ -93,9 +93,7 @@ export class FsmDesigner extends BaseDesigner {
       type: 'FSM' as const,
       nodes,
       edges,
-      alphabet: Array.from(this.alphabet).sort((a, b) =>
-        a === EPSILON ? -1 : b === EPSILON ? 1 : a.localeCompare(b),
-      ),
+      alphabet: this.getAlphabet(),
       isDeterministic: this.isDeterministic(),
     };
     return design;
