@@ -25,6 +25,7 @@ import {
 import { StateNode } from './state-node';
 import { TransitionEdge } from './transition-edge';
 import { useCanvasHandlers } from './utils/use-canvas-handlers';
+import { SwitchType } from './panel-components/switch-type';
 
 const nodeTypes: NodeTypes = {
   state: StateNode,
@@ -75,14 +76,13 @@ export default function Canvas() {
       >
         <Controls position="bottom-right" />
         <Background color={theme === 'light' ? 'black' : 'white'} />
-        <Panel position="top-left">
+        <Panel position="top-left" className="flex flex-col gap-2">
           <PlaygroundMode />
+          {mode === 'states' && <AddState />}
         </Panel>
-        {mode === 'states' && (
-          <Panel position="top-center">
-            <AddState />
-          </Panel>
-        )}
+        <Panel position="top-center">
+          <SwitchType />
+        </Panel>
         <Panel position="top-right">
           <ControlsHelp />
         </Panel>

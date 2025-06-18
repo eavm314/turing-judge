@@ -6,12 +6,11 @@ import { Cpu } from 'lucide-react';
 import { AccountMenu } from '@/components/layout/account-menu';
 import { DarkModeToggle } from '@/components/layout/dark-mode-toogle';
 import { AutomatonTitle } from './automaton-title';
+import { ExamplesMenu } from './examples-menu';
 import { ExportCode } from './export-code';
 import { ImportCode } from './import-code';
 import { PublicSelect } from './public-select';
 import { SaveAutomaton } from './save-automaton';
-import { ExamplesMenu } from './examples-menu';
-import { SwitchType } from './switch-type';
 
 export function PlaygroundLayout({ data }: { data?: Project }) {
   return (
@@ -20,7 +19,6 @@ export function PlaygroundLayout({ data }: { data?: Project }) {
         <Link className="flex items-center justify-center" href="/">
           <Cpu className="size-8 text-primary" />
         </Link>
-        <SwitchType />
         {data && (
           <>
             <AutomatonTitle title={data.title} />

@@ -7,7 +7,6 @@ export default function PlaygroundMode() {
   return (
     <div>
       <div className="font-medium text-neutral-foreground mb-1 text-sm">Mode:</div>
-
       {mode === 'simulation' ? (
         <button
           disabled

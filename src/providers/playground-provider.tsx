@@ -23,7 +23,7 @@ export const PlaygroundStoreProvider = ({
   isOwner,
 }: PlaygroundProviderProps) => {
   const storeRef = useRef<PlaygroundStoreApi | null>(null);
-  storeRef.current = useMemo(() => createPlaygroundStore(initialCode, isOwner), [isOwner]);
+  storeRef.current = useMemo(() => createPlaygroundStore(initialCode, isOwner), [initialCode, isOwner]);
 
   return (
     <PlaygroundStoreContext.Provider value={storeRef.current}>

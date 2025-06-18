@@ -6,8 +6,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useModal } from '@/providers/modal-provider';
-import { useAutomatonDesign, useIsOwner } from '@/providers/playground-provider';
+import { useAutomatonDesign } from '@/providers/playground-provider';
 import { AutomatonType } from '@prisma/client';
+import { usePathname, useRouter } from 'next/navigation';
 
 const valueToText = {
   [AutomatonType.FSM]: 'Finite State Machine',
@@ -16,30 +17,38 @@ const valueToText = {
 };
 
 export function SwitchType() {
-  const { automaton, setAutomaton } = useAutomatonDesign();
-  const isOwner = useIsOwner();
+  const { automaton } = useAutomatonDesign();
 
   const { showConfirm } = useModal();
+  const pathname = usePathname();
+  const router = useRouter();
 
   const handleSelectChange = async (value: AutomatonType) => {
     const confirmation = await showConfirm({
-      title: `Switch to ${valueToText[value]}`,
+      title: 'Save your changes',
       message: `Please save your design before switching the automaton type. This will reset the automaton.`,
       confirmLabel: 'Switch',
       cancelLabel: 'Cancel',
     });
     if (!confirmation) return;
-    setAutomaton({type: value})
+    const params = new URLSearchParams();
+    params.set('type', value.toLowerCase());
+    router.replace(`${pathname}?${params.toString()}`);
   };
+  
   return (
-    <Select disabled={!isOwner} value={automaton.type} onValueChange={handleSelectChange}>
-      <SelectTrigger className="w-20 disabled:opacity-100">
+    <Select
+      disabled={pathname.split('/').length > 2}
+      value={automaton.type}
+      onValueChange={handleSelectChange}
+    >
+      <SelectTrigger className="w-48 disabled:opacity-100 bg-muted text-accent-foreground font-semibold border-none">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         {Object.values(AutomatonType).map(type => (
           <SelectItem key={type} value={type}>
-            {type}
+            {valueToText[type]}
           </SelectItem>
         ))}
       </SelectContent>

@@ -40,12 +40,7 @@ export type PlaygroundStore = PlaygroundState & PlaygroundActions;
 
 export const automatonManager = new AutomatonManager({ type: 'FSM' });
 
-const defaultState: PlaygroundState = {
-  mode: 'states',
-  automaton: automatonManager.getDesigner().getDesign(),
-  isOwner: true,
-  unsavedChanges: false,
-
+const defaultState = {
   translation: 0,
   simulationSpeed: 700,
   simulationWord: '',
@@ -59,9 +54,11 @@ let movementTimeout: NodeJS.Timeout | undefined = undefined;
 
 export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner: boolean) => {
   if (initialCode) automatonManager.switchTo(initialCode);
-
+  
   const initialState: PlaygroundState = {
     ...defaultState,
+    unsavedChanges: false,
+    automaton: automatonManager.getDesigner().getDesign(),
     isOwner,
     mode: isOwner ? 'states' : 'viewer',
   };

@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
-import { type Project } from '@prisma/client';
+import { AutomatonType, type Project } from '@prisma/client';
 import { Loader } from 'lucide-react';
 
 import { PlaygroundLayout } from '@/components/playground/Layout';
@@ -22,7 +22,13 @@ const Canvas = dynamic(() => import('@/components/playground/Canvas'), {
   loading: LoadingCanvas,
 });
 
-export default function Playground({ data }: { data?: Project }) {
+export default function Playground({
+  data,
+  initialType,
+}: {
+  data?: Project;
+  initialType?: AutomatonType;
+}) {
   const { user } = useSession();
   const isOwner = data ? user?.id === data.userId : true;
 
@@ -38,6 +44,10 @@ export default function Playground({ data }: { data?: Project }) {
       console.error('Invalid automaton code:', parsedCode.error);
       console.log('Resetting to default Automaton...');
     }
+  } else {
+    automatonCode = {
+      type: initialType || 'FSM',
+    };
   }
 
   return (
