@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { ArrowRight, Plus, Trash2, X } from 'lucide-react';
+import { ArrowRight, Edit, Plus, Trash2, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -148,7 +148,7 @@ const AddPdaTransition = ({
 
   const formatTransition = (transition: PdaTransitionData) => {
     const pushStr = transition.push.length === 0 ? EPSILON : transition.push.join('');
-    return `${transition.input}, ${transition.pop} → ${pushStr}`;
+    return `${transition.input}, ${transition.pop} / ${pushStr}`;
   };
 
   if (value === null) return null;
@@ -169,6 +169,7 @@ const AddPdaTransition = ({
                 }));
               }}
               key={`input-${transitions.length}`}
+              value={currentTransition.input}
             >
               <SelectTrigger className="w-16 h-10 font-mono text-lg" data-transition-select>
                 <SelectValue placeholder="?" />
@@ -195,6 +196,7 @@ const AddPdaTransition = ({
                 }));
               }}
               key={`pop-${transitions.length}`}
+              value={currentTransition.pop}
             >
               <SelectTrigger className="w-16 h-10 font-mono text-lg" data-transition-select>
                 <SelectValue placeholder="?" />
@@ -217,10 +219,7 @@ const AddPdaTransition = ({
               {currentTransition.push.length > 0 ? (
                 <div className="flex flex-wrap gap-1 min-h-[40px] items-center justify-center border rounded-md p-2 bg-background min-w-[80px]">
                   {currentTransition.push.map((symbol, index) => (
-                    <Badge
-                      key={index}
-                      variant="outline" className="h-6 font-mono text-sm"
-                    >
+                    <Badge key={index} variant="outline" className="h-6 font-mono text-sm">
                       {symbol}
                       <button
                         onClick={() => handleRemovePushSymbol(symbol)}
@@ -275,25 +274,37 @@ const AddPdaTransition = ({
           <Separator />
           <div className="space-y-2">
             <h4 className="text-sm font-medium">Added Transitions ({transitions.length})</h4>
-            <div className="space-y-2 max-h-40 overflow-y-auto">
-              {transitions.map((transition, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between py-1 px-3 border rounded bg-background"
-                >
-                  <span className="font-mono text-sm">
-                    {formatTransition(transition)}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleRemoveTransition(index)}
-                    className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+            <ScrollArea type="always" className="h-32 px-4">
+              <div className="space-y-2">
+                {transitions.map((transition, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between py-1 px-3 border rounded bg-background"
                   >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
+                    <span className="font-mono text-sm">{formatTransition(transition)}</span>
+                    <div className="space-x-1">
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setCurrentTransition(transition);
+                          handleRemoveTransition(index);
+                        }}
+                        className="h-6 w-6 p-0"
+                      >
+                        <Edit className="size-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleRemoveTransition(index)}
+                        className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
           </div>
         </>
       )}

@@ -35,14 +35,14 @@ export function SwitchType() {
     params.set('type', value.toLowerCase());
     router.replace(`${pathname}?${params.toString()}`);
   };
-  
+
   return (
     <Select
       disabled={pathname.split('/').length > 2}
       value={automaton.type}
       onValueChange={handleSelectChange}
     >
-      <SelectTrigger className="w-48 disabled:opacity-100 bg-muted text-accent-foreground font-semibold border-none">
+      <SelectTrigger className="w-48 disabled:opacity-100 bg-muted text-accent-foreground font-semibold">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

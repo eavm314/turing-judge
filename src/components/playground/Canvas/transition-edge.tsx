@@ -9,6 +9,8 @@ import { EdgeLabelRenderer, useInternalNode, type Edge, type EdgeProps } from '@
 import { useEffect, useRef } from 'react';
 import { getPath } from './utils/graphics';
 import { type TransitionData } from '@/lib/automata/base/BaseState';
+import { PdaTransitionData } from '@/lib/automata/pushdown-automaton/PdaState';
+import { EPSILON } from '@/constants/symbols';
 
 export type TransitionEdgeType = Edge<{ transition: TransitionData[] }>;
 
@@ -103,12 +105,25 @@ export function TransitionEdge({
             pointerEvents: isInteractive ? 'all' : 'none',
           }}
           className={cn(
-            'nopan bg-background px-2 border rounded-md cursor-pointer font-mono',
+            'nopan bg-background px-2 border rounded-md cursor-pointer font-mono z-10',
             selected ? 'border-green-500' : 'border-foreground',
           )}
           onDoubleClick={handleEditTransition}
         >
-          {data?.transition.map(t => t.input).join(',')}
+          {automaton.type === 'FSM' && data!.transition.map(t => t.input).join(',')}
+          {automaton.type === 'PDA' && (
+            <>
+              {data!.transition.map((t, i) => {
+                const pt = t as PdaTransitionData;
+                const text = `${t.input},${pt.pop}/${pt.push.length > 0 ? pt.push.join('') : EPSILON}`;
+                if (!selected && i > 0) return null;
+                return <p key={text}>{text}</p>;
+              })}
+              {!selected && data!.transition.length > 1 && (
+                <div className="text-center -mt-3">...</div>
+              )}
+            </>
+          )}
         </div>
       </EdgeLabelRenderer>
     </>
