@@ -98,6 +98,7 @@ export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
     let lastPath: PdaStep[] = [];
 
     while (executionStack.length > 0) {
+      steps++;
       const { state, inputPos, stack, path, depth } = executionStack.pop()!;
       lastPath = path;
       if (inputPos === word.length && this.finals.has(state) && stack.length > 0) {
