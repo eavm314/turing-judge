@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { fromZodIssue } from 'zod-validation-error';
 
 import { fsmSchema } from './finite-state-machine';
-import { pdaSchema } from './pushdown-automata';
+import { pdaSchema } from './pushdown-automaton';
 
 export const automatonCodeSchema = z.discriminatedUnion('type', [
   z.object({

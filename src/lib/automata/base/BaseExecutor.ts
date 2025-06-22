@@ -1,26 +1,26 @@
-export type TransitionStep = [string, string, string]; // [from, to, symbol]
+export interface Step<TransInput, TransOutput> {
+  input: TransInput;
+  output: TransOutput;
+}
 
-export interface ExecutionResult {
+export interface ExecutionResult<TransInput, TransOutput> {
   accepted: boolean;
   depthLimitReached: boolean;
   maxLimitReached: boolean;
-  path: TransitionStep[];
+  path: Step<TransInput, TransOutput>[];
 }
 
-export type StepResult = {
-  consuming: TransitionStep[]; // [from, to, symbol]
-  epsilon: TransitionStep[]; // [from, to, "ε"]
-};
-
-export type ExecutionConfig = {
+export interface ExecutionConfig {
   depthLimit: number;
   maxSteps: number;
-};
+}
 
-export type StepInput = string;
-
-export abstract class BaseExecutor {
+export abstract class BaseExecutor<TransInput, TransOutput> {
   private config: ExecutionConfig;
+
+  protected initial!: string;
+  protected finals!: Set<string>;
+  protected states!: Map<string, Map<string, TransOutput[]>>;
 
   constructor() {
     this.config = { depthLimit: 500, maxSteps: 10000 };
@@ -34,11 +34,16 @@ export abstract class BaseExecutor {
     this.config = config;
   }
 
-  abstract countStates(): number;
+  countStates(): number {
+    return this.states.size;
+  }
 
   abstract isDeterministic(): boolean;
 
-  abstract step(input: StepInput, stateName: string): StepResult;
+  abstract transFn(input: TransInput): TransOutput[];
 
-  abstract execute(inputString: string, savePath?: boolean): ExecutionResult;
+  abstract execute(
+    inputString: string,
+    savePath: boolean,
+  ): ExecutionResult<TransInput, TransOutput>;
 }

@@ -1,4 +1,4 @@
-import { type JsonPdaState } from '@/lib/schemas/pushdown-automata';
+import { type JsonPdaState } from '@/lib/schemas/pushdown-automaton';
 import { BaseState } from '../base/BaseState';
 import { type PdaDesigner } from './PdaDesigner';
 

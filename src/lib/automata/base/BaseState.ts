@@ -1,7 +1,7 @@
 import { type JsonFsmState } from '@/lib/schemas/finite-state-machine';
 import { type FsmTransitionData } from '../finite-state-machine/FsmState';
 import { type PdaTransitionData } from '../pushdown-automaton/PdaState';
-import { type JsonPdaState } from '@/lib/schemas/pushdown-automata';
+import { type JsonPdaState } from '@/lib/schemas/pushdown-automaton';
 
 export type JsonState = JsonFsmState | JsonPdaState;
 export type TransitionData = FsmTransitionData | PdaTransitionData;

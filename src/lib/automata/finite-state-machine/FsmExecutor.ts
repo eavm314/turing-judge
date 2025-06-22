@@ -1,33 +1,27 @@
 import { EPSILON } from '@/constants/symbols';
 import { type JsonFsm } from '@/lib/schemas/finite-state-machine';
-import { BaseExecutor, type TransitionStep } from '../base/BaseExecutor';
+import { BaseExecutor, type Step } from '../base/BaseExecutor';
+
+type FsmInput = {
+  state: string;
+  symbol: string;
+};
+
+type FsmOutput = string; // Target state name
+
+type FsmStep = Step<FsmInput, FsmOutput>;
 
 interface ExecutionNode {
   state: string;
   inputPos: number;
-  path: TransitionStep[];
+  path: FsmStep[];
   depth: number;
 }
 
-export class FsmExecutor extends BaseExecutor {
-  private steps: number;
-
-  private initial: string;
-  private finals: Set<string>;
-  private states: Map<string, Map<string, string[]>>;
-
+export class FsmExecutor extends BaseExecutor<FsmInput, FsmOutput> {
   constructor(initialAutomaton: JsonFsm) {
     super();
-    this.steps = 0;
-    this.states = new Map<string, Map<string, string[]>>();
-    this.initial = '';
-    this.finals = new Set<string>();
-
     this.startAutomaton(initialAutomaton);
-  }
-
-  countStates(): number {
-    return this.states.size;
   }
 
   isDeterministic(): boolean {
@@ -42,8 +36,11 @@ export class FsmExecutor extends BaseExecutor {
   }
 
   startAutomaton(automaton: JsonFsm): void {
+    this.states = new Map();
+
     this.initial = automaton.initial;
     this.finals = new Set(automaton.finals);
+
     for (const [name, state] of Object.entries(automaton.states)) {
       const transitions = new Map<string, string[]>();
       for (const [target, symbols] of Object.entries(state.transitions ?? {})) {
@@ -58,40 +55,25 @@ export class FsmExecutor extends BaseExecutor {
     }
   }
 
-  step(inputSymbol: string, stateName: string) {
-    this.steps++;
-    const consuming: TransitionStep[] = [];
-    const epsilon: TransitionStep[] = [];
+  transFn(input: FsmInput): FsmOutput[] {
+    const transitions = this.states.get(input.state);
 
-    const state = this.states.get(stateName);
-    if (!state) throw new Error(`State ${stateName} not found`);
-
-    // Transitions that consume the current symbol
-    const targets = state.get(inputSymbol) || [];
-    for (const target of targets) {
-      consuming.push([stateName, target, inputSymbol]);
-    }
-
-    // Epsilon transitions
-    const epsilonTargets = state.get(EPSILON) || [];
-    for (const target of epsilonTargets) {
-      epsilon.push([stateName, target, EPSILON]);
-    }
-
-    return { consuming, epsilon };
+    const targets = transitions?.get(input.symbol) ?? [];
+    return targets;
   }
 
   execute(input: string, savePath: boolean = false) {
-    const config = this.getConfig();
-    this.steps = 0;
+    let steps = 0;
     let depthLimitReached = false;
+    const config = this.getConfig();
 
     const stack: ExecutionNode[] = [];
     stack.push({ state: this.initial, inputPos: 0, path: [], depth: 0 });
 
-    let lastPath: TransitionStep[] = [];
+    let lastPath: FsmStep[] = [];
 
     while (stack.length > 0) {
+      steps++;
       const { state, inputPos, path, depth } = stack.pop()!;
       lastPath = path;
 
@@ -104,7 +86,7 @@ export class FsmExecutor extends BaseExecutor {
         };
       }
 
-      if (this.steps > config.maxSteps) {
+      if (steps > config.maxSteps) {
         return {
           accepted: false,
           depthLimitReached,
@@ -118,26 +100,33 @@ export class FsmExecutor extends BaseExecutor {
         continue;
       }
 
-      const symbol = input[inputPos] ?? '';
-      const { consuming, epsilon } = this.step(symbol, state);
-
       // First, push epsilon transitions (they don't consume input)
-      for (const [from, to, transitionSymbol] of epsilon) {
+      const epsilonTargets = this.transFn({ state, symbol: EPSILON });
+      for (const target of epsilonTargets) {
+        const currentStep: FsmStep = {
+          input: { state, symbol: EPSILON },
+          output: target,
+        };
         stack.push({
-          state: to,
-          inputPos: inputPos, // No change in position since epsilon doesn't consume input
-          path: savePath ? [...path, [from, to, transitionSymbol]] : [],
+          state: target,
+          inputPos, // No change in position since it's an epsilon transition
+          path: savePath ? [...path, currentStep] : [],
           depth: depth + 1,
         });
       }
 
       // Then, push consuming transitions (they consume the input symbol)
-      for (const [from, to, transitionSymbol] of consuming) {
-        const nextInputPos = inputPos + 1;
+      const symbol = input[inputPos] ?? '';
+      const targets = this.transFn({ state, symbol });
+      for (const target of targets) {
+        const currentStep: FsmStep = {
+          input: { state, symbol },
+          output: target,
+        };
         stack.push({
-          state: to,
-          inputPos: nextInputPos,
-          path: savePath ? [...path, [from, to, transitionSymbol]] : [],
+          state: target,
+          inputPos: inputPos + 1,
+          path: savePath ? [...path, currentStep] : [],
           depth: depth + 1,
         });
       }

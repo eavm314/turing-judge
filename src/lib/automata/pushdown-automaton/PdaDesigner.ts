@@ -2,7 +2,7 @@ import { StateNodeType } from '@/components/playground/Canvas/state-node';
 import { TransitionEdgeType } from '@/components/playground/Canvas/transition-edge';
 import { BOTTOM, EPSILON } from '@/constants/symbols';
 import { AutomatonDesign, BaseDesigner } from '@/lib/automata/base/BaseDesigner';
-import { type JsonPda, type JsonPdaState } from '@/lib/schemas/pushdown-automata';
+import { type JsonPda, type JsonPdaState } from '@/lib/schemas/pushdown-automaton';
 import { PdaState, type PdaTransitionData } from './PdaState';
 import { TransitionData } from '../base/BaseState';
 

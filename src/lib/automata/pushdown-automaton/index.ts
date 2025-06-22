@@ -1,5 +1,5 @@
 import { BOTTOM } from "@/constants/symbols";
-import { type JsonPda } from "@/lib/schemas/pushdown-automata";
+import { type JsonPda } from "@/lib/schemas/pushdown-automaton";
 import { PdaDesigner } from "./PdaDesigner";
 import { PdaExecutor } from "./PdaExecutor";
 
