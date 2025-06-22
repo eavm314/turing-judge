@@ -50,7 +50,7 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
   const { mode } = usePlaygroundMode();
   const { showPrompt } = useModal();
   const { automaton, updateDesign } = useAutomatonDesign();
-  const { visitedState } = useVisitedState();
+  const visitedState = useVisitedState();
 
   const handleChangeName = async () => {
     const stateName = await showPrompt({
@@ -81,13 +81,13 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
         </div>
       )}
       <div
-        data-testid={`state-${data.name}`}
+        data-testid={data.name}
         className={cn(
           'relative grid rounded-full size-full border-2 bg-muted/80 border-foreground outline-foreground',
           data.isFinal && 'outline outline-2 -outline-offset-[12px]',
           selected &&
             'border-4 outline-4 -outline-offset-[14px] border-green-500 outline-green-500',
-          id === visitedState && 'bg-amber-300 dark:bg-purple-900',
+          data.name === visitedState && 'bg-amber-300 dark:bg-purple-900',
         )}
         onDoubleClick={handleChangeName}
       >

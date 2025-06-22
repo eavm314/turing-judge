@@ -6,6 +6,13 @@ import { type AutomatonCode } from '@/lib/schemas/automaton-code';
 
 export type PlaygroundMode = 'states' | 'transitions' | 'simulation' | 'viewer';
 
+export type AnimationData = {
+  state: string | null;
+  transition: string | null;
+  symbol: string | null;
+  stack: string | null;
+};
+
 export type PlaygroundState = {
   automaton: AutomatonDesign;
   mode: PlaygroundMode;
@@ -16,9 +23,7 @@ export type PlaygroundState = {
   simulationSpeed: number;
   simulationWord: string;
   simulationIndex: number;
-  visitedState: string | null;
-  visitedTransition: string | null;
-  visitedSymbol: string | null;
+  activeData: AnimationData;
 };
 
 export type PlaygroundActions = {
@@ -29,10 +34,8 @@ export type PlaygroundActions = {
 
   setSimulationSpeed: (speed: number) => void;
   setSimulationWord: (word: string) => void;
-  setVisitedState: (state: string) => void;
-  setVisitedTransition: (transition: string, symbol: string) => void;
-  moveRight: () => void;
-  moveLeft: () => void;
+  setAnimatedData: (data: AnimationData) => void;
+  move: (direction: 'L' | 'R') => void;
   stopSimulation: () => void;
 };
 
@@ -40,27 +43,27 @@ export type PlaygroundStore = PlaygroundState & PlaygroundActions;
 
 export const automatonManager = new AutomatonManager({ type: 'FSM' });
 
-const defaultState = {
-  translation: 0,
-  simulationSpeed: 700,
-  simulationWord: '',
-  simulationIndex: 0,
-  visitedState: null,
-  visitedTransition: null,
-  visitedSymbol: null,
-};
-
 let movementTimeout: NodeJS.Timeout | undefined = undefined;
 
 export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner: boolean) => {
   if (initialCode) automatonManager.switchTo(initialCode);
-  
+
   const initialState: PlaygroundState = {
-    ...defaultState,
     unsavedChanges: false,
     automaton: automatonManager.getDesigner().getDesign(),
     isOwner,
     mode: isOwner ? 'states' : 'viewer',
+
+    translation: 0,
+    simulationSpeed: 700,
+    simulationWord: '',
+    simulationIndex: 0,
+    activeData: {
+      state: null,
+      transition: null,
+      symbol: null,
+      stack: null,
+    },
   };
 
   return createStore<PlaygroundStore>()(set => ({
@@ -82,35 +85,23 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
 
     setSimulationSpeed: (speed: number) => set({ simulationSpeed: speed }),
     setSimulationWord: (word: string) => set({ simulationWord: word }),
-    setVisitedState: (state: string) =>
-      set({
-        visitedState: state,
-        visitedTransition: null,
-        visitedSymbol: null,
-      }),
-    setVisitedTransition: (transition: string, symbol: string) =>
-      set({
-        visitedTransition: transition,
-        visitedSymbol: symbol,
-        visitedState: null,
-      }),
-    moveRight: () =>
+    setAnimatedData: (data: AnimationData) => set({ activeData: data }),
+    move: (dir: 'L' | 'R') =>
       set(state => {
         const { simulationIndex, simulationWord } = state;
-        if (simulationIndex >= simulationWord.length) return state;
-        movementTimeout = setTimeout(() => {
-          set({ translation: 0, simulationIndex: simulationIndex + 1 });
-        }, state.simulationSpeed);
-        return { translation: -1 };
-      }),
-    moveLeft: () =>
-      set(state => {
-        const { simulationIndex } = state;
-        if (simulationIndex <= 0) return state;
-        movementTimeout = setTimeout(() => {
-          set({ translation: 0, simulationIndex: simulationIndex - 1 });
-        }, state.simulationSpeed);
-        return { translation: 1 };
+        if (dir === 'R') {
+          if (simulationIndex >= simulationWord.length) return state;
+          movementTimeout = setTimeout(() => {
+            set({ translation: 0, simulationIndex: simulationIndex + 1 });
+          }, state.simulationSpeed);
+          return { translation: -1 };
+        } else {
+          if (simulationIndex <= 0) return state;
+          movementTimeout = setTimeout(() => {
+            set({ translation: 0, simulationIndex: simulationIndex - 1 });
+          }, state.simulationSpeed);
+          return { translation: 1 };
+        }
       }),
     stopSimulation: () => {
       clearTimeout(movementTimeout);
@@ -118,9 +109,12 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
         mode: state.isOwner ? 'states' : 'viewer',
         translation: 0,
         simulationIndex: 0,
-        visitedState: null,
-        visitedTransition: null,
-        visitedSymbol: null,
+        activeData: {
+          state: null,
+          transition: null,
+          symbol: null,
+          stack: null,
+        },
       }));
     },
   }));

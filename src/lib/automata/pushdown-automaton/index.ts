@@ -30,5 +30,8 @@ export const createPDA = (initialCode: JsonPda = basicAutomata) => {
       }
       return executor;
     },
+    getAnimator: () => {
+      throw new Error("PDA Animator not implemented yet");
+    },
   };
 };

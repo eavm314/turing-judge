@@ -38,6 +38,10 @@ export abstract class BaseExecutor<TransInput, TransOutput> {
     return this.states.size;
   }
 
+  getInitialState() {
+    return this.initial;
+  }
+
   abstract isDeterministic(): boolean;
 
   abstract transFn(input: TransInput): TransOutput[];

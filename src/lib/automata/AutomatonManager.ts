@@ -32,6 +32,10 @@ export class AutomatonManager {
     return this.currentAutomaton.getExecutor();
   }
 
+  getAnimator() {
+    return this.currentAutomaton.getAnimator();
+  }
+
   getType() {
     return this.currentAutomaton.type;
   }

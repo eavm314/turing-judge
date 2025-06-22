@@ -8,67 +8,45 @@ import { EPSILON } from '@/constants/symbols';
 import { useToast } from '@/hooks/use-toast';
 import { automatonManager } from '@/store/playground-store';
 import { usePlaygroundMode, useSimulation } from '@/providers/playground-provider';
+import { FsmStep } from '@/lib/automata/finite-state-machine/FsmExecutor';
 
 export default function SimulationMenu() {
   const { mode, setMode } = usePlaygroundMode();
   const simulating = mode === 'simulation';
 
-  const {
-    word,
-    simulationSpeed,
-    setVisitedState,
-    setVisitedTransition,
-    moveRight,
-    stopSimulation,
-  } = useSimulation();
-  const simulationInterval = useRef<NodeJS.Timeout>(undefined);
+  const { word, simulationSpeed, setAnimatedData, move, stopSimulation } = useSimulation();
 
   const { toast } = useToast();
 
   const handleSimulation = () => {
+    const animator = automatonManager.getAnimator();
     if (simulating) {
-      clearInterval(simulationInterval.current);
+      animator.stop();
       stopSimulation();
       return;
     }
 
-    const executor = automatonManager.getExecutor();
-    const { accepted, path } = executor.execute(word, true);
+    const accepted = animator.start(word, {
+      onStart: () => {
+        setMode('simulation');
+      },
+      onFinish: () => {
+        toast({
+          title: 'Accepted!',
+          variant: 'success',
+        });
+        stopSimulation();
+      },
+      setAnimatedData,
+      move,
+    });
+
     if (!accepted) {
       toast({
         title: 'No path found',
         variant: 'destructive',
       });
-      return;
     }
-
-    setMode('simulation');
-    setVisitedState('0');
-
-    let step = 0;
-    let transition = true;
-    simulationInterval.current = setInterval(() => {
-      if (step >= path.length) {
-        toast({
-          title: 'Accepted!',
-          variant: 'success',
-        });
-        clearInterval(simulationInterval.current);
-        stopSimulation();
-        return;
-      }
-      const [from, to, symbol] = path[step];
-      if (transition) {
-        setVisitedTransition(`${from}->${to}`, symbol);
-        if (symbol !== EPSILON) {
-          moveRight();
-        }
-      } else {
-        setVisitedState(String(to));
-        step++;
-      }
-      transition = !transition;
-    }, simulationSpeed);
   };
   return (
     <div className="space-y-2 p-3">

@@ -23,7 +23,10 @@ export const PlaygroundStoreProvider = ({
   isOwner,
 }: PlaygroundProviderProps) => {
   const storeRef = useRef<PlaygroundStoreApi | null>(null);
-  storeRef.current = useMemo(() => createPlaygroundStore(initialCode, isOwner), [initialCode, isOwner]);
+  storeRef.current = useMemo(
+    () => createPlaygroundStore(initialCode, isOwner),
+    [initialCode, isOwner],
+  );
 
   return (
     <PlaygroundStoreContext.Provider value={storeRef.current}>
@@ -71,21 +74,14 @@ export const useSimulationWord = () =>
     })),
   );
 
-export const useVisitedState = () =>
-  usePlaygroundStore(
-    useShallow(state => ({
-      visitedState: state.visitedState,
-      setVisitedState: state.setVisitedState,
-    })),
-  );
+export const useVisitedState = () => usePlaygroundStore(state => state.activeData.state);
 
 export const useVisitedTransition = () =>
   usePlaygroundStore(
     useShallow(state => ({
-      visitedTransition: state.visitedTransition,
-      visitedSymbol: state.visitedSymbol,
+      visitedTransition: state.activeData.transition,
+      visitedSymbol: state.activeData.symbol,
       simulationSpeed: state.simulationSpeed,
-      setVisitedTransition: state.setVisitedTransition,
     })),
   );
 
@@ -97,10 +93,8 @@ export const useSimulation = () =>
       setWord: state.setSimulationWord,
       setSimulationSpeed: state.setSimulationSpeed,
       stopSimulation: state.stopSimulation,
-      setVisitedState: state.setVisitedState,
-      setVisitedTransition: state.setVisitedTransition,
-      moveRight: state.moveRight,
-      moveLeft: state.moveLeft,
+      setAnimatedData: state.setAnimatedData,
+      move: state.move,
     })),
   );
 
@@ -111,8 +105,6 @@ export const useSimulationTape = () =>
       speed: state.simulationSpeed,
       word: state.simulationWord,
       position: state.simulationIndex,
-      visitedSymbol: state.visitedSymbol,
-      moveRight: state.moveRight,
-      moveLeft: state.moveLeft,
+      visitedSymbol: state.activeData.symbol,
     })),
   );

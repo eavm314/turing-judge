@@ -9,8 +9,7 @@ const size = 50;
 const tapeSize = 11;
 
 export default function TuringTape() {
-  const { word, speed, position, translation, visitedSymbol, moveLeft, moveRight } =
-    useSimulationTape();
+  const { word, speed, position, translation, visitedSymbol } = useSimulationTape();
 
   const extraWord = ' '.repeat((tapeSize + 1) / 2) + word + ' '.repeat((tapeSize + 1) / 2);
 

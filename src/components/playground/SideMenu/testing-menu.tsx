@@ -17,7 +17,7 @@ export default function TestingMenu() {
   const handleTest = () => {
     const executor = automatonManager.getExecutor();
     const executionConfig = executor.getConfig();
-    const { accepted, depthLimitReached, maxLimitReached } = executor.execute(word);
+    const { accepted, depthLimitReached, maxLimitReached } = executor.execute(word, false);
     if (accepted) {
       toast({
         title: 'Accepted',

@@ -33,9 +33,11 @@ export function TransitionEdge({
   const { mode } = usePlaygroundMode();
   const isInteractive = mode !== 'simulation' && mode !== 'viewer';
 
+  const name = `${sourceNode?.data.name}->${targetNode?.data.name}`;
+
   useEffect(() => {
-    if (id === visitedTransition && animateRef.current) {
-      animateRef.current.beginElement();
+    if (name === visitedTransition && animateRef.current) {
+      animateRef.current?.beginElement();
     }
   }, [visitedTransition]);
 
@@ -56,8 +58,6 @@ export function TransitionEdge({
       auto.addTransition(source, target, transitionData);
     });
   };
-
-  const testId = `${sourceNode.data.name}->${targetNode.data.name}`;
 
   return (
     <>
@@ -86,7 +86,7 @@ export function TransitionEdge({
         markerEnd={`url(#triangle-${id})`}
         style={style}
       />
-      {id === visitedTransition && (
+      {name === visitedTransition && (
         <circle r="8" className="fill-amber-400 dark:fill-purple-800">
           <animateMotion
             ref={animateRef}
@@ -98,7 +98,7 @@ export function TransitionEdge({
       )}
       <EdgeLabelRenderer>
         <div
-          data-testid={testId}
+          data-testid={name}
           style={{
             position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,

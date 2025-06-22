@@ -9,7 +9,7 @@ type FsmInput = {
 
 type FsmOutput = string; // Target state name
 
-type FsmStep = Step<FsmInput, FsmOutput>;
+export type FsmStep = Step<FsmInput, FsmOutput>;
 
 interface ExecutionNode {
   state: string;
