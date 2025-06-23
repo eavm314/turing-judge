@@ -72,12 +72,12 @@ export const simpleNonDet: JsonFsm = {
 };
 
 export const epsilonTransitions: JsonFsm = {
-  alphabet: ['0', '1', EPSILON],
+  alphabet: [EPSILON, '0', '1'],
   states: {
     q0: {
       transitions: {
-        q1:[EPSILON],
-        q2:[EPSILON],
+        q1: [EPSILON],
+        q2: [EPSILON],
       },
     },
     q1: {
@@ -92,7 +92,7 @@ export const epsilonTransitions: JsonFsm = {
     },
     q3: {
       transitions: {
-        q2:[EPSILON],
+        q2: [EPSILON],
       },
     },
     q4: {

@@ -11,7 +11,7 @@ test.describe('Basic controls', () => {
     const banner = page.getByRole('banner');
     await expect(banner).not.toContainText('You have unsaved changes');
 
-    const initialState = page.getByTestId('state-q0');
+    const initialState = page.getByTestId('q0');
 
     await expect(initialState).toBeVisible();
     await expect(initialState).toContainClass('border-foreground');
@@ -89,7 +89,7 @@ test.describe('Basic controls', () => {
 
     await okButton.click();
 
-    const newState = page.getByTestId('state-new');
+    const newState = page.getByTestId('new');
     await expect(newState).toBeVisible();
 
     await expect(banner).toContainText('You have unsaved changes');
@@ -107,7 +107,7 @@ test.describe('Basic controls', () => {
 
     await okButton.click();
 
-    await expect(page.getByTestId('state-q1')).toBeVisible();
+    await expect(page.getByTestId('q1')).toBeVisible();
   });
 
   test('should delete state', async ({ page }) => {
@@ -118,12 +118,12 @@ test.describe('Basic controls', () => {
     await expect(banner).toContainText('You have unsaved changes');
 
     await deleteState(page, 'q1');
-    await expect(page.getByTestId('state-q1')).not.toBeVisible();
+    await expect(page.getByTestId('q1')).not.toBeVisible();
   });
 
   test('should not delete initial state', async ({ page }) => {
     await deleteState(page, 'q0');
-    await expect(page.getByTestId('state-q0')).toBeVisible();
+    await expect(page.getByTestId('q0')).toBeVisible();
     const notificationsRegion = page.getByRole('region');
     await expect(notificationsRegion).toBeAttached();
 
@@ -171,7 +171,7 @@ test.describe('Alphabet controls', () => {
 
     await switchMode(page, 'Transitions');
 
-    const state = page.getByTestId(`state-q0`);
+    const state = page.getByTestId('q0');
 
     const box = await state.boundingBox();
     if (!box) throw new Error('Node not visible');

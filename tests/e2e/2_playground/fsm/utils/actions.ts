@@ -5,16 +5,16 @@ export const switchMode = async (page: Page, mode: string) => {
   await modeButton.click();
 };
 
-export const switchFinal = async (page: Page, stateId: string) => {
-  const state = page.getByTestId(`state-${stateId}`);
+export const switchFinal = async (page: Page, stateName: string) => {
+  const state = page.getByTestId(stateName);
   await state.click();
   const finalButton = page.getByRole('button', { name: 'Final' });
   await finalButton.click();
 };
 
-export const moveState = async (page: Page, stateId: string, dx: number, dy: number) => {
+export const moveState = async (page: Page, stateName: string, dx: number, dy: number) => {
   await switchMode(page, 'States');
-  const state = page.getByTestId(`state-${stateId}`);
+  const state = page.getByTestId(stateName);
   const box = await state.boundingBox();
   if (!box) throw new Error('Node not visible');
 
@@ -38,22 +38,22 @@ export const moveState = async (page: Page, stateId: string, dx: number, dy: num
   expect(newY).toBe(startY + (steps - 1) * dy);
 };
 
-export const addState = async (page: Page, stateId: string) => {
+export const addState = async (page: Page, stateName: string) => {
   await switchMode(page, 'States');
   const addButton = page.getByRole('button', { name: 'Add State' });
   await addButton.click();
   const input = page.getByTestId('modal-input');
   const okButton = page.getByRole('button', { name: 'OK' });
 
-  await input.fill(stateId);
+  await input.fill(stateName);
   await okButton.click();
 
-  const newState = page.getByTestId(`state-${stateId}`);
+  const newState = page.getByTestId(stateName);
   await expect(newState).toBeVisible();
 };
 
-export const deleteState = async (page: Page, stateId: string) => {
-  const state = page.getByTestId(`state-${stateId}`);
+export const deleteState = async (page: Page, stateName: string) => {
+  const state = page.getByTestId(stateName);
   await state.click();
   await state.press('Backspace');
 };
@@ -66,8 +66,8 @@ export const addTransition = async (
 ) => {
   await switchMode(page, 'Transitions');
 
-  const fromState = page.getByTestId(`state-${from}`);
-  const toState = page.getByTestId(`state-${to}`);
+  const fromState = page.getByTestId(from);
+  const toState = page.getByTestId(to);
 
   const fromBox = await fromState.boundingBox();
   const toBox = await toState.boundingBox();
@@ -83,7 +83,7 @@ export const addTransition = async (
   await page.mouse.move(toX, toY, { steps: 2 });
   await page.mouse.up();
 
-  await expect(page.getByLabel('Add Transition')).toContainText('None');
+  await expect(page.getByLabel('Edit Transition')).toContainText('None');
   for (const symbol of inputSymbols) {
     await page.getByRole('checkbox', { name: symbol }).click();
   }
