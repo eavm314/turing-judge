@@ -9,7 +9,7 @@ export class FsmAnimator extends BaseAnimator {
     this.executor = executor;
   }
 
-  start(word:string, { onFinish, onStart, setAnimatedData, move }: AnimationCallbacks) {
+  start(word: string, { onFinish, onStart, setAnimatedData, move }: AnimationCallbacks) {
     const initialState = this.executor.getInitialState();
     const { accepted, path } = this.executor.execute(word, true);
     if (!accepted) return false;

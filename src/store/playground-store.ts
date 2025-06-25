@@ -3,6 +3,7 @@ import { createStore } from 'zustand/vanilla';
 import { AutomatonManager } from '@/lib/automata/AutomatonManager';
 import { type AutomatonDesign, type BaseDesigner } from '@/lib/automata/base/BaseDesigner';
 import { type AutomatonCode } from '@/lib/schemas/automaton-code';
+import { StackElement } from '@/lib/automata/pushdown-automaton/PdaAnimator';
 
 export type PlaygroundMode = 'states' | 'transitions' | 'simulation' | 'viewer';
 
@@ -10,7 +11,7 @@ export type AnimationData = {
   state: string | null;
   transition: string | null;
   symbol: string | null;
-  stack: string | null;
+  stack: StackElement[] | null;
 };
 
 export type PlaygroundState = {
@@ -54,8 +55,8 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
     isOwner,
     mode: isOwner ? 'states' : 'viewer',
 
+    simulationSpeed: automatonManager.getAnimator().getSimulationSpeed(),
     translation: 0,
-    simulationSpeed: 700,
     simulationWord: '',
     simulationIndex: 0,
     activeData: {
@@ -83,7 +84,10 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
     },
     saveChanges: () => set({ unsavedChanges: false }),
 
-    setSimulationSpeed: (speed: number) => set({ simulationSpeed: speed }),
+    setSimulationSpeed: (speed: number) => {
+      automatonManager.getAnimator().setSimulationSpeed(speed);
+      set({ simulationSpeed: speed });
+    },
     setSimulationWord: (word: string) => set({ simulationWord: word }),
     setAnimatedData: (data: AnimationData) => set({ activeData: data }),
     move: (dir: 'L' | 'R') =>

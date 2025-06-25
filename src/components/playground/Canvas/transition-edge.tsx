@@ -35,11 +35,18 @@ export function TransitionEdge({
 
   const name = `${sourceNode?.data.name}->${targetNode?.data.name}`;
 
+  const isRunning = useRef(false);
+
   useEffect(() => {
-    if (name === visitedTransition && animateRef.current) {
-      animateRef.current?.beginElement();
+    if (name === visitedTransition) {
+      if (!isRunning.current) {
+        animateRef.current?.beginElement();
+        isRunning.current = true;
+      }
+    } else {
+      isRunning.current = false;
     }
-  }, [visitedTransition]);
+  }, [visitedTransition, name]);
 
   if (!sourceNode || !targetNode) {
     return null;

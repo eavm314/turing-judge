@@ -26,6 +26,7 @@ import { StateNode } from './state-node';
 import { TransitionEdge } from './transition-edge';
 import { useCanvasHandlers } from './utils/use-canvas-handlers';
 import { SwitchType } from './panel-components/switch-type';
+import SimulationStack from './panel-components/simulation-stack';
 
 const nodeTypes: NodeTypes = {
   state: StateNode,
@@ -90,9 +91,14 @@ export default function Canvas() {
           <DeterminismBadge />
         </Panel>
         {mode === 'simulation' && (
-          <Panel position="bottom-center">
-            <TuringTape />
-          </Panel>
+          <>
+            <Panel position="bottom-center">
+              <TuringTape />
+            </Panel>
+            <Panel position="bottom-right" className="!pointer-events-none">
+              <SimulationStack />
+            </Panel>
+          </>
         )}
       </ReactFlow>
     </div>

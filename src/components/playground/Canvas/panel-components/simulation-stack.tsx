@@ -3,141 +3,25 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BOTTOM } from '@/constants/symbols';
+import { StackElement } from '@/lib/automata/pushdown-automaton/PdaAnimator';
 import { cn } from '@/lib/ui/utils';
+import { useSimulationStack } from '@/providers/playground-provider';
 import { ChevronDown, Play, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 
-interface Transition {
-  input: string;
-  popSymbol: string | null;
-  pushSymbols: string[];
-}
-
-interface StackElement {
-  id: string;
-  symbol: string;
-  isEntering: boolean;
-  isExiting: boolean;
-}
-
-const sampleTransitions: Transition[] = [
-  { input: 'a', popSymbol: null, pushSymbols: ['A'] },
-  { input: 'a', popSymbol: null, pushSymbols: ['A', 'A'] },
-  { input: 'b', popSymbol: 'A', pushSymbols: [] },
-  { input: 'b', popSymbol: 'A', pushSymbols: ['B'] },
-  { input: 'a', popSymbol: null, pushSymbols: ['A', 'A'] },
-  { input: 'a', popSymbol: null, pushSymbols: ['A', 'A'] },
-  { input: 'a', popSymbol: null, pushSymbols: ['A', 'A'] },
-  {
-    input: 'c',
-    popSymbol: 'B',
-    pushSymbols: ['C', 'C', 'C'],
-  },
-  { input: 'd', popSymbol: 'C', pushSymbols: [] },
-  { input: 'd', popSymbol: 'C', pushSymbols: [] },
-];
-
 const size = 50;
 const stackSize = 6;
-const speed = 1000;
 
 export default function SimulationStack() {
-  const [stack, setStack] = useState<StackElement[]>([
-    {
-      id: 'bottom',
-      symbol: BOTTOM,
-      isEntering: false,
-      isExiting: false,
-    },
-  ]);
-  const [currentTransition, setCurrentTransition] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [visibleStart, setVisibleStart] = useState(0);
+  const { stack, speed } = useSimulationStack();
+
+  if (!stack) return null;
 
   const totalElements = stack.length;
-  const hasHiddenBelow = visibleStart + stackSize < totalElements;
 
-  // Create visual stack (top to bottom for display)
-  const getVisibleStack = () => {
-    const startIndex = Math.max(0, totalElements - visibleStart - stackSize);
-    const endIndex = totalElements - visibleStart;
-    return stack.slice(startIndex, endIndex);
-  };
-
-  const visibleStack = stack;
   const toMove = Math.max(0, totalElements - stackSize);
 
   const opSpeed = speed / 2;
-
-  const executeTransition = async (transition: Transition) => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-
-    // Phase 1: Pop operation
-    if (transition.popSymbol) {
-      // Find and highlight the top element
-      const topElement = stack[stack.length - 1];
-      if (topElement && topElement.symbol === transition.popSymbol) {
-        // Start exit animation
-        setStack(prev =>
-          prev.map(el => (el.id === topElement.id ? { ...el, isExiting: true } : el)),
-        );
-
-        await new Promise(resolve => setTimeout(resolve, opSpeed));
-        setStack(prev => prev.filter(el => el.id !== topElement.id));
-      }
-    }
-
-    // Phase 2: Push operations (one by one)
-    if (transition.pushSymbols.length > 0) {
-      // Add the new elements with entering state
-      const newElements: StackElement[] = transition.pushSymbols.map((symbol, i) => ({
-        id: `${symbol}-${Date.now()}-${i}`,
-        symbol: symbol,
-        isEntering: true,
-        isExiting: false,
-      }));
-
-      setStack(prev => [...prev, ...newElements]);
-
-      // Wait a bit then complete the enter animation
-      await new Promise(resolve => setTimeout(resolve, opSpeed));
-      setStack(prev => prev.map(el => ({ ...el, isEntering: false })));
-    }
-
-    // Adjust visible window if needed
-    setVisibleStart(prev => {
-      const newStackLength =
-        stack.length + transition.pushSymbols.length - (transition.popSymbol ? 1 : 0);
-      if (newStackLength > stackSize && prev === 0) {
-        return Math.max(0, newStackLength - stackSize);
-      }
-      return prev;
-    });
-
-    setIsAnimating(false);
-  };
-
-  const nextTransition = () => {
-    if (currentTransition < sampleTransitions.length) {
-      executeTransition(sampleTransitions[currentTransition]);
-      setCurrentTransition(prev => prev + 1);
-    }
-  };
-
-  const reset = () => {
-    setStack([
-      {
-        id: 'bottom',
-        symbol: BOTTOM,
-        isEntering: false,
-        isExiting: false,
-      },
-    ]);
-    setCurrentTransition(0);
-    setVisibleStart(0);
-    setIsAnimating(false);
-  };
 
   const getElementClasses = (element: StackElement) => {
     let classes =
@@ -220,7 +104,7 @@ export default function SimulationStack() {
               transitionDuration: `${opSpeed}ms`,
             }}
           >
-            {visibleStack.map((element, visualIndex) => (
+            {stack.map((element, visualIndex) => (
               <div
                 key={element.id}
                 className={getElementClasses(element)}
@@ -248,7 +132,7 @@ export default function SimulationStack() {
           </div>
         )} */}
         {/* Controls */}
-        <div className="flex flex-col gap-2 mt-4 pointer-events-auto w-24">
+        {/* <div className="flex flex-col gap-2 mt-4 pointer-events-auto w-24">
           <Button
             onClick={nextTransition}
             disabled={isAnimating || currentTransition >= sampleTransitions.length}
@@ -261,7 +145,7 @@ export default function SimulationStack() {
             <RotateCcw className="w-4 h-4" />
             Reset
           </Button>
-        </div>
+        </div> */}
       </div>
     </>
   );

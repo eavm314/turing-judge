@@ -108,3 +108,11 @@ export const useSimulationTape = () =>
       visitedSymbol: state.activeData.symbol,
     })),
   );
+
+export const useSimulationStack = () =>
+  usePlaygroundStore(
+    useShallow(state => ({
+      stack: state.activeData.stack,
+      speed: state.simulationSpeed,
+    })),
+  );
