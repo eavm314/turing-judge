@@ -180,7 +180,7 @@ const verifySolution = async (id: number, problemId: string, solution: Automaton
   let finalVerdict: Verdict = Verdict.ACCEPTED;
   let failedCaseData: FailedCaseData | null = null;
   for (const testCase of problemTestData.testCases) {
-    const result = executor.execute(testCase.input);
+    const result = executor.execute(testCase.input, false);
     if (result.maxLimitReached) {
       finalVerdict = Verdict.STEP_LIMIT_EXCEEDED;
     }

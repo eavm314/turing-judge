@@ -217,7 +217,7 @@ export function ProblemForm({
                           <FormDescription>Allow Pushdown Automata</FormDescription>
                         </div>
                         <FormControl>
-                          <Switch disabled checked={field.value} onCheckedChange={field.onChange} />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </FormItem>
                     )}
