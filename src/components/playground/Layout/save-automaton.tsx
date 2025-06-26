@@ -1,26 +1,27 @@
-"use client";
+'use client';
 
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
-import { ChevronDown, Save } from "lucide-react";
+import { ChevronDown, Save } from 'lucide-react';
 
-import { createProjectAction, updateProjectAction } from "@/actions/projects";
-import { useSaveAutomatonPrompt } from "@/components/modal/save-automaton";
-import { Button } from "@/components/ui/button";
+import { createProjectAction, updateProjectAction } from '@/actions/projects';
+import { useSaveAutomatonPrompt } from '@/components/modal/save-automaton';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useServerAction } from "@/hooks/use-server-action";
-import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
-import { useSession } from "@/providers/user-provider";
+} from '@/components/ui/dropdown-menu';
+import { useServerAction } from '@/hooks/use-server-action';
+import { useAutomatonDesign, useIsOwner } from '@/providers/playground-provider';
+import { useSession } from '@/providers/user-provider';
+import { automatonManager } from '@/store/playground-store';
 
 export function SaveAutomaton() {
   const { user, setOpenSignIn } = useSession();
-  const { automaton, unsavedChanges, saveChanges } = useAutomaton();
+  const { unsavedChanges, saveChanges } = useAutomatonDesign();
   const isOwner = useIsOwner();
 
   const [retry, setRetry] = useState(false);
@@ -44,8 +45,8 @@ export function SaveAutomaton() {
         e.preventDefault();
       }
     };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
   useEffect(() => {
@@ -67,11 +68,11 @@ export function SaveAutomaton() {
     if (!userInput) {
       return;
     }
+
     const id = await createProject.execute({
       title: userInput.title.trim() || null,
       isPublic: userInput.isPublic,
-      type: "FSM",
-      automaton: automaton.toJson(),
+      automatonCode: automatonManager.getDesigner().toJson(),
     });
     if (id) {
       saveChanges();
@@ -82,7 +83,7 @@ export function SaveAutomaton() {
   const handleSave = async () => {
     if (automatonId && isOwner) {
       const result = await updateProject.execute(automatonId, {
-        automaton: automaton.toJson(),
+        automatonCode: automatonManager.getDesigner().toJson(),
       });
       if (result) saveChanges();
     } else {
@@ -115,16 +116,12 @@ export function SaveAutomaton() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-24">
-            <DropdownMenuItem onClick={handleSaveAs}>
-              Save As...
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSaveAs}>Save As...</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
       {unsavedChanges && (
-        <span className="italic text-neutral-foreground/80">
-          You have unsaved changes
-        </span>
+        <span className="italic text-neutral-foreground/80">You have unsaved changes</span>
       )}
     </div>
   );

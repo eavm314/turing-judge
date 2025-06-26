@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Background,
@@ -9,22 +9,24 @@ import {
   type EdgeTypes,
   type FitViewOptions,
   type NodeTypes,
-} from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import { useTheme } from "next-themes";
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import { useTheme } from 'next-themes';
 
-import { usePlaygroundMode } from "@/providers/playground-provider";
-import { FloatingConnectionLine } from "./floating-connection-line";
+import { usePlaygroundMode } from '@/providers/playground-provider';
+import { FloatingConnectionLine } from './floating-connection-line';
 import {
   AddState,
   ControlsHelp,
+  DeterminismBadge,
   PlaygroundMode,
   TuringTape,
-  DeterminismBadge,
-} from "./panel-components";
-import { StateNode } from "./state-node";
-import { TransitionEdge } from "./transition-edge";
-import { useCanvasHandlers } from "./utils/useCanvasHandlers";
+} from './panel-components';
+import { StateNode } from './state-node';
+import { TransitionEdge } from './transition-edge';
+import { useCanvasHandlers } from './utils/use-canvas-handlers';
+import { SwitchType } from './panel-components/switch-type';
+import SimulationStack from './panel-components/simulation-stack';
 
 const nodeTypes: NodeTypes = {
   state: StateNode,
@@ -35,7 +37,7 @@ const edgeTypes: EdgeTypes = {
 };
 
 const defaultEdgeOpts = {
-  type: "transition",
+  type: 'transition',
 };
 
 const viewOptions: FitViewOptions = {
@@ -49,10 +51,9 @@ export default function Canvas() {
   const { theme } = useTheme();
   const { mode } = usePlaygroundMode();
 
-  const isInteractive = mode !== "simulation" && mode !== "viewer";
+  const isInteractive = mode !== 'simulation' && mode !== 'viewer';
 
-  const { nodes, edges, onConnect, onEdgesChange, onNodesChange } =
-    useCanvasHandlers();
+  const { nodes, edges, onConnect, onEdgesChange, onNodesChange } = useCanvasHandlers();
 
   return (
     <div className="flex-1">
@@ -75,14 +76,23 @@ export default function Canvas() {
         elementsSelectable={isInteractive}
       >
         <Controls position="bottom-right" />
-        <Background color={theme === "light" ? "black" : "white"} />
-        <Panel position="top-left">
+        <Background color={theme === 'light' ? 'black' : 'white'} />
+        <Panel position="top-left" className="flex flex-col gap-2">
           <PlaygroundMode />
+          {mode === 'states' && <AddState />}
         </Panel>
-        {mode === "states" && (
-          <Panel position="top-center">
-            <AddState />
-          </Panel>
+        <Panel position="top-center">
+          <SwitchType />
+        </Panel>
+        {mode === 'simulation' && (
+          <>
+            <Panel position="bottom-center">
+              <TuringTape />
+            </Panel>
+            <Panel position="bottom-right" className="!pointer-events-none">
+              <SimulationStack />
+            </Panel>
+          </>
         )}
         <Panel position="top-right">
           <ControlsHelp />
@@ -90,11 +100,6 @@ export default function Canvas() {
         <Panel position="bottom-left">
           <DeterminismBadge />
         </Panel>
-        {mode === "simulation" && (
-          <Panel position="bottom-center">
-            <TuringTape />
-          </Panel>
-        )}
       </ReactFlow>
     </div>
   );

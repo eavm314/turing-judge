@@ -1,46 +1,52 @@
+import { useAddTransitionPrompt } from '@/components/modal/add-transition';
+import { cn } from '@/lib/ui/utils';
 import {
-  EdgeLabelRenderer,
-  useInternalNode,
-  type Edge,
-  type EdgeProps,
-} from "@xyflow/react";
-import { getPath } from "./utils/graphics";
-import { cn } from "@/lib/ui/utils";
-import { useEffect, useRef } from "react";
-import { useAddTransitionPrompt } from "@/components/modal/add-transition";
-import {
-  useAutomaton,
-  useIsOwner,
+  useAutomatonDesign,
   usePlaygroundMode,
   useVisitedTransition,
-} from "@/providers/playground-provider";
+} from '@/providers/playground-provider';
+import { EdgeLabelRenderer, useInternalNode, type Edge, type EdgeProps } from '@xyflow/react';
+import { useEffect, useRef } from 'react';
+import { getPath } from './utils/graphics';
+import { type TransitionData } from '@/lib/automata/base/BaseState';
+import { PdaTransitionData } from '@/lib/automata/pushdown-automaton/PdaState';
+import { EPSILON } from '@/constants/symbols';
 
-export type TransitionEdgeType = Edge<{ symbols: string[] }>;
+export type TransitionEdgeType = Edge<{ transition: TransitionData[] }>;
 
 export function TransitionEdge({
   id,
-  source,
-  target,
+  source: sourceId,
+  target: targetId,
   style,
   data,
   selected,
 }: EdgeProps<TransitionEdgeType>) {
-  const sourceNode = useInternalNode(source);
-  const targetNode = useInternalNode(target);
+  const sourceNode = useInternalNode(sourceId);
+  const targetNode = useInternalNode(targetId);
 
   const animateRef = useRef<SVGAnimateMotionElement>(null);
 
   const addTransitionPrompt = useAddTransitionPrompt();
-  const { automaton, updateAutomaton } = useAutomaton();
+  const { automaton, updateDesign } = useAutomatonDesign();
   const { visitedTransition, simulationSpeed } = useVisitedTransition();
   const { mode } = usePlaygroundMode();
-  const isInteractive = mode !== "simulation" && mode !== "viewer";
+  const isInteractive = mode !== 'simulation' && mode !== 'viewer';
+
+  const name = `${sourceNode?.data.name}->${targetNode?.data.name}`;
+
+  const isRunning = useRef(false);
 
   useEffect(() => {
-    if (id === visitedTransition && animateRef.current) {
-      animateRef.current.beginElement();
+    if (name === visitedTransition) {
+      if (!isRunning.current) {
+        animateRef.current?.beginElement();
+        isRunning.current = true;
+      }
+    } else {
+      isRunning.current = false;
     }
-  }, [visitedTransition]);
+  }, [visitedTransition, name]);
 
   if (!sourceNode || !targetNode) {
     return null;
@@ -50,18 +56,13 @@ export function TransitionEdge({
 
   const handleEditTransition = async () => {
     if (!isInteractive) return;
-    const initialSymbols = automaton.getTransition(
-      Number(source),
-      Number(target),
-    );
-    const symbols = await addTransitionPrompt({
-      alphabet: automaton.alphabet,
-      initialSymbols,
-    });
-    if (!symbols) return;
-    updateAutomaton((auto) => {
-      auto.removeTransition(Number(source), Number(target));
-      auto.addTransition(Number(source), Number(target), symbols);
+    const source = Number(sourceId);
+    const target = Number(targetId);
+    const transitionData = await addTransitionPrompt({ source, target });
+    if (!transitionData) return;
+    updateDesign(auto => {
+      auto.removeTransition(source, target);
+      auto.addTransition(source, target, transitionData);
     });
   };
 
@@ -80,23 +81,19 @@ export function TransitionEdge({
         >
           <path
             d="M 0 0 L 10 5 L 0 10"
-            className={selected ? "fill-green-500" : "fill-foreground"}
+            className={selected ? 'fill-green-500' : 'fill-foreground'}
           />
         </marker>
       </defs>
       <path
         fill="none"
         id={id}
-        className={
-          selected
-            ? "stroke-green-500 stroke-[3px]"
-            : "stroke-foreground stroke-2"
-        }
+        className={selected ? 'stroke-green-500 stroke-[3px]' : 'stroke-foreground stroke-2'}
         d={edgePath}
         markerEnd={`url(#triangle-${id})`}
         style={style}
       />
-      {id === visitedTransition && (
+      {name === visitedTransition && (
         <circle r="8" className="fill-amber-400 dark:fill-purple-800">
           <animateMotion
             ref={animateRef}
@@ -108,18 +105,32 @@ export function TransitionEdge({
       )}
       <EdgeLabelRenderer>
         <div
+          data-testid={name}
           style={{
-            position: "absolute",
+            position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-            pointerEvents: isInteractive ? "all" : "none",
+            pointerEvents: isInteractive ? 'all' : 'none',
           }}
           className={cn(
-            "nopan bg-background px-2 border rounded-md cursor-pointer font-mono",
-            selected ? "border-green-500" : "border-foreground",
+            'nopan bg-background px-2 border rounded-md cursor-pointer font-mono z-10',
+            selected ? 'border-green-500' : 'border-foreground',
           )}
           onDoubleClick={handleEditTransition}
         >
-          {data?.symbols.join(",")}
+          {automaton.type === 'FSM' && data!.transition.map(t => t.input).join(',')}
+          {automaton.type === 'PDA' && (
+            <>
+              {data!.transition.map((t, i) => {
+                const pt = t as PdaTransitionData;
+                const text = `${t.input},${pt.pop}/${pt.push.length > 0 ? pt.push.join('') : EPSILON}`;
+                if (!selected && i > 0) return null;
+                return <p key={text}>{text}</p>;
+              })}
+              {!selected && data!.transition.length > 1 && (
+                <div className="text-center -mt-3">...</div>
+              )}
+            </>
+          )}
         </div>
       </EdgeLabelRenderer>
     </>

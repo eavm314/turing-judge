@@ -1,12 +1,9 @@
-import { type InternalNode } from "@xyflow/react";
+import { type InternalNode } from '@xyflow/react';
 
 // this helper function returns the intersection points
 // of the line between the center of the intersectionNode and the target node
-function getNodeIntersections(
-  sourceNode: InternalNode,
-  targetNode: InternalNode,
-) {
-  const isTemporal = targetNode.id === "temporal";
+function getNodeIntersections(sourceNode: InternalNode, targetNode: InternalNode) {
+  const isTemporal = targetNode.id === 'temporal';
   const { width } = sourceNode.measured;
 
   const sPos = sourceNode.internals.positionAbsolute;
@@ -41,9 +38,7 @@ function getNodeIntersections(
   };
 }
 
-function getAutoConnectionPath(
-  node: InternalNode,
-): [path: string, labelX: number, labelY: number] {
+function getAutoConnectionPath(node: InternalNode): [path: string, labelX: number, labelY: number] {
   const { x, y } = node.internals.positionAbsolute;
   const { width, height } = node.measured;
   const nx = x + width! / 2;

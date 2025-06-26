@@ -1,8 +1,8 @@
-import { Search } from "lucide-react";
+import { Search } from 'lucide-react';
 
-import { cn } from "@/lib/ui/utils";
-import { Input } from "./input";
-import { TableCell, TableHead, TableRow } from "./table";
+import { cn } from '@/lib/ui/utils';
+import { Input } from './input';
+import { TableCell, TableHead, TableRow } from './table';
 
 export const TableHeadButton = ({
   children,
@@ -15,7 +15,7 @@ export const TableHeadButton = ({
 }) => (
   <TableHead
     className={cn(
-      "md:text-base hover:bg-accent/60 hover:text-accent-foreground cursor-pointer text-nowrap",
+      'md:text-base hover:bg-accent/60 hover:text-accent-foreground cursor-pointer text-nowrap',
       className,
     )}
     onClick={onClick}
@@ -27,28 +27,35 @@ export const TableHeadButton = ({
 export const InputSearch = ({
   value,
   onChange,
+  onEnter,
+  defaultValue,
 }: {
-  value: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-}) => (
-  <div className="relative flex-1">
-    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-    <Input
-      placeholder="Search..."
-      className="pl-8"
-      value={value}
-      onChange={onChange}
-    />
-  </div>
-);
+  value?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onEnter?: (value: string) => void;
+  defaultValue?: string;
+}) => {
+  const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+    if (e.key === 'Enter') {
+      onEnter?.(e.currentTarget.value);
+    }
+  };
+  return (
+    <div className="relative flex-1">
+      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <Input
+        placeholder="Search..."
+        className="pl-8"
+        value={value}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        defaultValue={defaultValue}
+      />
+    </div>
+  );
+};
 
-export const EmptyTableRow = ({
-  colSpan,
-  text,
-}: {
-  colSpan: number;
-  text: string;
-}) => (
+export const EmptyTableRow = ({ colSpan, text }: { colSpan: number; text: string }) => (
   <TableRow className="h-14 text-center text-muted-foreground">
     <TableCell colSpan={colSpan}>{text}</TableCell>
   </TableRow>

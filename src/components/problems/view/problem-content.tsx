@@ -1,8 +1,8 @@
-import { MarkdownWrapper } from "@/components/ui/markdown-wrapper";
-import { type ProblemView } from "@/lib/schemas";
-import { DifficultyBadge } from "@/utils/badges";
-import { Constraints } from "./constraints";
-import { SubmitSolution } from "./submit-solution";
+import { MarkdownWrapper } from '@/components/ui/markdown-wrapper';
+import { type ProblemView } from '@/lib/schemas';
+import { DifficultyBadge } from '@/utils/badges';
+import { Constraints } from './constraints';
+import { SubmitSolution } from './submit-solution';
 
 export default function ProblemContent({ problem }: { problem: ProblemView }) {
   return (
@@ -14,7 +14,7 @@ export default function ProblemContent({ problem }: { problem: ProblemView }) {
         <MarkdownWrapper content={problem.statement} />
       </div>
 
-      <div className="space-y-8">
+      <div className="flex flex-col gap-8 items-center md:ml-10 md:mr-5">
         <Constraints constraints={problem.constraints} />
         <SubmitSolution />
       </div>

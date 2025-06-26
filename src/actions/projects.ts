@@ -1,24 +1,22 @@
-"use server";
+'use server';
 
-import { notFound, redirect } from "next/navigation";
+import { notFound, redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
-import { type AutomatonType, type Project } from "@prisma/client";
-import { type JsonObject } from "@prisma/client/runtime/library";
+import { type Project } from '@prisma/client';
+import { type JsonObject } from '@prisma/client/runtime/library';
 
-import { type AutomatonProjectItem } from "@/lib/schemas";
-import { auth } from "@/lib/auth";
-import { type JsonFSM } from "@/lib/schemas/finite-state-machine";
-import { prisma } from "@/lib/db/prisma";
-import { revalidatePath } from "next/cache";
-import { ServerActionResult } from "@/hooks/use-server-action";
+import { PROJECTS_LIMIT } from '@/constants/app';
+import { ServerActionResult } from '@/hooks/use-server-action';
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/db/prisma';
+import { type AutomatonProjectItem } from '@/lib/schemas';
+import { type AutomatonCode } from '@/lib/schemas/automaton-code';
 
 export const getAutomatonById = async (id: string): Promise<Project> => {
   const session = await auth();
   const savedItem = await prisma.project.findUnique({ where: { id } });
-  if (
-    !savedItem ||
-    (!savedItem.isPublic && savedItem.userId !== session?.user?.id)
-  ) {
+  if (!savedItem || (!savedItem.isPublic && savedItem.userId !== session?.user?.id)) {
     notFound();
   }
   return savedItem;
@@ -26,7 +24,7 @@ export const getAutomatonById = async (id: string): Promise<Project> => {
 
 export const getUserProjects = async (): Promise<AutomatonProjectItem[]> => {
   const session = await auth();
-  if (!session?.user?.id) redirect("/signin");
+  if (!session?.user?.id) redirect('/signin');
 
   const results = await prisma.project.findMany({
     where: { userId: session.user.id },
@@ -43,9 +41,7 @@ export const getUserProjects = async (): Promise<AutomatonProjectItem[]> => {
   return results;
 };
 
-export const getUserProjectsLight = async (): Promise<
-  Partial<AutomatonProjectItem>[]
-> => {
+export const getUserProjectsLight = async (): Promise<Partial<AutomatonProjectItem>[]> => {
   const session = await auth();
   if (!session?.user?.id) return [];
 
@@ -63,28 +59,39 @@ export const getUserProjectsLight = async (): Promise<
 
 export const createProjectAction = async (body: {
   title: string | null;
-  type: AutomatonType;
   isPublic: boolean;
-  automaton: JsonFSM;
+  automatonCode: AutomatonCode;
 }): Promise<ServerActionResult<string>> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: "User not authenticated" };
+    return { success: false, message: 'User not authenticated' };
+  }
+
+  const limit = PROJECTS_LIMIT[session.user.role];
+  const count = await prisma.project.count({
+    where: { userId: session.user.id },
+  });
+
+  if (count >= limit) {
+    return {
+      success: false,
+      message: `You have reached the limit of ${limit} projects.`,
+    };
   }
 
   const savedAutomaton = await prisma.project.create({
     data: {
       userId: session.user.id,
       title: body.title,
-      type: body.type,
+      type: body.automatonCode.type,
       isPublic: body.isPublic,
-      automaton: body.automaton as unknown as JsonObject,
+      automaton: body.automatonCode.automaton as unknown as JsonObject,
     },
   });
-  revalidatePath("/library");
+  revalidatePath('/library');
   return {
     success: true,
-    message: "Automaton saved successfully",
+    message: 'Automaton saved successfully',
     data: savedAutomaton.id,
   };
 };
@@ -93,13 +100,12 @@ export const updateProjectAction = async (
   projectId: string,
   body: {
     title?: string | null;
-    type?: AutomatonType;
     isPublic?: boolean;
-    automaton?: JsonFSM;
+    automatonCode?: AutomatonCode;
   },
 ): Promise<ServerActionResult> => {
   const session = await auth();
-  if (!session?.user?.id) redirect("/signin");
+  if (!session?.user?.id) redirect('/signin');
   const oldAutomaton = await prisma.project.findUnique({
     where: { id: projectId },
     select: { id: true, userId: true },
@@ -108,32 +114,32 @@ export const updateProjectAction = async (
     notFound();
   }
   if (oldAutomaton.userId !== session.user.id) {
-    return { success: false, message: "Permission denied" };
+    return { success: false, message: 'Permission denied' };
   }
   await prisma.project.update({
     where: { id: oldAutomaton.id },
     data: {
       title: body.title?.substring(0, 32),
-      type: body.type,
+      type: body.automatonCode?.type,
       isPublic: body.isPublic,
-      automaton: body.automaton as unknown as JsonObject,
+      automaton: body.automatonCode?.automaton as unknown as JsonObject,
     },
   });
   revalidatePath(`/playground/${projectId}`);
-  return { success: true, message: "Automaton saved successfully" };
+  return { success: true, message: 'Automaton saved successfully' };
 };
 
 export const deleteAutomatonAction = async (id: string): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: "User not authenticated" };
-  };
+    return { success: false, message: 'User not authenticated' };
+  }
 
   try {
     await prisma.project.delete({ where: { id, userId: session.user.id } });
-    revalidatePath("/library");
-    return { success: true, message: "Automaton deleted successfully" };
+    revalidatePath('/library');
+    return { success: true, message: 'Automaton deleted successfully' };
   } catch (error) {
-    return { success: false, message: "Automaton not found" };
+    return { success: false, message: 'Automaton not found' };
   }
 };

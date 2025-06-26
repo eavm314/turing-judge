@@ -1,14 +1,15 @@
-import { Badge } from "@/components/ui/badge";
-import { useAutomaton } from "@/providers/playground-provider";
+import { Badge } from '@/components/ui/badge';
+import { useAutomatonDesign } from '@/providers/playground-provider';
 
 export default function DeterminismBadge() {
-  const { automaton } = useAutomaton();
+  const { automaton } = useAutomatonDesign();
   return (
     <Badge
+      data-testid="determinism-badge"
       variant="outline"
       className="w-full text-center text-sm bg-background"
     >
-      {automaton.isDeterministic() ? "Deterministic" : "Non-deterministic"}
+      {automaton.isDeterministic ? 'Deterministic' : 'Non-deterministic'}
     </Badge>
   );
 }

@@ -1,34 +1,31 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useMemo, useRef } from "react";
-import { useStore } from "zustand";
-import { useShallow } from "zustand/react/shallow";
+import { createContext, useContext, useMemo, useRef } from 'react';
+import { useStore } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 
-import {
-  createPlaygroundStore,
-  PlaygroundState,
-  type PlaygroundStore,
-} from "@/store/playground-store";
+import { type AutomatonCode } from '@/lib/schemas/automaton-code';
+import { createPlaygroundStore, type PlaygroundStore } from '@/store/playground-store';
 
 type PlaygroundStoreApi = ReturnType<typeof createPlaygroundStore>;
 
-export const PlaygroundStoreContext = createContext<
-  PlaygroundStoreApi | undefined
->(undefined);
+export const PlaygroundStoreContext = createContext<PlaygroundStoreApi | undefined>(undefined);
 
 interface PlaygroundProviderProps {
   children: React.ReactNode;
-  initState?: Partial<PlaygroundState>;
+  isOwner: boolean;
+  initialCode: AutomatonCode | null;
 }
 
 export const PlaygroundStoreProvider = ({
   children,
-  initState,
+  initialCode,
+  isOwner,
 }: PlaygroundProviderProps) => {
   const storeRef = useRef<PlaygroundStoreApi | null>(null);
   storeRef.current = useMemo(
-    () => createPlaygroundStore(initState),
-    [initState?.isOwner],
+    () => createPlaygroundStore(initialCode, isOwner),
+    [isOwner],
   );
 
   return (
@@ -38,91 +35,84 @@ export const PlaygroundStoreProvider = ({
   );
 };
 
-export const usePlaygroundStore = <T,>(
-  selector: (store: PlaygroundStore) => T,
-): T => {
+export const usePlaygroundStore = <T,>(selector: (store: PlaygroundStore) => T): T => {
   const context = useContext(PlaygroundStoreContext);
 
   if (!context) {
-    throw new Error(
-      `usePlaygroundStore must be used within PlaygroundStoreProvider`,
-    );
+    throw new Error(`usePlaygroundStore must be used within PlaygroundStoreProvider`);
   }
 
   return useStore(context, selector);
 };
 
-export const useAutomaton = () =>
+export const useAutomatonDesign = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       automaton: state.automaton,
       unsavedChanges: state.unsavedChanges,
       setAutomaton: state.setAutomaton,
-      updateAutomaton: state.updateAutomaton,
+      updateDesign: state.updateDesign,
       saveChanges: state.saveChanges,
     })),
   );
 
 export const usePlaygroundMode = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       mode: state.mode,
       setMode: state.setMode,
     })),
   );
 
-export const useIsOwner = () => usePlaygroundStore((state) => state.isOwner);
+export const useIsOwner = () => usePlaygroundStore(state => state.isOwner);
 
 export const useSimulationWord = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       word: state.simulationWord,
       setWord: state.setSimulationWord,
     })),
   );
 
-export const useVisitedState = () =>
-  usePlaygroundStore(
-    useShallow((state) => ({
-      visitedState: state.visitedState,
-      setVisitedState: state.setVisitedState,
-    })),
-  );
+export const useVisitedState = () => usePlaygroundStore(state => state.activeData.state);
 
 export const useVisitedTransition = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
-      visitedTransition: state.visitedTransition,
-      visitedSymbol: state.visitedSymbol,
+    useShallow(state => ({
+      visitedTransition: state.activeData.transition,
+      visitedSymbol: state.activeData.symbol,
       simulationSpeed: state.simulationSpeed,
-      setVisitedTransition: state.setVisitedTransition,
     })),
   );
 
 export const useSimulation = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       word: state.simulationWord,
       simulationSpeed: state.simulationSpeed,
       setWord: state.setSimulationWord,
       setSimulationSpeed: state.setSimulationSpeed,
       stopSimulation: state.stopSimulation,
-      setVisitedState: state.setVisitedState,
-      setVisitedTransition: state.setVisitedTransition,
-      moveRight: state.moveRight,
-      moveLeft: state.moveLeft,
+      setAnimatedData: state.setAnimatedData,
+      move: state.move,
     })),
   );
 
 export const useSimulationTape = () =>
   usePlaygroundStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       translation: state.translation,
       speed: state.simulationSpeed,
       word: state.simulationWord,
       position: state.simulationIndex,
-      visitedSymbol: state.visitedSymbol,
-      moveRight: state.moveRight,
-      moveLeft: state.moveLeft,
+      visitedSymbol: state.activeData.symbol,
+    })),
+  );
+
+export const useSimulationStack = () =>
+  usePlaygroundStore(
+    useShallow(state => ({
+      stack: state.activeData.stack,
+      speed: state.simulationSpeed,
     })),
   );

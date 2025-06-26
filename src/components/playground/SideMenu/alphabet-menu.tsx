@@ -1,81 +1,75 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from 'react';
 
-import { PlusCircle } from "lucide-react";
+import { PlusCircle } from 'lucide-react';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { EPSILON } from "@/constants/symbols";
-import {
-  useAutomaton,
-  useIsOwner,
-  usePlaygroundMode,
-} from "@/providers/playground-provider";
-import { cn } from "@/lib/ui/utils";
-import { useToast } from "@/hooks/use-toast";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { EPSILON } from '@/constants/symbols';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/ui/utils';
+import { useAutomatonDesign, useIsOwner, usePlaygroundMode } from '@/providers/playground-provider';
 
 export default function AlphabetMenu() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isOwner = useIsOwner();
-  const { automaton, updateAutomaton } = useAutomaton();
+  const { automaton, updateDesign } = useAutomatonDesign();
   const { mode } = usePlaygroundMode();
   const { toast } = useToast();
 
   const handleAddToAlphabet = () => {
     const inputChar = inputRef.current!.value.trim();
     if (inputChar.match(/^[a-zA-Z0-9]$/)) {
-      if (!automaton.alphabet.includes(inputChar)) {
-        updateAutomaton((automaton) => {
-          automaton.setAlphabet([...automaton.alphabet, inputChar]);
-        });
-      }
-      inputRef.current!.value = "";
+      updateDesign(automaton => {
+        automaton.addSymbol(inputChar);
+      });
+      inputRef.current!.value = '';
     }
   };
 
   const handleAddEpsilonToAlphabet = () => {
-    if (!automaton.alphabet.includes(EPSILON)) {
-      updateAutomaton((automaton) => {
-        automaton.setAlphabet([EPSILON, ...automaton.alphabet]);
-      });
-    }
+    updateDesign(automaton => {
+      automaton.addSymbol(EPSILON);
+    });
   };
 
   const handleRemoveFromAlphabet = (symbol: string) => {
-    if (automaton.getUsedSymbols().has(symbol)) {
+    const usedSymbols = new Set(automaton.edges.flatMap(edge => edge.data!.transition.map(t => t.input)));
+    if (usedSymbols.has(symbol)) {
       toast({
-        title: "Cannot remove symbol",
+        title: 'Cannot remove symbol',
         description: `Symbol "${symbol}" is used in transitions`,
-        variant: "warning",
+        variant: 'warning',
         duration: 4000,
       });
       return;
     }
-    updateAutomaton((automaton) => {
-      automaton.setAlphabet(automaton.alphabet.filter((s) => s !== symbol));
+    updateDesign(automaton => {
+      automaton.removeSymbol(symbol);
     });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
       handleAddToAlphabet();
     }
   };
 
-  const disabled = mode === "simulation" || !isOwner;
+  const disabled = mode === 'simulation' || !isOwner;
 
   return (
     <div className="space-y-2 p-3">
-      <h2>Alphabet</h2>
+      <h2>Input Alphabet</h2>
       <Label htmlFor="alphabet-input" className="text-muted-foreground">
         Only alphanumeric characters
       </Label>
       <div className="flex gap-2 items-center">
         <Input
           id="alphabet-input"
+          data-testid="alphabet-input"
           ref={inputRef}
           className="w-12"
           maxLength={1}
@@ -83,12 +77,7 @@ export default function AlphabetMenu() {
           onKeyDown={handleKeyDown}
           disabled={disabled}
         />
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={handleAddToAlphabet}
-          disabled={disabled}
-        >
+        <Button variant="secondary" size="sm" onClick={handleAddToAlphabet} disabled={disabled}>
           Add
         </Button>
       </div>
@@ -105,17 +94,13 @@ export default function AlphabetMenu() {
             <PlusCircle size={16} />
           </Button>
         )}
-        {automaton.alphabet.map((symbol) => (
-          <Badge
-            key={symbol}
-            variant="outline"
-            className="flex items-center gap-1 p-0 w-11"
-          >
+        {automaton.alphabet.map(symbol => (
+          <Badge key={symbol} variant="outline" className="flex items-center gap-1 p-0 w-11">
             <span className="py-1 pl-2 pr-0 text-sm">{symbol}</span>
             <button
               className={cn(
-                "p-2 pt-1 text-muted-foreground select-none",
-                !disabled && "hover:text-foreground",
+                'p-2 pt-1 text-muted-foreground select-none',
+                !disabled && 'hover:text-foreground',
               )}
               onClick={() => handleRemoveFromAlphabet(symbol)}
               disabled={disabled}

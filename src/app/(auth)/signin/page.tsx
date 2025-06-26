@@ -1,8 +1,8 @@
-"use client";
-import { signIn } from "@/actions/auth";
-import { useSession } from "@/providers/user-provider";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+'use client';
+import { signIn } from '@/actions/auth';
+import { useSession } from '@/providers/user-provider';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function SignInPage() {
   const searchParams = useSearchParams();
@@ -14,9 +14,9 @@ export default function SignInPage() {
     if (user) {
       setOpenSignIn(false);
       window.close();
-      router.replace("/");
+      router.replace('/');
     } else {
-      signIn(searchParams.get("provider") || "google");
+      signIn(searchParams.get('provider') || 'google');
     }
   }, [user, searchParams]);
 

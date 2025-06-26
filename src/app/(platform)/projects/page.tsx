@@ -1,5 +1,5 @@
-import { getUserProjects } from "@/actions/projects";
-import AutomataLibrary from "@/components/projects";
+import { getUserProjects } from '@/actions/projects';
+import AutomataLibrary from '@/components/projects';
 
 export default async function ProjectsPage() {
   const savedAutomata = await getUserProjects();

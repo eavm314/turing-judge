@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
+import { useRef, useState } from 'react';
 
-import { Code, FileJson, Upload } from "lucide-react";
+import { Code, FileJson, Upload } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { CodeEditor } from "@/components/ui/code-editor";
+import { Button } from '@/components/ui/button';
+import { CodeEditor } from '@/components/ui/code-editor';
 import {
   Dialog,
   DialogContent,
@@ -14,12 +14,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import { validateCode } from "@/lib/schemas/automaton-code";
-import { useAutomaton, useIsOwner } from "@/providers/playground-provider";
+} from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import { validateCode } from '@/lib/schemas/automaton-code';
+import { useAutomatonDesign, useIsOwner } from '@/providers/playground-provider';
 
-const initCode = "";
+const initCode = '';
 
 export function ImportCode() {
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
@@ -29,7 +29,7 @@ export function ImportCode() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { setAutomaton } = useAutomaton();
+  const { setAutomaton } = useAutomatonDesign();
   const isOwner = useIsOwner();
   const { toast } = useToast();
 
@@ -44,8 +44,8 @@ export function ImportCode() {
       setIsImportDialogOpen(false);
     } catch (error) {
       toast({
-        title: "Invalid JSON for automaton",
-        variant: "destructive",
+        title: 'Invalid JSON for automaton',
+        variant: 'destructive',
       });
     }
   };
@@ -55,7 +55,7 @@ export function ImportCode() {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = e => {
       const content = e.target?.result as string;
       setInitialImportJson(content);
       setImportJson(content);
@@ -73,12 +73,7 @@ export function ImportCode() {
   return (
     <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
       <DialogTrigger asChild>
-        <Button
-          disabled={!isOwner}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-1"
-        >
+        <Button disabled={!isOwner} variant="outline" size="sm" className="flex items-center gap-1">
           <Upload className="h-4 w-4" />
           Import
         </Button>
@@ -126,19 +121,13 @@ export function ImportCode() {
             </Button>
           </div>
 
-          <CodeEditor
-            initialValue={initialImportJson}
-            onChange={setImportJson}
-          />
+          <CodeEditor initialValue={initialImportJson} onChange={setImportJson} />
 
           {codeError && <p className="text-sm text-red-500">{codeError}</p>}
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => setIsImportDialogOpen(false)}
-          >
+          <Button variant="outline" onClick={() => setIsImportDialogOpen(false)}>
             Cancel
           </Button>
           <Button disabled={!!codeError} onClick={handleImport}>

@@ -1,5 +1,5 @@
-import { getUserSubmissions } from "@/actions/submissions";
-import { NextRequest, NextResponse } from "next/server";
+import { getUserSubmissions } from '@/actions/submissions';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (
   req: NextRequest,

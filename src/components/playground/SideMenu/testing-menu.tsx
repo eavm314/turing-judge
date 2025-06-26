@@ -1,17 +1,13 @@
-import { useRef } from "react";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { EPSILON } from "@/constants/symbols";
-import { useToast } from "@/hooks/use-toast";
-import AutomatonExecutor from "@/lib/automaton/AutomatonExecutor";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { EPSILON } from '@/constants/symbols';
+import { useToast } from '@/hooks/use-toast';
 import {
   usePlaygroundMode,
-  useSimulation,
-  useSimulationTape,
   useSimulationWord,
-} from "@/providers/playground-provider";
+} from '@/providers/playground-provider';
+import { automatonManager } from '@/store/playground-store';
 
 export default function TestingMenu() {
   const { word, setWord } = useSimulationWord();
@@ -19,29 +15,29 @@ export default function TestingMenu() {
   const { toast } = useToast();
 
   const handleTest = () => {
-    const executionConfig = AutomatonExecutor.getConfig();
-    const { accepted, depthLimitReached, maxLimitReached } =
-      AutomatonExecutor.execute(word);
+    const executor = automatonManager.getExecutor();
+    const executionConfig = executor.getConfig();
+    const { accepted, depthLimitReached, maxLimitReached } = executor.execute(word, false);
     if (accepted) {
       toast({
-        title: "Accepted",
-        variant: "success",
+        title: 'Accepted',
+        variant: 'success',
       });
     } else {
       toast({
-        title: "Rejected",
+        title: 'Rejected',
         description: maxLimitReached
           ? `Reached the maximum of ${executionConfig.maxSteps} steps. Potential infinite loop.`
           : depthLimitReached
             ? `Explored the maximum depth of ${executionConfig.depthLimit}. Potential infinite loop.`
             : undefined,
-        variant: "destructive",
+        variant: 'destructive',
       });
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
       handleTest();
     }
@@ -55,9 +51,10 @@ export default function TestingMenu() {
       </Label>
       <Input
         id="test-input"
+        data-testid="test-input"
         value={word}
-        onChange={(e) => setWord(e.target.value)}
-        disabled={mode === "simulation"}
+        onChange={e => setWord(e.target.value)}
+        disabled={mode === 'simulation'}
         type="text"
         className="font-mono placeholder:font-mono disabled:opacity-100"
         placeholder={EPSILON}

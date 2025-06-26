@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useCallback } from "react";
-import { useToast } from "./use-toast";
+import { useState, useCallback } from 'react';
+import { useToast } from './use-toast';
 
 export type ServerActionResult<T = void> = {
   success: boolean;
@@ -26,24 +26,25 @@ export function useServerAction<Args extends any[], T>(
 
         if (!result.success) {
           toast({
-            title: "Error",
+            title: 'Error',
             description: result.message,
-            variant: "destructive",
+            variant: 'destructive',
+            duration: 6000,
           });
           return false;
         }
 
         toast({
           title: result.message,
-          variant: "success",
+          variant: 'success',
         });
 
         return ('data' in result ? result.data : true) as MaybeVoid<T>;
       } catch (err) {
         toast({
-          title: "Error",
-          description: "An unexpected error occurred.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'An unexpected error occurred.',
+          variant: 'destructive',
         });
         return false;
       } finally {

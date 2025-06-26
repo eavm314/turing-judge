@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { Loader2 } from "lucide-react";
+import { Loader2 } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { GoogleIcon } from "@/components/ui/icons";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { GoogleIcon } from '@/components/ui/icons';
 
 export function SignUpForm() {
   const router = useRouter();
@@ -23,10 +23,10 @@ export function SignUpForm() {
     setError(null);
 
     const formData = new FormData(event.currentTarget);
-    const fullName = formData.get("fullName") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirmPassword") as string;
+    const fullName = formData.get('fullName') as string;
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
 
     if (password !== confirmPassword) {
       setPasswordMatch(false);
@@ -42,12 +42,12 @@ export function SignUpForm() {
       // await signUp(fullName, email, password)
 
       // Simulate registration delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Redirect to dashboard after successful registration
-      router.push("/dashboard");
+      router.push('/dashboard');
     } catch (error) {
-      setError("Failed to create account. Please try again.");
+      setError('Failed to create account. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -63,12 +63,12 @@ export function SignUpForm() {
       // await signUpWithGoogle()
 
       // Simulate authentication delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Redirect to dashboard after successful registration
-      router.push("/dashboard");
+      router.push('/dashboard');
     } catch (error) {
-      setError("Failed to sign up with Google");
+      setError('Failed to sign up with Google');
     } finally {
       setIsLoading(false);
     }
@@ -129,9 +129,7 @@ export function SignUpForm() {
               disabled={isLoading}
               required
             />
-            {!passwordMatch && (
-              <p className="text-sm text-destructive">Passwords do not match</p>
-            )}
+            {!passwordMatch && <p className="text-sm text-destructive">Passwords do not match</p>}
           </div>
           {error && <div className="text-sm text-destructive">{error}</div>}
           <Button type="submit" disabled={isLoading}>
@@ -145,17 +143,10 @@ export function SignUpForm() {
           <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
+          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
         </div>
       </div>
-      <Button
-        variant="outline"
-        type="button"
-        disabled={isLoading}
-        onClick={handleGoogleSignUp}
-      >
+      <Button variant="outline" type="button" disabled={isLoading} onClick={handleGoogleSignUp}>
         {isLoading ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         ) : (
