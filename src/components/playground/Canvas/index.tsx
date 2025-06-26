@@ -84,12 +84,6 @@ export default function Canvas() {
         <Panel position="top-center">
           <SwitchType />
         </Panel>
-        <Panel position="top-right">
-          <ControlsHelp />
-        </Panel>
-        <Panel position="bottom-left">
-          <DeterminismBadge />
-        </Panel>
         {mode === 'simulation' && (
           <>
             <Panel position="bottom-center">
@@ -100,6 +94,12 @@ export default function Canvas() {
             </Panel>
           </>
         )}
+        <Panel position="top-right">
+          <ControlsHelp />
+        </Panel>
+        <Panel position="bottom-left">
+          <DeterminismBadge />
+        </Panel>
       </ReactFlow>
     </div>
   );

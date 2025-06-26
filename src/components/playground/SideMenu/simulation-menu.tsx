@@ -69,7 +69,7 @@ export default function SimulationMenu() {
           <PenLine className="h-4 w-4" />
           Manual Simulation *
         </Button>
-        <span className="text-xs text-muted-foreground/80">* Coming Soon!</span>
+        <span className="text-xs text-muted-foreground">* Coming Soon!</span>
       </div>
     </div>
   );
