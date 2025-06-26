@@ -24,21 +24,22 @@ export function SwitchType() {
   const router = useRouter();
 
   const handleSelectChange = async (value: AutomatonType) => {
-    const confirmation = await showConfirm({
-      title: 'Save your changes',
-      message: `Please save your design before switching the automaton type. This will reset the automaton.`,
-      confirmLabel: 'Switch',
-      cancelLabel: 'Cancel',
-    });
-    if (!confirmation) return;
+    // const confirmation = await showConfirm({
+    //   title: 'Save your changes',
+    //   message: `Please save your design before switching the automaton type. This will reset the automaton.`,
+    //   confirmLabel: 'Switch',
+    //   cancelLabel: 'Cancel',
+    // });
+    // if (!confirmation) return;
     const params = new URLSearchParams();
     params.set('type', value.toLowerCase());
-    router.replace(`${pathname}?${params.toString()}`);
+    window.open(`/playground?${params.toString()}`, '_blank');
+    // router.replace(`${pathname}?${params.toString()}`);
   };
 
   return (
     <Select
-      disabled={pathname.split('/').length > 2}
+      // disabled={pathname.split('/').length > 2}
       value={automaton.type}
       onValueChange={handleSelectChange}
     >
@@ -46,7 +47,7 @@ export function SwitchType() {
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {Object.values(AutomatonType).map(type => (
+        {Object.values(AutomatonType).splice(0,2).map(type => (
           <SelectItem key={type} value={type}>
             {valueToText[type]}
           </SelectItem>
