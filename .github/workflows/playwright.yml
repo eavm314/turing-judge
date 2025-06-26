@@ -10,6 +10,10 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      CI: true
+      NODE_ENV: test
+      NEXT_PUBLIC_ENV: test
 
     steps:
       - uses: actions/checkout@v4
@@ -31,10 +35,6 @@ jobs:
         run: |
           npm run start & # starts in background
           npx wait-on http://localhost:3000
-        env:
-          CI: true
-          NODE_ENV: test
-          NEXT_PUBLIC_ENV: test
 
       - name: Run Playwright tests
         run: npm run test
