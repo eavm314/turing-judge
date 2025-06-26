@@ -25,7 +25,7 @@ export const PlaygroundStoreProvider = ({
   const storeRef = useRef<PlaygroundStoreApi | null>(null);
   storeRef.current = useMemo(
     () => createPlaygroundStore(initialCode, isOwner),
-    [initialCode, isOwner],
+    [isOwner],
   );
 
   return (
