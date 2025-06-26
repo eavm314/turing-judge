@@ -126,7 +126,7 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
   return (
     <Dialog open={openDialog} onOpenChange={handleOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className='w-40'>
           <PlusCircle size={20} /> Submit Solution{' '}
         </Button>
       </DialogTrigger>

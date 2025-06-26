@@ -68,7 +68,7 @@ export const FiltersBar = ({ search, difficulty }: { search: string; difficulty:
         <SelectContent>
           <SelectItem value="all">All</SelectItem>
           {Object.values(ProblemDifficulty).map(diff => (
-            <SelectItem key={diff} value={diff} textValue="aa">
+            <SelectItem key={diff} value={diff}>
               <DifficultyBadge difficulty={diff} />
             </SelectItem>
           ))}

@@ -14,7 +14,7 @@ export default function ProblemContent({ problem }: { problem: ProblemView }) {
         <MarkdownWrapper content={problem.statement} />
       </div>
 
-      <div className="space-y-8">
+      <div className="flex flex-col gap-8 items-center md:ml-10 md:mr-5">
         <Constraints constraints={problem.constraints} />
         <SubmitSolution />
       </div>

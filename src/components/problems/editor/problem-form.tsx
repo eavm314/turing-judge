@@ -34,6 +34,8 @@ import { useServerAction } from '@/hooks/use-server-action';
 import { problemSchema, type ProblemSchema } from '@/lib/schemas/problem-form';
 import { useRouter } from 'next/navigation';
 import { MarkdownEditor } from './markdown-editor';
+import { DifficultyBadge } from '@/utils/badges';
+import { ProblemDifficulty } from '@prisma/client';
 
 export function ProblemForm({
   problemId,
@@ -127,45 +129,46 @@ export function ProblemForm({
           <TabsContent value="basic" className="space-y-6">
             <Card>
               <CardContent className="pt-6">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter problem title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="difficulty"
-                  render={({ field }) => (
-                    <FormItem className="mt-4">
-                      <FormLabel>Difficulty</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-3">
+                        <FormLabel>Title</FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select difficulty" />
-                          </SelectTrigger>
+                          <Input placeholder="Enter problem title" {...field} />
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="UNKNOWN">Unknown</SelectItem>
-                          <SelectItem value="EASY">Easy</SelectItem>
-                          <SelectItem value="MEDIUM">Medium</SelectItem>
-                          <SelectItem value="HARD">Hard</SelectItem>
-                          <SelectItem value="EXPERT">Expert</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
+                  <FormField
+                    control={form.control}
+                    name="difficulty"
+                    render={({ field }) => (
+                      <FormItem >
+                        <FormLabel>Difficulty</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select difficulty" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {Object.values(ProblemDifficulty).map(diff => (
+                              <SelectItem key={diff} value={diff}>
+                                <DifficultyBadge difficulty={diff} />
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="statement"
@@ -349,12 +352,12 @@ export function ProblemForm({
                 <div className="bg-muted p-3 rounded-md">
                   <h4 className="text-sm font-medium mb-2 text-neutral-foreground">Examples:</h4>
                   <div className="flex divide-x-2">
-                    <pre className="text-xs pr-10">{`FSM/PDA:\n - 0101,1\n - abab,0\n - ,1 \t(${EPSILON} input)`}</pre>
-                    <pre className="text-xs pl-10">
+                    <pre className="text-sm pr-10">{`FSM/PDA:\n - 0101,1\n - abab,0\n - ,1 \t(${EPSILON} input)`}</pre>
+                    <pre className="text-sm pl-10">
                       {'TM:\n - 0011,0\n - 0101,1\n - aaaa,1,bbbb'}
                     </pre>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2">1 = accept, 0 = reject</p>
+                  <p className="text-sm text-muted-foreground mt-2 font-mono">1 = accept, 0 = reject</p>
                 </div>
               </CardContent>
             </Card>

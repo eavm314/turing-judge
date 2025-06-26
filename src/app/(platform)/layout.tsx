@@ -4,8 +4,7 @@ import { Cpu, ExternalLink } from 'lucide-react';
 
 import { AccountMenu } from '@/components/layout/account-menu';
 import { DarkModeToggle } from '@/components/layout/dark-mode-toogle';
-import { GithubIcon } from '@/components/ui/icons';
-import { APP_NAME, REPO } from '@/constants/app';
+import { APP_NAME } from '@/constants/app';
 
 export default function PlatformLayout({
   children,
@@ -43,26 +42,6 @@ export default function PlatformLayout({
         </nav>
       </header>
       {children}
-      <footer className="flex flex-col sm:flex-row items-center justify-between gap-2 py-4 w-full px-4 md:px-6 text-accent-foreground">
-        <div className="flex flex-col gap-1 text-sm text-center sm:flex-row sm:text-left">
-          <p>
-            © 2025 <span className="font-semibold tracking-wide">{APP_NAME}</span>.
-          </p>
-          <p>
-            Developed by <span className="font-semibold tracking-wide">Enrique Vicente</span>.
-          </p>
-        </div>
-        <nav className="flex items-center gap-4">
-          <a
-            href={REPO}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <GithubIcon className="size-6" />
-            <span className="sr-only">GitHub</span>
-          </a>
-        </nav>
-      </footer>
     </div>
   );
 }
