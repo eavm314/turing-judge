@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { fromZodIssue } from 'zod-validation-error';
 
-import { fsmSchema } from './finite-state-machine';
-import { pdaSchema } from './pushdown-automaton';
+import { fsmSchema, JsonFsmState } from './finite-state-machine';
+import { JsonPdaState, pdaSchema } from './pushdown-automaton';
+import { tmSchema, JsonTmState } from './turing-machine';
 
 export const automatonCodeSchema = z.discriminatedUnion('type', [
   z.object({
@@ -15,19 +16,18 @@ export const automatonCodeSchema = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal('TM'),
-    automaton: z.object({}).optional(),
+    automaton: tmSchema.optional(),
   }),
 ]);
 
 export type AutomatonCode = z.infer<typeof automatonCodeSchema>;
 
+export type JsonState = JsonFsmState | JsonPdaState | JsonTmState;
+
 export const validateCode = (code: string) => {
   try {
     const json = JSON.parse(code);
-    const automaton = automatonCodeSchema.parse(json);
-    if (automaton.type === 'TM') {
-      return 'Automaton type not supported yet. Come back later!';
-    }
+    automatonCodeSchema.parse(json);
     return '';
   } catch (error) {
     if (error instanceof z.ZodError) {
