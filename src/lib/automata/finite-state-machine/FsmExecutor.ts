@@ -11,7 +11,7 @@ type FsmOutput = string; // Target state name
 
 export type FsmStep = Step<FsmInput, FsmOutput>;
 
-interface ExecutionNode {
+type ExecutionNode = {
   state: string;
   inputPos: number;
   path: FsmStep[];
@@ -65,7 +65,6 @@ export class FsmExecutor extends BaseExecutor<FsmInput, FsmOutput> {
   execute(input: string, savePath: boolean = false) {
     let steps = 0;
     let depthLimitReached = false;
-    const config = this.getConfig();
 
     const stack: ExecutionNode[] = [];
     stack.push({ state: this.initial, inputPos: 0, path: [], depth: 0 });
@@ -86,7 +85,7 @@ export class FsmExecutor extends BaseExecutor<FsmInput, FsmOutput> {
         };
       }
 
-      if (steps > config.maxSteps) {
+      if (steps > this.config.maxSteps) {
         return {
           accepted: false,
           depthLimitReached,
@@ -95,16 +94,17 @@ export class FsmExecutor extends BaseExecutor<FsmInput, FsmOutput> {
         };
       }
 
-      if (depth > config.depthLimit) {
+      if (depth > this.config.depthLimit) {
         depthLimitReached = true;
         continue;
       }
 
       // First, push epsilon transitions (they don't consume input)
-      const epsilonTargets = this.transFn({ state, symbol: EPSILON });
+      const epsilonInput = { state, symbol: EPSILON };
+      const epsilonTargets = this.transFn(epsilonInput);
       for (const target of epsilonTargets) {
         const currentStep: FsmStep = {
-          input: { state, symbol: EPSILON },
+          input: epsilonInput,
           output: target,
         };
         stack.push({

@@ -1,37 +1,37 @@
-export interface Step<TransInput, TransOutput> {
-  input: TransInput;
-  output: TransOutput;
-}
+export type Step<TIn, TOut> = {
+  input: TIn;
+  output: TOut;
+};
 
-export interface ExecutionResult<TransInput, TransOutput> {
+export type ExecutionResult<TIn, TOut> = {
   accepted: boolean;
   depthLimitReached: boolean;
   maxLimitReached: boolean;
-  path: Step<TransInput, TransOutput>[];
+  path: Step<TIn, TOut>[];
 }
 
-export interface ExecutionConfig {
+export type ExecutionConfig = {
   depthLimit: number;
   maxSteps: number;
 }
 
-export abstract class BaseExecutor<TransInput, TransOutput> {
-  private config: ExecutionConfig;
+export abstract class BaseExecutor<TIn, TOut> {
+  #config: ExecutionConfig;
 
   protected initial!: string;
   protected finals!: Set<string>;
-  protected states!: Map<string, Map<string, TransOutput[]>>;
+  protected states!: Map<string, Map<string, TOut[]>>;
 
   constructor() {
-    this.config = { depthLimit: 500, maxSteps: 10000 };
+    this.#config = { depthLimit: 500, maxSteps: 10000 };
   }
 
-  getConfig() {
-    return this.config;
+  get config() {
+    return this.#config;
   }
 
-  setConfig(config: ExecutionConfig) {
-    this.config = config;
+  set config(value: ExecutionConfig) {
+    this.#config = value;
   }
 
   countStates(): number {
@@ -44,10 +44,10 @@ export abstract class BaseExecutor<TransInput, TransOutput> {
 
   abstract isDeterministic(): boolean;
 
-  abstract transFn(input: TransInput): TransOutput[];
+  abstract transFn(input: TIn): TOut[];
 
   abstract execute(
     inputString: string,
     savePath: boolean,
-  ): ExecutionResult<TransInput, TransOutput>;
+  ): ExecutionResult<TIn, TOut>;
 }

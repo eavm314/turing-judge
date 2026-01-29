@@ -15,7 +15,7 @@ type PdaOutput = {
 
 type PdaStep = Step<PdaInput, PdaOutput>;
 
-interface ExecutionNode {
+type ExecutionNode = {
   state: string;
   inputPos: number;
   stack: string[];
@@ -83,7 +83,6 @@ export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
   execute(word: string, savePath = false) {
     let steps = 0;
     let depthLimitReached = false;
-    const config = this.getConfig();
 
     const executionStack: ExecutionNode[] = [
       {
@@ -110,7 +109,7 @@ export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
         };
       }
 
-      if (steps > config.maxSteps) {
+      if (steps > this.config.maxSteps) {
         return {
           accepted: false,
           depthLimitReached,
@@ -119,7 +118,7 @@ export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
         };
       }
 
-      if (depth > config.depthLimit) {
+      if (depth > this.config.depthLimit) {
         depthLimitReached = true;
         continue;
       }
