@@ -5,10 +5,10 @@ import { TmDesigner } from './TmDesigner';
 export type TmTransitionData = {
   read: string;
   write: string;
-  move:  | 'R' | 'S';
+  move: 'L' | 'R' | 'S';
 };
 
-export class TmState extends BaseState {
+export class TmState extends BaseState<TmTransitionData> {
   id: number;
   name: string;
   position: { x: number; y: number };

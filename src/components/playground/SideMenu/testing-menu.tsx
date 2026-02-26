@@ -16,7 +16,6 @@ export default function TestingMenu() {
 
   const handleTest = () => {
     const executor = automatonManager.getExecutor();
-    const executionConfig = executor.getConfig();
     const { accepted, depthLimitReached, maxLimitReached } = executor.execute(word, false);
     if (accepted) {
       toast({
@@ -27,9 +26,9 @@ export default function TestingMenu() {
       toast({
         title: 'Rejected',
         description: maxLimitReached
-          ? `Reached the maximum of ${executionConfig.maxSteps} steps. Potential infinite loop.`
+          ? `Reached the maximum of ${executor.config.maxSteps} steps. Potential infinite loop.`
           : depthLimitReached
-            ? `Explored the maximum depth of ${executionConfig.depthLimit}. Potential infinite loop.`
+            ? `Explored the maximum depth of ${executor.config.depthLimit}. Potential infinite loop.`
             : undefined,
         variant: 'destructive',
       });

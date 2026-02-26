@@ -23,7 +23,7 @@ import {
   TuringTape,
 } from './panel-components';
 import { StateNode } from './state-node';
-import { TransitionEdge } from './transition-edge';
+import { FsmEdge, PdaEdge } from './transition-edges';
 import { useCanvasHandlers } from './utils/use-canvas-handlers';
 import { SwitchType } from './panel-components/switch-type';
 import SimulationStack from './panel-components/simulation-stack';
@@ -33,11 +33,8 @@ const nodeTypes: NodeTypes = {
 };
 
 const edgeTypes: EdgeTypes = {
-  transition: TransitionEdge,
-};
-
-const defaultEdgeOpts = {
-  type: 'transition',
+  fsm: FsmEdge,
+  pda: PdaEdge,
 };
 
 const viewOptions: FitViewOptions = {
@@ -67,7 +64,6 @@ export default function Canvas() {
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         connectionLineComponent={FloatingConnectionLine}
-        defaultEdgeOptions={defaultEdgeOpts}
         fitView
         fitViewOptions={viewOptions}
         proOptions={proOptions}

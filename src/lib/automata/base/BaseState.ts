@@ -3,14 +3,12 @@ import { type FsmTransitionData } from '../finite-state-machine/FsmState';
 import { type PdaTransitionData } from '../pushdown-automaton/PdaState';
 import { type TmTransitionData } from '../turing-machine/TmState';
 
-export type TransitionData = FsmTransitionData | PdaTransitionData | TmTransitionData;
-
-export abstract class BaseState {
+export abstract class BaseState<T = unknown> {
   abstract id: number;
   abstract name: string;
   abstract position: { x: number; y: number };
   abstract isFinal: boolean;
-  abstract transitions: Map<number, TransitionData[]>;
+  abstract transitions: Map<number, T[]>;
 
   setName(name: string) {
     this.name = name;
@@ -28,7 +26,7 @@ export abstract class BaseState {
     this.transitions.delete(to);
   }
 
-  addTransition(target: number, data: TransitionData[]) {
+  addTransition(target: number, data: T[]) {
     this.transitions.set(target, data);
   }
 

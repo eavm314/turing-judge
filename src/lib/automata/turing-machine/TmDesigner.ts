@@ -1,11 +1,11 @@
 import { StateNodeType } from '@/components/playground/Canvas/state-node';
-import { TransitionEdgeType } from '@/components/playground/Canvas/transition-edge';
+import { TransitionEdgeType } from '@/components/playground/Canvas/transition-edges';
 import { BLANK, EPSILON } from '@/constants/symbols';
 import { AutomatonDesign, BaseDesigner } from '@/lib/automata/base/BaseDesigner';
 import { JsonTm, JsonTmState } from '@/lib/schemas/turing-machine';
-import { TmState, TmTransitionData } from './TmState';
+import { TmState, type TmTransitionData } from './TmState';
 
-export class TmDesigner extends BaseDesigner {
+export class TmDesigner extends BaseDesigner<TmTransitionData> {
   protected states: Map<number, TmState>;
 
   constructor(json: JsonTm) {
@@ -83,6 +83,7 @@ export class TmDesigner extends BaseDesigner {
           .filter(([, tr]) => tr.length > 0)
           .map(([target, transition]) => ({
             id: `${state.id}->${target}`,
+            type: 'tm',
             source: String(state.id),
             target: String(target),
             data: { transition },
@@ -131,5 +132,17 @@ export class TmDesigner extends BaseDesigner {
       }
     }
     return true;
+  }
+
+  getUsedSymbols(): Set<string> {
+    const usedSymbols = new Set<string>();
+    for (const state of this.states.values()) {
+      for (const data of state.transitions.values()) {
+        for (const symbol of data.map(d => d.read)) {
+          usedSymbols.add(symbol);
+        }
+      }
+    }
+    return usedSymbols;
   }
 }

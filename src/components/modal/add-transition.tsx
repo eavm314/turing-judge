@@ -12,13 +12,14 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { EPSILON } from '@/constants/symbols';
-import { type TransitionData } from '@/lib/automata/base/BaseState';
 import { PdaDesigner } from '@/lib/automata/pushdown-automaton/PdaDesigner';
 import { PdaTransitionData } from '@/lib/automata/pushdown-automaton/PdaState';
 import { type CustomContentProps, useModal } from '@/providers/modal-provider';
 import { automatonManager } from '@/store/playground-store';
 import { AutomatonType } from '@prisma/client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { FsmTransitionData } from '@/lib/automata/finite-state-machine/FsmState';
+import { FsmDesigner } from '@/lib/automata/finite-state-machine/FsmDesigner';
 
 interface AddTransitionProps {
   source: number;
@@ -29,13 +30,14 @@ const AddFsmTransition = ({
   value: transitionData,
   setValue: setTransitionData,
   data,
-}: CustomContentProps<TransitionData[], AddTransitionProps>) => {
+}: CustomContentProps<FsmTransitionData[], AddTransitionProps>) => {
   const [alphabet, setAlphabet] = useState<string[]>([]);
 
   useEffect(() => {
-    const designer = automatonManager.getDesigner();
+    const designer = automatonManager.getDesigner() as FsmDesigner;
     const { source, target } = data;
     const transition = designer.getTransition(source, target);
+    if (automatonManager.getType() === AutomatonType.FSM) {}
     setTransitionData(transition);
     setAlphabet(designer.getAlphabet());
   }, []);
@@ -89,7 +91,7 @@ const AddPdaTransition = ({
   value,
   setValue: setTransitionData,
   data,
-}: CustomContentProps<TransitionData[], AddTransitionProps>) => {
+}: CustomContentProps<PdaTransitionData[], AddTransitionProps>) => {
   const [inputAlphabet, setInputAlphabet] = useState<string[]>([]);
   const [stackAlphabet, setStackAlphabet] = useState<string[]>([]);
 
@@ -316,13 +318,13 @@ const AddTMTransition = ({
   value: transitionData,
   setValue: setTransitionData,
   data,
-}: CustomContentProps<TransitionData[], AddTransitionProps>) => {
+}: CustomContentProps<unknown[], AddTransitionProps>) => {
   return null;
 };
 
 const componentByType: Record<
   AutomatonType,
-  React.FC<CustomContentProps<TransitionData[], AddTransitionProps>>
+  React.FC<CustomContentProps<any[], AddTransitionProps>>
 > = {
   [AutomatonType.FSM]: AddFsmTransition,
   [AutomatonType.PDA]: AddPdaTransition,
@@ -333,7 +335,7 @@ export const useAddTransitionPrompt = () => {
   const { showCustomModal } = useModal();
 
   const addTransition = (data: AddTransitionProps) =>
-    showCustomModal<TransitionData[], AddTransitionProps>({
+    showCustomModal<unknown[], AddTransitionProps>({
       title: 'Edit Transition',
       message: 'Choose the symbols for the transition',
       customContent: componentByType[automatonManager.getType()],
