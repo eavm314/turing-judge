@@ -262,7 +262,7 @@ export const deleteProblemAction = async (id: string): Promise<ServerActionResul
     revalidatePath('/problems');
     revalidatePath('/problems/editor');
     return { success: true, message: 'Problem deleted successfully' };
-  } catch (error) {
+  } catch {
     return { success: false, message: 'Problem not found' };
   }
 };

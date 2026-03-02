@@ -16,14 +16,13 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { PROJECTS_LIMIT } from '@/constants/app';
 import { SortDirection } from '@/constants/table';
+import { useServerAction } from '@/hooks/use-server-action';
 import { type AutomatonProjectItem } from '@/lib/schemas';
 import { useModal } from '@/providers/modal-provider';
-import ProjectItem from './item';
-import { useToast } from '@/hooks/use-toast';
-import { useServerAction } from '@/hooks/use-server-action';
 import { useSession } from '@/providers/user-provider';
-import { PROJECTS_LIMIT } from '@/constants/app';
+import ProjectItem from './item';
 
 type TableColumn = keyof AutomatonProjectItem;
 
@@ -121,7 +120,9 @@ export default function AutomatonProjects({
 
       <Separator />
 
-      <div className="text-sm text-muted-foreground">{projectItems.length} / {PROJECTS_LIMIT[user!.role]} Projects</div>
+      <div className="text-sm text-muted-foreground">
+        {projectItems.length} / {PROJECTS_LIMIT[user!.role]} Projects
+      </div>
       <Table>
         <TableHeader>
           <TableRow>

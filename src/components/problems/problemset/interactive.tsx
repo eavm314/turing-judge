@@ -21,7 +21,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from '@/components/ui/select';
 import { TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/ui/utils';

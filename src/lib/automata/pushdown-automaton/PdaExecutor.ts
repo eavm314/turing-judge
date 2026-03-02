@@ -21,7 +21,7 @@ type ExecutionNode = {
   stack: string[];
   path: PdaStep[];
   depth: number;
-}
+};
 
 export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
   constructor(initialAutomaton: JsonPda) {
@@ -34,7 +34,7 @@ export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
       const seen = new Set<string>();
 
       for (const key of transitions.keys()) {
-        const [input, _] = key.split('|');
+        const [input] = key.split('|');
         if (input === EPSILON) return false;
         if (seen.has(key)) return false;
 

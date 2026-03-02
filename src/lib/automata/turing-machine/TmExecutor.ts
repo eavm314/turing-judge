@@ -34,7 +34,7 @@ export class TmExecutor extends BaseExecutor<TmInput, TmOutput> {
       const seen = new Set<string>();
 
       for (const key of transitions.keys()) {
-        const [input, _] = key.split('|');
+        const [input] = key.split('|');
         if (input === EPSILON) return false;
         if (seen.has(key)) return false;
 
@@ -137,22 +137,23 @@ export class TmExecutor extends BaseExecutor<TmInput, TmOutput> {
           depth: depth + 1,
         });
       }
-      
+
       // Consuming transitions
       const readSymbol = tape.get(inputPos) ?? BLANK;
       const input = { state, readSymbol };
       const targets = this.transFn(input);
       for (const output of targets) {
         const currentStep: TmStep = { input, output };
-        
+
         const newTape = new Map(tape);
         newTape.set(inputPos, output.writeSymbol);
 
-        const newInputPos = output.direction === 'R'
-          ? inputPos + 1
-          : output.direction === 'L'
-            ? inputPos - 1
-            : inputPos;
+        const newInputPos =
+          output.direction === 'R'
+            ? inputPos + 1
+            : output.direction === 'L'
+              ? inputPos - 1
+              : inputPos;
 
         executionStack.push({
           state: output.state,

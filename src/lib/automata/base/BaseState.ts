@@ -1,7 +1,4 @@
 import { type JsonState } from '@/lib/schemas/automaton-code';
-import { type FsmTransitionData } from '../finite-state-machine/FsmState';
-import { type PdaTransitionData } from '../pushdown-automaton/PdaState';
-import { type TmTransitionData } from '../turing-machine/TmState';
 
 export abstract class BaseState<T = unknown> {
   abstract id: number;

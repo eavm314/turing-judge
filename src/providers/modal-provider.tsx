@@ -51,6 +51,8 @@ const ModalContext = createContext<ModalContextType | undefined>(undefined);
 export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState<ModalType>('confirm');
+  // We need to allow any type here since it will be determined by the custom modal content
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any 
   const [options, setOptions] = useState<CustomModalOptions<any, any>>({});
 
   const closeModal = () => {

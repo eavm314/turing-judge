@@ -139,7 +139,7 @@ export const deleteAutomatonAction = async (id: string): Promise<ServerActionRes
     await prisma.project.delete({ where: { id, userId: session.user.id } });
     revalidatePath('/library');
     return { success: true, message: 'Automaton deleted successfully' };
-  } catch (error) {
+  } catch {
     return { success: false, message: 'Automaton not found' };
   }
 };

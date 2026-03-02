@@ -1,25 +1,24 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { ArrowRight, Edit, Plus, Trash2, X } from 'lucide-react';
+import { Edit, Plus, Trash2, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { EPSILON } from '@/constants/symbols';
+import { FsmDesigner } from '@/lib/automata/finite-state-machine/FsmDesigner';
+import { FsmTransitionData } from '@/lib/automata/finite-state-machine/FsmState';
 import { PdaDesigner } from '@/lib/automata/pushdown-automaton/PdaDesigner';
 import { PdaTransitionData } from '@/lib/automata/pushdown-automaton/PdaState';
 import { type CustomContentProps, useModal } from '@/providers/modal-provider';
 import { automatonManager } from '@/store/playground-store';
 import { AutomatonType } from '@prisma/client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { FsmTransitionData } from '@/lib/automata/finite-state-machine/FsmState';
-import { FsmDesigner } from '@/lib/automata/finite-state-machine/FsmDesigner';
 
 interface AddTransitionProps {
   source: number;
@@ -315,15 +314,17 @@ const AddPdaTransition = ({
 };
 
 const AddTMTransition = ({
-  value: transitionData,
-  setValue: setTransitionData,
-  data,
+  // value: transitionData,
+  // setValue: setTransitionData,
+  // data,
 }: CustomContentProps<unknown[], AddTransitionProps>) => {
   return null;
 };
 
 const componentByType: Record<
   AutomatonType,
+  // We need to allow any type here since it will be determined by the automaton type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   React.FC<CustomContentProps<any[], AddTransitionProps>>
 > = {
   [AutomatonType.FSM]: AddFsmTransition,

@@ -42,7 +42,7 @@ export function ImportCode() {
       setAutomaton(parsed);
       setInitialImportJson(initCode);
       setIsImportDialogOpen(false);
-    } catch (error) {
+    } catch {
       toast({
         title: 'Invalid JSON for automaton',
         variant: 'destructive',
@@ -67,7 +67,9 @@ export function ImportCode() {
     try {
       const parsed = JSON.parse(importJson);
       setInitialImportJson(JSON.stringify(parsed, null, 2));
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error formatting JSON:', error);
+    }
   };
 
   return (

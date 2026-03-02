@@ -1,20 +1,17 @@
-import { useRef } from 'react';
 
 import { CircleStop, PenLine, Play, Shuffle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { EPSILON } from '@/constants/symbols';
 import { useToast } from '@/hooks/use-toast';
-import { automatonManager } from '@/store/playground-store';
 import { usePlaygroundMode, useSimulation } from '@/providers/playground-provider';
-import { FsmStep } from '@/lib/automata/finite-state-machine/FsmExecutor';
+import { automatonManager } from '@/store/playground-store';
 
 export default function SimulationMenu() {
   const { mode, setMode } = usePlaygroundMode();
   const simulating = mode === 'simulation';
 
-  const { word, simulationSpeed, setAnimatedData, move, stopSimulation } = useSimulation();
+  const { word, setAnimatedData, move, stopSimulation } = useSimulation();
 
   const { toast } = useToast();
 

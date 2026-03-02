@@ -1,7 +1,6 @@
-import { type JsonFsm } from '@/lib/schemas/finite-state-machine';
-import { TmDesigner } from './TmDesigner';
 import { JsonTm } from '@/lib/schemas/turing-machine';
-// import { FsmExecutor } from './FsmExecutor';
+import { TmDesigner } from './TmDesigner';
+import { TmExecutor } from './TmExecutor';
 // import { FsmAnimator } from './FsmAnimator';
 
 const basicAutomata: JsonTm = {
@@ -18,19 +17,19 @@ const basicAutomata: JsonTm = {
 
 export const createTM = (initialCode: JsonTm = basicAutomata) => {
   let designer: TmDesigner | undefined;
-  // let executor: FsmExecutor;
+  let executor: TmExecutor;
   // let animator: FsmAnimator | undefined;
 
   const getDesigner = () => (designer ??= new TmDesigner(initialCode));
 
-  // const getExecutor = () => {
-  //   if (!executor) {
-  //     executor = new FsmExecutor(initialCode);
-  //   } else if (designer) {
-  //     executor.startAutomaton(designer.toJson().automaton);
-  //   }
-  //   return executor;
-  // };
+  const getExecutor = () => {
+    if (!executor) {
+      executor = new TmExecutor(initialCode);
+    } else if (designer) {
+      executor.startAutomaton(designer.toJson().automaton);
+    }
+    return executor;
+  };
 
   // const getAnimator = () => {
   //   const executor = getExecutor();
@@ -44,7 +43,7 @@ export const createTM = (initialCode: JsonTm = basicAutomata) => {
   return {
     type: 'TM' as const,
     getDesigner,
-    // getExecutor,
+    getExecutor,
     // getAnimator,
   };
 };

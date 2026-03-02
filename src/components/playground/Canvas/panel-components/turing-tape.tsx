@@ -1,7 +1,5 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
-
 import { cn } from '@/lib/ui/utils';
 import { useSimulationTape } from '@/providers/playground-provider';
 

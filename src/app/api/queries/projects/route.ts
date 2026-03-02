@@ -1,7 +1,7 @@
 import { getUserProjectsLight } from '@/actions/projects';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export const GET = async (req: NextRequest) => {
+export const GET = async () => {
   const projects = await getUserProjectsLight();
   return NextResponse.json(projects);
 };

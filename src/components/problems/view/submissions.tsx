@@ -9,7 +9,7 @@ import { EmptyTableRow, TableHeadButton } from '@/components/ui/my-table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { type SubmissionItem } from '@/lib/schemas';
-import { AutomatonTypeBadge, StatusBadge } from '@/utils/badges';
+import { StatusBadge } from '@/utils/badges';
 import { formatDateTime } from '@/utils/date';
 import { SubmitSolution } from './submit-solution';
 

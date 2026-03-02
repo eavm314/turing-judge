@@ -5,10 +5,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useModal } from '@/providers/modal-provider';
 import { useAutomatonDesign } from '@/providers/playground-provider';
 import { AutomatonType } from '@prisma/client';
-import { usePathname, useRouter } from 'next/navigation';
+// import { useModal } from '@/providers/modal-provider';
+// import { usePathname, useRouter } from 'next/navigation';
 
 const valueToText = {
   [AutomatonType.FSM]: 'Finite State Machine',
@@ -19,9 +19,10 @@ const valueToText = {
 export function SwitchType() {
   const { automaton } = useAutomatonDesign();
 
-  const { showConfirm } = useModal();
-  const pathname = usePathname();
-  const router = useRouter();
+  // TODO: remove commented code when the current implementation becomes stable
+  // const { showConfirm } = useModal();
+  // const pathname = usePathname();
+  // const router = useRouter();
 
   const handleSelectChange = async (value: AutomatonType) => {
     // const confirmation = await showConfirm({
