@@ -30,15 +30,14 @@ const AddFsmTransition = ({
   setValue: setTransitionData,
   data,
 }: CustomContentProps<FsmTransitionData[], AddTransitionProps>) => {
-  const [alphabet, setAlphabet] = useState<string[]>([]);
+  const designer = automatonManager.getDesigner() as FsmDesigner;
+
+  const alphabet = designer.getAlphabet();
 
   useEffect(() => {
-    const designer = automatonManager.getDesigner() as FsmDesigner;
     const { source, target } = data;
     const transition = designer.getTransition(source, target);
-    if (automatonManager.getType() === AutomatonType.FSM) {}
     setTransitionData(transition);
-    setAlphabet(designer.getAlphabet());
   }, []);
 
   const handleSymbolToggle = (inputSymbol: string, checked: boolean) => {
@@ -91,16 +90,15 @@ const AddPdaTransition = ({
   setValue: setTransitionData,
   data,
 }: CustomContentProps<PdaTransitionData[], AddTransitionProps>) => {
-  const [inputAlphabet, setInputAlphabet] = useState<string[]>([]);
-  const [stackAlphabet, setStackAlphabet] = useState<string[]>([]);
+  const designer = automatonManager.getDesigner() as PdaDesigner;
+
+  const inputAlphabet = designer.getAlphabet();
+  const stackAlphabet = designer.getStackAlphabet();
 
   useEffect(() => {
-    const designer = automatonManager.getDesigner() as PdaDesigner;
     const { source, target } = data;
     const transition = designer.getTransition(source, target);
     setTransitionData(transition);
-    setInputAlphabet(designer.getAlphabet());
-    setStackAlphabet(designer.getStackAlphabet());
   }, []);
 
   // Keep state only for values that affect rendering

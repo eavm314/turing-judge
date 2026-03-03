@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useMemo, useRef } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -22,14 +22,13 @@ export const PlaygroundStoreProvider = ({
   initialCode,
   isOwner,
 }: PlaygroundProviderProps) => {
-  const storeRef = useRef<PlaygroundStoreApi | null>(null);
-  storeRef.current = useMemo(
+  const store = useMemo(
     () => createPlaygroundStore(initialCode, isOwner),
     [isOwner],
   );
 
   return (
-    <PlaygroundStoreContext.Provider value={storeRef.current}>
+    <PlaygroundStoreContext.Provider value={store}>
       {children}
     </PlaygroundStoreContext.Provider>
   );

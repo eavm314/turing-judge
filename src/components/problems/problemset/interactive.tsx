@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { ArrowDown, ArrowUp, ArrowUpDown, Eraser } from 'lucide-react';
 
@@ -16,16 +16,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { TableRow } from '@/components/ui/table';
+import { useChange } from '@/hooks/use-change';
 import { cn } from '@/lib/ui/utils';
-import { ProblemDifficulty } from '@prisma/client';
 import { DifficultyBadge } from '@/utils/badges';
+import { ProblemDifficulty } from '@prisma/client';
 
 export const FiltersBar = ({ search, difficulty }: { search: string; difficulty: string }) => {
   const pathname = usePathname();
@@ -34,10 +30,8 @@ export const FiltersBar = ({ search, difficulty }: { search: string; difficulty:
   const [localSearch, setLocalSearch] = useState(search);
   const [localDifficulty, setLocalDifficulty] = useState(difficulty);
 
-  useEffect(() => {
-    setLocalSearch(search);
-    setLocalDifficulty(difficulty);
-  }, [search, difficulty]);
+  useChange(search, val => setLocalSearch(val));
+  useChange(difficulty, val => setLocalDifficulty(val));
 
   const updateParams = (newSearch: string, newDiff: string) => {
     const params = new URLSearchParams();

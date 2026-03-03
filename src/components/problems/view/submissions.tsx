@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { RefreshCw } from 'lucide-react';
 
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { EmptyTableRow, TableHeadButton } from '@/components/ui/my-table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
+import { useFirstRender } from '@/hooks/use-first-render';
 import { type SubmissionItem } from '@/lib/schemas';
 import { StatusBadge } from '@/utils/badges';
 import { formatDateTime } from '@/utils/date';
@@ -17,10 +18,6 @@ export default function Submissions({ problemId }: { problemId: string }) {
   const [submissions, setSubmissions] = useState<SubmissionItem[]>();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    handleRefresh();
-  }, []);
-
   const handleRefresh = async () => {
     setLoading(true);
     const response = await fetch(`/api/queries/submissions/${problemId}`);
@@ -28,6 +25,10 @@ export default function Submissions({ problemId }: { problemId: string }) {
     setSubmissions(data);
     setLoading(false);
   };
+
+  useFirstRender(() => {
+    handleRefresh();
+  });
 
   return (
     <div className="space-y-3">

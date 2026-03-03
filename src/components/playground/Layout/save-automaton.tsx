@@ -49,13 +49,6 @@ export function SaveAutomaton() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  useEffect(() => {
-    if (user && retry) {
-      setRetry(false);
-      handleSaveAs();
-    }
-  }, [user, retry]);
-
   const handleSaveAs = async () => {
     setOpenMenu(false);
     if (!user) {
@@ -90,6 +83,13 @@ export function SaveAutomaton() {
       handleSaveAs();
     }
   };
+
+  useEffect(() => {
+    if (user && retry) {
+      setRetry(false);
+      handleSaveAs();
+    }
+  }, [user, retry]);
 
   const loading = createProject.loading || updateProject.loading;
 
