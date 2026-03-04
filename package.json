@@ -2,6 +2,7 @@
   "name": "turing-judge",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,12 +12,13 @@
     "test": "npx playwright test"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^2.8.0",
+    "@auth/prisma-adapter": "^2.11.1",
     "@codemirror/lang-json": "^6.0.1",
     "@codemirror/state": "^6.5.2",
     "@codemirror/theme-one-dark": "^6.1.2",
     "@hookform/resolvers": "^5.0.0",
-    "@prisma/client": "^6.11.1",
+    "@prisma/adapter-mariadb": "^7.4.2",
+    "@prisma/client": "^7.4.2",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-avatar": "^1.1.6",
     "@radix-ui/react-checkbox": "^1.2.2",
@@ -37,6 +39,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "codemirror": "^6.0.1",
+    "dotenv": "^17.3.1",
     "lucide-react": "^0.475.0",
     "next": "^16.1.6",
     "next-auth": "^5.0.0-beta.25",
@@ -66,8 +69,9 @@
     "eslint-config-prettier": "^10.1.2",
     "postcss": "^8",
     "prettier": "3.5.3",
-    "prisma": "^6.11.1",
+    "prisma": "^6.19.2",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   },
   "overrides": {

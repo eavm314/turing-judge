@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/ui/utils';
-import { AutomatonType, ProblemDifficulty, Status, Verdict } from '@prisma/client';
+import { AutomatonType, ProblemDifficulty, Status, Verdict } from '@prisma/browser';
 
 export const DifficultyBadge = ({ difficulty }: { difficulty: ProblemDifficulty }) => {
   let values;

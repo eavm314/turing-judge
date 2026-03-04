@@ -17,7 +17,7 @@ import { PdaDesigner } from '@/lib/automata/pushdown-automaton/PdaDesigner';
 import { PdaTransitionData } from '@/lib/automata/pushdown-automaton/PdaState';
 import { type CustomContentProps, useModal } from '@/providers/modal-provider';
 import { automatonManager } from '@/store/playground-store';
-import { AutomatonType } from '@prisma/client';
+import { AutomatonType } from '@prisma/browser';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 interface AddTransitionProps {

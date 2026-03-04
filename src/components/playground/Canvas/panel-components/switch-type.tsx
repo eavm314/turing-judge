@@ -6,9 +6,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAutomatonDesign } from '@/providers/playground-provider';
-import { AutomatonType } from '@prisma/client';
-// import { useModal } from '@/providers/modal-provider';
-// import { usePathname, useRouter } from 'next/navigation';
+import { AutomatonType } from '@prisma/browser';
 
 const valueToText = {
   [AutomatonType.FSM]: 'Finite State Machine',
@@ -48,11 +46,13 @@ export function SwitchType() {
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {Object.values(AutomatonType).splice(0,2).map(type => (
-          <SelectItem key={type} value={type}>
-            {valueToText[type]}
-          </SelectItem>
-        ))}
+        {Object.values(AutomatonType)
+          .splice(0, 2)
+          .map(type => (
+            <SelectItem key={type} value={type}>
+              {valueToText[type]}
+            </SelectItem>
+          ))}
       </SelectContent>
     </Select>
   );

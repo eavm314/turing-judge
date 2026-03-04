@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { AutomatonType } from '@prisma/client';
+import { AutomatonType } from '@prisma/browser';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 
 import { deleteAutomatonAction } from '@/actions/projects';

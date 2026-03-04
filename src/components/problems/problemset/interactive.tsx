@@ -21,7 +21,7 @@ import { TableRow } from '@/components/ui/table';
 import { useChange } from '@/hooks/use-change';
 import { cn } from '@/lib/ui/utils';
 import { DifficultyBadge } from '@/utils/badges';
-import { ProblemDifficulty } from '@prisma/client';
+import { ProblemDifficulty } from '@prisma/browser';
 
 export const FiltersBar = ({ search, difficulty }: { search: string; difficulty: string }) => {
   const pathname = usePathname();
