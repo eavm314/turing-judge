@@ -65,14 +65,6 @@ export const usePlaygroundMode = () =>
 
 export const useIsOwner = () => usePlaygroundStore(state => state.isOwner);
 
-export const useSimulationWord = () =>
-  usePlaygroundStore(
-    useShallow(state => ({
-      word: state.simulationWord,
-      setWord: state.setSimulationWord,
-    })),
-  );
-
 export const useVisitedState = () => usePlaygroundStore(state => state.activeData.state);
 
 export const useVisitedTransition = () =>

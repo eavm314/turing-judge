@@ -12,7 +12,6 @@ export class TmDesigner extends BaseDesigner<TmTransitionData> {
     super();
     this.states = new Map();
     this.alphabet = new Set(json.alphabet);
-    this.alphabet.add(BLANK);
 
     // Convert JSON to Objects
     this.stateToIndex = new Map([[json.initial, 0]]);
@@ -111,6 +110,7 @@ export class TmDesigner extends BaseDesigner<TmTransitionData> {
 
   addTransition(from: number, to: number, data: TmTransitionData[]) {
     const symbSet = new Set(data.flatMap(d => [d.read, d.write]));
+    symbSet.delete(BLANK);
     if (symbSet.difference(this.alphabet).size > 0) throw new Error('Symbols not in alphabet');
 
     const source = this.states.get(from);

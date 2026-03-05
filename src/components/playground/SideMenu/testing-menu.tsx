@@ -5,12 +5,12 @@ import { EPSILON } from '@/constants/symbols';
 import { useToast } from '@/hooks/use-toast';
 import {
   usePlaygroundMode,
-  useSimulationWord,
+  useSimulation,
 } from '@/providers/playground-provider';
 import { automatonManager } from '@/store/playground-store';
 
 export default function TestingMenu() {
-  const { word, setWord } = useSimulationWord();
+  const { word, setWord } = useSimulation();
   const { mode } = usePlaygroundMode();
   const { toast } = useToast();
 

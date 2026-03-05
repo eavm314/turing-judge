@@ -18,9 +18,6 @@ export class FsmAnimator extends BaseAnimator {
 
     setAnimatedData({
       state: initialState,
-      transition: null,
-      symbol: null,
-      stack: null,
     });
 
     let step = 0;
@@ -35,10 +32,8 @@ export class FsmAnimator extends BaseAnimator {
       const { input, output } = path[step];
       if (transition) {
         setAnimatedData({
-          state: null,
           transition: `${input.state}->${output}`,
           symbol: input.symbol,
-          stack: null,
         });
         if (input.symbol !== EPSILON) {
           move('R');
@@ -46,9 +41,6 @@ export class FsmAnimator extends BaseAnimator {
       } else {
         setAnimatedData({
           state: output,
-          transition: null,
-          symbol: null,
-          stack: null,
         });
         step++;
       }

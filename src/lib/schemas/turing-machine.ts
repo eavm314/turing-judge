@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-import { BLANK } from '@/constants/symbols';
+import { BLANK, TM_MOVES } from '@/constants/symbols';
 import { alphabetSchema, positionSchema } from './finite-state-machine';
 
-const headMovementSchema = z.enum(['L', 'R', 'S']);
+const headMovementSchema = z.enum(TM_MOVES);
 
 const transitionsSchema = z
   .record(

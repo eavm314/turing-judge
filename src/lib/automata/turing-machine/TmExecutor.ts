@@ -1,4 +1,4 @@
-import { BLANK, EPSILON } from '@/constants/symbols';
+import { BLANK, EPSILON, TM_MOVES } from '@/constants/symbols';
 import { BaseExecutor, type Step } from '../base/BaseExecutor';
 import { type JsonTm } from '@/lib/schemas/turing-machine';
 
@@ -10,7 +10,7 @@ type TmInput = {
 type TmOutput = {
   state: string;
   writeSymbol: string;
-  direction: 'L' | 'R' | 'S';
+  direction: typeof TM_MOVES[number];
 };
 
 type TmStep = Step<TmInput, TmOutput>;
@@ -100,7 +100,7 @@ export class TmExecutor extends BaseExecutor<TmInput, TmOutput> {
       steps++;
       const { state, inputPos, tape, path, depth } = executionStack.pop()!;
       lastPath = path;
-      if (inputPos === word.length && this.finals.has(state)) {
+      if (this.finals.has(state)) {
         return {
           accepted: true,
           depthLimitReached,

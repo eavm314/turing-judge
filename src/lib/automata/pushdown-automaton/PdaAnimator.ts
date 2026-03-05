@@ -27,8 +27,6 @@ export class PdaAnimator extends BaseAnimator {
     this.resetStack();
     setAnimatedData({
       state: initialState,
-      transition: null,
-      symbol: null,
       stack: this.stack,
     });
 
@@ -46,7 +44,6 @@ export class PdaAnimator extends BaseAnimator {
         const setStack = (newStack: StackElement[]) => {
           this.stack = newStack;
           setAnimatedData({
-            state: null,
             transition: `${input.state}->${output.state}`,
             symbol: `${input.inputSymbol},${input.stackTop}/${output.push.length > 0 ? output.push.toReversed().join('') : EPSILON}`,
             stack: this.stack,
@@ -60,8 +57,6 @@ export class PdaAnimator extends BaseAnimator {
         this.stack = this.stack.map(el => ({ ...el, isEntering: false }));
         setAnimatedData({
           state: output.state,
-          transition: null,
-          symbol: null,
           stack: this.stack,
         });
         step++;

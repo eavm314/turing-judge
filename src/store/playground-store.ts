@@ -8,10 +8,10 @@ import { StackElement } from '@/lib/automata/pushdown-automaton/PdaAnimator';
 export type PlaygroundMode = 'states' | 'transitions' | 'simulation' | 'viewer';
 
 export type AnimationData = {
-  state: string | null;
-  transition: string | null;
-  symbol: string | null;
-  stack: StackElement[] | null;
+  state?: string;
+  transition?: string;
+  symbol?: string;
+  stack?: StackElement[];
 };
 
 export type PlaygroundState = {
@@ -59,12 +59,7 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
     translation: 0,
     simulationWord: '',
     simulationIndex: 0,
-    activeData: {
-      state: null,
-      transition: null,
-      symbol: null,
-      stack: null,
-    },
+    activeData: {},
   };
 
   return createStore<PlaygroundStore>()(set => ({
@@ -113,12 +108,7 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
         mode: state.isOwner ? 'states' : 'viewer',
         translation: 0,
         simulationIndex: 0,
-        activeData: {
-          state: null,
-          transition: null,
-          symbol: null,
-          stack: null,
-        },
+        activeData: {},
       }));
     },
   }));

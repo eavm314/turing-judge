@@ -18,9 +18,6 @@ export class TmAnimator extends BaseAnimator {
 
     setAnimatedData({
       state: initialState,
-      transition: null,
-      symbol: null,
-      stack: null,
     });
 
     let step = 0;
@@ -35,10 +32,8 @@ export class TmAnimator extends BaseAnimator {
       const { input, output } = path[step];
       if (transition) {
         setAnimatedData({
-          state: null,
           transition: `${input.state}->${output.state}`,
           symbol: `${input.readSymbol} / ${output.writeSymbol}`,
-          stack: null,
         });
         if (input.readSymbol !== EPSILON) {
           move('R');
@@ -46,9 +41,6 @@ export class TmAnimator extends BaseAnimator {
       } else {
         setAnimatedData({
           state: output.state,
-          transition: null,
-          symbol: null,
-          stack: null,
         });
         step++;
       }

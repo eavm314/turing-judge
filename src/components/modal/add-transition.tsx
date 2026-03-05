@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { EPSILON } from '@/constants/symbols';
+import { BLANK, EPSILON, TM_MOVES } from '@/constants/symbols';
 import { FsmDesigner } from '@/lib/automata/finite-state-machine/FsmDesigner';
 import { FsmTransitionData } from '@/lib/automata/finite-state-machine/FsmState';
 import { PdaDesigner } from '@/lib/automata/pushdown-automaton/PdaDesigner';
@@ -321,7 +321,7 @@ const AddTmTransition = ({
   const designer = automatonManager.getDesigner() as TmDesigner;
 
   const alphabet = designer.getAlphabet();
-  const moves: TmTransitionData['move'][] = ['L', 'R', 'S'];
+  alphabet.push(BLANK);
 
   useEffect(() => {
     const { source, target } = data;
@@ -439,7 +439,7 @@ const AddTmTransition = ({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {moves.map(move => (
+              {TM_MOVES.map(move => (
                 <SelectItem key={move} value={move} className="font-mono text-center">
                   {move}
                 </SelectItem>
