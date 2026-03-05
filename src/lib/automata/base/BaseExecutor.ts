@@ -15,7 +15,7 @@ export type ExecutionConfig = {
   maxSteps: number;
 }
 
-export abstract class BaseExecutor<TIn, TOut> {
+export abstract class BaseExecutor<TIn = unknown, TOut = unknown> {
   #config: ExecutionConfig;
 
   protected initial!: string;

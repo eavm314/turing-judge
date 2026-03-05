@@ -6,6 +6,6 @@ import { BaseAnimator } from './BaseAnimator';
 export interface Automaton {
   type: AutomatonType;
   getDesigner: () => BaseDesigner;
-  getExecutor: () => BaseExecutor<unknown, unknown>;
+  getExecutor: () => BaseExecutor;
   getAnimator: () => BaseAnimator;
 }

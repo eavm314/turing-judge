@@ -15,6 +15,8 @@ import { FsmDesigner } from '@/lib/automata/finite-state-machine/FsmDesigner';
 import { FsmTransitionData } from '@/lib/automata/finite-state-machine/FsmState';
 import { PdaDesigner } from '@/lib/automata/pushdown-automaton/PdaDesigner';
 import { PdaTransitionData } from '@/lib/automata/pushdown-automaton/PdaState';
+import { TmDesigner } from '@/lib/automata/turing-machine/TmDesigner';
+import { TmTransitionData } from '@/lib/automata/turing-machine/TmState';
 import { type CustomContentProps, useModal } from '@/providers/modal-provider';
 import { automatonManager } from '@/store/playground-store';
 import { AutomatonType } from '@prisma/browser';
@@ -311,12 +313,194 @@ const AddPdaTransition = ({
   );
 };
 
-const AddTMTransition = ({
-  // value: transitionData,
-  // setValue: setTransitionData,
-  // data,
-}: CustomContentProps<unknown[], AddTransitionProps>) => {
-  return null;
+const AddTmTransition = ({
+  value,
+  setValue: setTransitionData,
+  data,
+}: CustomContentProps<TmTransitionData[], AddTransitionProps>) => {
+  const designer = automatonManager.getDesigner() as TmDesigner;
+
+  const alphabet = designer.getAlphabet();
+  const moves: TmTransitionData['move'][] = ['L', 'R', 'S'];
+
+  useEffect(() => {
+    const { source, target } = data;
+    const transition = designer.getTransition(source, target);
+    setTransitionData(transition);
+  }, []);
+
+  const [currentTransition, setCurrentTransition] = useState<TmTransitionData>({
+    read: '',
+    write: '',
+    move: 'S',
+  });
+
+  const handleAddTransition = () => {
+    if (!currentTransition.read || !currentTransition.write || !currentTransition.move) return;
+
+    const isDuplicate = transitions.some(
+      t =>
+        t.read === currentTransition.read &&
+        t.write === currentTransition.write &&
+        t.move === currentTransition.move,
+    );
+
+    if (isDuplicate) return;
+
+    setTransitionData([...transitions, currentTransition]);
+    setCurrentTransition({
+      read: '',
+      write: '',
+      move: 'S',
+    });
+  };
+
+  const handleRemoveTransition = (index: number) => {
+    setTransitionData(transitions.filter((_, i) => i !== index));
+  };
+
+  const formatTransition = (transition: TmTransitionData) => {
+    return `${transition.read} / ${transition.write}, ${transition.move}`;
+  };
+
+  if (value === null) return null;
+  const transitions = value as TmTransitionData[];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 justify-center">
+        <div className="flex flex-col items-center gap-1">
+          <Label className="text-xs text-muted-foreground">read</Label>
+          <Select
+            onValueChange={value => {
+              setCurrentTransition(prev => ({
+                ...prev,
+                read: value,
+              }));
+            }}
+            key={`tm-read-${transitions.length}`}
+            value={currentTransition.read}
+          >
+            <SelectTrigger className="w-16 h-10 font-mono text-lg" data-transition-select>
+              <SelectValue placeholder="?" />
+            </SelectTrigger>
+            <SelectContent>
+              {alphabet.map(symbol => (
+                <SelectItem key={symbol} value={symbol} className="font-mono text-center">
+                  {symbol}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <span className="text-lg font-mono mt-6">/</span>
+
+        <div className="flex flex-col items-center gap-1">
+          <Label className="text-xs text-muted-foreground">write</Label>
+          <Select
+            onValueChange={value => {
+              setCurrentTransition(prev => ({
+                ...prev,
+                write: value,
+              }));
+            }}
+            key={`tm-write-${transitions.length}`}
+            value={currentTransition.write}
+          >
+            <SelectTrigger className="w-16 h-10 font-mono text-lg" data-transition-select>
+              <SelectValue placeholder="?" />
+            </SelectTrigger>
+            <SelectContent>
+              {alphabet.map(symbol => (
+                <SelectItem key={symbol} value={symbol} className="font-mono text-center">
+                  {symbol}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <span className="text-lg font-mono mt-6">,</span>
+
+        <div className="flex flex-col items-center gap-1">
+          <Label className="text-xs text-muted-foreground">move</Label>
+          <Select
+            onValueChange={value => {
+              setCurrentTransition(prev => ({
+                ...prev,
+                move: value as TmTransitionData['move'],
+              }));
+            }}
+            key={`tm-move-${transitions.length}`}
+            value={currentTransition.move}
+          >
+            <SelectTrigger className="w-16 h-10 font-mono text-lg" data-transition-select>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {moves.map(move => (
+                <SelectItem key={move} value={move} className="font-mono text-center">
+                  {move}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="flex justify-center">
+        <Button
+          onClick={handleAddTransition}
+          size="sm"
+          disabled={!currentTransition.read || !currentTransition.write || !currentTransition.move}
+        >
+          <Plus className="h-4 w-4" />
+          Add This Rule
+        </Button>
+      </div>
+
+      {transitions.length > 0 && (
+        <>
+          <Separator />
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">Added Transitions ({transitions.length})</h4>
+            <ScrollArea type="always" className="h-32 px-4">
+              <div className="space-y-2">
+                {transitions.map((transition, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between py-1 px-3 border rounded bg-background"
+                  >
+                    <span className="font-mono text-sm">{formatTransition(transition)}</span>
+                    <div className="space-x-1">
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setCurrentTransition(transition);
+                          handleRemoveTransition(index);
+                        }}
+                        className="h-6 w-6 p-0"
+                      >
+                        <Edit className="size-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleRemoveTransition(index)}
+                        className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        </>
+      )}
+    </div>
+  );
 };
 
 const componentByType: Record<
@@ -327,7 +511,7 @@ const componentByType: Record<
 > = {
   [AutomatonType.FSM]: AddFsmTransition,
   [AutomatonType.PDA]: AddPdaTransition,
-  [AutomatonType.TM]: AddTMTransition,
+  [AutomatonType.TM]: AddTmTransition,
 };
 
 export const useAddTransitionPrompt = () => {

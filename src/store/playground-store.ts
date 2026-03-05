@@ -55,7 +55,7 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
     isOwner,
     mode: isOwner ? 'states' : 'viewer',
 
-    simulationSpeed: automatonManager.getAnimator().getSimulationSpeed(),
+    simulationSpeed: automatonManager.getAnimator().speed,
     translation: 0,
     simulationWord: '',
     simulationIndex: 0,
@@ -85,7 +85,7 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
     saveChanges: () => set({ unsavedChanges: false }),
 
     setSimulationSpeed: (speed: number) => {
-      automatonManager.getAnimator().setSimulationSpeed(speed);
+      automatonManager.getAnimator().speed = speed;
       set({ simulationSpeed: speed });
     },
     setSimulationWord: (word: string) => set({ simulationWord: word }),

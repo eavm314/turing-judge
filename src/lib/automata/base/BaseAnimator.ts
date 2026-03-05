@@ -9,19 +9,20 @@ export type AnimationCallbacks = {
 
 export abstract class BaseAnimator {
   protected intervalId?: NodeJS.Timeout;
-  protected speed: number = 1200;
+  
+  #speed: number = 1200;
 
   stop() {
     clearInterval(this.intervalId);
     this.intervalId = undefined;
   }
 
-  getSimulationSpeed() {
-    return this.speed;
+  get speed() {
+    return this.#speed;
   }
 
-  setSimulationSpeed(speed: number) {
-    this.speed = speed;
+  set speed(speed: number) {
+    this.#speed = speed;
   }
 
   abstract start(word: string, callbacks: AnimationCallbacks): boolean;

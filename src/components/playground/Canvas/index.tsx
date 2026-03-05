@@ -23,7 +23,7 @@ import {
   TuringTape,
 } from './panel-components';
 import { StateNode } from './state-node';
-import { FsmEdge, PdaEdge } from './transition-edges';
+import { FsmEdge, PdaEdge, TmEdge } from './transition-edges';
 import { useCanvasHandlers } from './utils/use-canvas-handlers';
 import { SwitchType } from './panel-components/switch-type';
 import SimulationStack from './panel-components/simulation-stack';
@@ -35,6 +35,7 @@ const nodeTypes: NodeTypes = {
 const edgeTypes: EdgeTypes = {
   fsm: FsmEdge,
   pda: PdaEdge,
+  tm: TmEdge,
 };
 
 const viewOptions: FitViewOptions = {
