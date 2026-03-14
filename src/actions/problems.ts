@@ -111,7 +111,7 @@ export const createProblemAction = async (body: ProblemSchema): Promise<ServerAc
   if (!session?.user?.id) {
     return { success: false, message: 'User not authenticated' };
   }
-  if (session.user.role !== 'EDITOR') {
+  if (session.user.role === 'USER') {
     return { success: false, message: 'Permission denied' };
   }
 
@@ -152,7 +152,7 @@ export const updateProblemAction = async (
   if (!session?.user?.id) {
     return { success: false, message: 'User not authenticated' };
   }
-  if (session.user.role !== 'EDITOR') {
+  if (session.user.role === 'USER') {
     return { success: false, message: 'Permission denied' };
   }
 
