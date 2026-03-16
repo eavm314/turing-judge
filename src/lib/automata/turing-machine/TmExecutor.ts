@@ -5,6 +5,7 @@ import { type JsonTm } from '@/lib/schemas/turing-machine';
 type TmInput = {
   state: string;
   readSymbol: string;
+  position: number;
 };
 
 type TmOutput = {
@@ -123,7 +124,7 @@ export class TmExecutor extends BaseExecutor<TmInput, TmOutput> {
         continue;
       }
 
-      const epsilonInput = { state, readSymbol: EPSILON };
+      const epsilonInput = { state, readSymbol: EPSILON, position: inputPos };
       const epsilonTargets = this.transFn(epsilonInput);
       // Epsilon transitions
       for (const output of epsilonTargets) {
@@ -140,7 +141,7 @@ export class TmExecutor extends BaseExecutor<TmInput, TmOutput> {
 
       // Consuming transitions
       const readSymbol = tape.get(inputPos) ?? BLANK;
-      const input = { state, readSymbol };
+      const input = { state, readSymbol, position: inputPos };
       const targets = this.transFn(input);
       for (const output of targets) {
         const currentStep: TmStep = { input, output };

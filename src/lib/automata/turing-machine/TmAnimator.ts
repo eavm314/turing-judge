@@ -9,13 +9,14 @@ export class TmAnimator extends BaseAnimator {
     this.executor = executor;
   }
 
-  start(word: string, { onFinish, onStart, setAnimatedData, move }: AnimationCallbacks) {
+  start(word: string, { onFinish, onStart, setAnimatedData, move, setTape }: AnimationCallbacks) {
     const initialState = this.executor.getInitialState();
     const { accepted, path } = this.executor.execute(word, true);
     if (!accepted) return false;
 
     onStart?.();
 
+    setTape(Object.fromEntries(word.split('').map((s, i) => [i, s])));
     setAnimatedData({
       state: initialState,
     });
@@ -31,17 +32,20 @@ export class TmAnimator extends BaseAnimator {
 
       const { input, output } = path[step];
       if (transition) {
+        setTape(prev => ({ ...prev, [input.position]: output.writeSymbol }));
+        const dirArrow = output.direction === 'R' ? '→' : output.direction === 'L' ? '←' : '•';
         setAnimatedData({
           transition: `${input.state}->${output.state}`,
-          symbol: `${input.readSymbol} / ${output.writeSymbol}`,
+          label: `${input.readSymbol} / ${output.writeSymbol}, ${dirArrow}`,
         });
         if (input.readSymbol !== EPSILON) {
-          move('R');
+          if (output.direction !== 'S') move(output.direction);
         }
       } else {
         setAnimatedData({
           state: output.state,
         });
+        
         step++;
       }
       transition = !transition;

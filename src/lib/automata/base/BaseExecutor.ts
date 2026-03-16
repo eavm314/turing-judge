@@ -16,22 +16,14 @@ export type ExecutionConfig = {
 }
 
 export abstract class BaseExecutor<TIn = unknown, TOut = unknown> {
-  #config: ExecutionConfig;
+  config: ExecutionConfig;
 
   protected initial!: string;
   protected finals!: Set<string>;
   protected states!: Map<string, Map<string, TOut[]>>;
 
   constructor() {
-    this.#config = { depthLimit: 500, maxSteps: 10000 };
-  }
-
-  get config() {
-    return this.#config;
-  }
-
-  set config(value: ExecutionConfig) {
-    this.#config = value;
+    this.config = { depthLimit: 500, maxSteps: 10000 };
   }
 
   countStates(): number {

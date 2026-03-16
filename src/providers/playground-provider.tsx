@@ -71,7 +71,7 @@ export const useVisitedTransition = () =>
   usePlaygroundStore(
     useShallow(state => ({
       visitedTransition: state.activeData.transition,
-      visitedSymbol: state.activeData.symbol,
+      visitedSymbol: state.activeData.label,
       simulationSpeed: state.simulationSpeed,
     })),
   );
@@ -82,6 +82,7 @@ export const useSimulation = () =>
       word: state.simulationWord,
       simulationSpeed: state.simulationSpeed,
       setWord: state.setSimulationWord,
+      setTape: state.setSimulationTape,
       setSimulationSpeed: state.setSimulationSpeed,
       stopSimulation: state.stopSimulation,
       setAnimatedData: state.setAnimatedData,
@@ -94,9 +95,9 @@ export const useSimulationTape = () =>
     useShallow(state => ({
       translation: state.translation,
       speed: state.simulationSpeed,
-      word: state.simulationWord,
+      tapeSymbols: state.simulationTape,
       position: state.simulationIndex,
-      visitedSymbol: state.activeData.symbol,
+      transitionLabel: state.activeData.label,
     })),
   );
 

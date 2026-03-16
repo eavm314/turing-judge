@@ -9,13 +9,14 @@ export class FsmAnimator extends BaseAnimator {
     this.executor = executor;
   }
 
-  start(word: string, { onFinish, onStart, setAnimatedData, move }: AnimationCallbacks) {
+  start(word: string, { onFinish, onStart, setAnimatedData, move, setTape }: AnimationCallbacks) {
     const initialState = this.executor.getInitialState();
     const { accepted, path } = this.executor.execute(word, true);
     if (!accepted) return false;
 
     onStart?.();
 
+    setTape(Object.fromEntries(word.split('').map((s, i) => [i, s])));
     setAnimatedData({
       state: initialState,
     });
@@ -33,7 +34,7 @@ export class FsmAnimator extends BaseAnimator {
       if (transition) {
         setAnimatedData({
           transition: `${input.state}->${output}`,
-          symbol: input.symbol,
+          label: input.symbol,
         });
         if (input.symbol !== EPSILON) {
           move('R');

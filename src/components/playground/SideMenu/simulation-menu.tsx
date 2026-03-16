@@ -11,7 +11,7 @@ export default function SimulationMenu() {
   const { mode, setMode } = usePlaygroundMode();
   const simulating = mode === 'simulation';
 
-  const { word, setAnimatedData, move, stopSimulation } = useSimulation();
+  const { word, setAnimatedData, move, stopSimulation, setTape } = useSimulation();
 
   const { toast } = useToast();
 
@@ -36,6 +36,7 @@ export default function SimulationMenu() {
       },
       setAnimatedData,
       move,
+      setTape,
     });
 
     if (!accepted) {
