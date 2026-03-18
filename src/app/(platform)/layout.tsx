@@ -34,6 +34,12 @@ export default function PlatformLayout({
             >
               <span>Problem Set</span>
             </Link>
+            <Link
+              href="/docs"
+              className="hover:border-b text-neutral-foreground hover:text-secondary border-secondary"
+            >
+              <span>Docs</span>
+            </Link>
           </div>
         </nav>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">

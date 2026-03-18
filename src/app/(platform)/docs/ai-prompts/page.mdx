@@ -1,0 +1,40 @@
+# Using AI Prompts
+
+LLMs like ChatGPT, Claude, and GitHub Copilot are excellent at generating finite state logic and JSON data. Because Turing Judge uses clear JSON schemas, you can ask your favorite AI to generate complete automatons for you and just paste them right into the editor's **JSON view**.
+
+Here are some prompt templates you can use to get the best results.
+
+---
+
+## 1. Prompting for an FSM
+
+If you need a Finite State Machine for a regular expression or a strict validation pattern:
+
+```text
+I need a Finite State Machine (FSM) JSON that accepts strings matching the pattern [INSERT YOUR PATTERN, e.g., 'starts with 01 and ends in 0']. It must precisely use this JSON format: An object with:`alphabet` (array of strings), `initial` (string), `finals` (array of strings), and `states` (an object mapping state names to `{ position: {x, y}, transitions: { <target_state>: ["symbols"] } }`). Use 'ε' for epsilon transitions if needed.
+```
+
+## 2. Prompting for a PDA
+
+Context-free languages like matching parenthesis or palindromes require a stack.
+
+```text
+I need a Pushdown Automaton (PDA) JSON to recognize [INSERT YOUR LANGUAGE, e.g., 'the language $a^n b^n$']. It must follow this JSON schema: An object with `alphabet`, `stackAlphabet` (must include '⊥' as the stack bottom), `initial`, `finals`, and `states`. Transitions should be formatted under each state like: `transitions: { <target_state>: [{ input: 'a', pop: '⊥', push: ['A', '⊥'] }] }`. Use 'ε' for empty input/pop/push. Please provide the JSON alone.
+```
+
+## 3. Prompting for a Turing Machine
+
+If you are evaluating complex logic or doing computation, use a TM:
+
+```text
+Generate a Turing Machine (TM) JSON that computes [INSERT YOUR TASK, e.g., 'binary addition']. The JSON schema requires `alphabet` (exclude the blank symbol from here, we will implicitly use '_'), `initial`, `finals`, and `states`. The transitions should map a target state to an array of objects shaped as `{ read: '1', write: '0', move: 'R' }`. The `move` property must be one of 'L', 'R', or 'S'. The blank symbol is represented by '_'.
+```
+
+---
+
+## Troubleshooting AI Outputs
+
+When copying an AI-generated JSON into Turing Judge, pay attention to these common pitfalls:
+- **Missing Nodes:** The AI might reference a state in a transition that it forgot to define in the `states` object.
+- **Missing `position`:** While `position: { x: 0, y: 0 }` is technically optional, the visual editor performs best when nodes are spaced out (e.g. `{x: 100, y: 150}`). If the AI clusters them all at `0,0`, you might need to drag them apart on the canvas.
+- **Unreachable States:** Use the editor's visual flow to sanity-check what the AI produced. Do all paths eventually have a route to an accepting final state?
