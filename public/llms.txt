@@ -63,7 +63,7 @@ TMs define transitions based on `read`, `write`, and `move` ("L", "R", "S").
 {
   "alphabet": ["0", "1", "X", "Y"],
   "initial": "q0",
-  "finals": ["q_accept"],
+  "finals": ["q_a"],
   "states": {
     "q0": {
       "transitions": {

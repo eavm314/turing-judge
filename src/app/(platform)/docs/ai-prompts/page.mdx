@@ -6,20 +6,83 @@ Here are some prompt templates you can use to get the best results.
 
 ---
 
-## 1. Prompting for an FSM
+## 1. Prompting for a Finite State Machine
 
-If you need a Finite State Machine for a regular expression or a strict validation pattern:
+If you need an FSM for a regular expression or a strict validation pattern:
 
 ```text
-I need a Finite State Machine (FSM) JSON that accepts strings matching the pattern [INSERT YOUR PATTERN, e.g., 'starts with 01 and ends in 0']. It must precisely use this JSON format: An object with:`alphabet` (array of strings), `initial` (string), `finals` (array of strings), and `states` (an object mapping state names to `{ position: {x, y}, transitions: { <target_state>: ["symbols"] } }`). Use 'ε' for epsilon transitions if needed.
+I need a Finite State Machine (FSM) JSON that accepts strings matching the pattern:
+[INSERT YOUR PATTERN, e.g., 'starts with 01 and ends in 0']
+
+It must precisely use this JSON format:
+{
+  "type": "FSM",
+  "alphabet": ["0", "1"],
+  "initial": "q0",
+  "finals": ["q2"],
+  "states": {
+    "q0": {
+      "position": { "x": 100, "y": 100 },
+      "transitions": {
+        "q1": ["0"]
+      }
+    },
+    "q1": {
+      "position": { "x": 200, "y": 100 },
+      "transitions": {
+        "q2": ["1"]
+      }
+    },
+    "q2": {
+      "position": { "x": 300, "y": 100 },
+      "transitions": {}
+    }
+  }
+}
+
+Important considerations:
+- Use 'ε' for epsilon transitions if needed.
+- Please output only the JSON.
 ```
 
-## 2. Prompting for a PDA
+## 2. Prompting for a Pushdown Automaton
 
 Context-free languages like matching parenthesis or palindromes require a stack.
 
 ```text
-I need a Pushdown Automaton (PDA) JSON to recognize [INSERT YOUR LANGUAGE, e.g., 'the language $a^n b^n$']. It must follow this JSON schema: An object with `alphabet`, `stackAlphabet` (must include '⊥' as the stack bottom), `initial`, `finals`, and `states`. Transitions should be formatted under each state like: `transitions: { <target_state>: [{ input: 'a', pop: '⊥', push: ['A', '⊥'] }] }`. Use 'ε' for empty input/pop/push. Please provide the JSON alone.
+I need a Pushdown Automaton (PDA) JSON to recognize:
+[INSERT YOUR LANGUAGE, e.g., 'the language $a^n b^n$']
+
+It must follow this JSON schema exactly:
+{
+  "type": "PDA",
+  "alphabet": ["a", "b"],
+  "stackAlphabet": ["A", "⊥"],
+  "initial": "q0",
+  "finals": ["q1"],
+  "states": {
+    "q0": {
+      "position": { "x": 100, "y": 100 },
+      "transitions": {
+        "q0": [
+          { "input": "a", "pop": "⊥", "push": ["A", "⊥"] }
+        ],
+        "q1": [
+          { "input": "ε", "pop": "⊥", "push": ["⊥"] }
+        ]
+      }
+    },
+    "q1": {
+      "position": { "x": 250, "y": 100 },
+      "transitions": {}
+    }
+  }
+}
+
+Important considerations:
+- Use 'ε' for empty input/pop/push.
+- '⊥' is the stack bottom.
+- Please provide the JSON alone.
 ```
 
 ## 3. Prompting for a Turing Machine
@@ -27,7 +90,36 @@ I need a Pushdown Automaton (PDA) JSON to recognize [INSERT YOUR LANGUAGE, e.g.,
 If you are evaluating complex logic or doing computation, use a TM:
 
 ```text
-Generate a Turing Machine (TM) JSON that computes [INSERT YOUR TASK, e.g., 'binary addition']. The JSON schema requires `alphabet` (exclude the blank symbol from here, we will implicitly use '_'), `initial`, `finals`, and `states`. The transitions should map a target state to an array of objects shaped as `{ read: '1', write: '0', move: 'R' }`. The `move` property must be one of 'L', 'R', or 'S'. The blank symbol is represented by '_'.
+Generate a Turing Machine (TM) JSON that computes:
+[INSERT YOUR TASK, e.g., 'binary addition']
+
+The JSON schema requires this exact structure:
+{
+  "type": "TM",
+  "alphabet": ["0", "1"],
+  "initial": "q0",
+  "finals": ["qf"],
+  "states": {
+    "q0": {
+      "position": { "x": 100, "y": 100 },
+      "transitions": {
+        "qf": [
+          { "read": "1", "write": "0", "move": "R" }
+        ]
+      }
+    },
+    "qf": {
+      "position": { "x": 300, "y": 100 },
+      "transitions": {}
+    }
+  }
+}
+
+Important considerations:
+- The `move` property must be one of 'L', 'R', or 'S'.
+- The blank symbol is represented by '_'.
+- Do not include '_' in the alphabet array.
+- Please provide the JSON alone.
 ```
 
 ---

@@ -19,6 +19,14 @@ export function DocsSidebar() {
       ],
     },
     {
+      group: 'Theory Reference',
+      items: [
+        { title: 'Finite State Machine', href: '/docs/fsm' },
+        { title: 'Pushdown Automaton', href: '/docs/pda' },
+        { title: 'Turing Machine', href: '/docs/tm' },
+      ],
+    },
+    {
       group: 'Advanced',
       items: [
         { title: 'JSON Formats', href: '/docs/json-formats' },

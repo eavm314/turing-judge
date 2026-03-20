@@ -23,10 +23,10 @@ export function CopyButton({ text }: CopyButtonProps) {
     <Button
       variant="ghost"
       size="icon"
-      className="absolute right-2 top-2 h-6 w-6 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800"
+      className="absolute right-2 top-2 size-8 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 z-50"
       onClick={copy}
     >
-      {isCopied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+      {isCopied ? <Check className="size-4" /> : <Copy className="size-4" />}
       <span className="sr-only">Copy</span>
     </Button>
   );

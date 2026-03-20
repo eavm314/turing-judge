@@ -1,0 +1,46 @@
+# Turing Machine (TM)
+
+A **Turing Machine (TM)**, invented by Alan Turing in 1936, is the holy grail of theoretical computer science. Despite its simplicity, it is meant to represent a **computationally universal** device. In fact, the *Church-Turing thesis* states that anything that can be computed by *any* standard computer (including the one you are reading this on) can be computed by a Turing Machine given enough time.
+
+Unlike an FSM (with no memory) or a PDA (with a LIFO stack), a Turing Machine operates on an **infinitely long tape** divided into cells. 
+
+## What does a TM do?
+
+A TM possesses a "Head" that reads the currently focused cell on the tape. Based on its state and the symbol it just read, it can:
+1.  **Write** a new symbol to that cell.
+2.  **Move** the head one step to the Left (L), Right (R), or Stay (S).
+3.  **Transition** into a new logical state.
+
+With this setup, TMs can calculate addition, perform multiplication, evaluate prime numbers, and process logically advanced bounds. Since it can traverse backwards, it is not restricted to processing input from start to finish like smaller automata. 
+
+<ImagePlaceholder text="Turing Machine Tape and State interactions" />
+
+## Formal Definition
+
+A deterministic Turing Machine is typically defined as a 7-tuple $(Q, \Sigma, \Gamma, \delta, q_0, q_{accept}, q_{reject})$:
+
+1.  $Q$: A finite set of states.
+2.  $\Sigma$: The input alphabet, naturally omitting the blank symbol `_`.
+3.  $\Gamma$: The **tape alphabet**, which must contain all symbols in $\Sigma$ plus the blank symbol `_` and any other variables you wish to write.
+4.  $\delta$: A transition function: $Q \times \Gamma \to Q \times \Gamma \times \{L, R, S\}$. (Given a state and a read symbol $\to$ transition to a new state, write a symbol, and move the head).
+5.  $q_0$: The initial state.
+6.  $q_{accept}$: The accepting state. Once reached, the machine instantly halts and returns **True**.
+7.  $q_{reject}$: The rejecting state. Once reached, the machine instantly halts and returns **False**. 
+
+*(Note: In Turing Judge, any halting configuration that isn't connected to an accepting state automatically evaluates as a rejection, simplifying the need to explicitly map out a $q_{reject}$ state).*
+
+## How to Build One in Turing Judge
+
+When configuring a TM in Turing Judge, every transition edge requires three parameters:
+- **Read:** What symbol is the tape head currently looking at? (If the tape is empty, it reads the blank symbol `_`).
+- **Write:** What symbol should the head overwrite the cell with? (You can write `_` to delete data, or write back the same symbol to leave it unchanged).
+- **Move:** Which direction should the head travel next? (`L` for left, `R` for right, `S` for stay).
+
+**Typical TM strategy:**
+1.  Read the first character and mark it with an `X` (so you know you've processed it).
+2.  Traverse all the way to the right (`R`) until you hit a blank `_`.
+3.  Do some comparison or operation.
+4.  Traverse all the way back left (`L`) until you hit your `X`.
+5.  Move `R` once to repeat the process on the next available character!
+
+Need to build a TM instantly? Check out our [AI Prompts guide](/docs/ai-prompts) to generate one with ChatGPT.
