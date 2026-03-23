@@ -30,6 +30,8 @@ jobs:
       name: Development
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      ADMIN_EMAIL: ${{ vars.ADMIN_EMAIL }}
+      ADMIN_NAME: ${{ vars.ADMIN_NAME }}
 
     steps:
       - uses: actions/checkout@v4

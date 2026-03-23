@@ -16,7 +16,10 @@ async function main() {
   const adminName = process.env.ADMIN_NAME || 'Admin';
   const adminUser = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: {},
+    update: {
+      email: adminEmail,
+      name: adminName,
+    },
     create: {
       email: adminEmail,
       name: adminName,
