@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [develop]
 
-environment:
-  name: Development
-
 jobs:
   unit-tests:
     name: Run Unit Tests
@@ -29,6 +26,8 @@ jobs:
   prisma:
     name: Run Migrations and Seed
     runs-on: ubuntu-latest
+    environment:
+      name: Development
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
