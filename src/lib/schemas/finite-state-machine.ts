@@ -1,15 +1,6 @@
 import { z } from 'zod';
 
-import { EPSILON } from '@/constants/symbols';
-
-export const alphabetSchema = z.array(
-  z
-    .string()
-    .length(1)
-    .refine(symbol => /^[a-zA-Z0-9]+$/.test(symbol) || symbol === EPSILON, {
-      message: `Symbols must be alphanumeric or "${EPSILON}"`,
-    }),
-);
+export const alphabetSchema = z.array(z.string().length(1));
 
 export const positionSchema = z
   .object({

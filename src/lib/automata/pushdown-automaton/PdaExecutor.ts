@@ -32,11 +32,20 @@ export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
   isDeterministic(): boolean {
     for (const transitions of this.states.values()) {
       const seen = new Set<string>();
+      const epsilonByPop = new Set<string>();
+      const consumingByPop = new Set<string>();
 
       for (const key of transitions.keys()) {
-        const [input] = key.split('|');
-        if (input === EPSILON) return false;
+        const [input, pop] = key.split('|');
         if (seen.has(key)) return false;
+
+        if (input === EPSILON) {
+          if (consumingByPop.has(pop)) return false;
+          epsilonByPop.add(pop);
+        } else {
+          if (epsilonByPop.has(pop)) return false;
+          consumingByPop.add(pop);
+        }
 
         seen.add(key);
       }

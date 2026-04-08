@@ -125,14 +125,24 @@ export class PdaDesigner extends BaseDesigner<PdaTransitionData> {
   isDeterministic(): boolean {
     for (const state of this.states.values()) {
       const seenPairs = new Set<string>();
+      const epsilonByPop = new Set<string>();
+      const consumingByPop = new Set<string>();
 
       for (const data of state.transitions.values()) {
         for (const transition of data) {
-          if (transition.input === EPSILON) return false;
-
           const pairKey = `${transition.input}|${transition.pop}`;
           if (seenPairs.has(pairKey)) return false;
           seenPairs.add(pairKey);
+
+          if (transition.input === EPSILON) {
+            // In a DPDA, epsilon and consuming transitions cannot coexist
+            // for the same stack-top symbol in a state.
+            if (consumingByPop.has(transition.pop)) return false;
+            epsilonByPop.add(transition.pop);
+          } else {
+            if (epsilonByPop.has(transition.pop)) return false;
+            consumingByPop.add(transition.pop);
+          }
         }
       }
     }
