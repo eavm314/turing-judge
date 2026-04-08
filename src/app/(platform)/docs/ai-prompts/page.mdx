@@ -17,31 +17,34 @@ I need a Finite State Machine (FSM) JSON that accepts strings matching the patte
 It must precisely use this JSON format:
 {
   "type": "FSM",
-  "alphabet": ["0", "1"],
-  "initial": "q0",
-  "finals": ["q2"],
-  "states": {
-    "q0": {
-      "position": { "x": 100, "y": 100 },
-      "transitions": {
-        "q1": ["0"]
+  "automaton": {
+    "alphabet": ["0", "1"],
+    "initial": "q0",
+    "finals": ["q2"],
+    "states": {
+      "q0": {
+        "position": { "x": 100, "y": 100 },
+        "transitions": {
+          "q1": ["0"]
+        }
+      },
+      "q1": {
+        "position": { "x": 200, "y": 100 },
+        "transitions": {
+          "q2": ["1"]
+        }
+      },
+      "q2": {
+        "position": { "x": 300, "y": 100 },
+        "transitions": {}
       }
-    },
-    "q1": {
-      "position": { "x": 200, "y": 100 },
-      "transitions": {
-        "q2": ["1"]
-      }
-    },
-    "q2": {
-      "position": { "x": 300, "y": 100 },
-      "transitions": {}
     }
   }
 }
 
 Important considerations:
-- Use 'ε' for epsilon transitions if needed.
+- States should be separated for a distance greater than 150, properly spaced out for the visual editor in both axes x and y.
+- Use 'ε' for epsilon transitions, include it in the alphabet if needed (forces non-determinism).
 - Please output only the JSON.
 ```
 
@@ -56,31 +59,34 @@ I need a Pushdown Automaton (PDA) JSON to recognize:
 It must follow this JSON schema exactly:
 {
   "type": "PDA",
-  "alphabet": ["a", "b"],
-  "stackAlphabet": ["A", "⊥"],
-  "initial": "q0",
-  "finals": ["q1"],
-  "states": {
-    "q0": {
-      "position": { "x": 100, "y": 100 },
-      "transitions": {
-        "q0": [
-          { "input": "a", "pop": "⊥", "push": ["A", "⊥"] }
-        ],
-        "q1": [
-          { "input": "ε", "pop": "⊥", "push": ["⊥"] }
-        ]
+  "automaton": {
+    "alphabet": ["a", "b"],
+    "stackAlphabet": ["A", "⊥"],
+    "initial": "q0",
+    "finals": ["q1"],
+    "states": {
+      "q0": {
+        "position": { "x": 100, "y": 100 },
+        "transitions": {
+          "q0": [
+            { "input": "a", "pop": "⊥", "push": ["A", "⊥"] }
+          ],
+          "q1": [
+            { "input": "ε", "pop": "⊥", "push": ["⊥"] }
+          ]
+        }
+      },
+      "q1": {
+        "position": { "x": 250, "y": 100 },
+        "transitions": {}
       }
-    },
-    "q1": {
-      "position": { "x": 250, "y": 100 },
-      "transitions": {}
     }
   }
 }
 
 Important considerations:
-- Use 'ε' for empty input/pop/push.
+- States should be separated for a distance greater than 150, properly spaced out for the visual editor in both axes x and y.
+- Use 'ε' for empty input, include it in the alphabet if needed.
 - '⊥' is the stack bottom.
 - Please provide the JSON alone.
 ```
@@ -96,26 +102,30 @@ Generate a Turing Machine (TM) JSON that computes:
 The JSON schema requires this exact structure:
 {
   "type": "TM",
-  "alphabet": ["0", "1"],
-  "initial": "q0",
-  "finals": ["qf"],
-  "states": {
-    "q0": {
-      "position": { "x": 100, "y": 100 },
-      "transitions": {
-        "qf": [
-          { "read": "1", "write": "0", "move": "R" }
-        ]
+  "automaton": {
+    "alphabet": ["0", "1"],
+    "initial": "q0",
+    "finals": ["qf"],
+    "states": {
+      "q0": {
+        "position": { "x": 100, "y": 100 },
+        "transitions": {
+          "qf": [
+            { "read": "1", "write": "0", "move": "R" }
+          ]
+        }
+      },
+      "qf": {
+        "position": { "x": 300, "y": 100 },
+        "transitions": {}
       }
-    },
-    "qf": {
-      "position": { "x": 300, "y": 100 },
-      "transitions": {}
     }
   }
 }
 
 Important considerations:
+- States should be separated for a distance greater than 150, properly spaced out for the visual editor in both axes x and y.
+- Use 'ε' for epsilon transitions, include it in the alphabet if needed (forces non-determinism).
 - The `move` property must be one of 'L', 'R', or 'S'.
 - The blank symbol is represented by '_'.
 - Do not include '_' in the alphabet array.
