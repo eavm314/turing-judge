@@ -22,7 +22,7 @@ export default function AlphabetMenu() {
 
   const handleAddToAlphabet = () => {
     const inputChar = inputRef.current!.value.trim();
-    if (inputChar.match(/^[a-zA-Z0-9]$/)) {
+    if (inputChar.length === 1) {
       updateDesign(automaton => {
         automaton.addSymbol(inputChar);
       });
