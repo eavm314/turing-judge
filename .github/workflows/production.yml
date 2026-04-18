@@ -63,6 +63,7 @@ jobs:
           retention-days: 30
   prisma:
     name: Run Migrations and Seed
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.ref == 'refs/heads/main' && 'Production' || 'Preview' }}
