@@ -49,7 +49,7 @@ export function AccountMenu({ variant }: { variant?: ButtonProps['variant'] }) {
             <Library size={16} /> My Projects
           </DropdownMenuItem>
         </Link>
-        {user.role === 'EDITOR' && (
+        {user.role !== 'USER' && (
           <Link href="/problems/editor">
             <DropdownMenuItem onClick={() => setOpen(false)}>
               <PenLine size={16} /> Problems Editor

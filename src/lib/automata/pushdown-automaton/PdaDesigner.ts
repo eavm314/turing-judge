@@ -1,12 +1,11 @@
 import { StateNodeType } from '@/components/playground/Canvas/state-node';
-import { TransitionEdgeType } from '@/components/playground/Canvas/transition-edge';
+import { TransitionEdgeType } from '@/components/playground/Canvas/transition-edges';
 import { BOTTOM, EPSILON } from '@/constants/symbols';
 import { AutomatonDesign, BaseDesigner } from '@/lib/automata/base/BaseDesigner';
 import { type JsonPda, type JsonPdaState } from '@/lib/schemas/pushdown-automaton';
 import { PdaState, type PdaTransitionData } from './PdaState';
-import { TransitionData } from '../base/BaseState';
 
-export class PdaDesigner extends BaseDesigner {
+export class PdaDesigner extends BaseDesigner<PdaTransitionData> {
   protected states: Map<number, PdaState>;
   private stackAlphabet: Set<string>;
 
@@ -82,6 +81,7 @@ export class PdaDesigner extends BaseDesigner {
       .flatMap(state =>
         state.transitions.entries().map(([target, transition]) => ({
           id: `${state.id}->${target}`,
+          type: 'pda',
           source: String(state.id),
           target: String(target),
           data: { transition },
@@ -125,14 +125,24 @@ export class PdaDesigner extends BaseDesigner {
   isDeterministic(): boolean {
     for (const state of this.states.values()) {
       const seenPairs = new Set<string>();
+      const epsilonByPop = new Set<string>();
+      const consumingByPop = new Set<string>();
 
       for (const data of state.transitions.values()) {
         for (const transition of data) {
-          if (transition.input === EPSILON) return false;
-
           const pairKey = `${transition.input}|${transition.pop}`;
           if (seenPairs.has(pairKey)) return false;
           seenPairs.add(pairKey);
+
+          if (transition.input === EPSILON) {
+            // In a DPDA, epsilon and consuming transitions cannot coexist
+            // for the same stack-top symbol in a state.
+            if (consumingByPop.has(transition.pop)) return false;
+            epsilonByPop.add(transition.pop);
+          } else {
+            if (epsilonByPop.has(transition.pop)) return false;
+            consumingByPop.add(transition.pop);
+          }
         }
       }
     }
@@ -156,5 +166,17 @@ export class PdaDesigner extends BaseDesigner {
 
   getTransition(from: number, to: number): PdaTransitionData[] {
     return super.getTransition(from, to) as PdaTransitionData[];
+  }
+
+  getUsedSymbols(): Set<string> {
+    const usedSymbols = new Set<string>();
+    for (const state of this.states.values()) {
+      for (const data of state.transitions.values()) {
+        for (const symbol of data.map(d => d.input)) {
+          usedSymbols.add(symbol);
+        }
+      }
+    }
+    return usedSymbols;
   }
 }

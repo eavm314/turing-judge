@@ -1,4 +1,4 @@
-import { type Problem, type Project, type Submission } from '@prisma/client';
+import { type Problem, type Project, type Submission } from '@prisma/browser';
 
 export type AutomatonProjectItem = Omit<Project, 'automaton' | 'userId'>;
 

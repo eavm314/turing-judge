@@ -6,7 +6,7 @@ export type FsmTransitionData = {
   input: string;
 };
 
-export class FsmState extends BaseState {
+export class FsmState extends BaseState<FsmTransitionData> {
   id: number;
   name: string;
   position: { x: number; y: number };

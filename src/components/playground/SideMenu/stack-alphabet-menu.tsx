@@ -1,17 +1,15 @@
 import { useRef } from 'react';
 
-import { PlusCircle } from 'lucide-react';
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { BOTTOM, EPSILON } from '@/constants/symbols';
+import { BOTTOM } from '@/constants/symbols';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/ui/utils';
-import { useAutomatonDesign, useIsOwner, usePlaygroundMode } from '@/providers/playground-provider';
 import { PdaDesigner } from '@/lib/automata/pushdown-automaton/PdaDesigner';
 import { PdaTransitionData } from '@/lib/automata/pushdown-automaton/PdaState';
+import { cn } from '@/lib/ui/utils';
+import { useAutomatonDesign, useIsOwner, usePlaygroundMode } from '@/providers/playground-provider';
 
 export default function StackAlphabetMenu() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -23,7 +21,7 @@ export default function StackAlphabetMenu() {
 
   const handleAddToAlphabet = () => {
     const inputChar = inputRef.current!.value.trim();
-    if (inputChar.match(/^[a-zA-Z0-9]$/)) {
+    if (inputChar.length === 1) {
       updateDesign(automaton => {
         (automaton as PdaDesigner).addStackSymbol(inputChar);
       });

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Orbitron } from 'next/font/google';
 import './globals.css';
@@ -20,21 +21,27 @@ export const metadata: Metadata = {
   description: 'Automaton Designer',
 };
 
-export default async function RootLayout({
+async function AppSessionProvider({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+  return <SessionProvider user={session?.user}>{children}</SessionProvider>;
+}
+
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${orbitron.variable} antialiased`}>
         <ThemeProvider>
           <ModalProvider>
-            <SessionProvider user={session?.user}>
-              {children}
-              <Toaster />
-            </SessionProvider>
+            <Suspense fallback={null}>
+              <AppSessionProvider>
+                {children}
+                <Toaster />
+              </AppSessionProvider>
+            </Suspense>
           </ModalProvider>
         </ThemeProvider>
       </body>

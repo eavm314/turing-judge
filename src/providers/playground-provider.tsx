@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useMemo, useRef } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -22,14 +22,13 @@ export const PlaygroundStoreProvider = ({
   initialCode,
   isOwner,
 }: PlaygroundProviderProps) => {
-  const storeRef = useRef<PlaygroundStoreApi | null>(null);
-  storeRef.current = useMemo(
+  const store = useMemo(
     () => createPlaygroundStore(initialCode, isOwner),
     [isOwner],
   );
 
   return (
-    <PlaygroundStoreContext.Provider value={storeRef.current}>
+    <PlaygroundStoreContext.Provider value={store}>
       {children}
     </PlaygroundStoreContext.Provider>
   );
@@ -66,21 +65,13 @@ export const usePlaygroundMode = () =>
 
 export const useIsOwner = () => usePlaygroundStore(state => state.isOwner);
 
-export const useSimulationWord = () =>
-  usePlaygroundStore(
-    useShallow(state => ({
-      word: state.simulationWord,
-      setWord: state.setSimulationWord,
-    })),
-  );
-
 export const useVisitedState = () => usePlaygroundStore(state => state.activeData.state);
 
 export const useVisitedTransition = () =>
   usePlaygroundStore(
     useShallow(state => ({
       visitedTransition: state.activeData.transition,
-      visitedSymbol: state.activeData.symbol,
+      visitedSymbol: state.activeData.label,
       simulationSpeed: state.simulationSpeed,
     })),
   );
@@ -91,6 +82,7 @@ export const useSimulation = () =>
       word: state.simulationWord,
       simulationSpeed: state.simulationSpeed,
       setWord: state.setSimulationWord,
+      setTape: state.setSimulationTape,
       setSimulationSpeed: state.setSimulationSpeed,
       stopSimulation: state.stopSimulation,
       setAnimatedData: state.setAnimatedData,
@@ -103,9 +95,9 @@ export const useSimulationTape = () =>
     useShallow(state => ({
       translation: state.translation,
       speed: state.simulationSpeed,
-      word: state.simulationWord,
+      tapeSymbols: state.simulationTape,
       position: state.simulationIndex,
-      visitedSymbol: state.activeData.symbol,
+      transitionLabel: state.activeData.label,
     })),
   );
 

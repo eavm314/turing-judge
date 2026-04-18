@@ -1,0 +1,24 @@
+# Problem Creation Guide 
+
+Welcome to the Authoring documentation. This guide is restricted to `EDITOR` and `ADMIN` roles. Here, you will learn how to draft, test, and publish problems to the Turing Judge problem set.
+
+## Anatomy of a Problem
+
+Every problem tests whether a user's automaton can correctly accept or reject a set of inputs. To define a problem, you need:
+1. **A clear description:** Markdown-enabled text explaining the desired language (e.g. "Create a DFA that accepts any binary string with an odd number of 1s.")
+2. **Automaton Type constraint:** Does the problem require an FSM, a PDA, or a TM?
+3. **Test Cases:** A suite of test strings and their expected outcome (`true` for accepted, `false` for rejected).
+
+## Creating the Problem
+
+To ensure quality:
+- Your problem must include **at least 5 test cases**.
+- Provide a robust mix of edge cases (e.g. empty strings `ε`, strings that fail right before the end).
+- Once submitted, you can preview what the user will see in the Problem View.
+
+## Best Practices
+- **Descriptions:** Use `$math$` to wrap variables and symbols to make them readable. If you specify variables like `$L = \\{w \\in \\{a,b\\}^* \\mid w \\text{ ends with } ab\\}$`, it will render beautifully for the students.
+- **Difficulty Grading:** Mark the difficulty based on the number of states a minimal machine would require.
+
+---
+_Thank you for contributing to the learning platform!_

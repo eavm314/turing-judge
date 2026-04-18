@@ -221,7 +221,7 @@ test.describe('Alphabet controls', () => {
     await expect(page.getByRole('checkbox', { name: EPSILON })).toBeVisible();
   });
 
-  test('should not add duplicate symbols nor special characters', async ({ page }) => {
+  test('should not add duplicate symbols', async ({ page }) => {
     const input = page.getByTestId('alphabet-input');
     const addButton = page.getByRole('button', { name: 'Add', exact: true });
 
@@ -229,13 +229,9 @@ test.describe('Alphabet controls', () => {
     await addButton.click();
     await expect(page.locator('span:has-text("1") + button:has-text("x")')).toHaveCount(1);
 
-    await input.fill('!');
+    await input.fill('0');
     await addButton.click();
-    await expect(page.locator('span:has-text("!") + button:has-text("x")')).toHaveCount(0);
-
-    await input.fill('*');
-    await addButton.click();
-    await expect(page.locator('span:has-text("*") + button:has-text("x")')).toHaveCount(0);
+    await expect(page.locator('span:has-text("0") + button:has-text("x")')).toHaveCount(1);
   });
 
   test('should not remove used symbols', async ({ page }) => {

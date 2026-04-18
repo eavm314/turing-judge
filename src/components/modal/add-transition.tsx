@@ -1,23 +1,25 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { ArrowRight, Edit, Plus, Trash2, X } from 'lucide-react';
+import { Edit, Plus, Trash2, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { EPSILON } from '@/constants/symbols';
-import { type TransitionData } from '@/lib/automata/base/BaseState';
+import { BLANK, EPSILON, TM_MOVES } from '@/constants/symbols';
+import { FsmDesigner } from '@/lib/automata/finite-state-machine/FsmDesigner';
+import { FsmTransitionData } from '@/lib/automata/finite-state-machine/FsmState';
 import { PdaDesigner } from '@/lib/automata/pushdown-automaton/PdaDesigner';
 import { PdaTransitionData } from '@/lib/automata/pushdown-automaton/PdaState';
+import { TmDesigner } from '@/lib/automata/turing-machine/TmDesigner';
+import { TmTransitionData } from '@/lib/automata/turing-machine/TmState';
 import { type CustomContentProps, useModal } from '@/providers/modal-provider';
 import { automatonManager } from '@/store/playground-store';
-import { AutomatonType } from '@prisma/client';
+import { AutomatonType } from '@prisma/browser';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 interface AddTransitionProps {
@@ -29,15 +31,15 @@ const AddFsmTransition = ({
   value: transitionData,
   setValue: setTransitionData,
   data,
-}: CustomContentProps<TransitionData[], AddTransitionProps>) => {
-  const [alphabet, setAlphabet] = useState<string[]>([]);
+}: CustomContentProps<FsmTransitionData[], AddTransitionProps>) => {
+  const designer = automatonManager.getDesigner() as FsmDesigner;
+
+  const alphabet = designer.getAlphabet();
 
   useEffect(() => {
-    const designer = automatonManager.getDesigner();
     const { source, target } = data;
     const transition = designer.getTransition(source, target);
     setTransitionData(transition);
-    setAlphabet(designer.getAlphabet());
   }, []);
 
   const handleSymbolToggle = (inputSymbol: string, checked: boolean) => {
@@ -89,17 +91,16 @@ const AddPdaTransition = ({
   value,
   setValue: setTransitionData,
   data,
-}: CustomContentProps<TransitionData[], AddTransitionProps>) => {
-  const [inputAlphabet, setInputAlphabet] = useState<string[]>([]);
-  const [stackAlphabet, setStackAlphabet] = useState<string[]>([]);
+}: CustomContentProps<PdaTransitionData[], AddTransitionProps>) => {
+  const designer = automatonManager.getDesigner() as PdaDesigner;
+
+  const inputAlphabet = designer.getAlphabet();
+  const stackAlphabet = designer.getStackAlphabet();
 
   useEffect(() => {
-    const designer = automatonManager.getDesigner() as PdaDesigner;
     const { source, target } = data;
     const transition = designer.getTransition(source, target);
     setTransitionData(transition);
-    setInputAlphabet(designer.getAlphabet());
-    setStackAlphabet(designer.getStackAlphabet());
   }, []);
 
   // Keep state only for values that affect rendering
@@ -312,28 +313,212 @@ const AddPdaTransition = ({
   );
 };
 
-const AddTMTransition = ({
-  value: transitionData,
+const AddTmTransition = ({
+  value,
   setValue: setTransitionData,
   data,
-}: CustomContentProps<TransitionData[], AddTransitionProps>) => {
-  return null;
+}: CustomContentProps<TmTransitionData[], AddTransitionProps>) => {
+  const designer = automatonManager.getDesigner() as TmDesigner;
+
+  const alphabet = designer.getAlphabet();
+  alphabet.push(BLANK);
+
+  useEffect(() => {
+    const { source, target } = data;
+    const transition = designer.getTransition(source, target);
+    setTransitionData(transition);
+  }, []);
+
+  const [currentTransition, setCurrentTransition] = useState<TmTransitionData>({
+    read: '',
+    write: '',
+    move: 'S',
+  });
+
+  const handleAddTransition = () => {
+    if (!currentTransition.read || !currentTransition.write || !currentTransition.move) return;
+
+    const isDuplicate = transitions.some(
+      t =>
+        t.read === currentTransition.read &&
+        t.write === currentTransition.write &&
+        t.move === currentTransition.move,
+    );
+
+    if (isDuplicate) return;
+
+    setTransitionData([...transitions, currentTransition]);
+    setCurrentTransition({
+      read: '',
+      write: '',
+      move: 'S',
+    });
+  };
+
+  const handleRemoveTransition = (index: number) => {
+    setTransitionData(transitions.filter((_, i) => i !== index));
+  };
+
+  const formatTransition = (transition: TmTransitionData) => {
+    return `${transition.read} / ${transition.write}, ${transition.move}`;
+  };
+
+  if (value === null) return null;
+  const transitions = value as TmTransitionData[];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 justify-center">
+        <div className="flex flex-col items-center gap-1">
+          <Label className="text-xs text-muted-foreground">read</Label>
+          <Select
+            onValueChange={value => {
+              setCurrentTransition(prev => ({
+                ...prev,
+                read: value,
+              }));
+            }}
+            key={`tm-read-${transitions.length}`}
+            value={currentTransition.read}
+          >
+            <SelectTrigger className="w-16 h-10 font-mono text-lg" data-transition-select>
+              <SelectValue placeholder="?" />
+            </SelectTrigger>
+            <SelectContent>
+              {alphabet.map(symbol => (
+                <SelectItem key={symbol} value={symbol} className="font-mono text-center">
+                  {symbol}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <span className="text-lg font-mono mt-6">/</span>
+
+        <div className="flex flex-col items-center gap-1">
+          <Label className="text-xs text-muted-foreground">write</Label>
+          <Select
+            onValueChange={value => {
+              setCurrentTransition(prev => ({
+                ...prev,
+                write: value,
+              }));
+            }}
+            key={`tm-write-${transitions.length}`}
+            value={currentTransition.write}
+          >
+            <SelectTrigger className="w-16 h-10 font-mono text-lg" data-transition-select>
+              <SelectValue placeholder="?" />
+            </SelectTrigger>
+            <SelectContent>
+              {alphabet.map(symbol => (
+                <SelectItem key={symbol} value={symbol} className="font-mono text-center">
+                  {symbol}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <span className="text-lg font-mono mt-6">,</span>
+
+        <div className="flex flex-col items-center gap-1">
+          <Label className="text-xs text-muted-foreground">move</Label>
+          <Select
+            onValueChange={value => {
+              setCurrentTransition(prev => ({
+                ...prev,
+                move: value as TmTransitionData['move'],
+              }));
+            }}
+            key={`tm-move-${transitions.length}`}
+            value={currentTransition.move}
+          >
+            <SelectTrigger className="w-16 h-10 font-mono text-lg" data-transition-select>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TM_MOVES.map(move => (
+                <SelectItem key={move} value={move} className="font-mono text-center">
+                  {move}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="flex justify-center">
+        <Button
+          onClick={handleAddTransition}
+          size="sm"
+          disabled={!currentTransition.read || !currentTransition.write || !currentTransition.move}
+        >
+          <Plus className="h-4 w-4" />
+          Add This Rule
+        </Button>
+      </div>
+
+      {transitions.length > 0 && (
+        <>
+          <Separator />
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">Added Transitions ({transitions.length})</h4>
+            <ScrollArea type="always" className="h-32 px-4">
+              <div className="space-y-2">
+                {transitions.map((transition, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between py-1 px-3 border rounded bg-background"
+                  >
+                    <span className="font-mono text-sm">{formatTransition(transition)}</span>
+                    <div className="space-x-1">
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setCurrentTransition(transition);
+                          handleRemoveTransition(index);
+                        }}
+                        className="h-6 w-6 p-0"
+                      >
+                        <Edit className="size-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleRemoveTransition(index)}
+                        className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        </>
+      )}
+    </div>
+  );
 };
 
 const componentByType: Record<
   AutomatonType,
-  React.FC<CustomContentProps<TransitionData[], AddTransitionProps>>
+  // We need to allow any type here since it will be determined by the automaton type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  React.FC<CustomContentProps<any[], AddTransitionProps>>
 > = {
   [AutomatonType.FSM]: AddFsmTransition,
   [AutomatonType.PDA]: AddPdaTransition,
-  [AutomatonType.TM]: AddTMTransition,
+  [AutomatonType.TM]: AddTmTransition,
 };
 
 export const useAddTransitionPrompt = () => {
   const { showCustomModal } = useModal();
 
   const addTransition = (data: AddTransitionProps) =>
-    showCustomModal<TransitionData[], AddTransitionProps>({
+    showCustomModal<unknown[], AddTransitionProps>({
       title: 'Edit Transition',
       message: 'Choose the symbols for the transition',
       customContent: componentByType[automatonManager.getType()],

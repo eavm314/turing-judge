@@ -15,13 +15,13 @@ type PdaOutput = {
 
 type PdaStep = Step<PdaInput, PdaOutput>;
 
-interface ExecutionNode {
+type ExecutionNode = {
   state: string;
   inputPos: number;
   stack: string[];
   path: PdaStep[];
   depth: number;
-}
+};
 
 export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
   constructor(initialAutomaton: JsonPda) {
@@ -32,11 +32,20 @@ export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
   isDeterministic(): boolean {
     for (const transitions of this.states.values()) {
       const seen = new Set<string>();
+      const epsilonByPop = new Set<string>();
+      const consumingByPop = new Set<string>();
 
       for (const key of transitions.keys()) {
-        const [input, _] = key.split('|');
-        if (input === EPSILON) return false;
+        const [input, pop] = key.split('|');
         if (seen.has(key)) return false;
+
+        if (input === EPSILON) {
+          if (consumingByPop.has(pop)) return false;
+          epsilonByPop.add(pop);
+        } else {
+          if (epsilonByPop.has(pop)) return false;
+          consumingByPop.add(pop);
+        }
 
         seen.add(key);
       }
@@ -83,7 +92,6 @@ export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
   execute(word: string, savePath = false) {
     let steps = 0;
     let depthLimitReached = false;
-    const config = this.getConfig();
 
     const executionStack: ExecutionNode[] = [
       {
@@ -110,7 +118,7 @@ export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
         };
       }
 
-      if (steps > config.maxSteps) {
+      if (steps > this.config.maxSteps) {
         return {
           accepted: false,
           depthLimitReached,
@@ -119,7 +127,7 @@ export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
         };
       }
 
-      if (depth > config.depthLimit) {
+      if (depth > this.config.depthLimit) {
         depthLimitReached = true;
         continue;
       }

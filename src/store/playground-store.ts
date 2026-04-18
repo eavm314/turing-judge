@@ -8,10 +8,10 @@ import { StackElement } from '@/lib/automata/pushdown-automaton/PdaAnimator';
 export type PlaygroundMode = 'states' | 'transitions' | 'simulation' | 'viewer';
 
 export type AnimationData = {
-  state: string | null;
-  transition: string | null;
-  symbol: string | null;
-  stack: StackElement[] | null;
+  state?: string;
+  transition?: string;
+  label?: string;
+  stack?: StackElement[];
 };
 
 export type PlaygroundState = {
@@ -20,12 +20,17 @@ export type PlaygroundState = {
   isOwner: boolean;
   unsavedChanges: boolean;
 
-  translation: number;
+  translation: -1 | 0 | 1;
   simulationSpeed: number;
   simulationWord: string;
+  simulationTape: Record<number, string>;
   simulationIndex: number;
   activeData: AnimationData;
 };
+
+export type TapeOrCallback =
+  | Record<number, string>
+  | ((prev: Record<number, string>) => Record<number, string>);
 
 export type PlaygroundActions = {
   setAutomaton: (code: AutomatonCode) => void;
@@ -35,6 +40,7 @@ export type PlaygroundActions = {
 
   setSimulationSpeed: (speed: number) => void;
   setSimulationWord: (word: string) => void;
+  setSimulationTape: (tapeOrCallback: TapeOrCallback) => void;
   setAnimatedData: (data: AnimationData) => void;
   move: (direction: 'L' | 'R') => void;
   stopSimulation: () => void;
@@ -55,16 +61,12 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
     isOwner,
     mode: isOwner ? 'states' : 'viewer',
 
-    simulationSpeed: automatonManager.getAnimator().getSimulationSpeed(),
+    simulationSpeed: automatonManager.getAnimator().speed,
     translation: 0,
     simulationWord: '',
+    simulationTape: {},
     simulationIndex: 0,
-    activeData: {
-      state: null,
-      transition: null,
-      symbol: null,
-      stack: null,
-    },
+    activeData: {},
   };
 
   return createStore<PlaygroundStore>()(set => ({
@@ -85,22 +87,27 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
     saveChanges: () => set({ unsavedChanges: false }),
 
     setSimulationSpeed: (speed: number) => {
-      automatonManager.getAnimator().setSimulationSpeed(speed);
+      automatonManager.getAnimator().speed = speed;
       set({ simulationSpeed: speed });
     },
     setSimulationWord: (word: string) => set({ simulationWord: word }),
+    setSimulationTape: (tapeOrCallback: TapeOrCallback) => {
+      if (typeof tapeOrCallback === 'function') {
+        set(state => ({ simulationTape: tapeOrCallback(state.simulationTape) }));
+      } else {
+        set({ simulationTape: tapeOrCallback });
+      }
+    },
     setAnimatedData: (data: AnimationData) => set({ activeData: data }),
     move: (dir: 'L' | 'R') =>
       set(state => {
-        const { simulationIndex, simulationWord } = state;
+        const { simulationIndex } = state;
         if (dir === 'R') {
-          if (simulationIndex >= simulationWord.length) return state;
           movementTimeout = setTimeout(() => {
             set({ translation: 0, simulationIndex: simulationIndex + 1 });
           }, state.simulationSpeed);
           return { translation: -1 };
         } else {
-          if (simulationIndex <= 0) return state;
           movementTimeout = setTimeout(() => {
             set({ translation: 0, simulationIndex: simulationIndex - 1 });
           }, state.simulationSpeed);
@@ -113,12 +120,7 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
         mode: state.isOwner ? 'states' : 'viewer',
         translation: 0,
         simulationIndex: 0,
-        activeData: {
-          state: null,
-          transition: null,
-          symbol: null,
-          stack: null,
-        },
+        activeData: {},
       }));
     },
   }));

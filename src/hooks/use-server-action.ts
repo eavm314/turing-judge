@@ -11,7 +11,7 @@ export type ServerActionResult<T = void> = {
 
 type MaybeVoid<T> = T extends void ? true : T;
 
-export function useServerAction<Args extends any[], T>(
+export function useServerAction<Args extends unknown[], T>(
   action: (...args: Args) => Promise<ServerActionResult<T>>,
 ) {
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,7 @@ export function useServerAction<Args extends any[], T>(
         });
 
         return ('data' in result ? result.data : true) as MaybeVoid<T>;
-      } catch (err) {
+      } catch {
         toast({
           title: 'Error',
           description: 'An unexpected error occurred.',

@@ -8,7 +8,7 @@ export type PdaTransitionData = {
   push: string[];
 };
 
-export class PdaState extends BaseState {
+export class PdaState extends BaseState<PdaTransitionData> {
   id: number;
   name: string;
   position: { x: number; y: number };

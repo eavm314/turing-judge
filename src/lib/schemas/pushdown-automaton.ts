@@ -4,14 +4,7 @@ import { BOTTOM } from '@/constants/symbols';
 import { alphabetSchema, positionSchema } from './finite-state-machine';
 
 export const stackAphabetSchema = z
-  .array(
-    z
-      .string()
-      .length(1)
-      .refine(symbol => /^[a-zA-Z0-9]+$/.test(symbol) || symbol === BOTTOM, {
-        message: `Symbols must be alphanumeric or "${BOTTOM}"`,
-      }),
-  )
+  .array(z.string().length(1))
   .refine(arr => arr.includes(BOTTOM), {
     message: `Stack alphabet must include "${BOTTOM}"`,
   });

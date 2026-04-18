@@ -1,0 +1,45 @@
+# Pushdown Automaton (PDA)
+
+A **Pushdown Automaton (PDA)** takes the concept of a Finite State Machine and adds a significant upgrade: **a stack**. 
+
+A stack is a Last-In, First-Out (LIFO) data structure. You can "push" items onto the top of the stack and "pop" items off the top. Because the infinite stack acts as memory, a PDA can do things an FSM could never do—most importantly, it can **count relative relationships**.
+
+## What does a PDA do?
+
+PDAs process **Context-Free Languages**, which are incredibly important in computer science. Every modern programming language relies on Context-Free Grammars to be parsed by the compiler!
+
+A PDA is required when you need to match nested structures:
+*   **Balancing Parentheses:** Making sure every `(` is matched with a `)`.
+*   **HTML/XML Tags:** Ensuring `<div>` is properly closed by `</div>`.
+*   **Palindrome Checking:** Knowing if a string is mirrored in the middle.
+*   **Mathematical Expressions:** Safely evaluating `3 * (4 + 5)`.
+
+In general, a PDA handles the rule: _"For every X there must be a matching Y."_
+
+## Formal Definition
+
+A PDA is mathematically defined as a 7-tuple $(Q, \Sigma, \Gamma, \delta, q_0, Z_0, F)$:
+
+1.  $Q$: A finite set of states.
+2.  $\Sigma$: The input alphabet.
+3.  $\Gamma$: The **stack alphabet** (symbols allowed to be pushed/popped).
+4.  $\delta$: A transition function indicating how to move between states while simultaneously reading an input symbol and popping/pushing stack symbols.
+5.  $q_0$: The initial state.
+6.  $Z_0$: The **initial stack symbol** (also known as the stack bottom, usually represented as $\perp$).
+7.  $F$: The set of accepting states.
+
+<ImagePlaceholder text="PDA Diagram for matched parenthesis" />
+
+## How to Build One in Turing Judge
+
+When building a PDA, transitions are more complex than FSM transitions. Every step considers three things: 
+1. **Read:** What is the next symbol of the input string? (You can use $\epsilon$ to consume no input).
+2. **Pop:** What symbol must be at the top of the stack for this transition to happen? The machine removes it from the stack.
+3. **Push:** What symbols should be pushed onto the stack after the pop? (You can push multiple, or push none `[]` to effectively just delete the popped symbol).
+
+A classic example is answering the problem $a^n b^n$ (a string of `a`s followed by an equal number of `b`s):
+*   As you read `a`s, **push** an `A` onto the stack.
+*   When you start reading `b`s, **pop** one `A` off the stack.
+*   If you reach the end of the input and the stack only contains the initial bottom symbol ($\perp$), the string has perfectly matched `a`s and `b`s!
+
+Need to build a PDA instantly? Check out our [AI Prompts guide](/docs/ai-prompts) to generate one with ChatGPT.

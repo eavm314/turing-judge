@@ -1,4 +1,4 @@
-import { type AutomatonType } from '@prisma/client';
+import { type AutomatonType } from '@prisma/browser';
 import { type BaseDesigner } from './BaseDesigner';
 import { type BaseExecutor } from './BaseExecutor';
 import { BaseAnimator } from './BaseAnimator';
@@ -6,6 +6,6 @@ import { BaseAnimator } from './BaseAnimator';
 export interface Automaton {
   type: AutomatonType;
   getDesigner: () => BaseDesigner;
-  getExecutor: () => BaseExecutor<unknown, unknown>;
+  getExecutor: () => BaseExecutor;
   getAnimator: () => BaseAnimator;
 }

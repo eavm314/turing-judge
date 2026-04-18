@@ -3,9 +3,9 @@ import { FsmState, FsmTransitionData } from './FsmState';
 import { type JsonFsm, type JsonFsmState } from '@/lib/schemas/finite-state-machine';
 import { AutomatonDesign, BaseDesigner } from '@/lib/automata/base/BaseDesigner';
 import { StateNodeType } from '@/components/playground/Canvas/state-node';
-import { TransitionEdgeType } from '@/components/playground/Canvas/transition-edge';
+import { TransitionEdgeType } from '@/components/playground/Canvas/transition-edges';
 
-export class FsmDesigner extends BaseDesigner {
+export class FsmDesigner extends BaseDesigner<FsmTransitionData> {
   protected states: Map<number, FsmState>;
 
   constructor(json: JsonFsm) {
@@ -82,6 +82,7 @@ export class FsmDesigner extends BaseDesigner {
           .filter(([, tr]) => tr.length > 0)
           .map(([target, transition]) => ({
             id: `${state.id}->${target}`,
+            type: 'fsm',
             source: String(state.id),
             target: String(target),
             data: { transition },
@@ -130,5 +131,17 @@ export class FsmDesigner extends BaseDesigner {
       }
     }
     return true;
+  }
+
+  getUsedSymbols(): Set<string> {
+    const usedSymbols = new Set<string>();
+    for (const state of this.states.values()) {
+      for (const data of state.transitions.values()) {
+        for (const symbol of data.map(d => d.input)) {
+          usedSymbols.add(symbol);
+        }
+      }
+    }
+    return usedSymbols;
   }
 }

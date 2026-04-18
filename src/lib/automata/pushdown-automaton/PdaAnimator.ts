@@ -17,7 +17,7 @@ export class PdaAnimator extends BaseAnimator {
     this.executor = executor;
   }
 
-  start(word: string, { onFinish, onStart, setAnimatedData, move }: AnimationCallbacks) {
+  start(word: string, { onFinish, onStart, setAnimatedData, move, setTape }: AnimationCallbacks) {
     const initialState = this.executor.getInitialState();
     const { accepted, path } = this.executor.execute(word, true);
     if (!accepted) return false;
@@ -25,10 +25,9 @@ export class PdaAnimator extends BaseAnimator {
     onStart?.();
 
     this.resetStack();
+    setTape(Object.fromEntries(word.split('').map((s, i) => [i, s])));
     setAnimatedData({
       state: initialState,
-      transition: null,
-      symbol: null,
       stack: this.stack,
     });
 
@@ -46,9 +45,8 @@ export class PdaAnimator extends BaseAnimator {
         const setStack = (newStack: StackElement[]) => {
           this.stack = newStack;
           setAnimatedData({
-            state: null,
             transition: `${input.state}->${output.state}`,
-            symbol: `${input.inputSymbol},${input.stackTop}/${output.push.length > 0 ? output.push.toReversed().join('') : EPSILON}`,
+            label: `${input.inputSymbol},${input.stackTop}/${output.push.length > 0 ? output.push.toReversed().join('') : EPSILON}`,
             stack: this.stack,
           });
         };
@@ -60,8 +58,6 @@ export class PdaAnimator extends BaseAnimator {
         this.stack = this.stack.map(el => ({ ...el, isEntering: false }));
         setAnimatedData({
           state: output.state,
-          transition: null,
-          symbol: null,
           stack: this.stack,
         });
         step++;

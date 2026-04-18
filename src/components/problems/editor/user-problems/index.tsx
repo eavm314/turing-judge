@@ -10,7 +10,6 @@ import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { SortDirection } from '@/constants/table';
 import { type ProblemEditorItem as ProblemItem } from '@/lib/schemas';
-import { useToast } from '@/hooks/use-toast';
 import { useModal } from '@/providers/modal-provider';
 import ProblemEditorItem from './item';
 import { useServerAction } from '@/hooks/use-server-action';

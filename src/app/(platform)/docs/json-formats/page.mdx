@@ -1,0 +1,126 @@
+# JSON Formats
+
+The Turing Judge playground heavily relies on a strict JSON schema to maintain consistency between the visual editor and the execution engine. This format makes it incredibly easy to copy, share, sequence, and version-control your automaton states.
+
+Use the structures below to define **FSM**, **PDA**, and **TM**.
+
+---
+
+## Finite State Machine (FSM)
+
+An FSM requires defining an `alphabet`, initial state, a list of final states, and the `states` mapping. The special character `ε` (`\u03B5`) represents the epsilon transition.
+
+### Schema Shape
+```json
+{
+  "alphabet": ["0", "1", "ε"],
+  "initial": "q0",
+  "finals": ["q2"],
+  "states": {
+    "q0": {
+      "position": { "x": 100, "y": 150 },
+      "transitions": {
+        "q1": ["0"],
+        "q2": ["1", "ε"]
+      }
+    },
+    "q1": {
+      "position": { "x": 200, "y": 150 },
+      "transitions": {
+        "q2": ["1"]
+      }
+    },
+    "q2": {
+      "position": { "x": 300, "y": 150 },
+      "transitions": {}
+    }
+  }
+}
+```
+
+---
+
+## Pushdown Automaton (PDA)
+
+A PDA needs an explicitly declared `stackAlphabet` alongside its `alphabet`. The stack bottom is usually represented by `⊥` (`\u22A5`). 
+Transitions map the target state to an array of objects specifying what is read (`input`), popped (`pop`), and pushed (`push`).
+
+### Schema Shape
+```json
+{
+  "alphabet": ["a", "b", "ε"],
+  "stackAlphabet": ["X", "Y", "⊥"],
+  "initial": "q0",
+  "finals": ["q1"],
+  "states": {
+    "q0": {
+      "position": { "x": 30, "y": 50 },
+      "transitions": {
+        "q0": [
+          {
+            "input": "a",
+            "pop": "⊥",
+            "push": ["X", "⊥"]
+          }
+        ],
+        "q1": [
+          {
+            "input": "ε",
+            "pop": "X",
+            "push": []
+             }
+        ]
+      }
+    },
+    "q1": {
+      "position": { "x": 130, "y": 50 }
+    }
+  }
+}
+```
+
+---
+
+## Turing Machine (TM)
+
+A TM uses a tape of infinite length. Transitions define what symbol to `read`, what symbol to `write`, and the `move` direction for the head (`L` for Left, `R` for Right, or `S` for Stay). The blank symbol is `_`.
+
+### Schema Shape
+```json
+{
+  "alphabet": ["0", "1", "x", "y"],
+  "initial": "q0",
+  "finals": ["q_accept"],
+  "states": {
+    "q0": {
+      "position": { "x": 100, "y": 100 },
+      "transitions": {
+        "q1": [
+          {
+            "read": "0",
+            "write": "x",
+            "move": "R"
+          }
+        ]
+      }
+    },
+    "q1": {
+      "position": { "x": 250, "y": 100 },
+      "transitions": {
+        "q_accept": [
+          {
+            "read": "_",
+            "write": "_",
+            "move": "S"
+          }
+        ]
+      }
+    },
+    "q_accept": {
+      "position": { "x": 400, "y": 100 }
+    }
+  }
+}
+```
+
+> **Note on Positions:** The `position` key inside states is purely for the visual editor and does not affect the engine logic. It is optional but recommended if loading models back into the Canvas.

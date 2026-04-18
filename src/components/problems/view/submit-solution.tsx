@@ -116,7 +116,9 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
     try {
       const parsed = JSON.parse(code);
       setInitialCode(JSON.stringify(parsed, null, 2));
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error formatting JSON:', error);
+    }
   };
 
   const filteredAutomatons = automatons.filter(
@@ -126,7 +128,7 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
   return (
     <Dialog open={openDialog} onOpenChange={handleOpen}>
       <DialogTrigger asChild>
-        <Button className='w-40'>
+        <Button className="w-40">
           <PlusCircle size={20} /> Submit Solution{' '}
         </Button>
       </DialogTrigger>

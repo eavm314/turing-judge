@@ -2,7 +2,7 @@ import { AutomatonCode } from '../schemas/automaton-code';
 import { type Automaton } from './base';
 import { createFSM } from './finite-state-machine';
 import { createPDA } from './pushdown-automaton';
-// import { createTM } from './turing-machine';
+import { createTM } from './turing-machine';
 
 export class AutomatonManager {
   private currentAutomaton!: Automaton;
@@ -19,8 +19,11 @@ export class AutomatonManager {
       case 'PDA':
         this.currentAutomaton = createPDA(initialCode.automaton);
         break;
+      case 'TM':
+        this.currentAutomaton = createTM(initialCode.automaton);
+        break;
       default:
-        throw new Error(`Automaton type not supported yet: ${initialCode.type}`);
+        throw new Error('Failed to switch to unsupported automaton type');
     }
   }
 

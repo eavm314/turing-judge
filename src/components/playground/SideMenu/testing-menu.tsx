@@ -5,18 +5,17 @@ import { EPSILON } from '@/constants/symbols';
 import { useToast } from '@/hooks/use-toast';
 import {
   usePlaygroundMode,
-  useSimulationWord,
+  useSimulation,
 } from '@/providers/playground-provider';
 import { automatonManager } from '@/store/playground-store';
 
 export default function TestingMenu() {
-  const { word, setWord } = useSimulationWord();
+  const { word, setWord } = useSimulation();
   const { mode } = usePlaygroundMode();
   const { toast } = useToast();
 
   const handleTest = () => {
     const executor = automatonManager.getExecutor();
-    const executionConfig = executor.getConfig();
     const { accepted, depthLimitReached, maxLimitReached } = executor.execute(word, false);
     if (accepted) {
       toast({
@@ -27,9 +26,9 @@ export default function TestingMenu() {
       toast({
         title: 'Rejected',
         description: maxLimitReached
-          ? `Reached the maximum of ${executionConfig.maxSteps} steps. Potential infinite loop.`
+          ? `Reached the maximum of ${executor.config.maxSteps} steps. Potential infinite loop.`
           : depthLimitReached
-            ? `Explored the maximum depth of ${executionConfig.depthLimit}. Potential infinite loop.`
+            ? `Explored the maximum depth of ${executor.config.depthLimit}. Potential infinite loop.`
             : undefined,
         variant: 'destructive',
       });

@@ -1,0 +1,42 @@
+# Managing the Canvas
+
+The Turing Judge Visual Editor provides an intuitive, drag-and-drop interface for constructing Finite State Machines (FSM), Pushdown Automata (PDA), and Turing Machines (TM).
+
+<ImagePlaceholder text="Visual Editor Overall Interface" />
+
+## 1. Creating Nodes (States)
+
+Nodes represent the different states of your automaton. 
+
+- **Adding a Node:** You can enter a new state name via the side menu or double-click an empty space on the canvas to spawn a new Node.
+- **Initial State:** There must be exactly one initial state. It is indicated by an incoming arrow from nowhere.
+- **Final/Accepting States:** You can toggle a node's "isFinal" property. Accept states are visually represented by a double circle.
+- **Moving Nodes:** Click and drag any node to organize your canvas. The layout is saved relative to the node positions.
+
+<ImagePlaceholder text="Canvas with Several Nodes (Differentiating Initial vs Final)" />
+
+## 2. Creating Edges (Transitions)
+
+Edges dictate how your automaton moves from one Node to another based on the input.
+
+- **Drawing Edges:** Click and drag from the **source node's boundary** to the **target node's boundary**. A modal will pop up prompting you to define the transition.
+- **FSM Transitions:** You will only need to define the reading symbol.
+- **PDA Transitions:** You must define the reading symbol, the symbol to pop from the stack, and the symbols to push to the stack.
+- **TM Transitions:** You must define the reading symbol, the symbol to write to the tape, and the head movement direction (`L` for Left, `R` for Right, or `S` for Stay).
+- **Self-Loops:** Dragging an edge from a node back onto itself creates a self-loop (e.g. state $q_0 \to q_0$).
+
+<ImagePlaceholder text="Creating a Transition (Modal Popup visible)" />
+
+## 3. The Side Menu
+
+The right-hand Side Menu offers granular control:
+
+<ImagePlaceholder text="Side Menu Sections: Test execution and JSON View" />
+
+- **JSON Sync:** At any time, you can flip to the **JSON** tab in the side menu to view the raw representation of your automaton. Edits made in the visual canvas instantly reflect here, and edits made in the JSON instantly update your canvas.
+- **Testing Inputs:** Enter strings into the test panel and click **Run**. The canvas will highlight the active node as it steps through your input, making it incredibly easy to debug logical flaws.
+- **Playback Controls:** Pause, step forward, or step backward during execution.
+
+## Next Steps
+
+Now that you know how to navigate the visual interface, you might want to learn about the underlying data models. Check out the [JSON Formats Outline](/docs/json-formats) to understand exactly how the editor serializes your automata.

@@ -1,5 +1,6 @@
 'use client';
-
+/*
+TODO: use this to implement signup form in the future with user credentials
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -157,3 +158,4 @@ export function SignUpForm() {
     </div>
   );
 }
+*/

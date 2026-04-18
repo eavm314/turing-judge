@@ -4,7 +4,6 @@ import { notFound, redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
 import { type Project } from '@prisma/client';
-import { type JsonObject } from '@prisma/client/runtime/library';
 
 import { PROJECTS_LIMIT } from '@/constants/app';
 import { ServerActionResult } from '@/hooks/use-server-action';
@@ -85,7 +84,7 @@ export const createProjectAction = async (body: {
       title: body.title,
       type: body.automatonCode.type,
       isPublic: body.isPublic,
-      automaton: body.automatonCode.automaton as unknown as JsonObject,
+      automaton: body.automatonCode.automaton ?? {},
     },
   });
   revalidatePath('/library');
@@ -122,7 +121,7 @@ export const updateProjectAction = async (
       title: body.title?.substring(0, 32),
       type: body.automatonCode?.type,
       isPublic: body.isPublic,
-      automaton: body.automatonCode?.automaton as unknown as JsonObject,
+      automaton: body.automatonCode?.automaton ?? {},
     },
   });
   revalidatePath(`/playground/${projectId}`);
@@ -139,7 +138,7 @@ export const deleteAutomatonAction = async (id: string): Promise<ServerActionRes
     await prisma.project.delete({ where: { id, userId: session.user.id } });
     revalidatePath('/library');
     return { success: true, message: 'Automaton deleted successfully' };
-  } catch (error) {
+  } catch {
     return { success: false, message: 'Automaton not found' };
   }
 };

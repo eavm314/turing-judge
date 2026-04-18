@@ -1,7 +1,7 @@
 import { type StateNodeType } from '@/components/playground/Canvas/state-node';
-import { type TransitionEdgeType } from '@/components/playground/Canvas/transition-edge';
-import { type AutomatonCode } from '@/lib/schemas/automaton-code';
-import { type BaseState, type JsonState, type TransitionData } from './BaseState';
+import { type TransitionEdgeType } from '@/components/playground/Canvas/transition-edges';
+import { type JsonState, type AutomatonCode } from '@/lib/schemas/automaton-code';
+import { type BaseState } from './BaseState';
 import { EPSILON } from '@/constants/symbols';
 
 export interface AutomatonDesign {
@@ -13,22 +13,24 @@ export interface AutomatonDesign {
   isDeterministic: boolean;
 }
 
-export abstract class BaseDesigner {
-  protected states!: Map<number, BaseState>;
+export abstract class BaseDesigner<T = unknown> {
+  protected states!: Map<number, BaseState<T>>;
   protected alphabet!: Set<string>;
 
   stateToIndex!: Map<string, number>;
 
-  getState(id: number): BaseState {
+  getState(id: number): BaseState<T> {
     const state = this.states.get(id);
     if (!state) throw new Error('State does not exist');
     return state;
   }
 
   getAlphabet(): string[] {
-    return Array.from(this.alphabet).sort((a, b) =>
-      a === EPSILON ? -1 : b === EPSILON ? 1 : a.localeCompare(b),
-    );
+    return Array.from(this.alphabet).sort((a, b) => {
+      if (a === EPSILON) return -1;
+      if (b === EPSILON) return 1;
+      return a.localeCompare(b);
+    });
   }
 
   addSymbol(symbol: string) {
@@ -56,7 +58,7 @@ export abstract class BaseDesigner {
     source.removeTransition(to);
   }
 
-  getTransition(from: number, to: number): TransitionData[] {
+  getTransition(from: number, to: number) {
     const state = this.states.get(from);
     if (!state) throw new Error('State does not exist');
 
@@ -91,7 +93,9 @@ export abstract class BaseDesigner {
 
   abstract addState(name: string, stateJson: JsonState): void;
 
-  abstract addTransition(from: number, to: number, data: TransitionData[]): void;
+  abstract addTransition(from: number, to: number, data: T[]): void;
 
   abstract isDeterministic(): boolean;
+
+  abstract getUsedSymbols(): Set<string>;
 }

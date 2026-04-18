@@ -10,6 +10,7 @@ import { EPSILON } from '@/constants/symbols';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/ui/utils';
 import { useAutomatonDesign, useIsOwner, usePlaygroundMode } from '@/providers/playground-provider';
+import { automatonManager } from '@/store/playground-store';
 
 export default function AlphabetMenu() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -21,7 +22,7 @@ export default function AlphabetMenu() {
 
   const handleAddToAlphabet = () => {
     const inputChar = inputRef.current!.value.trim();
-    if (inputChar.match(/^[a-zA-Z0-9]$/)) {
+    if (inputChar.length === 1) {
       updateDesign(automaton => {
         automaton.addSymbol(inputChar);
       });
@@ -36,7 +37,7 @@ export default function AlphabetMenu() {
   };
 
   const handleRemoveFromAlphabet = (symbol: string) => {
-    const usedSymbols = new Set(automaton.edges.flatMap(edge => edge.data!.transition.map(t => t.input)));
+    const usedSymbols = automatonManager.getDesigner().getUsedSymbols();
     if (usedSymbols.has(symbol)) {
       toast({
         title: 'Cannot remove symbol',

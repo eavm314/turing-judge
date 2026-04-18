@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { type Project } from '@prisma/client';
+import { type Project } from '@prisma/browser';
 import { Cpu } from 'lucide-react';
 
 import { AccountMenu } from '@/components/layout/account-menu';

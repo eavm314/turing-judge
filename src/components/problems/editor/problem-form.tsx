@@ -35,7 +35,7 @@ import { problemSchema, type ProblemSchema } from '@/lib/schemas/problem-form';
 import { useRouter } from 'next/navigation';
 import { MarkdownEditor } from './markdown-editor';
 import { DifficultyBadge } from '@/utils/badges';
-import { ProblemDifficulty } from '@prisma/client';
+import { ProblemDifficulty } from '@prisma/browser';
 
 export function ProblemForm({
   problemId,
