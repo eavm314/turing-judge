@@ -1,4 +1,4 @@
-import { ProblemDifficulty } from '@prisma/client';
+import { ProblemDifficulty } from '@prisma/browser';
 import { z } from 'zod';
 
 const DifficultyEnum = z.nativeEnum(ProblemDifficulty);

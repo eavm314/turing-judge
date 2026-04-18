@@ -6,29 +6,30 @@ import {
   useVisitedTransition,
 } from '@/providers/playground-provider';
 import { EdgeLabelRenderer, useInternalNode, type Edge, type EdgeProps } from '@xyflow/react';
-import { useEffect, useRef } from 'react';
-import { getPath } from './utils/graphics';
-import { type TransitionData } from '@/lib/automata/base/BaseState';
-import { PdaTransitionData } from '@/lib/automata/pushdown-automaton/PdaState';
-import { EPSILON } from '@/constants/symbols';
+import { useEffect, useRef, type ReactNode } from 'react';
+import { getPath } from '../utils/graphics';
 
-export type TransitionEdgeType = Edge<{ transition: TransitionData[] }>;
+export type TransitionEdgeType = Edge<{ transition: unknown[] }>;
 
-export function TransitionEdge({
+export interface BaseEdgeProps extends EdgeProps<TransitionEdgeType> {
+  children?: ReactNode;
+}
+
+export function BaseEdge({
   id,
   source: sourceId,
   target: targetId,
   style,
-  data,
   selected,
-}: EdgeProps<TransitionEdgeType>) {
+  children,
+}: BaseEdgeProps) {
   const sourceNode = useInternalNode(sourceId);
   const targetNode = useInternalNode(targetId);
 
   const animateRef = useRef<SVGAnimateMotionElement>(null);
 
   const addTransitionPrompt = useAddTransitionPrompt();
-  const { automaton, updateDesign } = useAutomatonDesign();
+  const { updateDesign } = useAutomatonDesign();
   const { visitedTransition, simulationSpeed } = useVisitedTransition();
   const { mode } = usePlaygroundMode();
   const isInteractive = mode !== 'simulation' && mode !== 'viewer';
@@ -60,7 +61,7 @@ export function TransitionEdge({
     const target = Number(targetId);
     const transitionData = await addTransitionPrompt({ source, target });
     if (!transitionData) return;
-    updateDesign(auto => {
+    updateDesign((auto) => {
       auto.removeTransition(source, target);
       auto.addTransition(source, target, transitionData);
     });
@@ -117,20 +118,7 @@ export function TransitionEdge({
           )}
           onDoubleClick={handleEditTransition}
         >
-          {automaton.type === 'FSM' && data!.transition.map(t => t.input).join(',')}
-          {automaton.type === 'PDA' && (
-            <>
-              {data!.transition.map((t, i) => {
-                const pt = t as PdaTransitionData;
-                const text = `${t.input},${pt.pop}/${pt.push.length > 0 ? pt.push.join('') : EPSILON}`;
-                if (!selected && i > 0) return null;
-                return <p key={text}>{text}</p>;
-              })}
-              {!selected && data!.transition.length > 1 && (
-                <div className="text-center -mt-3">...</div>
-              )}
-            </>
-          )}
+          {children}
         </div>
       </EdgeLabelRenderer>
     </>

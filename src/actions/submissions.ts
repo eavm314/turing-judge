@@ -169,10 +169,10 @@ const verifySolution = async (id: number, problemId: string, solution: Automaton
     await setInvalidFormat(id, 'The automaton has too many states.');
     return;
   }
-  executor.setConfig({
+  executor.config = {
     depthLimit: problemTestData.depthLimit,
     maxSteps: problemTestData.maxStepLimit,
-  });
+  };
 
   const totalCases = problemTestData.testCases.length;
   let passedCases = 0;

@@ -1,24 +1,28 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import exampleProjects from '@/constants/example-projects';
+import { AutomatonType } from '@prisma/browser';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 
-const automatonExamples = [
-  { name: 'Even Ones', id: 'pilw80yiq2vnjy2w1gm8hi5q' },
-  { name: 'Ends with "01"', id: 'q25bcbnu07apqx6iiv08qhx2' },
-  { name: '3-Char Palindrome', id: 'h147pt8jj29gpztrpob0oeft' },
-  { name: 'Divisible by 3', id: 'bganvr3nc18rura47zpx46vi' },
-  { name: 'Simple NFA', id: 'x9h6i1odejrjr54mxe79a5n9' },
-];
-
 export function ExamplesMenu() {
+  const projectsByType = Object.groupBy(exampleProjects, project => project.type);
+
+  const typeOrder = [AutomatonType.FSM, AutomatonType.PDA, AutomatonType.TM];
+  const typeLabel: Record<AutomatonType, string> = {
+    [AutomatonType.FSM]: 'Finite State Machines',
+    [AutomatonType.PDA]: 'Pushdown Automata',
+    [AutomatonType.TM]: 'Turing Machines',
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -28,11 +32,22 @@ export function ExamplesMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
-        {automatonExamples.map(example => (
-          <Link href={`/playground/${example.id}`} key={example.id} target="_blank">
-            <DropdownMenuItem>{example.name}</DropdownMenuItem>
-          </Link>
-        ))}
+        {typeOrder
+          .filter(type => (projectsByType[type]?.length ?? 0) > 0)
+          .map(type => (
+            <DropdownMenuSub key={type}>
+              <DropdownMenuSubTrigger>{typeLabel[type]}</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                {projectsByType[type]!.map(example => (
+                  <DropdownMenuItem asChild key={example.id}>
+                    <Link href={`/playground/${example.id}`} target="_blank">
+                      {example.title}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

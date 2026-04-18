@@ -1,0 +1,142 @@
+# Using AI Prompts
+
+LLMs like ChatGPT, Claude, and GitHub Copilot are excellent at generating finite state logic and JSON data. Because Turing Judge uses clear JSON schemas, you can ask your favorite AI to generate complete automatons for you and just paste them right into the editor's **JSON view**.
+
+Here are some prompt templates you can use to get the best results.
+
+---
+
+## 1. Prompting for a Finite State Machine
+
+If you need an FSM for a regular expression or a strict validation pattern:
+
+```text
+I need a Finite State Machine (FSM) JSON that accepts strings matching the pattern:
+[INSERT YOUR PATTERN, e.g., 'starts with 01 and ends in 0']
+
+It must precisely use this JSON format:
+{
+  "type": "FSM",
+  "automaton": {
+    "alphabet": ["0", "1"],
+    "initial": "q0",
+    "finals": ["q2"],
+    "states": {
+      "q0": {
+        "position": { "x": 100, "y": 100 },
+        "transitions": {
+          "q1": ["0"]
+        }
+      },
+      "q1": {
+        "position": { "x": 200, "y": 100 },
+        "transitions": {
+          "q2": ["1"]
+        }
+      },
+      "q2": {
+        "position": { "x": 300, "y": 100 },
+        "transitions": {}
+      }
+    }
+  }
+}
+
+Important considerations:
+- States should be separated for a distance greater than 150, properly spaced out for the visual editor in both axes x and y.
+- Use 'ε' for epsilon transitions, include it in the alphabet if needed (forces non-determinism).
+- Please output only the JSON.
+```
+
+## 2. Prompting for a Pushdown Automaton
+
+Context-free languages like matching parenthesis or palindromes require a stack.
+
+```text
+I need a Pushdown Automaton (PDA) JSON to recognize:
+[INSERT YOUR LANGUAGE, e.g., 'the language $a^n b^n$']
+
+It must follow this JSON schema exactly:
+{
+  "type": "PDA",
+  "automaton": {
+    "alphabet": ["a", "b"],
+    "stackAlphabet": ["A", "⊥"],
+    "initial": "q0",
+    "finals": ["q1"],
+    "states": {
+      "q0": {
+        "position": { "x": 100, "y": 100 },
+        "transitions": {
+          "q0": [
+            { "input": "a", "pop": "⊥", "push": ["A", "⊥"] }
+          ],
+          "q1": [
+            { "input": "ε", "pop": "⊥", "push": ["⊥"] }
+          ]
+        }
+      },
+      "q1": {
+        "position": { "x": 250, "y": 100 },
+        "transitions": {}
+      }
+    }
+  }
+}
+
+Important considerations:
+- States should be separated for a distance greater than 150, properly spaced out for the visual editor in both axes x and y.
+- Use 'ε' for empty input, include it in the alphabet if needed.
+- '⊥' is the stack bottom.
+- Please provide the JSON alone.
+```
+
+## 3. Prompting for a Turing Machine
+
+If you are evaluating complex logic or doing computation, use a TM:
+
+```text
+Generate a Turing Machine (TM) JSON that computes:
+[INSERT YOUR TASK, e.g., 'binary addition']
+
+The JSON schema requires this exact structure:
+{
+  "type": "TM",
+  "automaton": {
+    "alphabet": ["0", "1"],
+    "initial": "q0",
+    "finals": ["qf"],
+    "states": {
+      "q0": {
+        "position": { "x": 100, "y": 100 },
+        "transitions": {
+          "qf": [
+            { "read": "1", "write": "0", "move": "R" }
+          ]
+        }
+      },
+      "qf": {
+        "position": { "x": 300, "y": 100 },
+        "transitions": {}
+      }
+    }
+  }
+}
+
+Important considerations:
+- States should be separated for a distance greater than 150, properly spaced out for the visual editor in both axes x and y.
+- Use 'ε' for epsilon transitions, include it in the alphabet if needed (forces non-determinism).
+- The `move` property must be one of 'L', 'R', or 'S'.
+- The blank symbol is represented by '_'.
+- Do not include '_' in the alphabet array.
+- Please provide the JSON alone.
+```
+
+---
+
+## Troubleshooting AI Outputs
+
+When copying an AI-generated JSON into Turing Judge, pay attention to these common pitfalls:
+- **Missing Nodes:** The AI might reference a state in a transition that it forgot to define in the `states` object.
+- **Missing `position`:** While `position: { x: 0, y: 0 }` is technically optional, the visual editor performs best when nodes are spaced out (e.g. `{x: 100, y: 150}`). If the AI clusters them all at `0,0`, you might need to drag them apart on the canvas.
+- **Unreachable States:** Use the editor's visual flow to sanity-check what the AI produced. Do all paths eventually have a route to an accepting final state?

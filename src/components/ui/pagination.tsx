@@ -1,8 +1,8 @@
-import * as React from "react"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
+import * as React from "react"
 
+import { Button, ButtonProps } from "@/components/ui/button"
 import { cn } from "@/lib/ui/utils"
-import { Button, ButtonProps, buttonVariants } from "@/components/ui/button"
 
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
@@ -39,15 +39,15 @@ type PaginationLinkProps = {
 } & ButtonProps
 
 const PaginationLink = ({
-  className,
   isActive,
   size = "icon",
   ...props
 }: PaginationLinkProps) => (
   <Button
+    {...props}
+    size={size}
     aria-current={isActive ? "page" : undefined}
     variant={isActive ? "outline" : "ghost"}
-    {...props}
   />
 )
 PaginationLink.displayName = "PaginationLink"
@@ -78,7 +78,6 @@ const PaginationNext = ({
     className={cn("gap-1 pr-2.5", className)}
     {...props}
   >
-    {/* <span>Next</span> */}
     <ChevronRight className="size-5" />
   </PaginationLink>
 )
@@ -101,10 +100,5 @@ PaginationEllipsis.displayName = "PaginationEllipsis"
 
 export {
   Pagination,
-  PaginationContent,
-  PaginationLink,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationNext,
-  PaginationEllipsis,
+  PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious
 }

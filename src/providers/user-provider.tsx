@@ -1,8 +1,9 @@
 'use client';
 
 import { SignInModal } from '@/components/auth/signin-modal';
+import { useChange } from '@/hooks/use-change';
 import { type User } from 'next-auth';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 interface UserContextType {
   user?: User;
@@ -20,11 +21,11 @@ interface SessionProviderProps {
 export const SessionProvider = ({ children, user }: SessionProviderProps) => {
   const [openSignIn, setOpenSignIn] = useState(false);
 
-  useEffect(() => {
+  useChange(user, () => {
     if (user) {
       setOpenSignIn(false);
     }
-  }, [user]);
+  });
 
   return (
     <UserContext.Provider value={{ user, openSignIn, setOpenSignIn }}>

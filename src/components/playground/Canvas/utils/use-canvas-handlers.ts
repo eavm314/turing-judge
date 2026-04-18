@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
   applyEdgeChanges,
@@ -15,6 +15,7 @@ import '@xyflow/react/dist/style.css';
 import { useAddTransitionPrompt } from '@/components/modal/add-transition';
 import { useToast } from '@/hooks/use-toast';
 import { useAutomatonDesign, usePlaygroundMode } from '@/providers/playground-provider';
+import { useChange } from '@/hooks/use-change';
 
 export const useCanvasHandlers = () => {
   const { automaton, updateDesign } = useAutomatonDesign();
@@ -26,13 +27,18 @@ export const useCanvasHandlers = () => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
-  useEffect(() => {
+  useChange(automaton, () => {
     setNodes(prev => {
       const selected = new Set(prev.filter(node => node.selected).map(node => node.id));
       return automaton.nodes.map(node => ({ ...node, selected: selected.has(node.id) }));
     });
     setEdges(automaton.edges);
-  }, [automaton]);
+  });
+
+  useChange(mode, () => {
+    setNodes(prev => prev.map(n => ({ ...n, selected: false })));
+    setEdges(prev => prev.map(e => ({ ...e, selected: false })));
+  });
 
   const onNodesChange: OnNodesChange = useCallback(
     changes => {
@@ -97,11 +103,6 @@ export const useCanvasHandlers = () => {
     },
     [updateDesign],
   );
-
-  useEffect(() => {
-    setNodes(prev => prev.map(n => ({ ...n, selected: false })));
-    setEdges(prev => prev.map(e => ({ ...e, selected: false })));
-  }, [mode]);
 
   return {
     nodes,

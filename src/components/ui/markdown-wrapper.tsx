@@ -11,17 +11,17 @@ export const MarkdownWrapper = ({ content }: { content: string }) => {
         remarkPlugins={[remarkMath]}
         rehypePlugins={[rehypeKatex, remarkGfm]}
         components={{
-          table: ({ node, ...props }) => (
+          table: ({ ...props }) => (
             <table {...props} className="w-fit border-collapse border border-neutral-foreground">
               {props.children}
             </table>
           ),
-          th: ({ node, ...props }) => (
+          th: ({ ...props }) => (
             <th {...props} className="px-4 py-2 border border-neutral-foreground bg-accent">
               {props.children}
             </th>
           ),
-          td: ({ node, ...props }) => (
+          td: ({ ...props }) => (
             <td {...props} className="px-4 py-2 border border-neutral-foreground">
               {props.children}
             </td>

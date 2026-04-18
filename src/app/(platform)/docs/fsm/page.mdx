@@ -1,0 +1,36 @@
+# Finite State Machine (FSM)
+
+A **Finite State Machine (FSM)** is the simplest model of computation. You can think of an FSM as a machine that can only be positioned in exactly one out of a finite number of active "states" at any given time.
+
+Whenever it reads an input symbol, it transitions to a new state based on a strict set of rules. Because it has **no memory** beyond the state it's currently occupying, it cannot "count" arbitrarily high.
+
+## What does an FSM do?
+
+FSMs represent **Regular Languages**, which are equivalent to Regular Expressions (RegEx). In the real world, FSMs are incredibly common:
+*   **Vending Machines:** Keep track of the current balance deposited.
+*   **Turnstiles:** Switch from "Locked" to "Unlocked" when a coin is inserted.
+*   **Text Parsers:** Identify matching patterns, validate formatting (e.g., checking if an email is valid), and split strings.
+*   **Game AI:** NPCs switch between "Patrol", "Combat", and "Fleeing" states based on player proximity.
+
+<ImagePlaceholder text="Simple FSM accepting a string ending in 0" />
+
+## Formal Definition
+
+For the curious learner, a Deterministic Finite Automaton (a type of FSM) is formally defined as a 5-tuple $(Q, \Sigma, \delta, q_0, F)$ where:
+
+1.  $Q$: A finite set of states (e.g., $\{q_0, q_1, q_2\}$).
+2.  $\Sigma$: A finite set of input symbols called the alphabet (e.g., $\{0, 1\}$).
+3.  $\delta$: A transition function that maps $Q \times \Sigma \to Q$ (e.g., if you are in $q_0$ and read a $1$, go to $q_1$).
+4.  $q_0$: The initial state, which belongs to $Q$.
+5.  $F$: A set of accepting (final) states which is a subset of $Q$.
+
+## How to Build One in Turing Judge
+
+Constructing an FSM is all about mapping nodes and edges based on your requirement:
+
+1.  **Define your alphabet** (e.g., $\{a, b\}$).
+2.  **Create your initial state:** This is where the evaluation of an input string begins safely.
+3.  **Trace the happy path:** Draw transitions that consume characters towards a final accepting state.
+4.  **Cover the edge cases:** Make sure that invalid characters (or invalid sequences) either transition to a "dead" standard state or are simply omitted. _In Turing Judge, if an FSM tries to read a symbol that has no designated transition from the current state, the evaluation simply halts and rejects the input._
+
+Need to build an FSM instantly? Check out our [AI Prompts guide](/docs/ai-prompts) to generate one with ChatGPT.

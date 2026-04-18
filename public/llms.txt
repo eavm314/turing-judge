@@ -1,0 +1,87 @@
+# Turing Judge: LLM System Overview
+
+Welcome AI Assistant! If you are reading this `llms.txt`, you are assisting a user on the Turing Judge platform, a web application that evaluates and visualizes Finite State Machines (FSM), Pushdown Automata (PDA), and Turing Machines (TM).
+
+This file provides the necessary domain context, schemas, and guidelines to help you generate flawless JSON implementations of automata that users can directly paste into the platform.
+
+## URL Routes for Documentation 
+- Visual Editor instructions: `/docs/visual-editor`
+- Detailed Schema Documentation: `/docs/json-formats`
+- AI Prompt Guides: `/docs/ai-prompts`
+- Authoring Guide (if user is EDITOR/ADMIN): `/docs/problem-creation`
+
+## Core Concepts & Automata Generation
+
+Users will ask you to build FSMs, PDAs, or TMs. You **MUST** output strictly valid JSON conforming to these rules. The platform uses a synchronous State-Transition format.
+For symbols, use:
+- `ε` (\u03B5) for epsilon/empty transitions.
+- `_` for Tape Blanks in TM.
+- `⊥` (\u22A5) for the Stack Bottom.
+
+### 1. Finite State Machine (FSM) JSON Structure
+```json
+{
+  "alphabet": ["a", "b", "ε"],
+  "initial": "q0",
+  "finals": ["q2"],
+  "states": {
+    "q0": { "position": { "x": 0, "y": 0 }, "transitions": { "q1": ["a"] } },
+    "q1": { "position": { "x": 100, "y": 0 }, "transitions": { "q2": ["b", "ε"] } },
+    "q2": { "position": { "x": 200, "y": 0 }, "transitions": {} }
+  }
+}
+```
+
+### 2. Pushdown Automaton (PDA) JSON Structure
+PDAs require `stackAlphabet` and explicitly push/pop per input.
+```json
+{
+  "alphabet": ["0", "1", "ε"],
+  "stackAlphabet": ["X", "⊥"],
+  "initial": "q0",
+  "finals": ["q1"],
+  "states": {
+    "q0": {
+      "transitions": {
+        "q0": [
+          { "input": "0", "pop": "⊥", "push": ["X", "⊥"] },
+          { "input": "1", "pop": "X", "push": [] } 
+        ],
+        "q1": [
+          { "input": "ε", "pop": "⊥", "push": [] }
+        ]
+      }
+    },
+    ...
+  }
+}
+```
+
+### 3. Turing Machine (TM) JSON Structure
+TMs define transitions based on `read`, `write`, and `move` ("L", "R", "S").
+```json
+{
+  "alphabet": ["0", "1", "X", "Y"],
+  "initial": "q0",
+  "finals": ["q_a"],
+  "states": {
+    "q0": {
+      "transitions": {
+        "q1": [
+          { "read": "0", "write": "X", "move": "R" },
+          { "read": "_", "write": "_", "move": "S" }
+        ]
+      }
+    },
+    ...
+  }
+}
+```
+
+## Guidelines for Output
+1. The user will copy/paste your JSON. **Do not wrap it in explanations if they just ask for code.**
+2. If `position` is omitted, the visual editor will default states to (0,0), which stacks them. Whenever possible, stagger `position.x` by +150 for each connected state.
+3. Every state referenced in `initial`, `finals`, or `transitions` **must** be defined as a key in the `states` object, even if its `transitions` object is empty.
+4. For TMs, do not include `_` (blank) in the `alphabet` list. It is an implicit symbol.
+
+Use this knowledge to flawlessly execute user FSM, PDA, and TM generation requests.

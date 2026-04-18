@@ -48,5 +48,9 @@ next-env.d.ts
 /blob-report/
 /playwright/.cache/
 
-# Dev Scripts
+# Prisma generated client
+/prisma/generated/
+
+# Dev Files
 /scripts/
+.github/prompts/

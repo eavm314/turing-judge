@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
-import { AutomatonType, type Project } from '@prisma/client';
+import { AutomatonType, type Project } from '@prisma/browser';
 import { Loader } from 'lucide-react';
 
 import { PlaygroundLayout } from '@/components/playground/Layout';

@@ -1,17 +1,11 @@
-import { type JsonFsmState } from '@/lib/schemas/finite-state-machine';
-import { type FsmTransitionData } from '../finite-state-machine/FsmState';
-import { type PdaTransitionData } from '../pushdown-automaton/PdaState';
-import { type JsonPdaState } from '@/lib/schemas/pushdown-automaton';
+import { type JsonState } from '@/lib/schemas/automaton-code';
 
-export type JsonState = JsonFsmState | JsonPdaState;
-export type TransitionData = FsmTransitionData | PdaTransitionData;
-
-export abstract class BaseState {
+export abstract class BaseState<T = unknown> {
   abstract id: number;
   abstract name: string;
   abstract position: { x: number; y: number };
   abstract isFinal: boolean;
-  abstract transitions: Map<number, TransitionData[]>;
+  abstract transitions: Map<number, T[]>;
 
   setName(name: string) {
     this.name = name;
@@ -29,7 +23,7 @@ export abstract class BaseState {
     this.transitions.delete(to);
   }
 
-  addTransition(target: number, data: TransitionData[]) {
+  addTransition(target: number, data: T[]) {
     this.transitions.set(target, data);
   }
 

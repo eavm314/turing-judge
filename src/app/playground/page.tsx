@@ -1,5 +1,5 @@
 import Playground from '@/components/playground';
-import { AutomatonType } from '@prisma/client';
+import { AutomatonType } from '@prisma/browser';
 
 export default async function PlaygroundPage({
   searchParams,
