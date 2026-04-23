@@ -17,7 +17,7 @@ export class PdaAnimator extends BaseAnimator {
     this.executor = executor;
   }
 
-  start(word: string, { onFinish, onStart, setAnimatedData, move, setTape }: AnimationCallbacks) {
+  start(word: string, { onFinish, onStart }: AnimationCallbacks) {
     const initialState = this.executor.getInitialState();
     const { accepted, path } = this.executor.execute(word, true);
     if (!accepted) return false;
@@ -25,8 +25,8 @@ export class PdaAnimator extends BaseAnimator {
     onStart?.();
 
     this.resetStack();
-    setTape(Object.fromEntries(word.split('').map((s, i) => [i, s])));
-    setAnimatedData({
+    this.controls.setTape(Object.fromEntries(word.split('').map((s, i) => [i, s])));
+    this.controls.setAnimatedData({
       state: initialState,
       stack: this.stack,
     });
@@ -44,7 +44,7 @@ export class PdaAnimator extends BaseAnimator {
       if (transition) {
         const setStack = (newStack: StackElement[]) => {
           this.stack = newStack;
-          setAnimatedData({
+          this.controls.setAnimatedData({
             transition: `${input.state}->${output.state}`,
             label: `${input.inputSymbol},${input.stackTop}/${output.push.length > 0 ? output.push.toReversed().join('') : EPSILON}`,
             stack: this.stack,
@@ -52,11 +52,11 @@ export class PdaAnimator extends BaseAnimator {
         };
         this.executeTransition(input.stackTop, output.push, setStack);
         if (input.inputSymbol !== EPSILON) {
-          move('R');
+          this.controls.move('R');
         }
       } else {
         this.stack = this.stack.map(el => ({ ...el, isEntering: false }));
-        setAnimatedData({
+        this.controls.setAnimatedData({
           state: output.state,
           stack: this.stack,
         });

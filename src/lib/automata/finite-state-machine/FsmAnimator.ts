@@ -9,15 +9,15 @@ export class FsmAnimator extends BaseAnimator {
     this.executor = executor;
   }
 
-  start(word: string, { onFinish, onStart, setAnimatedData, move, setTape }: AnimationCallbacks) {
+  start(word: string, { onFinish, onStart }: AnimationCallbacks) {
     const initialState = this.executor.getInitialState();
     const { accepted, path } = this.executor.execute(word, true);
     if (!accepted) return false;
 
     onStart?.();
 
-    setTape(Object.fromEntries(word.split('').map((s, i) => [i, s])));
-    setAnimatedData({
+    this.controls.setTape(Object.fromEntries(word.split('').map((s, i) => [i, s])));
+    this.controls.setAnimatedData({
       state: initialState,
     });
 
@@ -32,15 +32,15 @@ export class FsmAnimator extends BaseAnimator {
 
       const { input, output } = path[step];
       if (transition) {
-        setAnimatedData({
+        this.controls.setAnimatedData({
           transition: `${input.state}->${output}`,
           label: input.symbol,
         });
         if (input.symbol !== EPSILON) {
-          move('R');
+          this.controls.move('R');
         }
       } else {
-        setAnimatedData({
+        this.controls.setAnimatedData({
           state: output,
         });
         step++;

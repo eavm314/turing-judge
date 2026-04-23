@@ -9,15 +9,15 @@ export class TmAnimator extends BaseAnimator {
     this.executor = executor;
   }
 
-  start(word: string, { onFinish, onStart, setAnimatedData, move, setTape }: AnimationCallbacks) {
+  start(word: string, { onFinish, onStart }: AnimationCallbacks) {
     const initialState = this.executor.getInitialState();
     const { accepted, path } = this.executor.execute(word, true);
     if (!accepted) return false;
 
     onStart?.();
 
-    setTape(Object.fromEntries(word.split('').map((s, i) => [i, s])));
-    setAnimatedData({
+    this.controls.setTape(Object.fromEntries(word.split('').map((s, i) => [i, s])));
+    this.controls.setAnimatedData({
       state: initialState,
     });
 
@@ -32,17 +32,17 @@ export class TmAnimator extends BaseAnimator {
 
       const { input, output } = path[step];
       if (transition) {
-        setTape(prev => ({ ...prev, [input.position]: output.writeSymbol }));
+        this.controls.setTape(prev => ({ ...prev, [input.position]: output.writeSymbol }));
         const dirArrow = output.direction === 'R' ? '→' : output.direction === 'L' ? '←' : '•';
-        setAnimatedData({
+        this.controls.setAnimatedData({
           transition: `${input.state}->${output.state}`,
           label: `${input.readSymbol} / ${output.writeSymbol}, ${dirArrow}`,
         });
         if (input.readSymbol !== EPSILON) {
-          if (output.direction !== 'S') move(output.direction);
+          if (output.direction !== 'S') this.controls.move(output.direction);
         }
       } else {
-        setAnimatedData({
+        this.controls.setAnimatedData({
           state: output.state,
         });
         

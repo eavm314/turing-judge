@@ -17,6 +17,8 @@ export default function SimulationMenu() {
 
   const handleSimulation = () => {
     const animator = automatonManager.getAnimator();
+    animator.setControls({ setAnimatedData, move, setTape });
+    
     if (simulating) {
       animator.stop();
       stopSimulation();
@@ -34,9 +36,6 @@ export default function SimulationMenu() {
         });
         stopSimulation();
       },
-      setAnimatedData,
-      move,
-      setTape,
     });
 
     if (!accepted) {
