@@ -175,4 +175,107 @@ export class PdaExecutor extends BaseExecutor<PdaInput, PdaOutput> {
       path: lastPath,
     };
   }
+
+  executeRandom(word: string, savePath = false, random: () => number = Math.random) {
+    let steps = 0;
+    let depthLimitReached = false;
+
+    let state = this.initial;
+    let inputPos = 0;
+    let stack = [BOTTOM];
+    let depth = 0;
+    const path: PdaStep[] = [];
+
+    while (true) {
+      steps++;
+
+      if (inputPos === word.length && this.finals.has(state) && stack.length > 0) {
+        return {
+          accepted: true,
+          depthLimitReached,
+          maxLimitReached: false,
+          path,
+        };
+      }
+
+      if (steps > this.config.maxSteps) {
+        return {
+          accepted: false,
+          depthLimitReached,
+          maxLimitReached: true,
+          path,
+        };
+      }
+
+      if (depth > this.config.depthLimit) {
+        depthLimitReached = true;
+        return {
+          accepted: false,
+          depthLimitReached,
+          maxLimitReached: false,
+          path,
+        };
+      }
+
+      const stackTop = stack.at(-1);
+      if (!stackTop) {
+        return {
+          accepted: false,
+          depthLimitReached,
+          maxLimitReached: false,
+          path,
+        };
+      }
+
+      const stackWithoutTop = stack.slice(0, -1);
+      const inputSymbol = word[inputPos] ?? '';
+      const candidates: Array<{ state: string; inputPos: number; stack: string[]; step: PdaStep }> = [];
+
+      const epsilonInput = { state, inputSymbol: EPSILON, stackTop };
+      const epsilonTargets = this.transFn(epsilonInput);
+      for (const output of epsilonTargets) {
+        candidates.push({
+          state: output.state,
+          inputPos,
+          stack: [...stackWithoutTop, ...output.push],
+          step: { input: epsilonInput, output },
+        });
+      }
+
+      const consumingInput = { state, inputSymbol, stackTop };
+      const consumingTargets = this.transFn(consumingInput);
+      for (const output of consumingTargets) {
+        candidates.push({
+          state: output.state,
+          inputPos: inputPos + 1,
+          stack: [...stackWithoutTop, ...output.push],
+          step: { input: consumingInput, output },
+        });
+      }
+
+      if (candidates.length === 0) {
+        return {
+          accepted: false,
+          depthLimitReached,
+          maxLimitReached: false,
+          path,
+        };
+      }
+
+      const randomIndex = Math.min(
+        candidates.length - 1,
+        Math.floor(Math.max(0, random()) * candidates.length),
+      );
+      const selected = candidates[randomIndex]!;
+
+      if (savePath) {
+        path.push(selected.step);
+      }
+
+      state = selected.state;
+      inputPos = selected.inputPos;
+      stack = selected.stack;
+      depth++;
+    }
+  }
 }

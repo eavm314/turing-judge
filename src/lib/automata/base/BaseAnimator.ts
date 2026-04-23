@@ -32,5 +32,5 @@ export abstract class BaseAnimator {
   }
 
   abstract start(word: string, callbacks?: AnimationCallbacks): boolean;
-  // abstract startRandom(word: string, callbacks?: AnimationCallbacks): boolean;
+  abstract startRandom(word: string, callbacks?: AnimationCallbacks): boolean;
 }

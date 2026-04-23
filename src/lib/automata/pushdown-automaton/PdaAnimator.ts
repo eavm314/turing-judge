@@ -67,6 +67,57 @@ export class PdaAnimator extends BaseAnimator {
     return true;
   }
 
+  startRandom(word: string, { onFinish, onStart }: AnimationCallbacks) {
+    const initialState = this.executor.getInitialState();
+    const { accepted, path } = this.executor.executeRandom(word, true);
+    if (!accepted && path.length === 0) return false;
+
+    onStart?.();
+
+    this.resetStack();
+    this.controls.setTape(Object.fromEntries(word.split('').map((s, i) => [i, s])));
+    this.controls.setAnimatedData({
+      state: initialState,
+      stack: this.stack,
+    });
+
+    let step = 0;
+    let transition = true;
+    this.intervalId = setInterval(() => {
+      if (step >= path.length) {
+        onFinish?.();
+        this.stop();
+        return;
+      }
+
+      const { input, output } = path[step];
+      if (transition) {
+        const setStack = (newStack: StackElement[]) => {
+          this.stack = newStack;
+          this.controls.setAnimatedData({
+            transition: `${input.state}->${output.state}`,
+            label: `${input.inputSymbol},${input.stackTop}/${output.push.length > 0 ? output.push.toReversed().join('') : EPSILON}`,
+            stack: this.stack,
+          });
+        };
+        this.executeTransition(input.stackTop, output.push, setStack);
+        if (input.inputSymbol !== EPSILON) {
+          this.controls.move('R');
+        }
+      } else {
+        this.stack = this.stack.map(el => ({ ...el, isEntering: false }));
+        this.controls.setAnimatedData({
+          state: output.state,
+          stack: this.stack,
+        });
+        step++;
+      }
+      transition = !transition;
+    }, this.speed);
+
+    return true;
+  }
+
   resetStack() {
     this.stack = [
       {

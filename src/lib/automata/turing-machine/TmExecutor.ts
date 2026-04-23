@@ -173,4 +173,113 @@ export class TmExecutor extends BaseExecutor<TmInput, TmOutput> {
       path: lastPath,
     };
   }
+
+  executeRandom(word: string, savePath = false, random: () => number = Math.random) {
+    let steps = 0;
+    let depthLimitReached = false;
+
+    const initialTapeItems = word.split('').map((char, index) => [index, char] as const);
+
+    let state = this.initial;
+    let inputPos = 0;
+    let tape = new Map(initialTapeItems);
+    let depth = 0;
+    const path: TmStep[] = [];
+
+    while (true) {
+      steps++;
+
+      if (this.finals.has(state)) {
+        return {
+          accepted: true,
+          depthLimitReached,
+          maxLimitReached: false,
+          path,
+        };
+      }
+
+      if (steps > this.config.maxSteps) {
+        return {
+          accepted: false,
+          depthLimitReached,
+          maxLimitReached: true,
+          path,
+        };
+      }
+
+      if (depth > this.config.depthLimit) {
+        depthLimitReached = true;
+        return {
+          accepted: false,
+          depthLimitReached,
+          maxLimitReached: false,
+          path,
+        };
+      }
+
+      const candidates: Array<{
+        state: string;
+        inputPos: number;
+        tape: Map<number, string>;
+        step: TmStep;
+      }> = [];
+
+      const epsilonInput = { state, readSymbol: EPSILON, position: inputPos };
+      const epsilonTargets = this.transFn(epsilonInput);
+      for (const output of epsilonTargets) {
+        candidates.push({
+          state: output.state,
+          inputPos,
+          tape: new Map(tape),
+          step: { input: epsilonInput, output },
+        });
+      }
+
+      const readSymbol = tape.get(inputPos) ?? BLANK;
+      const consumingInput = { state, readSymbol, position: inputPos };
+      const consumingTargets = this.transFn(consumingInput);
+      for (const output of consumingTargets) {
+        const newTape = new Map(tape);
+        newTape.set(inputPos, output.writeSymbol);
+
+        const newInputPos =
+          output.direction === 'R'
+            ? inputPos + 1
+            : output.direction === 'L'
+              ? inputPos - 1
+              : inputPos;
+
+        candidates.push({
+          state: output.state,
+          inputPos: newInputPos,
+          tape: newTape,
+          step: { input: consumingInput, output },
+        });
+      }
+
+      if (candidates.length === 0) {
+        return {
+          accepted: false,
+          depthLimitReached,
+          maxLimitReached: false,
+          path,
+        };
+      }
+
+      const randomIndex = Math.min(
+        candidates.length - 1,
+        Math.floor(Math.max(0, random()) * candidates.length),
+      );
+      const selected = candidates[randomIndex]!;
+
+      if (savePath) {
+        path.push(selected.step);
+      }
+
+      state = selected.state;
+      inputPos = selected.inputPos;
+      tape = selected.tape;
+      depth++;
+    }
+  }
 }
