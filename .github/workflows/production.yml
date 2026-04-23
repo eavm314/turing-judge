@@ -26,13 +26,11 @@ jobs:
   e2e-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    environment:
-      name: Development
     env:
       CI: true
       NODE_ENV: test
       NEXT_PUBLIC_ENV: test
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: http://localhost:5432/db_test
 
     steps:
       - uses: actions/checkout@v4
