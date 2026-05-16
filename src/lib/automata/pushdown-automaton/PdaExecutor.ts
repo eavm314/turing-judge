@@ -13,7 +13,7 @@ type PdaOutput = {
   push: string[];
 };
 
-type PdaStep = Step<PdaInput, PdaOutput>;
+export type PdaStep = Step<PdaInput, PdaOutput>;
 
 type ExecutionNode = {
   state: string;

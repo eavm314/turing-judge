@@ -1,4 +1,9 @@
 import { TapeOrCallback, type AnimationData } from '@/store/playground-store';
+import {
+  type ManualRuntime,
+  type ManualSessionStatus,
+  type ManualTransitionOption,
+} from '@/lib/automata/manual/manual-types';
 
 export type AnimationCallbacks = {
   onStart?: () => void;
@@ -9,6 +14,7 @@ export type AnimationControls = {
   setAnimatedData: (data: AnimationData) => void;
   move: (dir: 'L' | 'R') => void;
   setTape: (tapeOrCallback: TapeOrCallback) => void;
+  setPosition: (position: number) => void;
 };
 
 export abstract class BaseAnimator {
@@ -18,6 +24,7 @@ export abstract class BaseAnimator {
     setAnimatedData: () => {},
     move: () => {},
     setTape: () => {},
+    setPosition: () => {},
   };
 
   speed: number = 1200;
@@ -33,4 +40,21 @@ export abstract class BaseAnimator {
 
   abstract start(word: string, callbacks?: AnimationCallbacks): boolean;
   abstract startRandom(word: string, callbacks?: AnimationCallbacks): boolean;
+
+  abstract createManualRuntime(word: string): ManualRuntime;
+  abstract getManualChoices(runtime: ManualRuntime): ManualTransitionOption[];
+  abstract isManualRuntimeAccepted(runtime: ManualRuntime): boolean;
+  abstract syncManualRuntime(runtime: ManualRuntime): void;
+  abstract applyManualChoice(choice: ManualTransitionOption): Promise<boolean>;
+
+  getManualStatus(
+    runtime: ManualRuntime,
+    choices: ManualTransitionOption[] = this.getManualChoices(runtime),
+  ): ManualSessionStatus {
+    if (this.isManualRuntimeAccepted(runtime)) {
+      return 'accepted';
+    }
+
+    return choices.length > 0 ? 'running' : 'blocked';
+  }
 }

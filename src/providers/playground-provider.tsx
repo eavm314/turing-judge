@@ -83,6 +83,7 @@ export const useSimulation = () =>
       simulationSpeed: state.simulationSpeed,
       setWord: state.setSimulationWord,
       setTape: state.setSimulationTape,
+      setPosition: state.setSimulationPosition,
       setSimulationSpeed: state.setSimulationSpeed,
       stopSimulation: state.stopSimulation,
       setAnimatedData: state.setAnimatedData,

@@ -14,7 +14,7 @@ type TmOutput = {
   direction: typeof TM_MOVES[number];
 };
 
-type TmStep = Step<TmInput, TmOutput>;
+export type TmStep = Step<TmInput, TmOutput>;
 
 type ExecutionNode = {
   state: string;

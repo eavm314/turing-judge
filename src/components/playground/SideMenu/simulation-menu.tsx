@@ -1,11 +1,13 @@
 import { CircleStop, PenLine, Play, Shuffle } from 'lucide-react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { usePlaygroundMode, useSimulation } from '@/providers/playground-provider';
 import { automatonManager } from '@/store/playground-store';
-import { useState } from 'react';
+import ManualSimulationControls from './manual-simulation-controls';
+import { useManualSimulation } from './use-manual-simulation';
 
 type SimulationType = 'normal' | 'random' | 'manual';
 
@@ -18,22 +20,24 @@ export default function SimulationMenu() {
   const simulatingRandom = simulating && simulationType === 'random';
   const simulatingManual = simulating && simulationType === 'manual';
 
-  const { word, setAnimatedData, move, stopSimulation, setTape } = useSimulation();
+  const simulation = useSimulation();
+  const manualController = useManualSimulation();
 
   const { toast } = useToast();
 
   const handleSimulation = () => {
     setSimulationType('normal');
+
     const animator = automatonManager.getAnimator();
-    animator.setControls({ setAnimatedData, move, setTape });
+    animator.setControls(simulation);
 
     if (simulating) {
       animator.stop();
-      stopSimulation();
+      simulation.stopSimulation();
       return;
     }
 
-    const accepted = animator.start(word, {
+    const accepted = animator.start(simulation.word, {
       onStart: () => {
         setMode('simulation');
       },
@@ -42,7 +46,7 @@ export default function SimulationMenu() {
           title: 'Accepted!',
           variant: 'success',
         });
-        stopSimulation();
+        simulation.stopSimulation();
       },
     });
 
@@ -56,16 +60,17 @@ export default function SimulationMenu() {
 
   const handleRandomSimulation = () => {
     setSimulationType('random');
+
     const animator = automatonManager.getAnimator();
-    animator.setControls({ setAnimatedData, move, setTape });
+    animator.setControls(simulation);
 
     if (simulating) {
       animator.stop();
-      stopSimulation();
+      simulation.stopSimulation();
       return;
     }
 
-    const foundPath = animator.startRandom(word, {
+    const foundPath = animator.startRandom(simulation.word, {
       onStart: () => {
         setMode('simulation');
       },
@@ -73,7 +78,7 @@ export default function SimulationMenu() {
         toast({
           title: 'Random path finished',
         });
-        stopSimulation();
+        simulation.stopSimulation();
       },
     });
 
@@ -83,6 +88,18 @@ export default function SimulationMenu() {
         variant: 'destructive',
       });
     }
+  };
+
+  const handleManualSimulation = () => {
+    setSimulationType('manual');
+
+    if (simulating) {
+      simulation.stopSimulation();
+      return;
+    }
+
+    manualController.start();
+    setMode('simulation');
   };
 
   return (
@@ -109,14 +126,16 @@ export default function SimulationMenu() {
           {simulatingRandom ? 'Stop' : 'Random Path'}
         </Button>
         <Button
-          disabled={true || simulating && !simulatingManual}
+          onClick={handleManualSimulation}
+          disabled={simulating && !simulatingManual}
           className="w-full justify-start"
           variant={simulatingManual ? 'destructive' : 'secondary'}
         >
           {simulatingManual ? <CircleStop className="h-4 w-4" /> : <PenLine className="h-4 w-4" />}
           {simulatingManual ? 'Stop' : 'Manual Simulation'}
         </Button>
-        <span className="text-xs text-muted-foreground">* Manual simulation coming soon.</span>
+
+        {simulatingManual && <ManualSimulationControls controller={manualController} />}
       </div>
     </div>
   );
