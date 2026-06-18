@@ -41,6 +41,7 @@ export type PlaygroundActions = {
   setSimulationSpeed: (speed: number) => void;
   setSimulationWord: (word: string) => void;
   setSimulationTape: (tapeOrCallback: TapeOrCallback) => void;
+  setSimulationPosition: (position: number) => void;
   setAnimatedData: (data: AnimationData) => void;
   move: (direction: 'L' | 'R') => void;
   stopSimulation: () => void;
@@ -98,6 +99,7 @@ export const createPlaygroundStore = (initialCode: AutomatonCode | null, isOwner
         set({ simulationTape: tapeOrCallback });
       }
     },
+    setSimulationPosition: (position: number) => set({ simulationIndex: position, translation: 0 }),
     setAnimatedData: (data: AnimationData) => set({ activeData: data }),
     move: (dir: 'L' | 'R') =>
       set(state => {

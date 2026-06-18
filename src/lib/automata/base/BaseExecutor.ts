@@ -34,6 +34,10 @@ export abstract class BaseExecutor<TIn = unknown, TOut = unknown> {
     return this.initial;
   }
 
+  isFinalState(state: string) {
+    return this.finals.has(state);
+  }
+
   abstract isDeterministic(): boolean;
 
   abstract transFn(input: TIn): TOut[];
