@@ -44,9 +44,6 @@ jobs:
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-        env:
-          DEBIAN_FRONTEND: noninteractive
-          NEEDRESTART_MODE: a
 
       - name: Build the app
         run: npm run build
