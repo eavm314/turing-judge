@@ -192,6 +192,7 @@ export class TmAnimator extends BaseAnimator {
     if (runtime.type !== 'TM') return;
 
     this.controls.setTape(Object.fromEntries(runtime.tape.entries()));
+    this.controls.setPosition(runtime.inputPos);
     this.controls.setAnimatedData({
       state: runtime.state,
     });

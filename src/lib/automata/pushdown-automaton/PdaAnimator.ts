@@ -221,6 +221,7 @@ export class PdaAnimator extends BaseAnimator {
     }));
 
     this.controls.setTape(Object.fromEntries(runtime.word.split('').map((symbol, i) => [i, symbol])));
+    this.controls.setPosition(runtime.inputPos);
     this.controls.setAnimatedData({
       state: runtime.state,
       stack: this.stack,
