@@ -139,4 +139,91 @@ export class FsmExecutor extends BaseExecutor<FsmInput, FsmOutput> {
       path: lastPath,
     };
   }
+
+  executeRandom(input: string, savePath: boolean = false, random: () => number = Math.random) {
+    let steps = 0;
+    let depthLimitReached = false;
+
+    let state = this.initial;
+    let inputPos = 0;
+    let depth = 0;
+    const path: FsmStep[] = [];
+
+    while (true) {
+      steps++;
+
+      if (inputPos === input.length && this.finals.has(state)) {
+        return {
+          accepted: true,
+          depthLimitReached,
+          maxLimitReached: false,
+          path,
+        };
+      }
+
+      if (steps > this.config.maxSteps) {
+        return {
+          accepted: false,
+          depthLimitReached,
+          maxLimitReached: true,
+          path,
+        };
+      }
+
+      if (depth > this.config.depthLimit) {
+        depthLimitReached = true;
+        return {
+          accepted: false,
+          depthLimitReached,
+          maxLimitReached: false,
+          path,
+        };
+      }
+
+      const candidates: Array<{ state: string; inputPos: number; step: FsmStep }> = [];
+
+      const epsilonInput = { state, symbol: EPSILON };
+      const epsilonTargets = this.transFn(epsilonInput);
+      for (const target of epsilonTargets) {
+        candidates.push({
+          state: target,
+          inputPos,
+          step: { input: epsilonInput, output: target },
+        });
+      }
+
+      const symbol = input[inputPos] ?? '';
+      const targets = this.transFn({ state, symbol });
+      for (const target of targets) {
+        candidates.push({
+          state: target,
+          inputPos: inputPos + 1,
+          step: { input: { state, symbol }, output: target },
+        });
+      }
+
+      if (candidates.length === 0) {
+        return {
+          accepted: false,
+          depthLimitReached,
+          maxLimitReached: false,
+          path,
+        };
+      }
+
+      const randomIndex = Math.min(
+        candidates.length - 1,
+        Math.floor(Math.max(0, random()) * candidates.length),
+      );
+      const selected = candidates[randomIndex]!;
+
+      if (savePath) {
+        path.push(selected.step);
+      }
+
+      state = selected.state;
+      inputPos = selected.inputPos;
+      depth++;
+    }
+  }
 }

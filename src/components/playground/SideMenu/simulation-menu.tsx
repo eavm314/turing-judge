@@ -1,29 +1,43 @@
-
 import { CircleStop, PenLine, Play, Shuffle } from 'lucide-react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { usePlaygroundMode, useSimulation } from '@/providers/playground-provider';
 import { automatonManager } from '@/store/playground-store';
+import ManualSimulationControls from './manual-simulation-controls';
+import { useManualSimulation } from './use-manual-simulation';
+
+type SimulationType = 'normal' | 'random' | 'manual';
 
 export default function SimulationMenu() {
   const { mode, setMode } = usePlaygroundMode();
-  const simulating = mode === 'simulation';
+  const [simulationType, setSimulationType] = useState<SimulationType>('normal');
 
-  const { word, setAnimatedData, move, stopSimulation, setTape } = useSimulation();
+  const simulating = mode === 'simulation';
+  const simulatingNormal = simulating && simulationType === 'normal';
+  const simulatingRandom = simulating && simulationType === 'random';
+  const simulatingManual = simulating && simulationType === 'manual';
+
+  const simulation = useSimulation();
+  const manualController = useManualSimulation();
 
   const { toast } = useToast();
 
   const handleSimulation = () => {
+    setSimulationType('normal');
+
     const animator = automatonManager.getAnimator();
+    animator.setControls(simulation);
+
     if (simulating) {
       animator.stop();
-      stopSimulation();
+      simulation.stopSimulation();
       return;
     }
 
-    const accepted = animator.start(word, {
+    const accepted = animator.start(simulation.word, {
       onStart: () => {
         setMode('simulation');
       },
@@ -32,11 +46,8 @@ export default function SimulationMenu() {
           title: 'Accepted!',
           variant: 'success',
         });
-        stopSimulation();
+        simulation.stopSimulation();
       },
-      setAnimatedData,
-      move,
-      setTape,
     });
 
     if (!accepted) {
@@ -46,6 +57,51 @@ export default function SimulationMenu() {
       });
     }
   };
+
+  const handleRandomSimulation = () => {
+    setSimulationType('random');
+
+    const animator = automatonManager.getAnimator();
+    animator.setControls(simulation);
+
+    if (simulating) {
+      animator.stop();
+      simulation.stopSimulation();
+      return;
+    }
+
+    const foundPath = animator.startRandom(simulation.word, {
+      onStart: () => {
+        setMode('simulation');
+      },
+      onFinish: () => {
+        toast({
+          title: 'Random path finished',
+        });
+        simulation.stopSimulation();
+      },
+    });
+
+    if (!foundPath) {
+      toast({
+        title: 'No path found',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleManualSimulation = () => {
+    setSimulationType('manual');
+
+    if (simulating) {
+      simulation.stopSimulation();
+      return;
+    }
+
+    manualController.start();
+    setMode('simulation');
+  };
+
   return (
     <div className="space-y-2 p-3">
       <h2>Simulation</h2>
@@ -54,20 +110,32 @@ export default function SimulationMenu() {
         <Button
           onClick={handleSimulation}
           className="w-full justify-start"
-          variant={simulating ? 'destructive' : 'secondary'}
+          disabled={simulating && !simulatingNormal}
+          variant={simulatingNormal ? 'destructive' : 'secondary'}
         >
-          {simulating ? <CircleStop className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-          {simulating ? 'Stop' : 'Find Accepted Path'}
+          {simulatingNormal ? <CircleStop className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+          {simulatingNormal ? 'Stop' : 'Find Accepted Path'}
         </Button>
-        <Button disabled className="w-full justify-start" variant="outline">
-          <Shuffle className="h-4 w-4" />
-          Random Path *
+        <Button
+          onClick={handleRandomSimulation}
+          className="w-full justify-start"
+          disabled={simulating && !simulatingRandom}
+          variant={simulatingRandom ? 'destructive' : 'secondary'}
+        >
+          {simulatingRandom ? <CircleStop className="h-4 w-4" /> : <Shuffle className="h-4 w-4" />}
+          {simulatingRandom ? 'Stop' : 'Random Path'}
         </Button>
-        <Button disabled className="w-full justify-start" variant="outline">
-          <PenLine className="h-4 w-4" />
-          Manual Simulation *
+        <Button
+          onClick={handleManualSimulation}
+          disabled={simulating && !simulatingManual}
+          className="w-full justify-start"
+          variant={simulatingManual ? 'destructive' : 'secondary'}
+        >
+          {simulatingManual ? <CircleStop className="h-4 w-4" /> : <PenLine className="h-4 w-4" />}
+          {simulatingManual ? 'Stop' : 'Manual Simulation'}
         </Button>
-        <span className="text-xs text-muted-foreground">* Coming Soon!</span>
+
+        {simulatingManual && <ManualSimulationControls controller={manualController} />}
       </div>
     </div>
   );
