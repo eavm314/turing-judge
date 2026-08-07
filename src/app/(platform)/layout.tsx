@@ -4,6 +4,7 @@ import { Cpu, ExternalLink } from 'lucide-react';
 
 import { AccountMenu } from '@/components/layout/account-menu';
 import { DarkModeToggle } from '@/components/layout/dark-mode-toogle';
+import { MobileNav } from '@/components/layout/mobile-nav';
 import { APP_NAME } from '@/constants/app';
 
 export default function PlatformLayout({
@@ -12,14 +13,17 @@ export default function PlatformLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-dvh">
       <header className="px-4 lg:px-6 h-14 flex items-center">
         <nav className="mr-auto flex items-center">
-          <Link className="flex items-center justify-center mr-8" href="/">
+          <MobileNav />
+          <Link className="flex items-center justify-center mr-2 md:mr-8" href="/">
             <Cpu className="size-8 mr-2 text-primary" />
-            <span className="h-full text-xl font-orbitron text-primary">{APP_NAME}</span>
+            <span className="hidden sm:inline h-full text-xl font-orbitron text-primary">
+              {APP_NAME}
+            </span>
           </Link>
-          <div className="flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-6">
             <Link
               href="/playground"
               target="_blank"

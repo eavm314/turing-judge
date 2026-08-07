@@ -18,7 +18,7 @@ export default async function ProblemPage({
   const problem = await getProblemView(problemId);
 
   return (
-    <main className="mx-10 my-4 flex-1">
+    <main className="mx-4 md:mx-10 my-4 flex-1">
       <Tabs defaultValue={currentTab}>
         <TabsList className="grid w-full grid-cols-2 text-4xl">
           <TabsTrigger value="statement">Problem Statement</TabsTrigger>

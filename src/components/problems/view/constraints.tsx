@@ -2,7 +2,7 @@ import { type ProblemConstraints } from '@/lib/schemas';
 
 export const Constraints = ({ constraints }: { constraints: ProblemConstraints }) => {
   return (
-    <div className="mt-4 p-4 rounded-md bg-accent text-neutral-foreground max-h-max w-72">
+    <div className="mt-4 p-4 rounded-md bg-accent text-neutral-foreground max-h-max w-full md:w-72">
       <h3 className="text-lg font-bold mb-4">Problem Constraints</h3>
       <div className="grid grid-cols-1 gap-4">
         <div>
