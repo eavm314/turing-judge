@@ -19,13 +19,12 @@ import { useAutomatonDesign, useIsOwner } from '@/providers/playground-provider'
 import { useSession } from '@/providers/user-provider';
 import { automatonManager } from '@/store/playground-store';
 
-export function SaveAutomaton() {
+export function useSaveAutomaton() {
   const { user, setOpenSignIn } = useSession();
   const { unsavedChanges, saveChanges } = useAutomatonDesign();
   const isOwner = useIsOwner();
 
   const [retry, setRetry] = useState(false);
-  const [openMenu, setOpenMenu] = useState(false);
 
   const { automatonId } = useParams<{ automatonId: string }>();
   const saveAutomatonPrompt = useSaveAutomatonPrompt();
@@ -34,23 +33,7 @@ export function SaveAutomaton() {
   const createProject = useServerAction(createProjectAction);
   const updateProject = useServerAction(updateProjectAction);
 
-  const unsavedChangesRef = useRef(unsavedChanges);
-  useEffect(() => {
-    unsavedChangesRef.current = unsavedChanges;
-  }, [unsavedChanges]);
-
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (unsavedChangesRef.current) {
-        e.preventDefault();
-      }
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, []);
-
   const handleSaveAs = async () => {
-    setOpenMenu(false);
     if (!user) {
       setOpenSignIn(true);
       setRetry(true);
@@ -93,36 +76,91 @@ export function SaveAutomaton() {
 
   const loading = createProject.loading || updateProject.loading;
 
+  return { handleSave, handleSaveAs, loading, unsavedChanges };
+}
+
+export function SaveAutomaton() {
+  const { unsavedChanges } = useAutomatonDesign();
+  const { handleSave, handleSaveAs, loading } = useSaveAutomaton();
+
+  const [openMenu, setOpenMenu] = useState(false);
+
+  const unsavedChangesRef = useRef(unsavedChanges);
+  useEffect(() => {
+    unsavedChangesRef.current = unsavedChanges;
+  }, [unsavedChanges]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (unsavedChangesRef.current) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   return (
-    <div className="flex items-center gap-6">
-      <div className="flex items-center">
+    <>
+      {/* Desktop: split button + unsaved-changes text */}
+      <div className="hidden md:flex items-center gap-6">
+        <div className="flex items-center">
+          <Button
+            disabled={loading}
+            size="sm"
+            className="rounded-r-none border-r-0 text-sm"
+            onClick={handleSave}
+          >
+            <Save size={18} />
+            Save
+          </Button>
+          <DropdownMenu open={openMenu} onOpenChange={setOpenMenu}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                disabled={loading}
+                size="sm"
+                className="rounded-l-none px-2 border-l border-background"
+              >
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-24">
+              <DropdownMenuItem
+                onClick={() => {
+                  setOpenMenu(false);
+                  handleSaveAs();
+                }}
+              >
+                Save As...
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        {unsavedChanges && (
+          <span className="hidden lg:inline italic text-neutral-foreground/80">
+            You have unsaved changes
+          </span>
+        )}
+      </div>
+
+      {/* Mobile: icon button with an unsaved-changes dot */}
+      <div className="relative md:hidden">
         <Button
           disabled={loading}
-          size="sm"
-          className="rounded-r-none border-r-0 text-sm"
+          size="icon"
+          className="size-10"
           onClick={handleSave}
+          aria-label={unsavedChanges ? 'Save (unsaved changes)' : 'Save'}
         >
-          <Save size={18} />
-          Save
+          <Save className="!size-5" />
         </Button>
-        <DropdownMenu open={openMenu} onOpenChange={setOpenMenu}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              disabled={loading}
-              size="sm"
-              className="rounded-l-none px-2 border-l border-background"
-            >
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-24">
-            <DropdownMenuItem onClick={handleSaveAs}>Save As...</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {unsavedChanges && (
+          <span
+            aria-hidden
+            className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full border border-background bg-warning"
+          />
+        )}
       </div>
-      {unsavedChanges && (
-        <span className="italic text-neutral-foreground/80">You have unsaved changes</span>
-      )}
-    </div>
+    </>
   );
 }

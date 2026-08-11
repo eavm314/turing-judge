@@ -21,8 +21,18 @@ import { useAutomatonDesign, useIsOwner } from '@/providers/playground-provider'
 
 const initCode = '';
 
-export function ImportCode() {
-  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+type ImportCodeProps = {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
+
+export function ImportCode({ open: controlledOpen, onOpenChange }: ImportCodeProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isImportDialogOpen = controlledOpen ?? internalOpen;
+  const setIsImportDialogOpen = (open: boolean) => {
+    setInternalOpen(open);
+    onOpenChange?.(open);
+  };
 
   const [initialImportJson, setInitialImportJson] = useState(initCode);
   const [importJson, setImportJson] = useState(initCode);
