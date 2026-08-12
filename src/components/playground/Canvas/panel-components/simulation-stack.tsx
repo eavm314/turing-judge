@@ -1,14 +1,16 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
+import { useIsMobile } from '@/hooks/use-media-query';
 import { cn } from '@/lib/ui/utils';
 import { useSimulationStack } from '@/providers/playground-provider';
 
-const size = 50;
-const stackSize = 9;
-
 export default function SimulationStack() {
   const { stack, speed } = useSimulationStack();
+  const isMobile = useIsMobile();
+
+  const size = isMobile ? 36 : 50;
+  const stackSize = isMobile ? 5 : 9;
 
   if (!stack) return null;
 
@@ -60,7 +62,7 @@ export default function SimulationStack() {
       `}</style>
 
       {/* Stack Visualization */}
-      <div className="flex flex-col items-center bg-transparent border-none mr-10 mb-5">
+      <div className="flex flex-col items-center bg-transparent border-none md:ml-2 md:mb-20">
         <Badge variant="outline" className="text-sm mb-2 bg-background">
           <span className="text-base font-bold mr-1">{totalElements}</span>
           element

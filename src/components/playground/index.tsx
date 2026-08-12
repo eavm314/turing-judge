@@ -52,9 +52,9 @@ export default function Playground({
 
   return (
     <PlaygroundStoreProvider initialCode={automatonCode} isOwner={isOwner}>
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col h-dvh">
         <PlaygroundLayout data={data} />
-        <main className="flex flex-1 overflow-hidden">
+        <main className="relative flex flex-1 overflow-hidden">
           <Canvas />
           <SideMenu />
         </main>

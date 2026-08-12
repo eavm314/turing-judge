@@ -13,6 +13,8 @@ import {
 import '@xyflow/react/dist/style.css';
 import { useTheme } from 'next-themes';
 
+import { useIsCoarsePointer, useIsMobile } from '@/hooks/use-media-query';
+import { cn } from '@/lib/ui/utils';
 import { usePlaygroundMode } from '@/providers/playground-provider';
 import { FloatingConnectionLine } from './floating-connection-line';
 import {
@@ -48,6 +50,8 @@ const proOptions = { hideAttribution: true };
 export default function Canvas() {
   const { theme } = useTheme();
   const { mode } = usePlaygroundMode();
+  const isCoarsePointer = useIsCoarsePointer();
+  const isMobile = useIsMobile();
 
   const isInteractive = mode !== 'simulation' && mode !== 'viewer';
 
@@ -71,22 +75,31 @@ export default function Canvas() {
         nodesDraggable={isInteractive}
         nodesConnectable={isInteractive}
         elementsSelectable={isInteractive}
+        zoomOnDoubleClick={!isCoarsePointer}
       >
-        <Controls position="bottom-right" />
+        <Controls
+          position="bottom-right"
+          className={cn(mode === 'simulation' && 'max-md:hidden')}
+        />
         <Background color={theme === 'light' ? 'black' : 'white'} />
         <Panel position="top-left" className="flex flex-col gap-2">
           <PlaygroundMode />
           {mode === 'states' && <AddState />}
+          <div className="md:hidden">
+            <SwitchType />
+          </div>
         </Panel>
-        <Panel position="top-center">
+        <Panel position="top-center" className="max-md:hidden">
           <SwitchType />
         </Panel>
-        {mode === 'simulation' && (
+        {/* On mobile these render inside MobileSimulationOverlay instead, so
+            they stack above the controls without overlapping */}
+        {mode === 'simulation' && !isMobile && (
           <>
             <Panel position="bottom-center">
               <TuringTape />
             </Panel>
-            <Panel position="bottom-right" className="!pointer-events-none">
+            <Panel position="bottom-left" className="!pointer-events-none">
               <SimulationStack />
             </Panel>
           </>
@@ -94,7 +107,7 @@ export default function Canvas() {
         <Panel position="top-right">
           <ControlsHelp />
         </Panel>
-        <Panel position="bottom-left">
+        <Panel position="bottom-left" className={cn(mode === 'simulation' && 'max-md:hidden')}>
           <DeterminismBadge />
         </Panel>
       </ReactFlow>
