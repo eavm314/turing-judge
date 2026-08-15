@@ -36,6 +36,9 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      /* The desktop suite relies on keyboard/mouse interactions (Backspace
+         deletion, Shift+drag) — keep it off the mobile specs. */
+      testIgnore: /3_mobile/,
       use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 600 } },
     },
     // {
@@ -47,13 +50,15 @@ export default defineConfig({
     //   use: { ...devices['Desktop Safari'] },
     // },
 
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
+    /* Mobile viewports run only the touch-oriented smoke suite. */
+    {
+      name: 'Mobile Chrome',
+      testMatch: /3_mobile/,
+      use: { ...devices['Pixel 5'] },
+    },
     // {
     //   name: 'Mobile Safari',
+    //   testMatch: /3_mobile/,
     //   use: { ...devices['iPhone 12'] },
     // },
 

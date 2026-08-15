@@ -124,7 +124,7 @@ test.describe('Basic controls', () => {
   test('should not delete initial state', async ({ page }) => {
     await deleteState(page, 'q0');
     await expect(page.getByTestId('q0')).toBeVisible();
-    const notificationsRegion = page.getByRole('region');
+    const notificationsRegion = page.getByRole('region', { name: /Notifications/ });
     await expect(notificationsRegion).toBeAttached();
 
     const notification = notificationsRegion.getByText('Initial state cannot be removed');
@@ -239,7 +239,7 @@ test.describe('Alphabet controls', () => {
     const removeButton = page.locator('span:has-text("1") + button');
     await removeButton.click();
 
-    const notificationsRegion = page.getByRole('region');
+    const notificationsRegion = page.getByRole('region', { name: /Notifications/ });
     await expect(notificationsRegion).toBeAttached();
     const notification = notificationsRegion.getByText('Cannot remove symbol');
     await expect(notification).toBeVisible();
