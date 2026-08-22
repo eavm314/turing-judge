@@ -335,7 +335,7 @@ export function ProblemForm({
                     <FormItem>
                       <FormLabel>Test Cases</FormLabel>
                       <FormDescription className="font-mono text-sm">
-                        Enter test cases in format: input,accept|reject,output? (One per line)
+                        Enter test cases, one per line:
                       </FormDescription>
                       <FormControl>
                         <Textarea
@@ -349,15 +349,27 @@ export function ProblemForm({
                     </FormItem>
                   )}
                 />
-                <div className="bg-muted p-3 rounded-md">
-                  <h4 className="text-sm font-medium mb-2 text-neutral-foreground">Examples:</h4>
-                  <div className="flex divide-x-2">
-                    <pre className="text-sm pr-10">{`FSM/PDA:\n - 0101,1\n - abab,0\n - ,1 \t(${EPSILON} input)`}</pre>
-                    <pre className="text-sm pl-10">
-                      {'TM:\n - 0011,0\n - 0101,1\n - aaaa,1,bbbb'}
-                    </pre>
+                <div className="bg-muted p-4 rounded-md">
+                  <h4 className="text-sm font-medium mb-3 text-neutral-foreground">Examples:</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                    <div className="bg-background rounded p-3">
+                      <p className="text-xs font-semibold text-muted-foreground mb-2">FSM/PDA:</p>
+                      <ul className="text-sm space-y-1 font-mono">
+                        <li>0101,1</li>
+                        <li>abab,0</li>
+                        <li>,1 <span className="text-muted-foreground text-xs">({EPSILON} input)</span></li>
+                      </ul>
+                    </div>
+                    <div className="bg-background rounded p-3">
+                      <p className="text-xs font-semibold text-muted-foreground mb-2">Turing Machine:</p>
+                      <ul className="text-sm space-y-1 font-mono">
+                        <li>0011,0</li>
+                        <li>0101,1</li>
+                        <li>aaaa,1,bbbb</li>
+                      </ul>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-2 font-mono">1 = accept, 0 = reject</p>
+                  <p className="text-xs text-muted-foreground font-mono">Format: input,accept/reject or input,accept/reject,output</p>
                 </div>
               </CardContent>
             </Card>
