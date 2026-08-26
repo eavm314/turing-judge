@@ -132,7 +132,7 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
           <PlusCircle size={20} /> Submit Solution{' '}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[540px]">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-[540px] rounded-lg">
         <DialogHeader>
           <DialogTitle>Submit Solution</DialogTitle>
           <DialogDescription>

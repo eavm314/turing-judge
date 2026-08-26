@@ -26,7 +26,7 @@ export default function PlaygroundMode() {
           <button
             onClick={() => setMode('states')}
             className={cn(
-              'relative px-4 py-2 text-sm font-medium transition-colors',
+              'relative min-h-10 px-3 py-2 text-sm font-medium transition-colors sm:px-4',
               mode === 'states'
                 ? 'bg-secondary text-secondary-foreground'
                 : 'bg-background text-foreground hover:bg-muted',
@@ -37,7 +37,7 @@ export default function PlaygroundMode() {
           <button
             onClick={() => setMode('transitions')}
             className={cn(
-              'relative px-4 py-2 text-sm font-medium transition-colors',
+              'relative min-h-10 px-3 py-2 text-sm font-medium transition-colors sm:px-4',
               mode === 'transitions'
                 ? 'bg-secondary text-secondary-foreground'
                 : 'bg-background text-foreground hover:bg-muted',

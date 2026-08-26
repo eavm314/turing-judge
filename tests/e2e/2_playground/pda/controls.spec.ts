@@ -58,7 +58,7 @@ test.describe('PDA controls', () => {
 
     await page.locator('span:has-text("A") + button:has-text("x")').click();
 
-    const notificationsRegion = page.getByRole('region');
+    const notificationsRegion = page.getByRole('region', { name: /Notifications/ });
     await expect(notificationsRegion).toContainText('Cannot remove symbol');
   });
 });

@@ -13,13 +13,12 @@ import {
 import { useModal } from '@/providers/modal-provider';
 import { useIsOwner } from '@/providers/playground-provider';
 
-export function PublicSelect({ isPublic }: { isPublic: boolean }) {
+export function useChangeVisibility() {
   const { automatonId } = useParams<{ automatonId: string }>();
   const { showConfirm } = useModal();
 
-  const isOwner = useIsOwner();
-
-  const handleSelectChange = async (value: string) => {
+  return async (isPublic: boolean) => {
+    const value = isPublic ? 'public' : 'private';
     const confirmation = await showConfirm({
       title: 'Change Visibility',
       message: `Are you sure you want to change the visibility to ${value}?`,
@@ -29,14 +28,20 @@ export function PublicSelect({ isPublic }: { isPublic: boolean }) {
     if (!confirmation) return;
 
     await updateProjectAction(automatonId, {
-      isPublic: value === 'public',
+      isPublic,
     });
   };
+}
+
+export function PublicSelect({ isPublic }: { isPublic: boolean }) {
+  const isOwner = useIsOwner();
+  const changeVisibility = useChangeVisibility();
+
   return (
     <Select
       disabled={!isOwner}
       value={isPublic ? 'public' : 'private'}
-      onValueChange={handleSelectChange}
+      onValueChange={value => changeVisibility(value === 'public')}
     >
       <SelectTrigger className="w-28 disabled:opacity-100">
         <SelectValue />

@@ -290,14 +290,14 @@ const AddPdaTransition = ({
                           setCurrentTransition(transition);
                           handleRemoveTransition(index);
                         }}
-                        className="h-6 w-6 p-0"
+                        className="size-8 p-0"
                       >
                         <Edit className="size-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         onClick={() => handleRemoveTransition(index)}
-                        className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                        className="size-8 p-0 text-destructive hover:text-destructive"
                       >
                         <Trash2 className="size-4" />
                       </Button>
@@ -480,14 +480,14 @@ const AddTmTransition = ({
                           setCurrentTransition(transition);
                           handleRemoveTransition(index);
                         }}
-                        className="h-6 w-6 p-0"
+                        className="size-8 p-0"
                       >
                         <Edit className="size-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         onClick={() => handleRemoveTransition(index)}
-                        className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                        className="size-8 p-0 text-destructive hover:text-destructive"
                       >
                         <Trash2 className="size-4" />
                       </Button>

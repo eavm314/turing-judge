@@ -1,5 +1,8 @@
-import { Handle, NodeToolbar, Position, type Node, type NodeProps } from '@xyflow/react';
+import { Handle, NodeToolbar, Position, useReactFlow, type Node, type NodeProps } from '@xyflow/react';
 
+import { Pencil, Trash2 } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import { cn } from '@/lib/ui/utils';
 import {
@@ -9,8 +12,17 @@ import {
 } from '@/providers/playground-provider';
 import { useModal } from '@/providers/modal-provider';
 
-function CustomToolbar({ nodeId, final }: { nodeId: string; final: boolean }) {
+function CustomToolbar({
+  nodeId,
+  final,
+  onRename,
+}: {
+  nodeId: string;
+  final: boolean;
+  onRename: () => void;
+}) {
   const { updateDesign: updateAutomaton } = useAutomatonDesign();
+  const { deleteElements } = useReactFlow();
 
   const handleClick = () => {
     updateAutomaton(auto => {
@@ -21,9 +33,32 @@ function CustomToolbar({ nodeId, final }: { nodeId: string; final: boolean }) {
   return (
     <NodeToolbar className="nopan -top-1" position={Position.Bottom}>
       <div className="flex gap-1">
-        <Toggle className="p-2" variant="outline" pressed={final} onPressedChange={handleClick}>
+        <Toggle
+          className="h-9 p-2"
+          variant="outline"
+          pressed={final}
+          onPressedChange={handleClick}
+        >
           Final
         </Toggle>
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-9 bg-background"
+          onClick={onRename}
+          aria-label="Rename state"
+        >
+          <Pencil className="!size-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="size-9 bg-background text-destructive hover:text-destructive"
+          onClick={() => deleteElements({ nodes: [{ id: nodeId }] })}
+          aria-label="Delete state"
+        >
+          <Trash2 className="!size-4" />
+        </Button>
       </div>
     </NodeToolbar>
   );
@@ -108,7 +143,7 @@ export function StateNode({ id, data, selected }: NodeProps<StateNodeType>) {
           isConnectableStart={false}
         />
       </div>
-      <CustomToolbar nodeId={id} final={data.isFinal} />
+      <CustomToolbar nodeId={id} final={data.isFinal} onRename={handleChangeName} />
     </div>
   );
 }

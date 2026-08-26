@@ -1,11 +1,19 @@
 import { useAddTransitionPrompt } from '@/components/modal/add-transition';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/ui/utils';
 import {
   useAutomatonDesign,
   usePlaygroundMode,
   useVisitedTransition,
 } from '@/providers/playground-provider';
-import { EdgeLabelRenderer, useInternalNode, type Edge, type EdgeProps } from '@xyflow/react';
+import {
+  EdgeLabelRenderer,
+  useInternalNode,
+  useReactFlow,
+  type Edge,
+  type EdgeProps,
+} from '@xyflow/react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { getPath } from '../utils/graphics';
 
@@ -25,6 +33,7 @@ export function BaseEdge({
 }: BaseEdgeProps) {
   const sourceNode = useInternalNode(sourceId);
   const targetNode = useInternalNode(targetId);
+  const { deleteElements } = useReactFlow();
 
   const animateRef = useRef<SVGAnimateMotionElement>(null);
 
@@ -119,6 +128,28 @@ export function BaseEdge({
           onDoubleClick={handleEditTransition}
         >
           {children}
+          {selected && isInteractive && (
+            <div className="nodrag nopan absolute left-1/2 top-full mt-1.5 flex -translate-x-1/2 gap-1">
+              <Button
+                variant="outline"
+                size="icon"
+                className="size-9 bg-background"
+                onClick={handleEditTransition}
+                aria-label="Edit transition"
+              >
+                <Pencil className="!size-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="size-9 bg-background text-destructive hover:text-destructive"
+                onClick={() => deleteElements({ edges: [{ id }] })}
+                aria-label="Delete transition"
+              >
+                <Trash2 className="!size-4" />
+              </Button>
+            </div>
+          )}
         </div>
       </EdgeLabelRenderer>
     </>

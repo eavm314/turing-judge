@@ -81,7 +81,10 @@ export function Modal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && handleCancel()}>
-      <DialogContent className={cn('max-w-[420px]', options.className)} onKeyDown={handleKeyDown}>
+      <DialogContent
+        className={cn('w-[calc(100vw-2rem)] max-w-[420px] rounded-lg', options.className)}
+        onKeyDown={handleKeyDown}
+      >
         <DialogHeader>
           <DialogTitle>{options.title}</DialogTitle>
         </DialogHeader>

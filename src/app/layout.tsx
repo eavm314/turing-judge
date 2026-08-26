@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Orbitron } from 'next/font/google';
 import './globals.css';
 
@@ -19,6 +19,13 @@ const orbitron = Orbitron({
 export const metadata: Metadata = {
   title: APP_NAME,
   description: 'Automaton Designer',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  interactiveWidget: 'resizes-content',
 };
 
 async function AppSessionProvider({ children }: { children: React.ReactNode }) {

@@ -2,21 +2,23 @@
 
 import { useState } from 'react';
 
-import { GitBranch, HelpCircle, MousePointer, Move, X } from 'lucide-react';
+import { GitBranch, HelpCircle, MousePointer, Move, Pointer, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useIsCoarsePointer } from '@/hooks/use-media-query';
 
 export default function ControlsHelp() {
   const [isOpen, setIsOpen] = useState(false);
+  const isCoarsePointer = useIsCoarsePointer();
 
   if (!isOpen) {
     return (
       <Button
         variant="ghost"
         size="icon"
-        className="rounded-full"
+        className="size-10 rounded-full"
         onClick={() => setIsOpen(true)}
         aria-label="Show controls help"
       >
@@ -25,13 +27,32 @@ export default function ControlsHelp() {
     );
   }
 
+  const controls: { action: string; gesture: string; desktopOnly?: boolean }[] = isCoarsePointer
+    ? [
+        { action: 'Select state or transition:', gesture: 'Tap' },
+        { action: 'Rename or delete:', gesture: 'Tap → toolbar' },
+        { action: 'Edit transition symbols:', gesture: 'Tap → toolbar' },
+        { action: 'Navigate:', gesture: 'Drag' },
+        { action: 'Zoom:', gesture: 'Pinch' },
+      ]
+    : [
+        { action: 'Select state or transition:', gesture: 'Click' },
+        { action: 'Rename state or transition:', gesture: 'Double Click' },
+        { action: 'Navigate:', gesture: 'Drag' },
+        { action: 'Select multiple states:', gesture: 'Shift+Drag' },
+        { action: 'Remove state or transition:', gesture: 'Backspace' },
+      ];
+
   return (
-    <Card className="relative w-80 shadow-xl">
-      <X
-        className="absolute top-2 right-2 size-5 cursor-pointer text-muted-foreground hover:text-accent-foreground"
+    <Card className="relative w-80 max-w-[calc(100vw-1rem)] shadow-xl">
+      <button
+        className="absolute right-1 top-1 grid size-9 place-items-center text-muted-foreground hover:text-accent-foreground"
         onClick={() => setIsOpen(false)}
-      />
-      <CardContent className="space-y-4 mt-4">
+        aria-label="Close controls help"
+      >
+        <X className="size-5" />
+      </button>
+      <CardContent className="mt-4 max-h-[70dvh] space-y-4 overflow-y-auto">
         <div className="space-y-2">
           <h3 className="font-medium text-neutral-foreground">Edition Modes</h3>
           <div className="grid grid-cols-2 gap-2 text-sm">
@@ -55,40 +76,18 @@ export default function ControlsHelp() {
         </div>
         <div className="space-y-2">
           <h3 className="font-medium flex items-center gap-2 text-neutral-foreground">
-            <MousePointer className="h-4 w-4" />
+            {isCoarsePointer ? <Pointer className="h-4 w-4" /> : <MousePointer className="h-4 w-4" />}
             Controls
           </h3>
           <ul className="space-y-2 text-sm">
-            <li className="flex items-center justify-between gap-2">
-              <span>Select state or transition:</span>
-              <Badge variant="outline" className="mt-0.5">
-                Click
-              </Badge>
-            </li>
-            <li className="flex items-center justify-between gap-2">
-              <span>Rename state or transition:</span>
-              <Badge variant="outline" className="mt-0.5">
-                Double Click
-              </Badge>
-            </li>
-            <li className="flex items-center justify-between gap-2">
-              <span>Navigate:</span>
-              <Badge variant="outline" className="mt-0.5">
-                Drag
-              </Badge>
-            </li>
-            <li className="flex items-center justify-between gap-2">
-              <span>Select multiple states:</span>
-              <Badge variant="outline" className="mt-0.5">
-                Shift+Drag
-              </Badge>
-            </li>
-            <li className="flex items-center justify-between gap-2">
-              <span>Remove state or transition:</span>
-              <Badge variant="outline" className="mt-0.5">
-                Backspace
-              </Badge>
-            </li>
+            {controls.map(control => (
+              <li key={control.action} className="flex items-center justify-between gap-2">
+                <span>{control.action}</span>
+                <Badge variant="outline" className="mt-0.5 whitespace-nowrap">
+                  {control.gesture}
+                </Badge>
+              </li>
+            ))}
           </ul>
         </div>
       </CardContent>
