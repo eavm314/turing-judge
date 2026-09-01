@@ -12,6 +12,7 @@ import {
 export function ResizeHandle() {
   const sidebarWidth = usePlaygroundUiStore(state => state.sidebarWidth);
   const setSidebarWidth = usePlaygroundUiStore(state => state.setSidebarWidth);
+  const setSidebarResizing = usePlaygroundUiStore(state => state.setSidebarResizing);
 
   const dragState = useRef<{ startX: number; startWidth: number } | null>(null);
 
@@ -20,6 +21,7 @@ export function ResizeHandle() {
     dragState.current = { startX: e.clientX, startWidth: sidebarWidth };
     e.currentTarget.setPointerCapture(e.pointerId);
     document.body.style.userSelect = 'none';
+    setSidebarResizing(true);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -35,15 +37,18 @@ export function ResizeHandle() {
       e.currentTarget.releasePointerCapture(e.pointerId);
     }
     document.body.style.userSelect = '';
+    setSidebarResizing(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     // The panel sits on the right, so moving the handle left makes it wider
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
+      setSidebarResizing(true);
       setSidebarWidth(sidebarWidth + 16);
     } else if (e.key === 'ArrowRight') {
       e.preventDefault();
+      setSidebarResizing(true);
       setSidebarWidth(sidebarWidth - 16);
     }
   };
@@ -63,6 +68,8 @@ export function ResizeHandle() {
       onPointerCancel={endDrag}
       onDoubleClick={() => setSidebarWidth(SIDEBAR_DEFAULT_WIDTH)}
       onKeyDown={handleKeyDown}
+      onKeyUp={() => setSidebarResizing(false)}
+      onBlur={() => setSidebarResizing(false)}
       className="absolute left-0 top-0 z-10 h-full w-2 -translate-x-1/2 cursor-col-resize touch-none bg-transparent transition-colors hover:bg-secondary/40 focus-visible:bg-secondary/40 focus-visible:outline-none"
     />
   );

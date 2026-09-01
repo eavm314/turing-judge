@@ -13,12 +13,9 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-media-query';
+import { cn } from '@/lib/ui/utils';
 import { useAutomatonDesign, usePlaygroundMode } from '@/providers/playground-provider';
-import {
-  SIDEBAR_DEFAULT_WIDTH,
-  usePlaygroundUiStore,
-  type SideMenuSection,
-} from '@/store/playground-ui-store';
+import { usePlaygroundUiStore, type SideMenuSection } from '@/store/playground-ui-store';
 import AlphabetMenu from './alphabet-menu';
 import MobileSimulationOverlay from './mobile-simulation-overlay';
 import { ResizeHandle } from './resize-handle';
@@ -26,6 +23,8 @@ import SimulationMenu, { type SimulationType } from './simulation-menu';
 import StackAlphabetMenu from './stack-alphabet-menu';
 import TestingMenu from './testing-menu';
 import { useManualSimulation } from './use-manual-simulation';
+
+const SLIDE_TRANSITION = 'transition-[width] duration-300 ease-in-out motion-reduce:transition-none';
 
 export default function SideMenu() {
   const { automaton } = useAutomatonDesign();
@@ -45,11 +44,8 @@ export default function SideMenu() {
     setOpenSections,
     sheetOpen,
     setSheetOpen,
+    sidebarResizing,
   } = usePlaygroundUiStore();
-
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
-  const width = hydrated ? sidebarWidth : SIDEBAR_DEFAULT_WIDTH;
 
   const simulating = mode === 'simulation';
 
@@ -142,40 +138,44 @@ export default function SideMenu() {
     );
   }
 
-  if (sidebarCollapsed) {
-    return (
+  return (
+    <>
       <Button
         variant="outline"
         onClick={toggleSidebarCollapsed}
         aria-label="Open side panel"
+        inert={!sidebarCollapsed}
         className="absolute right-0 top-1/2 z-10 hidden h-12 w-9 -translate-y-1/2 rounded-r-none border-r-0 p-0 shadow-md md:flex"
       >
         <PanelRightOpen className="!size-5" />
       </Button>
-    );
-  }
-
-  return (
-    <div
-      data-testid="side-menu"
-      className="relative hidden h-full shrink-0 md:block"
-      style={{ width }}
-    >
-      <ResizeHandle />
-      <div className="flex h-full flex-col border-l">
-        <div className="flex justify-end border-b px-1 py-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-7"
-            onClick={toggleSidebarCollapsed}
-            aria-label="Collapse side panel"
-          >
-            <PanelRightClose className="!size-4" />
-          </Button>
+      <div
+        data-testid="side-menu"
+        inert={sidebarCollapsed}
+        className={cn(
+          'relative z-20 hidden h-full shrink-0 md:block',
+          !sidebarResizing && SLIDE_TRANSITION,
+        )}
+        style={{ width: sidebarCollapsed ? 0 : sidebarWidth }}
+      >
+        <ResizeHandle />
+        <div className="h-full overflow-hidden">
+          <div className="flex h-full flex-col border-l bg-background" style={{ width: sidebarWidth }}>
+            <div className="flex justify-end border-b px-1 py-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-7"
+                onClick={toggleSidebarCollapsed}
+                aria-label="Collapse side panel"
+              >
+                <PanelRightClose className="!size-4" />
+              </Button>
+            </div>
+            <ScrollArea className="min-h-0 flex-1">{sections}</ScrollArea>
+          </div>
         </div>
-        <ScrollArea className="min-h-0 flex-1">{sections}</ScrollArea>
       </div>
-    </div>
+    </>
   );
 }

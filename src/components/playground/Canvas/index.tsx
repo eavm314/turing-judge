@@ -79,7 +79,7 @@ export default function Canvas() {
       >
         <Controls
           position="bottom-right"
-          className={cn(mode === 'simulation' && 'max-md:hidden')}
+          showZoom={false}
         />
         <Background color={theme === 'light' ? 'black' : 'white'} />
         <Panel position="top-left" className="flex flex-col gap-2">
