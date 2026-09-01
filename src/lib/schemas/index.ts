@@ -28,3 +28,26 @@ export type UserProfile = Pick<User, 'id' | 'name' | 'email' | 'image' | 'role'>
   hasPassword: boolean;
   accounts: LinkedAccount[];
 };
+
+export type UserResourceCounts = {
+  projects: number;
+  problems: number;
+  submissions: number;
+};
+
+export type AdminUserItem = Pick<User, 'id' | 'name' | 'email' | 'image' | 'role' | 'createdAt'> & {
+  hasPassword: boolean;
+  counts: UserResourceCounts;
+};
+
+export type AdminUserResources = Pick<
+  User,
+  'id' | 'name' | 'email' | 'image' | 'role' | 'createdAt'
+> & {
+  projects: Pick<Project, 'id' | 'title' | 'type' | 'isPublic' | 'updatedAt'>[];
+  problems: Pick<Problem, 'id' | 'title' | 'difficulty' | 'isPublic' | 'updatedAt'>[];
+  submissions: (Pick<Submission, 'id' | 'verdict' | 'status' | 'createdAt'> & {
+    problemTitle: string;
+  })[];
+  totals: UserResourceCounts;
+};
