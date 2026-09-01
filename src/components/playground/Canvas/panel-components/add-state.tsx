@@ -3,6 +3,7 @@ import { useReactFlow } from '@xyflow/react';
 import { Button } from '@/components/ui/button';
 import { useModal } from '@/providers/modal-provider';
 import { useAutomatonDesign } from '@/providers/playground-provider';
+import { CirclePlus } from 'lucide-react';
 
 export default function AddState() {
   const { automaton, updateDesign } = useAutomatonDesign();
@@ -44,8 +45,8 @@ export default function AddState() {
   };
 
   return (
-    <Button variant="secondary" onClick={handleAddState}>
-      Add State
+    <Button className="w-32" variant="secondary" onClick={handleAddState}>
+      <CirclePlus size={18}/> Add State
     </Button>
   );
 }

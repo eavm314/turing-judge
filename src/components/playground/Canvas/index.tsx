@@ -83,11 +83,11 @@ export default function Canvas() {
         />
         <Background color={theme === 'light' ? 'black' : 'white'} />
         <Panel position="top-left" className="flex flex-col gap-2">
-          <PlaygroundMode />
-          {mode === 'states' && <AddState />}
           <div className="md:hidden">
             <SwitchType />
           </div>
+          <PlaygroundMode />
+          {mode === 'states' && <AddState />}
         </Panel>
         <Panel position="top-center" className="max-md:hidden">
           <SwitchType />

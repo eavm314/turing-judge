@@ -5,8 +5,7 @@ export default function PlaygroundMode() {
   const { mode, setMode } = usePlaygroundMode();
 
   return (
-    <div>
-      <div className="font-medium text-neutral-foreground mb-1 text-sm">Mode:</div>
+    <div className="w-fit">
       {mode === 'simulation' ? (
         <button
           disabled
@@ -26,7 +25,7 @@ export default function PlaygroundMode() {
           <button
             onClick={() => setMode('states')}
             className={cn(
-              'relative min-h-10 px-3 py-2 text-sm font-medium transition-colors sm:px-4',
+              'flex-1 relative min-h-10 px-3 py-2 text-sm font-medium transition-colors sm:px-4',
               mode === 'states'
                 ? 'bg-secondary text-secondary-foreground'
                 : 'bg-background text-foreground hover:bg-muted',
@@ -37,7 +36,7 @@ export default function PlaygroundMode() {
           <button
             onClick={() => setMode('transitions')}
             className={cn(
-              'relative min-h-10 px-3 py-2 text-sm font-medium transition-colors sm:px-4',
+              'flex-1 relative min-h-10 px-3 py-2 text-sm font-medium transition-colors sm:px-4',
               mode === 'transitions'
                 ? 'bg-secondary text-secondary-foreground'
                 : 'bg-background text-foreground hover:bg-muted',
