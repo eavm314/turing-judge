@@ -16,7 +16,7 @@ import {
 import { handleSignOut } from '@/lib/auth/client-handlers';
 import { useSession } from '@/providers/user-provider';
 import { AvatarImage } from '@radix-ui/react-avatar';
-import { Library, LogIn, LogOut, PenLine, UserRound } from 'lucide-react';
+import { Library, LogIn, LogOut, PenLine, ShieldCheck, UserRound } from 'lucide-react';
 
 export function AccountMenu({ variant }: { variant?: ButtonProps['variant'] }) {
   const [open, setOpen] = useState(false);
@@ -58,6 +58,13 @@ export function AccountMenu({ variant }: { variant?: ButtonProps['variant'] }) {
           <Link href="/problems/editor">
             <DropdownMenuItem onClick={() => setOpen(false)}>
               <PenLine size={16} /> Problems Editor
+            </DropdownMenuItem>
+          </Link>
+        )}
+        {user.role === 'ADMIN' && (
+          <Link href="/admin">
+            <DropdownMenuItem onClick={() => setOpen(false)}>
+              <ShieldCheck size={16} /> Admin
             </DropdownMenuItem>
           </Link>
         )}
