@@ -16,7 +16,7 @@ import {
 import { handleSignOut } from '@/lib/auth/client-handlers';
 import { useSession } from '@/providers/user-provider';
 import { AvatarImage } from '@radix-ui/react-avatar';
-import { Library, LogIn, LogOut, PenLine } from 'lucide-react';
+import { Library, LogIn, LogOut, PenLine, UserRound } from 'lucide-react';
 
 export function AccountMenu({ variant }: { variant?: ButtonProps['variant'] }) {
   const [open, setOpen] = useState(false);
@@ -44,6 +44,11 @@ export function AccountMenu({ variant }: { variant?: ButtonProps['variant'] }) {
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel className="text-neutral-foreground">{user.email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <Link href="/profile">
+          <DropdownMenuItem onClick={() => setOpen(false)}>
+            <UserRound size={16} /> My Profile
+          </DropdownMenuItem>
+        </Link>
         <Link href="/projects">
           <DropdownMenuItem onClick={() => setOpen(false)}>
             <Library size={16} /> My Projects
