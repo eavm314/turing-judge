@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { BLANK, TM_MOVES } from '@/constants/symbols';
-import { alphabetSchema, positionSchema } from './finite-state-machine';
+import { alphabetSchema, positionSchema, stateLabel } from './finite-state-machine';
 
 const headMovementSchema = z.enum(TM_MOVES);
 
@@ -22,7 +22,7 @@ const stateSchema = z.object({
   transitions: transitionsSchema,
 });
 
-const statesRecord = z.record(z.string().min(1).max(3), stateSchema);
+const statesRecord = z.record(stateLabel, stateSchema);
 
 export const tmSchema = z
   .object({

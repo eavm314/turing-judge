@@ -5,6 +5,14 @@ import { useModal } from '@/providers/modal-provider';
 import { useAutomatonDesign } from '@/providers/playground-provider';
 import { CirclePlus } from 'lucide-react';
 
+export const stateValidator = (value: string, automaton: ReturnType<typeof useAutomatonDesign>['automaton']) => {
+  if (value.length < 1 || value.length > 10)
+    return 'State name must contain 1 to 10 characters';
+  if (automaton.nodes.filter(node => node.data.name === value).length > 0)
+    return 'State name must be unique';
+  return '';
+};
+
 export default function AddState() {
   const { automaton, updateDesign } = useAutomatonDesign();
   const { showPrompt } = useModal();
@@ -16,14 +24,7 @@ export default function AddState() {
       inputLabel: 'Enter the name of the new state:',
       defaultValue: '',
       className: 'gap-1',
-      validator: value => {
-        if (value.length < 1 || value.length > 3)
-          return 'State name must contain 1 to 3 characters';
-        if (value.match(/[^a-zA-Z0-9]/)) return 'State name can only contain letters and numbers';
-        if (automaton.nodes.filter(node => node.data.name === value).length > 0)
-          return 'State name must be unique';
-        return '';
-      },
+      validator: value => stateValidator(value, automaton),
     });
     if (!stateName) return;
 

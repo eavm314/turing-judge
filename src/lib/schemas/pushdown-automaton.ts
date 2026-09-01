@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { BOTTOM } from '@/constants/symbols';
-import { alphabetSchema, positionSchema } from './finite-state-machine';
+import { alphabetSchema, positionSchema, stateLabel } from './finite-state-machine';
 
 export const stackAphabetSchema = z
   .array(z.string().length(1))
@@ -26,7 +26,7 @@ const stateSchema = z.object({
   transitions: transitionsSchema,
 });
 
-const statesRecord = z.record(z.string().min(1).max(3), stateSchema);
+const statesRecord = z.record(stateLabel, stateSchema);
 
 export const pdaSchema = z
   .object({
