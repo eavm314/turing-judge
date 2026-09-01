@@ -36,21 +36,21 @@ export function PlaygroundLayout({ data }: { data?: Project }) {
           </>
         )}
         <SaveAutomaton />
-      </nav>
-      <nav className="flex shrink-0 items-center gap-1 md:gap-3">
-        <ExamplesMenu />
-        <div className="mx-2 hidden gap-2 md:flex">
-          <ImportCode open={importOpen} onOpenChange={setImportOpen} />
-          <ExportCode title={data?.title} open={exportOpen} onOpenChange={setExportOpen} />
-        </div>
-        <DarkModeToggle />
-        <AccountMenu variant="ghost" />
         <OverflowMenu
           data={data}
           onOpenExamples={() => setExamplesOpen(true)}
           onOpenImport={() => setImportOpen(true)}
           onOpenExport={() => setExportOpen(true)}
         />
+      </nav>
+      <nav className="flex shrink-0 items-center gap-1 md:gap-3">
+        <ExamplesMenu />
+        <div className="mx-2 hidden gap-2 lg:flex">
+          <ImportCode open={importOpen} onOpenChange={setImportOpen} />
+          <ExportCode title={data?.title} open={exportOpen} onOpenChange={setExportOpen} />
+        </div>
+        <DarkModeToggle />
+        <AccountMenu variant="ghost" />
       </nav>
       <ExamplesDialog open={examplesOpen} onOpenChange={setExamplesOpen} />
     </header>

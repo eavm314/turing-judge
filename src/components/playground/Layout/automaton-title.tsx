@@ -39,14 +39,14 @@ export function AutomatonTitle({ title }: { title: string | null }) {
     setTimer(newTimer);
   };
   return (
-    <div className="relative min-w-0 flex-1 md:flex-initial">
+    <div className="relative min-w-36 w-full max-w-72 flex-1 md:flex-initial">
       {editing ? (
         <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 text-neutral-foreground animate-spin" />
       ) : (
         <Check className="absolute right-2.5 top-2.5 h-4 w-4 text-green-500" />
       )}
       <Input
-        className="w-full pr-8 text-base md:w-72 text-neutral-foreground placeholder:italic disabled:opacity-100"
+        className="w-full pr-8 text-base text-neutral-foreground placeholder:italic disabled:opacity-100"
         disabled={!isOwner}
         placeholder="Untitled"
         value={tempTitle ?? ''}
