@@ -1,10 +1,15 @@
+type RateLimiterCounter = {
+  count: number;
+  firstRequest: number;
+};
+
 export const rateLimiter = ({ limit, interval }: { limit: number; interval: number }) => {
-  const requests = new Map();
+  const requests = new Map<string, RateLimiterCounter>();
   return (userId: string) => {
     if (!requests.has(userId)) {
       requests.set(userId, { count: 0, firstRequest: Date.now() });
     }
-    const data = requests.get(userId);
+    const data = requests.get(userId)!;
     if (Date.now() - data.firstRequest > interval) {
       data.count = 0;
       data.firstRequest = Date.now();

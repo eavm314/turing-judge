@@ -84,8 +84,8 @@ export const submitSolutionAction = async (
       data: {
         userId: session.user.id,
         problemId,
-        status: 'FINISHED',
-        verdict: 'INVALID_FORMAT',
+        status: Status.FINISHED,
+        verdict: Verdict.INVALID_FORMAT,
         message: 'The provided code is not a valid automaton.',
       },
     });
@@ -128,7 +128,7 @@ type FailedCaseData = {
   maxLimitReached: boolean;
 };
 
-const verifySolution = async (id: number, problemId: string, solution: AutomatonCode) => {
+const verifySolution = async (submissionId: number, problemId: string, solution: AutomatonCode) => {
   const problemTestData = (await prisma.problem.findUnique({
     where: { id: problemId },
     select: {
@@ -150,15 +150,15 @@ const verifySolution = async (id: number, problemId: string, solution: Automaton
   }))!;
 
   if (solution.type === 'FSM' && !problemTestData.allowFSM) {
-    await setInvalidFormat(id, 'This problem does not accept FSM solutions.');
+    await setInvalidFormat(submissionId, 'This problem does not accept FSM solutions.');
     return;
   }
   if (solution.type === 'PDA' && !problemTestData.allowPDA) {
-    await setInvalidFormat(id, 'This problem does not accept PDA solutions.');
+    await setInvalidFormat(submissionId, 'This problem does not accept PDA solutions.');
     return;
   }
   if (solution.type === 'TM' && !problemTestData.allowTM) {
-    await setInvalidFormat(id, 'This problem does not accept TM solutions.');
+    await setInvalidFormat(submissionId, 'This problem does not accept TM solutions.');
     return;
   }
 
@@ -166,11 +166,11 @@ const verifySolution = async (id: number, problemId: string, solution: Automaton
   const executor = manager.getExecutor();
 
   if (!executor.isDeterministic() && !problemTestData.allowNonDet) {
-    await setInvalidFormat(id, 'This problem does not accept non-deterministic solutions.');
+    await setInvalidFormat(submissionId, 'This problem does not accept non-deterministic solutions.');
     return;
   }
   if (executor.countStates() > problemTestData.stateLimit) {
-    await setInvalidFormat(id, 'The automaton has too many states.');
+    await setInvalidFormat(submissionId, 'The automaton has too many states.');
     return;
   }
   executor.config = {
@@ -204,7 +204,7 @@ const verifySolution = async (id: number, problemId: string, solution: Automaton
     passedCases++;
   }
   await prisma.submission.update({
-    where: { id: id },
+    where: { id: submissionId },
     data: {
       status: Status.FINISHED,
       verdict: finalVerdict,
