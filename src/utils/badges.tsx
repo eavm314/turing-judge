@@ -61,6 +61,12 @@ export const StatusBadge = ({ verdict, status }: { verdict: Verdict | null; stat
         text: 'Step Limit Exceeded',
       };
       break;
+    case Verdict.TIME_LIMIT_EXCEEDED:
+      values = {
+        color: 'bg-red-200 text-red-900 hover:bg-red-100/80',
+        text: 'Time Limit Exceeded',
+      };
+      break;
     case Verdict.INVALID_FORMAT:
       values = {
         color: 'bg-orange-200 text-amber-900 hover:bg-amber-100/80',
