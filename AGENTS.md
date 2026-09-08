@@ -44,6 +44,8 @@ All data access lives in `src/actions` (`'use server'`), reads included. Never a
 ## Data Layer & Domain Logic
 - Prisma client is a shared singleton ([src/lib/db/prisma.ts](src/lib/db/prisma.ts#L1-L7)); never instantiate new clients.
 - Automata logic lives in `src/lib/automata` and is orchestrated via the playground store (`src/store/playground-store.ts`); extend existing managers/stores instead of duplicating state handling.
+- Submission judging lives in `src/lib/judge`. `judge-submission.ts` is pure and must stay free of Prisma, Next, and React — it is bundled into a standalone worker by `npm run build:worker` (see `tools/build-verify-worker.mjs`), which fails if anything from `node_modules` gets pulled in. Import automata executors directly (`finite-state-machine/FsmExecutor`), never through the barrels, which also export Designers and Animators that reach React and the playground store. `@prisma/*` may only be imported as a type there, because CI installs with `--ignore-scripts` and has no generated client.
+- Set `JUDGE_WORKER=1` to judge on a worker thread (standalone deploys); unset it to judge inline (Vercel). Both modes run the same `judgeSubmission`.
 
 ## UI, Styling, and Components
 - Reuse shadcn primitives (e.g., [src/components/ui/button.tsx](src/components/ui/button.tsx#L1-L44)) and compose variants with `cva`. Shared helpers like `cn` live in [src/lib/ui/utils.ts](src/lib/ui/utils.ts#L1-L6).
