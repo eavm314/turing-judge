@@ -9,7 +9,7 @@ import { type SubmissionItem } from '@/lib/schemas';
 import { automatonCodeSchema, type AutomatonCode } from '@/lib/schemas/automaton-code';
 import { Status, Verdict } from '@prisma/client';
 import { rateLimiter } from '@/utils/rate-limit';
-import { AutomatonManager } from '@/lib/automata/AutomatonManager';
+import { runJudge } from '@/lib/judge/judge-runner';
 
 export const getUserSubmissions = async (problemId: string) =>
   serverQuery(async (): Promise<SubmissionItem[]> => {
@@ -118,18 +118,8 @@ export const submitSolutionAction = async (
   return { success: true, message: 'Solution submitted successfully' };
 };
 
-type FailedCaseData = {
-  input: string;
-  result: boolean;
-  expectedResult: boolean;
-  output?: string;
-  expectedOutput?: string;
-  depthLimitReached: boolean;
-  maxLimitReached: boolean;
-};
-
 const verifySolution = async (submissionId: number, problemId: string, solution: AutomatonCode) => {
-  const problemTestData = (await prisma.problem.findUnique({
+  const { testCases, ...constraints } = (await prisma.problem.findUnique({
     where: { id: problemId },
     select: {
       allowFSM: true,
@@ -149,95 +139,20 @@ const verifySolution = async (submissionId: number, problemId: string, solution:
     },
   }))!;
 
-  if (solution.type === 'FSM' && !problemTestData.allowFSM) {
-    await setInvalidFormat(submissionId, 'This problem does not accept FSM solutions.');
-    return;
-  }
-  if (solution.type === 'PDA' && !problemTestData.allowPDA) {
-    await setInvalidFormat(submissionId, 'This problem does not accept PDA solutions.');
-    return;
-  }
-  if (solution.type === 'TM' && !problemTestData.allowTM) {
-    await setInvalidFormat(submissionId, 'This problem does not accept TM solutions.');
-    return;
-  }
+  const outcome = await runJudge({ solution, constraints, testCases });
 
-  const manager = new AutomatonManager(solution);
-  const executor = manager.getExecutor();
-
-  if (!executor.isDeterministic() && !problemTestData.allowNonDet) {
-    await setInvalidFormat(submissionId, 'This problem does not accept non-deterministic solutions.');
-    return;
-  }
-  if (executor.countStates() > problemTestData.stateLimit) {
-    await setInvalidFormat(submissionId, 'The automaton has too many states.');
-    return;
-  }
-  executor.config = {
-    depthLimit: problemTestData.depthLimit,
-    maxSteps: problemTestData.maxStepLimit,
-  };
-
-  const totalCases = problemTestData.testCases.length;
-  let passedCases = 0;
-
-  let finalVerdict: Verdict = Verdict.ACCEPTED;
-  let failedCaseData: FailedCaseData | null = null;
-  for (const testCase of problemTestData.testCases) {
-    const result = executor.execute(testCase.input, false);
-    if (result.maxLimitReached) {
-      finalVerdict = Verdict.STEP_LIMIT_EXCEEDED;
-    }
-    if (result.accepted !== testCase.expectedResult) {
-      finalVerdict = Verdict.WRONG_RESULT;
-    }
-    if (finalVerdict !== Verdict.ACCEPTED) {
-      failedCaseData = {
-        input: testCase.input,
-        result: result.accepted,
-        expectedResult: testCase.expectedResult,
-        depthLimitReached: result.depthLimitReached,
-        maxLimitReached: result.maxLimitReached,
-      };
-      break;
-    }
-    passedCases++;
-  }
   await prisma.submission.update({
     where: { id: submissionId },
-    data: {
-      status: Status.FINISHED,
-      verdict: finalVerdict,
-      message: buildMessage(totalCases, passedCases, failedCaseData),
-    },
-  });
-};
-
-const buildMessage = (
-  totalCases: number,
-  passedCases: number,
-  failedCaseData: FailedCaseData | null,
-) => {
-  let message = `(${passedCases}/${totalCases})`;
-  if (failedCaseData) {
-    message += ` Failed test case: '${failedCaseData.input}'.`;
-    if (!failedCaseData.result && failedCaseData.depthLimitReached) {
-      message += ' Depth limit reached.';
-    }
-    if (failedCaseData.maxLimitReached) {
-      message += ' Max step limit reached.';
-    }
-  }
-  return message;
-};
-
-const setInvalidFormat = async (submissionId: number, message: string) => {
-  await prisma.submission.update({
-    where: { id: submissionId },
-    data: {
-      status: Status.FINISHED,
-      verdict: Verdict.INVALID_FORMAT,
-      message,
-    },
+    data: outcome.ok
+      ? {
+          status: Status.FINISHED,
+          verdict: outcome.result.verdict,
+          message: outcome.result.message,
+        }
+      : {
+          status: Status.FINISHED,
+          verdict: Verdict.TIME_LIMIT_EXCEEDED,
+          message: 'Time limit exceeded.',
+        },
   });
 };
