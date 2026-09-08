@@ -25,4 +25,15 @@ export type JudgeResult = {
   passedCases: number;
 };
 
-export type JudgeOutcome = { ok: true; result: JudgeResult } | { ok: false; reason: 'timeout' };
+export type JudgeProgress = {
+  passedCases: number;
+  totalCases: number;
+};
+
+export type JudgeWorkerMessage =
+  | { type: 'progress'; progress: JudgeProgress }
+  | { type: 'result'; result: JudgeResult };
+
+export type JudgeOutcome =
+  | { ok: true; result: JudgeResult }
+  | { ok: false; reason: 'timeout'; progress: JudgeProgress };

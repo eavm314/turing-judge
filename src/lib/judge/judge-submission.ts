@@ -1,5 +1,5 @@
 import { createJudgeExecutor } from './judge-executor';
-import type { JudgeRequest, JudgeResult, JudgeVerdict } from './judge-types';
+import type { JudgeProgress, JudgeRequest, JudgeResult, JudgeVerdict } from './judge-types';
 
 type FailedCaseData = {
   input: string;
@@ -9,12 +9,11 @@ type FailedCaseData = {
   maxLimitReached: boolean;
 };
 
-const buildMessage = (
-  totalCases: number,
-  passedCases: number,
-  failedCaseData: FailedCaseData | null,
-) => {
-  let message = `(${passedCases}/${totalCases})`;
+const formatCaseCount = ({ passedCases, totalCases }: JudgeProgress) =>
+  `(${passedCases}/${totalCases})`;
+
+const buildMessage = (progress: JudgeProgress, failedCaseData: FailedCaseData | null) => {
+  let message = formatCaseCount(progress);
   if (failedCaseData) {
     message += ` Failed test case: '${failedCaseData.input}'.`;
     if (!failedCaseData.result && failedCaseData.depthLimitReached) {
@@ -27,11 +26,13 @@ const buildMessage = (
   return message;
 };
 
-export const judgeSubmission = ({
-  solution,
-  constraints,
-  testCases,
-}: JudgeRequest): JudgeResult => {
+export const buildTimeoutMessage = (progress: JudgeProgress) =>
+  `${formatCaseCount(progress)} Time limit exceeded.`;
+
+export const judgeSubmission = (
+  { solution, constraints, testCases }: JudgeRequest,
+  onProgress?: (progress: JudgeProgress) => void,
+): JudgeResult => {
   const totalCases = testCases.length;
   const invalidFormat = (message: string): JudgeResult => ({
     verdict: 'INVALID_FORMAT',
@@ -85,11 +86,12 @@ export const judgeSubmission = ({
       break;
     }
     passedCases++;
+    onProgress?.({ passedCases, totalCases });
   }
 
   return {
     verdict: finalVerdict,
-    message: buildMessage(totalCases, passedCases, failedCaseData),
+    message: buildMessage({ passedCases, totalCases }, failedCaseData),
     totalCases,
     passedCases,
   };

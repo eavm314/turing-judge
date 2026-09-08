@@ -1,6 +1,11 @@
 import path from 'node:path';
 
-import type { JudgeOutcome, JudgeRequest, JudgeResult } from './judge-types';
+import type {
+  JudgeOutcome,
+  JudgeProgress,
+  JudgeRequest,
+  JudgeWorkerMessage,
+} from './judge-types';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 const DEFAULT_MEMORY_MB = 256;
@@ -29,6 +34,7 @@ export const runInWorker = async (request: JudgeRequest): Promise<JudgeOutcome> 
     });
 
     let settled = false;
+    let progress: JudgeProgress = { passedCases: 0, totalCases: request.testCases.length };
 
     const settle = (finish: () => void) => {
       if (settled) return;
@@ -39,12 +45,18 @@ export const runInWorker = async (request: JudgeRequest): Promise<JudgeOutcome> 
 
     const timer = setTimeout(() => {
       // terminate() interrupts the running execute() loop, which never yields on its own.
-      settle(() => resolve({ ok: false, reason: 'timeout' }));
+      settle(() => resolve({ ok: false, reason: 'timeout', progress }));
       void worker.terminate();
     }, Number(process.env.JUDGE_WORKER_TIMEOUT_MS ?? DEFAULT_TIMEOUT_MS));
     timer.unref();
 
-    worker.on('message', (result: JudgeResult) => settle(() => resolve({ ok: true, result })));
+    worker.on('message', (message: JudgeWorkerMessage) => {
+      if (message.type === 'progress') {
+        progress = message.progress;
+        return;
+      }
+      settle(() => resolve({ ok: true, result: message.result }));
+    });
     worker.on('error', (error: Error) => settle(() => reject(error)));
     worker.on('exit', (code) =>
       settle(() => reject(new Error(`Judge worker exited with code ${code}`))),

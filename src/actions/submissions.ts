@@ -10,6 +10,7 @@ import { automatonCodeSchema, type AutomatonCode } from '@/lib/schemas/automaton
 import { Status, Verdict } from '@prisma/client';
 import { rateLimiter } from '@/utils/rate-limit';
 import { runJudge } from '@/lib/judge/judge-runner';
+import { buildTimeoutMessage } from '@/lib/judge/judge-submission';
 
 export const getUserSubmissions = async (problemId: string) =>
   serverQuery(async (): Promise<SubmissionItem[]> => {
@@ -152,7 +153,7 @@ const verifySolution = async (submissionId: number, problemId: string, solution:
       : {
           status: Status.FINISHED,
           verdict: Verdict.TIME_LIMIT_EXCEEDED,
-          message: 'Time limit exceeded.',
+          message: buildTimeoutMessage(outcome.progress),
         },
   });
 };

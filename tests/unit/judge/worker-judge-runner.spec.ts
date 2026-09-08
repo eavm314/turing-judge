@@ -69,7 +69,29 @@ describe('runInWorker', () => {
 
     const outcome = await runInWorker(spinning([{ input: 'a', expectedResult: true }]));
 
-    expect(outcome).toEqual({ ok: false, reason: 'timeout' });
+    expect(outcome).toEqual({
+      ok: false,
+      reason: 'timeout',
+      progress: { passedCases: 0, totalCases: 1 },
+    });
+  }, 20_000);
+
+  it('reports the cases that passed before the timeout', async () => {
+    process.env.JUDGE_WORKER_TIMEOUT_MS = '500';
+
+    // The empty input is accepted as soon as q1 is popped; 'a' can never be consumed.
+    const outcome = await runInWorker(
+      spinning([
+        { input: '', expectedResult: true },
+        { input: 'a', expectedResult: true },
+      ]),
+    );
+
+    expect(outcome).toEqual({
+      ok: false,
+      reason: 'timeout',
+      progress: { passedCases: 1, totalCases: 2 },
+    });
   }, 20_000);
 
   it('rejects instead of crashing the process when the worker runs out of memory', async () => {

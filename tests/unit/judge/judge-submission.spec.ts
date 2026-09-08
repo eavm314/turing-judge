@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { judgeSubmission } from '@/lib/judge/judge-submission';
-import type { JudgeRequest, JudgeTestCase } from '@/lib/judge/judge-types';
+import { buildTimeoutMessage, judgeSubmission } from '@/lib/judge/judge-submission';
+import type { JudgeProgress, JudgeRequest, JudgeTestCase } from '@/lib/judge/judge-types';
 import type { ProblemConstraints } from '@/lib/schemas';
 import { createLinearFsm } from '../automata/helpers/fixtures';
 
@@ -117,6 +117,26 @@ describe('judgeSubmission', () => {
     expect(result.verdict).toBe('ACCEPTED');
   });
 
+  it('reports progress once per passed case', () => {
+    const seen: JudgeProgress[] = [];
+
+    judgeSubmission(
+      request({
+        testCases: [
+          { input: 'a', expectedResult: true },
+          { input: 'b', expectedResult: false },
+          { input: 'b', expectedResult: true },
+        ],
+      }),
+      (progress) => seen.push(progress),
+    );
+
+    expect(seen).toEqual([
+      { passedCases: 1, totalCases: 3 },
+      { passedCases: 2, totalCases: 3 },
+    ]);
+  });
+
   it('reports the depth limit on a rejected case', () => {
     const automaton = createLinearFsm();
     automaton.states.q0.transitions = { q0: ['a'] };
@@ -134,3 +154,10 @@ describe('judgeSubmission', () => {
   });
 });
 
+describe('buildTimeoutMessage', () => {
+  it('keeps the case count that the message for a finished run uses', () => {
+    expect(buildTimeoutMessage({ passedCases: 7, totalCases: 20 })).toBe(
+      '(7/20) Time limit exceeded.',
+    );
+  });
+});
