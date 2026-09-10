@@ -1,30 +1,22 @@
 'use client';
 
-import { useState } from 'react';
-
 import { RefreshCw } from 'lucide-react';
 
+import { getUserSubmissions } from '@/actions/submissions';
 import { Button } from '@/components/ui/button';
 import { EmptyTableRow, TableHeadButton } from '@/components/ui/my-table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { useFirstRender } from '@/hooks/use-first-render';
-import { type SubmissionItem } from '@/lib/schemas';
+import { useServerQuery } from '@/hooks/use-server-query';
 import { StatusBadge } from '@/utils/badges';
 import { formatDateTime } from '@/utils/date';
 import { SubmitSolution } from './submit-solution';
 
 export default function Submissions({ problemId }: { problemId: string }) {
-  const [submissions, setSubmissions] = useState<SubmissionItem[]>();
-  const [loading, setLoading] = useState(true);
+  const { data: submissions, loading, execute } = useServerQuery(getUserSubmissions);
 
-  const handleRefresh = async () => {
-    setLoading(true);
-    const response = await fetch(`/api/queries/submissions/${problemId}`);
-    const data = await response.json();
-    setSubmissions(data);
-    setLoading(false);
-  };
+  const handleRefresh = () => execute(problemId);
 
   useFirstRender(() => {
     handleRefresh();

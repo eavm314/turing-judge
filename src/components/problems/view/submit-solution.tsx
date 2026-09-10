@@ -24,10 +24,11 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
+import { getUserProjectsLight } from '@/actions/projects';
 import { submitSolutionAction } from '@/actions/submissions';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useServerAction } from '@/hooks/use-server-action';
-import { AutomatonProjectItem } from '@/lib/schemas';
+import { useServerQuery } from '@/hooks/use-server-query';
 import { validateCode } from '@/lib/schemas/automaton-code';
 import { cn } from '@/lib/ui/utils';
 import { useSession } from '@/providers/user-provider';
@@ -45,25 +46,21 @@ export function SubmitSolution({ onSubmit }: { onSubmit?: () => void }) {
   const [initialCode, setInitialCode] = useState(initCode);
   const [code, setCode] = useState('');
 
-  const [automatons, setAutomatons] = useState<AutomatonProjectItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
   const { problemId } = useParams();
   const { user, setOpenSignIn } = useSession();
 
   const submitSolution = useServerAction(submitSolutionAction);
+  const projects = useServerQuery(getUserProjectsLight);
+  const automatons = projects.data ?? [];
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const loadAutomatons = projects.execute;
   useEffect(() => {
-    const fetchAutomatons = async () => {
-      const response = await fetch(`/api/queries/projects`);
-      const data = await response.json();
-      setAutomatons(data);
-    };
-
-    fetchAutomatons();
-  }, []);
+    loadAutomatons();
+  }, [loadAutomatons]);
 
   const handleOpen = async (open: boolean) => {
     if (!open || user) {

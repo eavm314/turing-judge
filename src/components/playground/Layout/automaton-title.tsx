@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { updateProjectAction } from '@/actions/projects';
 import { Input } from '@/components/ui/input';
+import { useServerAction } from '@/hooks/use-server-action';
 import { useIsOwner } from '@/providers/playground-provider';
 import { Check, Loader2 } from 'lucide-react';
 
@@ -13,6 +14,10 @@ export function AutomatonTitle({ title }: { title: string | null }) {
 
   const [editing, setEditing] = useState(false);
   const isOwner = useIsOwner();
+
+  // The inline spinner/check already reports progress; a toast per debounced
+  // save would fire on every pause in typing.
+  const updateProject = useServerAction(updateProjectAction, { successToast: false });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditing(true);
@@ -26,7 +31,7 @@ export function AutomatonTitle({ title }: { title: string | null }) {
       return;
     }
     const newTimer = setTimeout(async () => {
-      await updateProjectAction(automatonId, {
+      await updateProject.execute(automatonId, {
         title: newTitle,
       });
       setEditing(false);
