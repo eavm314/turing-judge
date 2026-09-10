@@ -5,19 +5,23 @@ import { LinkedAccounts } from '@/components/profile/linked-accounts';
 import { PasswordSection } from '@/components/profile/password-section';
 import { ProfileForm } from '@/components/profile/profile-form';
 import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { QueryError } from '@/components/ui/query-error';
 import { Label } from '@/components/ui/label';
 
 export default async function ProfilePage() {
-  const profile = await getMyProfile();
-  if (!profile) redirect('/');
+  const result = await getMyProfile();
+  if (!result.success) {
+    if (result.code === 'UNAUTHENTICATED' || result.code === 'NOT_FOUND') redirect('/');
+    return (
+      <main className="container flex-1 mx-auto max-w-3xl py-10 px-4">
+        <h1 className="mb-4">My Profile</h1>
+        <QueryError message={result.message} />
+      </main>
+    );
+  }
+  const profile = result.data;
 
   return (
     <main className="container flex-1 mx-auto max-w-3xl py-10 px-4">

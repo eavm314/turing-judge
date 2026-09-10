@@ -1,9 +1,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { notFound, redirect } from 'next/navigation';
 
-import { type ServerActionResult } from '@/lib/actions/result';
+import { ActionError, serverQuery, type ServerActionResult } from '@/lib/actions/result';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { type ProblemEditorItem, type ProblemSetItem, type ProblemView } from '@/lib/schemas';
@@ -18,18 +17,18 @@ import { ProblemSetOptions } from '@/lib/schemas/problem-set';
 export const getProblemsCount = async (
   search: string,
   difficulty: ProblemSetOptions['difficulty'],
-): Promise<number> => {
-  const count = await prisma.problem.count({
-    where: {
-      isPublic: true,
-      difficulty,
-      title: {
-        contains: search,
+) =>
+  serverQuery(async (): Promise<number> => {
+    return prisma.problem.count({
+      where: {
+        isPublic: true,
+        difficulty,
+        title: {
+          contains: search,
+        },
       },
-    },
+    });
   });
-  return count;
-};
 
 export const getProblemSet = async ({
   take,
@@ -38,73 +37,72 @@ export const getProblemSet = async ({
   direction,
   search,
   difficulty,
-}: ProblemSetOptions): Promise<ProblemSetItem[]> => {
-  const problems = await prisma.problem.findMany({
-    where: {
-      isPublic: true,
-      difficulty,
-      title: {
-        contains: search,
+}: ProblemSetOptions) =>
+  serverQuery(async (): Promise<ProblemSetItem[]> => {
+    return prisma.problem.findMany({
+      where: {
+        isPublic: true,
+        difficulty,
+        title: {
+          contains: search,
+        },
       },
-    },
-    select: {
-      id: true,
-      title: true,
-      difficulty: true,
-      updatedAt: true,
-    },
-    take,
-    skip: (page - 1) * take,
-    orderBy: { [sortKey]: direction },
+      select: {
+        id: true,
+        title: true,
+        difficulty: true,
+        updatedAt: true,
+      },
+      take,
+      skip: (page - 1) * take,
+      orderBy: { [sortKey]: direction },
+    });
   });
 
-  return problems;
-};
+export const getProblemView = async (id: string) =>
+  serverQuery(async (): Promise<ProblemView> => {
+    const session = await auth();
+    const problem = await prisma.problem.findUnique({ where: { id } });
 
-export const getProblemView = async (id: string): Promise<ProblemView> => {
-  const session = await auth();
-  const problem = await prisma.problem.findUnique({ where: { id } });
+    if (!problem || (!problem.isPublic && problem.authorId !== session?.user?.id)) {
+      throw new ActionError('NOT_FOUND', 'Problem not found');
+    }
 
-  if (!problem || (!problem.isPublic && problem.authorId !== session?.user?.id)) {
-    notFound();
-  }
-
-  const problemView: ProblemView = {
-    id: problem.id,
-    title: problem.title,
-    difficulty: problem.difficulty,
-    statement: problem.statement,
-    constraints: {
-      allowFSM: problem.allowFSM,
-      allowPDA: problem.allowPDA,
-      allowTM: problem.allowTM,
-      allowNonDet: problem.allowNonDet,
-      stateLimit: problem.stateLimit,
-      depthLimit: problem.depthLimit,
-      maxStepLimit: problem.maxStepLimit,
-    },
-  };
-
-  return problemView;
-};
-
-export const getUserProblems = async (): Promise<ProblemEditorItem[]> => {
-  const session = await auth();
-  if (!session?.user?.id) redirect('/signin');
-
-  const results = await prisma.problem.findMany({
-    where: { authorId: session.user.id },
-    select: {
-      id: true,
-      title: true,
-      isPublic: true,
-      updatedAt: true,
-      createdAt: true,
-    },
+    return {
+      id: problem.id,
+      title: problem.title,
+      difficulty: problem.difficulty,
+      statement: problem.statement,
+      constraints: {
+        allowFSM: problem.allowFSM,
+        allowPDA: problem.allowPDA,
+        allowTM: problem.allowTM,
+        allowNonDet: problem.allowNonDet,
+        stateLimit: problem.stateLimit,
+        depthLimit: problem.depthLimit,
+        maxStepLimit: problem.maxStepLimit,
+      },
+    };
   });
 
-  return results;
-};
+export const getUserProblems = async () =>
+  serverQuery(async (): Promise<ProblemEditorItem[]> => {
+    const session = await auth();
+    if (!session?.user?.id) {
+      throw new ActionError('UNAUTHENTICATED', 'User not authenticated');
+    }
+
+    return prisma.problem.findMany({
+      where: { authorId: session.user.id },
+      select: {
+        id: true,
+        title: true,
+        isPublic: true,
+        updatedAt: true,
+        createdAt: true,
+      },
+    });
+  });
 
 export const createProblemAction = async (body: ProblemSchema): Promise<ServerActionResult> => {
   const session = await auth();
@@ -169,7 +167,7 @@ export const updateProblemAction = async (
   });
 
   if (!oldProblem) {
-    notFound();
+    return { success: false, message: 'Problem not found', code: 'NOT_FOUND' };
   }
   if (oldProblem.authorId !== session.user.id) {
     return { success: false, message: 'Permission denied', code: 'FORBIDDEN' };
@@ -207,49 +205,50 @@ export const updateProblemAction = async (
   return { success: true, message: 'Problem updated successfully' };
 };
 
-export const getProblemEditable = async (id: string): Promise<ProblemSchema> => {
-  const session = await auth();
-  const problem = await prisma.problem.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      authorId: true,
-      title: true,
-      isPublic: true,
-      difficulty: true,
-      statement: true,
-      allowFSM: true,
-      allowPDA: true,
-      allowTM: true,
-      allowNonDet: true,
-      stateLimit: true,
-      depthLimit: true,
-      maxStepLimit: true,
-      testCases: {
-        select: {
-          input: true,
-          expectedOutput: true,
-          expectedResult: true,
+export const getProblemEditable = async (id: string) =>
+  serverQuery(async (): Promise<ProblemSchema> => {
+    const session = await auth();
+    const problem = await prisma.problem.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        authorId: true,
+        title: true,
+        isPublic: true,
+        difficulty: true,
+        statement: true,
+        allowFSM: true,
+        allowPDA: true,
+        allowTM: true,
+        allowNonDet: true,
+        stateLimit: true,
+        depthLimit: true,
+        maxStepLimit: true,
+        testCases: {
+          select: {
+            input: true,
+            expectedOutput: true,
+            expectedResult: true,
+          },
         },
       },
-    },
+    });
+
+    if (!problem || problem.authorId !== session?.user?.id) {
+      throw new ActionError('NOT_FOUND', 'Problem not found');
+    }
+
+    const testCases = problem.testCases
+      .map(testCase => {
+        if (testCase.expectedOutput === null) {
+          return `${testCase.input}, ${Number(testCase.expectedResult)}`;
+        }
+        return `${testCase.input}, ${Number(testCase.expectedResult)}, ${testCase.expectedOutput}`;
+      })
+      .join('\n');
+
+    return { ...problem, testCases };
   });
-
-  if (!problem || problem.authorId !== session?.user?.id) {
-    notFound();
-  }
-
-  const testCases = problem.testCases
-    .map(testCase => {
-      if (testCase.expectedOutput === null) {
-        return `${testCase.input}, ${Number(testCase.expectedResult)}`;
-      }
-      return `${testCase.input}, ${Number(testCase.expectedResult)}, ${testCase.expectedOutput}`;
-    })
-    .join('\n');
-
-  return { ...problem, testCases };
-};
 
 export const deleteProblemAction = async (id: string): Promise<ServerActionResult> => {
   const session = await auth();

@@ -2,32 +2,32 @@
 
 import { after } from 'next/server';
 
-import { type ServerActionResult } from '@/lib/actions/result';
+import { serverQuery, type ServerActionResult } from '@/lib/actions/result';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
+import { type SubmissionItem } from '@/lib/schemas';
 import { automatonCodeSchema, type AutomatonCode } from '@/lib/schemas/automaton-code';
 import { Status, Verdict } from '@prisma/client';
 import { rateLimiter } from '@/utils/rate-limit';
 import { AutomatonManager } from '@/lib/automata/AutomatonManager';
 
-export const getUserSubmissions = async (problemId: string) => {
-  const session = await auth();
-  if (!session?.user?.id) return [];
+export const getUserSubmissions = async (problemId: string) =>
+  serverQuery(async (): Promise<SubmissionItem[]> => {
+    const session = await auth();
+    if (!session?.user?.id) return [];
 
-  const results = await prisma.submission.findMany({
-    where: { problemId, userId: session.user.id },
-    select: {
-      status: true,
-      verdict: true,
-      message: true,
-      createdAt: true,
-    },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
+    return prisma.submission.findMany({
+      where: { problemId, userId: session.user.id },
+      select: {
+        status: true,
+        verdict: true,
+        message: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
   });
-
-  return results;
-};
 
 const submitLimiter = rateLimiter({
   interval: 30 * 1000,

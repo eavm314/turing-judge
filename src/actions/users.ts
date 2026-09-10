@@ -3,7 +3,7 @@
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 
-import { type ServerActionResult } from '@/lib/actions/result';
+import { ActionError, serverQuery, type ServerActionResult } from '@/lib/actions/result';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { type UserProfile } from '@/lib/schemas';
@@ -15,30 +15,35 @@ import {
 } from '@/lib/schemas/user';
 import { rateLimiter } from '@/utils/rate-limit';
 
-export const getMyProfile = async (): Promise<UserProfile | null> => {
-  const session = await auth();
-  if (!session?.user?.id) return null;
+export const getMyProfile = async () =>
+  serverQuery(async (): Promise<UserProfile> => {
+    const session = await auth();
+    if (!session?.user?.id) {
+      throw new ActionError('UNAUTHENTICATED', 'User not authenticated');
+    }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true,
-      role: true,
-      password: true,
-      accounts: {
-        select: { provider: true, providerAccountId: true, createdAt: true },
-        orderBy: { createdAt: 'asc' },
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        password: true,
+        accounts: {
+          select: { provider: true, providerAccountId: true, createdAt: true },
+          orderBy: { createdAt: 'asc' },
+        },
       },
-    },
-  });
-  if (!user) return null;
+    });
+    if (!user) {
+      throw new ActionError('NOT_FOUND', 'User not found');
+    }
 
-  const { password, ...profile } = user;
-  return { ...profile, hasPassword: password !== null };
-};
+    const { password, ...profile } = user;
+    return { ...profile, hasPassword: password !== null };
+  });
 
 export const updateProfileAction = async (values: ProfileSchema): Promise<ServerActionResult> => {
   const session = await auth();

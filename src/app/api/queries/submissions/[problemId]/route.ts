@@ -6,6 +6,6 @@ export const GET = async (
   { params }: { params: Promise<{ problemId: string }> },
 ) => {
   const { problemId } = await params;
-  const submissions = await getUserSubmissions(problemId);
-  return NextResponse.json(submissions);
+  const result = await getUserSubmissions(problemId);
+  return NextResponse.json(result.success ? result.data : []);
 };

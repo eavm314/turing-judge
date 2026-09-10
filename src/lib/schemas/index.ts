@@ -2,6 +2,8 @@ import { type Account, type Problem, type Project, type Submission, type User } 
 
 export type AutomatonProjectItem = Omit<Project, 'automaton' | 'userId'>;
 
+export type AutomatonProjectOption = Pick<Project, 'id' | 'title' | 'type'>;
+
 export type ProblemSetItem = Pick<Problem, 'id' | 'title' | 'difficulty' | 'updatedAt'>;
 
 export type ProblemEditorItem = Pick<
@@ -18,9 +20,7 @@ export type ProblemView = Pick<Problem, 'id' | 'title' | 'difficulty' | 'stateme
   constraints: ProblemConstraints;
 };
 
-export type SubmissionItem = Pick<Submission, 'status' | 'verdict' | 'message'> & {
-  createdAt: string;
-};
+export type SubmissionItem = Pick<Submission, 'status' | 'verdict' | 'message' | 'createdAt'>;
 
 export type LinkedAccount = Pick<Account, 'provider' | 'providerAccountId' | 'createdAt'>;
 

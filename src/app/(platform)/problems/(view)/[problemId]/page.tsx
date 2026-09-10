@@ -1,6 +1,9 @@
+import { notFound } from 'next/navigation';
+
 import { getProblemView } from '@/actions/problems';
 import { ProblemContent, Submissions } from '@/components/problems/view';
 import { SetSection } from '@/components/problems/view/set-section';
+import { QueryError } from '@/components/ui/query-error';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default async function ProblemPage({
@@ -15,7 +18,16 @@ export default async function ProblemPage({
 
   const currentTab = section === 'submissions' ? 'submissions' : 'statement';
 
-  const problem = await getProblemView(problemId);
+  const result = await getProblemView(problemId);
+  if (!result.success) {
+    if (result.code === 'NOT_FOUND') notFound();
+    return (
+      <main className="mx-4 md:mx-10 my-4 flex-1">
+        <QueryError message={result.message} />
+      </main>
+    );
+  }
+  const problem = result.data;
 
   return (
     <main className="mx-4 md:mx-10 my-4 flex-1">

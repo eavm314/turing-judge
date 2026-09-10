@@ -4,6 +4,7 @@ import { getUserResources } from '@/actions/admin';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { EmptyTableRow } from '@/components/ui/my-table';
+import { QueryError } from '@/components/ui/query-error';
 import {
   Table,
   TableBody,
@@ -13,22 +14,21 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  AutomatonTypeBadge,
-  DifficultyBadge,
-  RoleBadge,
-  StatusBadge,
-} from '@/utils/badges';
+import { AutomatonTypeBadge, DifficultyBadge, RoleBadge, StatusBadge } from '@/utils/badges';
 import { formatDate, formatDateTime } from '@/utils/date';
 
-export default async function AdminUserPage({
-  params,
-}: {
-  params: Promise<{ userId: string }>;
-}) {
+export default async function AdminUserPage({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params;
-  const user = await getUserResources(userId);
-  if (!user) notFound();
+  const result = await getUserResources(userId);
+  if (!result.success) {
+    if (result.code === 'NOT_FOUND') notFound();
+    return (
+      <main className="container flex-1 mx-auto py-6 px-4">
+        <QueryError message={result.message} />
+      </main>
+    );
+  }
+  const user = result.data;
 
   return (
     <main className="container flex-1 mx-auto py-6 px-4 space-y-6">
@@ -41,9 +41,7 @@ export default async function AdminUserPage({
                 alt={user.name ?? 'User'}
                 className="object-cover"
               />
-              <AvatarFallback className="font-bold text-2xl">
-                {user.name?.charAt(0)}
-              </AvatarFallback>
+              <AvatarFallback className="font-bold text-2xl">{user.name?.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="flex-1 space-y-1">
               <div className="flex items-center gap-3">

@@ -13,13 +13,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/ui/utils';
 import { useSession } from '@/providers/user-provider';
 
@@ -92,9 +86,7 @@ function DocsNav({ onNavigate }: { onNavigate?: () => void }) {
                     onClick={onNavigate}
                     className={cn(
                       'block rounded-md px-2 py-1.5 transition-colors hover:text-primary',
-                      pathname === item.href
-                        ? 'text-primary font-medium'
-                        : 'text-muted-foreground',
+                      pathname === item.href ? 'text-primary font-medium' : 'text-muted-foreground',
                     )}
                   >
                     {item.title}

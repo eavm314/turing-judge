@@ -11,7 +11,7 @@ export default async function PlaygroundPage({
     ? [AutomatonType.FSM, AutomatonType.PDA, AutomatonType.TM].includes(
         type.toUpperCase() as AutomatonType,
       )
-      ? type.toUpperCase() as AutomatonType
+      ? (type.toUpperCase() as AutomatonType)
       : AutomatonType.FSM
     : AutomatonType.FSM;
   return <Playground initialType={validType} />;

@@ -3,7 +3,7 @@
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 
-import { type ServerActionResult } from '@/lib/actions/result';
+import { ActionError, serverQuery, type ServerActionResult } from '@/lib/actions/result';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { type AdminUserItem, type AdminUserResources } from '@/lib/schemas';
@@ -34,15 +34,15 @@ const buildUserWhere = (search: string, role?: Role): Prisma.UserWhereInput => (
   ],
 });
 
-export const getUsersCount = async (
-  search: string,
-  role: AdminUsersOptions['role'],
-): Promise<number> => {
-  const session = await getAdminSession();
-  if (!session) return 0;
+export const getUsersCount = async (search: string, role: AdminUsersOptions['role']) =>
+  serverQuery(async (): Promise<number> => {
+    const session = await getAdminSession();
+    if (!session) {
+      throw new ActionError('FORBIDDEN', 'Permission denied');
+    }
 
-  return prisma.user.count({ where: buildUserWhere(search, role) });
-};
+    return prisma.user.count({ where: buildUserWhere(search, role) });
+  });
 
 export const getUsers = async ({
   take,
@@ -51,39 +51,42 @@ export const getUsers = async ({
   direction,
   search,
   role,
-}: AdminUsersOptions): Promise<AdminUserItem[]> => {
-  const session = await getAdminSession();
-  if (!session) return [];
+}: AdminUsersOptions) =>
+  serverQuery(async (): Promise<AdminUserItem[]> => {
+    const session = await getAdminSession();
+    if (!session) {
+      throw new ActionError('FORBIDDEN', 'Permission denied');
+    }
 
-  const users = await prisma.user.findMany({
-    where: buildUserWhere(search, role),
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true,
-      role: true,
-      createdAt: true,
-      password: true,
-      _count: {
-        select: { userAutomatons: true, problems: true, submissions: true },
+    const users = await prisma.user.findMany({
+      where: buildUserWhere(search, role),
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        createdAt: true,
+        password: true,
+        _count: {
+          select: { userAutomatons: true, problems: true, submissions: true },
+        },
       },
-    },
-    take,
-    skip: (page - 1) * take,
-    orderBy: { [sortKey]: direction },
-  });
+      take,
+      skip: (page - 1) * take,
+      orderBy: { [sortKey]: direction },
+    });
 
-  return users.map(({ password, _count, ...user }) => ({
-    ...user,
-    hasPassword: password !== null,
-    counts: {
-      projects: _count.userAutomatons,
-      problems: _count.problems,
-      submissions: _count.submissions,
-    },
-  }));
-};
+    return users.map(({ password, _count, ...user }) => ({
+      ...user,
+      hasPassword: password !== null,
+      counts: {
+        projects: _count.userAutomatons,
+        problems: _count.problems,
+        submissions: _count.submissions,
+      },
+    }));
+  });
 
 export const createUserAction = async (values: CreateUserSchema): Promise<ServerActionResult> => {
   const session = await getAdminSession();
@@ -204,57 +207,62 @@ export const resetUserPasswordAction = async (
   return { success: true, message: 'Password reset successfully' };
 };
 
-export const getUserResources = async (userId: string): Promise<AdminUserResources | null> => {
-  const session = await getAdminSession();
-  if (!session) return null;
+export const getUserResources = async (userId: string) =>
+  serverQuery(async (): Promise<AdminUserResources> => {
+    const session = await getAdminSession();
+    if (!session) {
+      throw new ActionError('FORBIDDEN', 'Permission denied');
+    }
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true,
-      role: true,
-      createdAt: true,
-      userAutomatons: {
-        select: { id: true, title: true, type: true, isPublic: true, updatedAt: true },
-        orderBy: { updatedAt: 'desc' },
-      },
-      problems: {
-        select: { id: true, title: true, difficulty: true, isPublic: true, updatedAt: true },
-        orderBy: { updatedAt: 'desc' },
-      },
-      submissions: {
-        select: {
-          id: true,
-          verdict: true,
-          status: true,
-          createdAt: true,
-          problem: { select: { title: true } },
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        createdAt: true,
+        userAutomatons: {
+          select: { id: true, title: true, type: true, isPublic: true, updatedAt: true },
+          orderBy: { updatedAt: 'desc' },
         },
-        orderBy: { createdAt: 'desc' },
-        take: 20,
+        problems: {
+          select: { id: true, title: true, difficulty: true, isPublic: true, updatedAt: true },
+          orderBy: { updatedAt: 'desc' },
+        },
+        submissions: {
+          select: {
+            id: true,
+            verdict: true,
+            status: true,
+            createdAt: true,
+            problem: { select: { title: true } },
+          },
+          orderBy: { createdAt: 'desc' },
+          take: 20,
+        },
+        _count: {
+          select: { userAutomatons: true, problems: true, submissions: true },
+        },
       },
-      _count: {
-        select: { userAutomatons: true, problems: true, submissions: true },
-      },
-    },
-  });
-  if (!user) return null;
+    });
+    if (!user) {
+      throw new ActionError('NOT_FOUND', 'User not found');
+    }
 
-  const { userAutomatons, submissions, _count, ...userData } = user;
-  return {
-    ...userData,
-    projects: userAutomatons,
-    submissions: submissions.map(({ problem, ...submission }) => ({
-      ...submission,
-      problemTitle: problem.title,
-    })),
-    totals: {
-      projects: _count.userAutomatons,
-      problems: _count.problems,
-      submissions: _count.submissions,
-    },
-  };
-};
+    const { userAutomatons, submissions, _count, ...userData } = user;
+    return {
+      ...userData,
+      projects: userAutomatons,
+      submissions: submissions.map(({ problem, ...submission }) => ({
+        ...submission,
+        problemTitle: problem.title,
+      })),
+      totals: {
+        projects: _count.userAutomatons,
+        problems: _count.problems,
+        submissions: _count.submissions,
+      },
+    };
+  });
