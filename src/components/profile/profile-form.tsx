@@ -4,7 +4,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 
-import { updateProfile } from '@/actions/users';
+import { updateProfileAction } from '@/actions/users';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,7 +25,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ name, image }: ProfileFormProps) {
-  const { execute, loading } = useServerAction(updateProfile);
+  const { execute: updateProfile, loading } = useServerAction(updateProfileAction);
 
   const form = useForm<ProfileSchema>({
     resolver: zodResolver(profileSchema),
@@ -37,7 +37,7 @@ export function ProfileForm({ name, image }: ProfileFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(values => execute(values))} className="space-y-4">
+      <form onSubmit={form.handleSubmit(values => updateProfile(values))} className="space-y-4">
         <div className="flex items-start gap-4">
           <Avatar className="size-16">
             <AvatarImage src={imageValue || undefined} alt={nameValue} className="object-cover" />

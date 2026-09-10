@@ -27,7 +27,7 @@ export default function SignInPage() {
 
   return (
     <main className="flex min-h-svh items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-8">
+      <div className="w-full max-w-sm space-y-8 border rounded-xl p-6">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Welcome!</h1>
           <p className="text-muted-foreground">Sign in to your account to continue:</p>

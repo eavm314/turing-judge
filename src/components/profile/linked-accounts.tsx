@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
-import { unlinkAccount } from '@/actions/users';
+import { unlinkAccountAction } from '@/actions/users';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -36,7 +36,7 @@ interface LinkedAccountsProps {
 }
 
 export function LinkedAccounts({ accounts, hasPassword }: LinkedAccountsProps) {
-  const { execute, loading } = useServerAction(unlinkAccount);
+  const { execute: unlinkAccount, loading } = useServerAction(unlinkAccountAction);
   const [linking, setLinking] = useState<string | null>(null);
   const [accountToUnlink, setAccountToUnlink] = useState<LinkedAccount | null>(null);
 
@@ -50,7 +50,7 @@ export function LinkedAccounts({ accounts, hasPassword }: LinkedAccountsProps) {
 
   const onConfirmUnlink = async () => {
     if (!accountToUnlink) return;
-    await execute(accountToUnlink.provider, accountToUnlink.providerAccountId);
+    await unlinkAccount(accountToUnlink.provider, accountToUnlink.providerAccountId);
     setAccountToUnlink(null);
   };
 

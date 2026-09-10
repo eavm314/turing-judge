@@ -12,7 +12,7 @@ export const revalidateAll = async () => {
   revalidatePath('/', 'layout');
 };
 
-export const signInWithCredentials = async (
+export const signInWithCredentialsAction = async (
   values: CredentialsSchema,
 ): Promise<ServerActionResult> => {
   const result = credentialsSchema.safeParse(values);
@@ -33,6 +33,5 @@ export const signInWithCredentials = async (
     throw error;
   }
 
-  revalidatePath('/', 'layout');
   return { success: true, message: 'Signed in successfully' };
 };

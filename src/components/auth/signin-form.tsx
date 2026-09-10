@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 
-import { signInWithCredentials } from '@/actions/auth';
+import { revalidateAll, signInWithCredentialsAction } from '@/actions/auth';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -27,7 +27,7 @@ interface SignInFormProps {
 }
 
 export function SignInForm({ onSuccess }: SignInFormProps) {
-  const { execute, loading } = useServerAction(signInWithCredentials);
+  const { execute: signInWithCredentials, loading } = useServerAction(signInWithCredentialsAction);
   const [oauthProvider, setOauthProvider] = useState<string | null>(null);
 
   const form = useForm<CredentialsSchema>({
@@ -36,8 +36,11 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
   });
 
   const onSubmit = async (values: CredentialsSchema) => {
-    const result = await execute(values);
-    if (result) onSuccess?.();
+    const result = await signInWithCredentials(values);
+    if (!result) return;
+
+    await revalidateAll();
+    onSuccess?.();
   };
 
   const onProviderSignIn = async (provider: 'google' | 'github') => {
@@ -89,7 +92,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={disabled}>
+          <Button type="submit" disabled={disabled} className="mt-2">
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign In
           </Button>

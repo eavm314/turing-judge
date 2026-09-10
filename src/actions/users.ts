@@ -40,7 +40,7 @@ export const getMyProfile = async (): Promise<UserProfile | null> => {
   return { ...profile, hasPassword: password !== null };
 };
 
-export const updateProfile = async (values: ProfileSchema): Promise<ServerActionResult> => {
+export const updateProfileAction = async (values: ProfileSchema): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
     return { success: false, message: 'User not authenticated' };
@@ -65,7 +65,7 @@ const passwordLimiter = rateLimiter({
   limit: 5,
 });
 
-export const changePassword = async (values: PasswordChangeSchema): Promise<ServerActionResult> => {
+export const changePasswordAction = async (values: PasswordChangeSchema): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
     return { success: false, message: 'User not authenticated' };
@@ -111,7 +111,7 @@ export const changePassword = async (values: PasswordChangeSchema): Promise<Serv
   };
 };
 
-export const unlinkAccount = async (
+export const unlinkAccountAction = async (
   provider: string,
   providerAccountId: string,
 ): Promise<ServerActionResult> => {

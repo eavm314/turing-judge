@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 
-import { changePassword } from '@/actions/users';
+import { changePasswordAction } from '@/actions/users';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -26,7 +26,7 @@ import { useServerAction } from '@/hooks/use-server-action';
 import { passwordFormSchema, type PasswordFormSchema } from '@/lib/schemas/user';
 
 export function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
-  const { execute, loading } = useServerAction(changePassword);
+  const { execute: changePassword, loading } = useServerAction(changePasswordAction);
 
   const schema = hasPassword
     ? passwordFormSchema.refine(values => !!values.currentPassword, {
@@ -41,7 +41,7 @@ export function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
   });
 
   const onSubmit = async (values: PasswordFormSchema) => {
-    const result = await execute({
+    const result = await changePassword({
       currentPassword: values.currentPassword,
       newPassword: values.newPassword,
     });
