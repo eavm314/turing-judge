@@ -3,7 +3,7 @@
 import { AuthError } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 import { signIn, signOut } from '@/lib/auth';
-import { type ServerActionResult } from '@/hooks/use-server-action';
+import { type ServerActionResult } from '@/lib/actions/result';
 import { credentialsSchema, type CredentialsSchema } from '@/lib/schemas/user';
 
 export { signIn, signOut };
@@ -17,18 +17,20 @@ export const signInWithCredentialsAction = async (
 ): Promise<ServerActionResult> => {
   const result = credentialsSchema.safeParse(values);
   if (!result.success) {
-    return { success: false, message: 'Invalid email or password' };
+    return { success: false, message: 'Invalid email or password', code: 'VALIDATION' };
   }
 
   try {
     await signIn('credentials', { ...result.data, redirect: false });
   } catch (error) {
     if (error instanceof AuthError) {
-      const message =
-        error.type === 'CredentialsSignin'
-          ? 'Invalid email or password'
-          : 'Something went wrong. Please try again.';
-      return { success: false, message };
+      return error.type === 'CredentialsSignin'
+        ? { success: false, message: 'Invalid email or password', code: 'VALIDATION' }
+        : {
+            success: false,
+            message: 'Something went wrong. Please try again.',
+            code: 'UNEXPECTED',
+          };
     }
     throw error;
   }

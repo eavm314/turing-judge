@@ -3,7 +3,7 @@
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 
-import { type ServerActionResult } from '@/hooks/use-server-action';
+import { type ServerActionResult } from '@/lib/actions/result';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { type AdminUserItem, type AdminUserResources } from '@/lib/schemas';
@@ -85,15 +85,15 @@ export const getUsers = async ({
   }));
 };
 
-export const createUser = async (values: CreateUserSchema): Promise<ServerActionResult> => {
+export const createUserAction = async (values: CreateUserSchema): Promise<ServerActionResult> => {
   const session = await getAdminSession();
   if (!session) {
-    return { success: false, message: 'Permission denied' };
+    return { success: false, message: 'Permission denied', code: 'FORBIDDEN' };
   }
 
   const result = createUserSchema.safeParse(values);
   if (!result.success) {
-    return { success: false, message: 'Invalid user data' };
+    return { success: false, message: 'Invalid user data', code: 'VALIDATION' };
   }
 
   const existingUser = await prisma.user.findUnique({
@@ -101,7 +101,7 @@ export const createUser = async (values: CreateUserSchema): Promise<ServerAction
     select: { id: true },
   });
   if (existingUser) {
-    return { success: false, message: 'A user with this email already exists' };
+    return { success: false, message: 'A user with this email already exists', code: 'VALIDATION' };
   }
 
   const password = await bcrypt.hash(result.data.password, 10);
@@ -118,19 +118,21 @@ export const createUser = async (values: CreateUserSchema): Promise<ServerAction
   return { success: true, message: 'User created successfully' };
 };
 
-export const updateUserRole = async (values: UpdateRoleSchema): Promise<ServerActionResult> => {
+export const updateUserRoleAction = async (
+  values: UpdateRoleSchema,
+): Promise<ServerActionResult> => {
   const session = await getAdminSession();
   if (!session) {
-    return { success: false, message: 'Permission denied' };
+    return { success: false, message: 'Permission denied', code: 'FORBIDDEN' };
   }
 
   const result = updateRoleSchema.safeParse(values);
   if (!result.success) {
-    return { success: false, message: 'Invalid role data' };
+    return { success: false, message: 'Invalid role data', code: 'VALIDATION' };
   }
 
   if (result.data.userId === session.userId) {
-    return { success: false, message: 'You cannot change your own role' };
+    return { success: false, message: 'You cannot change your own role', code: 'FORBIDDEN' };
   }
 
   const user = await prisma.user.findUnique({
@@ -138,7 +140,7 @@ export const updateUserRole = async (values: UpdateRoleSchema): Promise<ServerAc
     select: { id: true },
   });
   if (!user) {
-    return { success: false, message: 'User not found' };
+    return { success: false, message: 'User not found', code: 'NOT_FOUND' };
   }
 
   await prisma.user.update({
@@ -155,25 +157,33 @@ const resetLimiter = rateLimiter({
   limit: 10,
 });
 
-export const resetUserPassword = async (
+export const resetUserPasswordAction = async (
   values: ResetPasswordSchema,
 ): Promise<ServerActionResult> => {
   const session = await getAdminSession();
   if (!session) {
-    return { success: false, message: 'Permission denied' };
+    return { success: false, message: 'Permission denied', code: 'FORBIDDEN' };
   }
 
   if (!resetLimiter(session.userId)) {
-    return { success: false, message: 'Too many attempts. Please try again later.' };
+    return {
+      success: false,
+      message: 'Too many attempts. Please try again later.',
+      code: 'RATE_LIMITED',
+    };
   }
 
   const result = resetPasswordSchema.safeParse(values);
   if (!result.success) {
-    return { success: false, message: 'Invalid password data' };
+    return { success: false, message: 'Invalid password data', code: 'VALIDATION' };
   }
 
   if (result.data.userId === session.userId) {
-    return { success: false, message: 'Change your own password from your profile' };
+    return {
+      success: false,
+      message: 'Change your own password from your profile',
+      code: 'FORBIDDEN',
+    };
   }
 
   const user = await prisma.user.findUnique({
@@ -181,7 +191,7 @@ export const resetUserPassword = async (
     select: { id: true },
   });
   if (!user) {
-    return { success: false, message: 'User not found' };
+    return { success: false, message: 'User not found', code: 'NOT_FOUND' };
   }
 
   const password = await bcrypt.hash(result.data.temporaryPassword, 10);

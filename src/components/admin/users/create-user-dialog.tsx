@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Loader2, RefreshCw, UserPlus } from 'lucide-react';
 
-import { createUser } from '@/actions/admin';
+import { createUserAction } from '@/actions/admin';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -34,7 +34,7 @@ import { Role } from '@prisma/browser';
 
 export function CreateUserDialog() {
   const [open, setOpen] = useState(false);
-  const { execute, loading } = useServerAction(createUser);
+  const { execute: createUser, loading } = useServerAction(createUserAction);
 
   const form = useForm<CreateUserSchema>({
     resolver: zodResolver(createUserSchema),
@@ -42,7 +42,7 @@ export function CreateUserDialog() {
   });
 
   const onSubmit = async (values: CreateUserSchema) => {
-    const result = await execute(values);
+    const result = await createUser(values);
     if (result) {
       form.reset();
       setOpen(false);

@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { FolderSearch, KeyRound, Loader2, MoreHorizontal, RefreshCw, UserCog } from 'lucide-react';
 
-import { resetUserPassword, updateUserRole } from '@/actions/admin';
+import { resetUserPasswordAction, updateUserRoleAction } from '@/actions/admin';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-button';
 import {
@@ -37,12 +37,12 @@ export function RowActions({ user }: { user: AdminUserItem }) {
 
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
   const [newRole, setNewRole] = useState<Role>(user.role);
-  const roleAction = useServerAction(updateUserRole);
+  const roleAction = useServerAction(updateUserRoleAction);
 
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [tempPassword, setTempPassword] = useState('');
   const [resetDone, setResetDone] = useState(false);
-  const resetAction = useServerAction(resetUserPassword);
+  const resetAction = useServerAction(resetUserPasswordAction);
 
   const openResetDialog = () => {
     setTempPassword(generatePassword());

@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { type Project } from '@prisma/client';
 
 import { PROJECTS_LIMIT } from '@/constants/app';
-import { ServerActionResult } from '@/hooks/use-server-action';
+import { type ServerActionResult } from '@/lib/actions/result';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { type AutomatonProjectItem } from '@/lib/schemas';
@@ -63,7 +63,7 @@ export const createProjectAction = async (body: {
 }): Promise<ServerActionResult<string>> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: 'User not authenticated' };
+    return { success: false, message: 'User not authenticated', code: 'UNAUTHENTICATED' };
   }
 
   const limit = PROJECTS_LIMIT[session.user.role];
@@ -75,6 +75,7 @@ export const createProjectAction = async (body: {
     return {
       success: false,
       message: `You have reached the limit of ${limit} projects.`,
+      code: 'FORBIDDEN',
     };
   }
 
@@ -104,16 +105,18 @@ export const updateProjectAction = async (
   },
 ): Promise<ServerActionResult> => {
   const session = await auth();
-  if (!session?.user?.id) redirect('/signin');
+  if (!session?.user?.id) {
+    return { success: false, message: 'User not authenticated', code: 'UNAUTHENTICATED' };
+  }
   const oldAutomaton = await prisma.project.findUnique({
     where: { id: projectId },
     select: { id: true, userId: true },
   });
   if (!oldAutomaton) {
-    notFound();
+    return { success: false, message: 'Automaton not found', code: 'NOT_FOUND' };
   }
   if (oldAutomaton.userId !== session.user.id) {
-    return { success: false, message: 'Permission denied' };
+    return { success: false, message: 'Permission denied', code: 'FORBIDDEN' };
   }
   await prisma.project.update({
     where: { id: oldAutomaton.id },
@@ -131,7 +134,7 @@ export const updateProjectAction = async (
 export const deleteAutomatonAction = async (id: string): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: 'User not authenticated' };
+    return { success: false, message: 'User not authenticated', code: 'UNAUTHENTICATED' };
   }
 
   try {
@@ -139,6 +142,6 @@ export const deleteAutomatonAction = async (id: string): Promise<ServerActionRes
     revalidatePath('/library');
     return { success: true, message: 'Automaton deleted successfully' };
   } catch {
-    return { success: false, message: 'Automaton not found' };
+    return { success: false, message: 'Automaton not found', code: 'NOT_FOUND' };
   }
 };

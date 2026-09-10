@@ -2,7 +2,7 @@
 
 import { after } from 'next/server';
 
-import { type ServerActionResult } from '@/hooks/use-server-action';
+import { type ServerActionResult } from '@/lib/actions/result';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { automatonCodeSchema, type AutomatonCode } from '@/lib/schemas/automaton-code';
@@ -41,12 +41,16 @@ export const submitSolutionAction = async (
 ): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: 'User not authenticated' };
+    return { success: false, message: 'User not authenticated', code: 'UNAUTHENTICATED' };
   }
 
   const canSubmit = submitLimiter(session.user.id);
   if (!canSubmit) {
-    return { success: false, message: 'Please wait some seconds before submitting again.' };
+    return {
+      success: false,
+      message: 'Please wait some seconds before submitting again.',
+      code: 'RATE_LIMITED',
+    };
   }
 
   let solutionCode;
@@ -62,7 +66,7 @@ export const submitSolutionAction = async (
       },
     });
     if (!project) {
-      return { success: false, message: 'Project not found' };
+      return { success: false, message: 'Project not found', code: 'NOT_FOUND' };
     }
     solutionCode = {
       type: project.type,
@@ -71,7 +75,7 @@ export const submitSolutionAction = async (
   } else if (automatonCode !== null) {
     solutionCode = automatonCode;
   } else {
-    return { success: false, message: 'No automaton provided' };
+    return { success: false, message: 'No automaton provided', code: 'VALIDATION' };
   }
 
   const result = automatonCodeSchema.safeParse(solutionCode);
@@ -85,7 +89,7 @@ export const submitSolutionAction = async (
         message: 'The provided code is not a valid automaton.',
       },
     });
-    return { success: false, message: 'Invalid automaton code' };
+    return { success: false, message: 'Invalid automaton code', code: 'VALIDATION' };
   }
   const submission = await prisma.submission.create({
     data: {

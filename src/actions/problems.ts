@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { notFound, redirect } from 'next/navigation';
 
-import { type ServerActionResult } from '@/hooks/use-server-action';
+import { type ServerActionResult } from '@/lib/actions/result';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { type ProblemEditorItem, type ProblemSetItem, type ProblemView } from '@/lib/schemas';
@@ -109,15 +109,15 @@ export const getUserProblems = async (): Promise<ProblemEditorItem[]> => {
 export const createProblemAction = async (body: ProblemSchema): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: 'User not authenticated' };
+    return { success: false, message: 'User not authenticated', code: 'UNAUTHENTICATED' };
   }
   if (session.user.role === 'USER') {
-    return { success: false, message: 'Permission denied' };
+    return { success: false, message: 'Permission denied', code: 'FORBIDDEN' };
   }
 
   const parsedBody = problemSchema.safeParse(body);
   if (!parsedBody.success) {
-    return { success: false, message: 'Invalid problem data' };
+    return { success: false, message: 'Invalid problem data', code: 'VALIDATION' };
   }
 
   const { testCases, ...fields } = parsedBody.data;
@@ -150,15 +150,15 @@ export const updateProblemAction = async (
 ): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: 'User not authenticated' };
+    return { success: false, message: 'User not authenticated', code: 'UNAUTHENTICATED' };
   }
   if (session.user.role === 'USER') {
-    return { success: false, message: 'Permission denied' };
+    return { success: false, message: 'Permission denied', code: 'FORBIDDEN' };
   }
 
   const parsedBody = updateProblemSchema.safeParse(body);
   if (!parsedBody.success) {
-    return { success: false, message: 'Invalid problem data' };
+    return { success: false, message: 'Invalid problem data', code: 'VALIDATION' };
   }
 
   const { problemId, testCases, ...fields } = parsedBody.data;
@@ -172,7 +172,7 @@ export const updateProblemAction = async (
     notFound();
   }
   if (oldProblem.authorId !== session.user.id) {
-    return { success: false, message: 'Permission denied' };
+    return { success: false, message: 'Permission denied', code: 'FORBIDDEN' };
   }
 
   let testCasesQuery = undefined;
@@ -254,7 +254,7 @@ export const getProblemEditable = async (id: string): Promise<ProblemSchema> => 
 export const deleteProblemAction = async (id: string): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: 'User not authenticated' };
+    return { success: false, message: 'User not authenticated', code: 'UNAUTHENTICATED' };
   }
 
   try {
@@ -263,6 +263,6 @@ export const deleteProblemAction = async (id: string): Promise<ServerActionResul
     revalidatePath('/problems/editor');
     return { success: true, message: 'Problem deleted successfully' };
   } catch {
-    return { success: false, message: 'Problem not found' };
+    return { success: false, message: 'Problem not found', code: 'NOT_FOUND' };
   }
 };

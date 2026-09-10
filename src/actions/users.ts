@@ -3,7 +3,7 @@
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 
-import { type ServerActionResult } from '@/hooks/use-server-action';
+import { type ServerActionResult } from '@/lib/actions/result';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
 import { type UserProfile } from '@/lib/schemas';
@@ -43,12 +43,12 @@ export const getMyProfile = async (): Promise<UserProfile | null> => {
 export const updateProfileAction = async (values: ProfileSchema): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: 'User not authenticated' };
+    return { success: false, message: 'User not authenticated', code: 'UNAUTHENTICATED' };
   }
 
   const result = profileSchema.safeParse(values);
   if (!result.success) {
-    return { success: false, message: 'Invalid profile data' };
+    return { success: false, message: 'Invalid profile data', code: 'VALIDATION' };
   }
 
   await prisma.user.update({
@@ -65,19 +65,25 @@ const passwordLimiter = rateLimiter({
   limit: 5,
 });
 
-export const changePasswordAction = async (values: PasswordChangeSchema): Promise<ServerActionResult> => {
+export const changePasswordAction = async (
+  values: PasswordChangeSchema,
+): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: 'User not authenticated' };
+    return { success: false, message: 'User not authenticated', code: 'UNAUTHENTICATED' };
   }
 
   if (!passwordLimiter(session.user.id)) {
-    return { success: false, message: 'Too many attempts. Please try again later.' };
+    return {
+      success: false,
+      message: 'Too many attempts. Please try again later.',
+      code: 'RATE_LIMITED',
+    };
   }
 
   const result = passwordChangeSchema.safeParse(values);
   if (!result.success) {
-    return { success: false, message: 'Invalid password data' };
+    return { success: false, message: 'Invalid password data', code: 'VALIDATION' };
   }
 
   const user = await prisma.user.findUnique({
@@ -85,16 +91,16 @@ export const changePasswordAction = async (values: PasswordChangeSchema): Promis
     select: { password: true },
   });
   if (!user) {
-    return { success: false, message: 'User not found' };
+    return { success: false, message: 'User not found', code: 'NOT_FOUND' };
   }
 
   if (user.password) {
     if (!result.data.currentPassword) {
-      return { success: false, message: 'Current password is required' };
+      return { success: false, message: 'Current password is required', code: 'VALIDATION' };
     }
     const currentMatches = await bcrypt.compare(result.data.currentPassword, user.password);
     if (!currentMatches) {
-      return { success: false, message: 'Current password is incorrect' };
+      return { success: false, message: 'Current password is incorrect', code: 'VALIDATION' };
     }
   }
 
@@ -117,7 +123,7 @@ export const unlinkAccountAction = async (
 ): Promise<ServerActionResult> => {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, message: 'User not authenticated' };
+    return { success: false, message: 'User not authenticated', code: 'UNAUTHENTICATED' };
   }
 
   const user = await prisma.user.findUnique({
@@ -128,20 +134,21 @@ export const unlinkAccountAction = async (
     },
   });
   if (!user) {
-    return { success: false, message: 'User not found' };
+    return { success: false, message: 'User not found', code: 'NOT_FOUND' };
   }
 
   const account = user.accounts.find(
     account => account.provider === provider && account.providerAccountId === providerAccountId,
   );
   if (!account) {
-    return { success: false, message: 'Linked account not found' };
+    return { success: false, message: 'Linked account not found', code: 'NOT_FOUND' };
   }
 
   if (!user.password && user.accounts.length <= 1) {
     return {
       success: false,
       message: 'Set a password before unlinking your only sign-in method',
+      code: 'FORBIDDEN',
     };
   }
 
