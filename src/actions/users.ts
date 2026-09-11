@@ -32,7 +32,7 @@ export const getMyProfile = async () =>
         role: true,
         password: true,
         accounts: {
-          select: { provider: true, providerAccountId: true, createdAt: true },
+          select: { provider: true, createdAt: true },
           orderBy: { createdAt: 'asc' },
         },
       },
@@ -120,47 +120,4 @@ export const changePasswordAction = async (
     success: true,
     message: user.password ? 'Password changed successfully' : 'Password set successfully',
   };
-};
-
-export const unlinkAccountAction = async (
-  provider: string,
-  providerAccountId: string,
-): Promise<ServerActionResult> => {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return { success: false, message: 'User not authenticated', code: 'UNAUTHENTICATED' };
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      password: true,
-      accounts: { select: { provider: true, providerAccountId: true } },
-    },
-  });
-  if (!user) {
-    return { success: false, message: 'User not found', code: 'NOT_FOUND' };
-  }
-
-  const account = user.accounts.find(
-    account => account.provider === provider && account.providerAccountId === providerAccountId,
-  );
-  if (!account) {
-    return { success: false, message: 'Linked account not found', code: 'NOT_FOUND' };
-  }
-
-  if (!user.password && user.accounts.length <= 1) {
-    return {
-      success: false,
-      message: 'Set a password before unlinking your only sign-in method',
-      code: 'FORBIDDEN',
-    };
-  }
-
-  await prisma.account.delete({
-    where: { provider_providerAccountId: { provider, providerAccountId } },
-  });
-
-  revalidatePath('/profile');
-  return { success: true, message: 'Account unlinked successfully' };
 };

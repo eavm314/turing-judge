@@ -8,6 +8,7 @@ import { type Role } from '@prisma/client';
 import { prisma } from '@/lib/db/prisma';
 import { credentialsSchema } from '@/lib/schemas/user';
 import { rateLimiter } from '@/utils/rate-limit';
+import { cookies } from 'next/headers';
 
 const signInLimiter = rateLimiter({
   interval: 15 * 60 * 1000,
@@ -53,6 +54,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn() {
+      const cookieStore = await cookies();
+      const sessionToken = cookieStore.get('authjs.session-token')?.value;
+      return !sessionToken;
+    },
     async jwt({ token }) {
       if (token.email) {
         const user = await prisma.user.findUnique({

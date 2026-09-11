@@ -22,7 +22,7 @@ export type ProblemView = Pick<Problem, 'id' | 'title' | 'difficulty' | 'stateme
 
 export type SubmissionItem = Pick<Submission, 'status' | 'verdict' | 'message' | 'createdAt'>;
 
-export type LinkedAccount = Pick<Account, 'provider' | 'providerAccountId' | 'createdAt'>;
+export type LinkedAccount = Pick<Account, 'provider' | 'createdAt'>;
 
 export type UserProfile = Pick<User, 'id' | 'name' | 'email' | 'image' | 'role'> & {
   hasPassword: boolean;

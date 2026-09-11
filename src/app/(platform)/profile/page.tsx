@@ -49,7 +49,7 @@ export default async function ProfilePage() {
           </CardContent>
         </Card>
         <PasswordSection hasPassword={profile.hasPassword} />
-        <LinkedAccounts accounts={profile.accounts} hasPassword={profile.hasPassword} />
+        <LinkedAccounts accounts={profile.accounts} />
       </div>
     </main>
   );
