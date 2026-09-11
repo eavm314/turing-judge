@@ -14,9 +14,9 @@ import { formatDateTime } from '@/utils/date';
 import { SubmitSolution } from './submit-solution';
 
 export default function Submissions({ problemId }: { problemId: string }) {
-  const { data: submissions, loading, execute } = useServerQuery(getUserSubmissions);
+  const submissions = useServerQuery(getUserSubmissions);
 
-  const handleRefresh = () => execute(problemId);
+  const handleRefresh = () => submissions.execute(problemId);
 
   useFirstRender(() => {
     handleRefresh();
@@ -28,7 +28,7 @@ export default function Submissions({ problemId }: { problemId: string }) {
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-medium">Summary</h3>
         <Button variant="outline" size="icon" onClick={handleRefresh}>
-          <RefreshCw size={20} className={loading ? 'animate-spin' : undefined} />
+          <RefreshCw size={20} className={submissions.loading ? 'animate-spin' : undefined} />
         </Button>
       </div>
       <div className="text-sm text-muted-foreground">Last 50 submissions</div>
@@ -42,20 +42,20 @@ export default function Submissions({ problemId }: { problemId: string }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {submissions === undefined ? (
+          {submissions.data === undefined ? (
             <TableRow>
               <TableCell colSpan={4} className="space-y-2">
                 <Skeleton className="h-10" />
                 <Skeleton className="h-10" />
               </TableCell>
             </TableRow>
-          ) : submissions.length === 0 ? (
+          ) : submissions.data.length === 0 ? (
             <EmptyTableRow
               colSpan={4}
               text="You haven't submitted any solutions for this problem yet."
             />
           ) : (
-            submissions.map((submission, index) => (
+            submissions.data.map((submission, index) => (
               <TableRow key={index} className="hover:bg-muted/50">
                 <TableCell className="w-56 text-nowrap ml-4 text-center">
                   <StatusBadge verdict={submission.verdict} status={submission.status} />

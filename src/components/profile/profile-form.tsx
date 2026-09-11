@@ -25,7 +25,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ name, image }: ProfileFormProps) {
-  const { execute: updateProfile, loading } = useServerAction(updateProfileAction);
+  const updateProfile = useServerAction(updateProfileAction);
 
   const form = useForm<ProfileSchema>({
     resolver: zodResolver(profileSchema),
@@ -36,7 +36,10 @@ export function ProfileForm({ name, image }: ProfileFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(values => updateProfile(values))} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(values => updateProfile.execute(values))}
+        className="space-y-4"
+      >
         <div className="flex items-center gap-4">
           <Avatar className="size-16">
             <AvatarImage src={image ?? undefined} alt={nameValue} className="object-cover" />
@@ -56,8 +59,8 @@ export function ProfileForm({ name, image }: ProfileFormProps) {
             )}
           />
         </div>
-        <Button type="submit" disabled={loading}>
-          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        <Button type="submit" disabled={updateProfile.loading}>
+          {updateProfile.loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Save Changes
         </Button>
       </form>

@@ -26,7 +26,7 @@ import { useServerAction } from '@/hooks/use-server-action';
 import { passwordFormSchema, type PasswordFormSchema } from '@/lib/schemas/user';
 
 export function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
-  const { execute: changePassword, loading } = useServerAction(changePasswordAction);
+  const changePassword = useServerAction(changePasswordAction);
 
   const schema = hasPassword
     ? passwordFormSchema.refine(values => !!values.currentPassword, {
@@ -41,7 +41,7 @@ export function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
   });
 
   const onSubmit = async (values: PasswordFormSchema) => {
-    const result = await changePassword({
+    const result = await changePassword.execute({
       currentPassword: values.currentPassword,
       newPassword: values.newPassword,
     });
@@ -104,8 +104,8 @@ export function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
                 )}
               />
             </div>
-            <Button type="submit" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" disabled={changePassword.loading}>
+              {changePassword.loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {hasPassword ? 'Change Password' : 'Set Password'}
             </Button>
           </form>

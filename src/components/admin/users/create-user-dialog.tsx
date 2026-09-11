@@ -34,7 +34,7 @@ import { Role } from '@prisma/browser';
 
 export function CreateUserDialog() {
   const [open, setOpen] = useState(false);
-  const { execute: createUser, loading } = useServerAction(createUserAction);
+  const createUser = useServerAction(createUserAction);
 
   const form = useForm<CreateUserSchema>({
     resolver: zodResolver(createUserSchema),
@@ -42,7 +42,7 @@ export function CreateUserDialog() {
   });
 
   const onSubmit = async (values: CreateUserSchema) => {
-    const result = await createUser(values);
+    const result = await createUser.execute(values);
     if (result) {
       form.reset();
       setOpen(false);
@@ -144,8 +144,8 @@ export function CreateUserDialog() {
               <Button variant="outline" type="button" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={loading}>
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button type="submit" disabled={createUser.loading}>
+                {createUser.loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Create User
               </Button>
             </DialogFooter>

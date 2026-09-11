@@ -27,7 +27,7 @@ interface SignInFormProps {
 }
 
 export function SignInForm({ onSuccess }: SignInFormProps) {
-  const { execute: signInWithCredentials, loading } = useServerAction(signInWithCredentialsAction);
+  const signInWithCredentials = useServerAction(signInWithCredentialsAction);
   const [oauthProvider, setOauthProvider] = useState<string | null>(null);
 
   const form = useForm<CredentialsSchema>({
@@ -36,7 +36,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
   });
 
   const onSubmit = async (values: CredentialsSchema) => {
-    const result = await signInWithCredentials(values);
+    const result = await signInWithCredentials.execute(values);
     if (!result) return;
 
     await revalidateAll();
@@ -49,7 +49,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
     setOauthProvider(null);
   };
 
-  const disabled = loading || oauthProvider !== null;
+  const disabled = signInWithCredentials.loading || oauthProvider !== null;
 
   return (
     <div className="grid gap-6">
@@ -93,7 +93,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
             )}
           />
           <Button type="submit" disabled={disabled} className="mt-2">
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {signInWithCredentials.loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign In
           </Button>
         </form>
