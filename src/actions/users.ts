@@ -58,7 +58,7 @@ export const updateProfileAction = async (values: ProfileSchema): Promise<Server
 
   await prisma.user.update({
     where: { id: session.user.id },
-    data: { name: result.data.name, image: result.data.image || null },
+    data: { name: result.data.name },
   });
 
   revalidatePath('/', 'layout');

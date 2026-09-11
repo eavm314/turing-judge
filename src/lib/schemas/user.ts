@@ -12,7 +12,6 @@ export const profileSchema = z.object({
     .string()
     .min(1, { message: 'Name is required.' })
     .max(100, { message: 'Name must be at most 100 characters.' }),
-  image: z.union([z.literal(''), z.string().url({ message: 'Invalid image URL.' })]),
 });
 
 export type ProfileSchema = z.infer<typeof profileSchema>;
