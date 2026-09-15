@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import { getUsers, getUsersCount } from '@/actions/admin';
 import { CreateUserDialog } from '@/components/admin/users/create-user-dialog';
 import {
@@ -6,11 +8,15 @@ import {
   UsersSortableHeader,
 } from '@/components/admin/users/interactive';
 import UserItem from '@/components/admin/users/item';
-import { EmptyTableRow } from '@/components/ui/my-table';
-import { ErrorToast, QueryError } from '@/components/ui/query-error';
+import { EmptyTableRow, LoadingTableRow } from '@/components/ui/my-table';
+import { ErrorToast } from '@/components/ui/query-error';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableHeader } from '@/components/ui/table';
+import { type ServerActionResult } from '@/lib/actions/result';
 import { adminUsersOptionsSchema, type AdminUsersOptions } from '@/lib/schemas/admin-users';
+
+type CountResult = Promise<ServerActionResult<number>>;
 
 export default async function AdminUsersPage({
   searchParams,
@@ -18,17 +24,7 @@ export default async function AdminUsersPage({
   searchParams: Promise<Record<string, string>>;
 }) {
   const options = adminUsersOptionsSchema.parse(await searchParams);
-
-  const usersCount = await getUsersCount(options.search, options.role);
-  if (!usersCount.success) {
-    return (
-      <main className="container flex-1 mx-auto py-6 px-4">
-        <h1 className="mb-4">User Management</h1>
-        <QueryError message={usersCount.message} />
-      </main>
-    );
-  }
-  const maxPages = Math.ceil(usersCount.data / options.take);
+  const usersCount = getUsersCount(options.search, options.role);
 
   return (
     <main className="container flex-1 mx-auto py-6 px-4">
@@ -39,19 +35,50 @@ export default async function AdminUsersPage({
       <div className="space-y-3">
         <UsersFiltersBar search={options.search} role={options.role ?? ''} />
         <Separator />
-        <div className="text-sm text-muted-foreground">{usersCount.data} users found</div>
+        <Suspense fallback={<Skeleton className="h-5 w-36" />}>
+          <UsersFound count={usersCount} />
+        </Suspense>
         <Table>
           <TableHeader>
             <UsersSortableHeader currentKey={options.sortKey} currentDir={options.direction} />
           </TableHeader>
           <TableBody>
-            <UserItems options={options} />
+            <Suspense fallback={<LoadingTableRow colSpan={6} rows={options.take} />}>
+              <UserItems options={options} />
+            </Suspense>
           </TableBody>
         </Table>
-        <UsersPagination page={options.page} maxPages={maxPages} />
+        <Suspense fallback={<Skeleton className="h-10 w-72 mx-auto" />}>
+          <PaginationBar count={usersCount} page={options.page} take={options.take} />
+        </Suspense>
       </div>
     </main>
   );
+}
+
+async function UsersFound({ count }: { count: CountResult }) {
+  const usersCount = await count;
+
+  return (
+    <div className="text-sm text-muted-foreground">
+      {usersCount.success ? `${usersCount.data} users found` : usersCount.message}
+    </div>
+  );
+}
+
+async function PaginationBar({
+  count,
+  page,
+  take,
+}: {
+  count: CountResult;
+  page: number;
+  take: number;
+}) {
+  const usersCount = await count;
+  if (!usersCount.success) return null;
+
+  return <UsersPagination page={page} maxPages={Math.ceil(usersCount.data / take)} />;
 }
 
 async function UserItems({ options }: { options: AdminUsersOptions }) {

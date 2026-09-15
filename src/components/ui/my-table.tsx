@@ -2,6 +2,7 @@ import { Search } from 'lucide-react';
 
 import { cn } from '@/lib/ui/utils';
 import { Input } from './input';
+import { SkeletonRows } from './skeleton';
 import { TableCell, TableHead, TableRow } from './table';
 
 export const TableHeadButton = ({
@@ -58,5 +59,13 @@ export const InputSearch = ({
 export const EmptyTableRow = ({ colSpan, text }: { colSpan: number; text: string }) => (
   <TableRow className="h-14 text-center text-muted-foreground">
     <TableCell colSpan={colSpan}>{text}</TableCell>
+  </TableRow>
+);
+
+export const LoadingTableRow = ({ colSpan, rows }: { colSpan: number; rows?: number }) => (
+  <TableRow className="hover:bg-transparent">
+    <TableCell colSpan={colSpan}>
+      <SkeletonRows rows={rows} />
+    </TableCell>
   </TableRow>
 );

@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import { notFound } from 'next/navigation';
 
 import { getUserResources } from '@/actions/admin';
@@ -5,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { EmptyTableRow } from '@/components/ui/my-table';
 import { QueryError } from '@/components/ui/query-error';
+import { Skeleton, SkeletonRows } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -19,19 +22,26 @@ import { formatDate, formatDateTime } from '@/utils/date';
 
 export default async function AdminUserPage({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params;
+
+  return (
+    <main className="container flex-1 mx-auto py-6 px-4 space-y-6">
+      <Suspense fallback={<UserResourcesSkeleton />}>
+        <UserResources userId={userId} />
+      </Suspense>
+    </main>
+  );
+}
+
+async function UserResources({ userId }: { userId: string }) {
   const result = await getUserResources(userId);
   if (!result.success) {
     if (result.code === 'NOT_FOUND') notFound();
-    return (
-      <main className="container flex-1 mx-auto py-6 px-4">
-        <QueryError message={result.message} />
-      </main>
-    );
+    return <QueryError message={result.message} />;
   }
   const user = result.data;
 
   return (
-    <main className="container flex-1 mx-auto py-6 px-4 space-y-6">
+    <>
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -168,6 +178,34 @@ export default async function AdminUserPage({ params }: { params: Promise<{ user
           </Table>
         </TabsContent>
       </Tabs>
-    </main>
+    </>
+  );
+}
+
+function UserResourcesSkeleton() {
+  return (
+    <>
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <Skeleton className="size-16 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-6 w-48" />
+              <Skeleton className="h-4 w-64" />
+              <Skeleton className="h-4 w-40" />
+            </div>
+            <div className="flex gap-6">
+              {Array.from({ length: 3 }, (_, index) => (
+                <Skeleton key={index} className="h-12 w-16" />
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      <div className="space-y-2">
+        <Skeleton className="h-10 w-80" />
+        <SkeletonRows rows={5} className="h-12" />
+      </div>
+    </>
   );
 }

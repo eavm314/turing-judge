@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import { getProblemsCount, getProblemSet } from '@/actions/problems';
 import {
   FiltersBar,
@@ -5,11 +7,15 @@ import {
   SortableTableHeader,
 } from '@/components/problems/problemset/interactive';
 import ProblemSetItem from '@/components/problems/problemset/item';
-import { EmptyTableRow } from '@/components/ui/my-table';
-import { ErrorToast, QueryError } from '@/components/ui/query-error';
+import { EmptyTableRow, LoadingTableRow } from '@/components/ui/my-table';
+import { ErrorToast } from '@/components/ui/query-error';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableHeader } from '@/components/ui/table';
+import { type ServerActionResult } from '@/lib/actions/result';
 import { optionsSchema, type ProblemSetOptions } from '@/lib/schemas/problem-set';
+
+type CountResult = Promise<ServerActionResult<number>>;
 
 export default async function ProblemsPage({
   searchParams,
@@ -17,17 +23,7 @@ export default async function ProblemsPage({
   searchParams: Promise<Record<string, string>>;
 }) {
   const options = optionsSchema.parse(await searchParams);
-
-  const problemsCount = await getProblemsCount(options.search, options.difficulty);
-  if (!problemsCount.success) {
-    return (
-      <main className="container flex-1 mx-auto py-6 px-4 scroll-smooth">
-        <h1 className="mb-4">Problem Set</h1>
-        <QueryError message={problemsCount.message} />
-      </main>
-    );
-  }
-  const maxPages = Math.ceil(problemsCount.data / options.take);
+  const problemsCount = getProblemsCount(options.search, options.difficulty);
 
   return (
     <main className="container flex-1 mx-auto py-6 px-4 scroll-smooth">
@@ -35,19 +31,50 @@ export default async function ProblemsPage({
       <div className="space-y-3">
         <FiltersBar search={options.search} difficulty={options.difficulty ?? ''} />
         <Separator />
-        <div className="text-sm text-muted-foreground">{problemsCount.data} problems found</div>
+        <Suspense fallback={<Skeleton className="h-5 w-36" />}>
+          <ProblemsFound count={problemsCount} />
+        </Suspense>
         <Table>
           <TableHeader>
             <SortableTableHeader currentKey={options.sortKey} currentDir={options.direction} />
           </TableHeader>
           <TableBody>
-            <ProblemItems options={options} />
+            <Suspense fallback={<LoadingTableRow colSpan={3} rows={options.take} />}>
+              <ProblemItems options={options} />
+            </Suspense>
           </TableBody>
         </Table>
-        <ProblemsPagination page={options.page} maxPages={maxPages} />
+        <Suspense fallback={<Skeleton className="h-10 w-72 mx-auto" />}>
+          <PaginationBar count={problemsCount} page={options.page} take={options.take} />
+        </Suspense>
       </div>
     </main>
   );
+}
+
+async function ProblemsFound({ count }: { count: CountResult }) {
+  const problemsCount = await count;
+
+  return (
+    <div className="text-sm text-muted-foreground">
+      {problemsCount.success ? `${problemsCount.data} problems found` : problemsCount.message}
+    </div>
+  );
+}
+
+async function PaginationBar({
+  count,
+  page,
+  take,
+}: {
+  count: CountResult;
+  page: number;
+  take: number;
+}) {
+  const problemsCount = await count;
+  if (!problemsCount.success) return null;
+
+  return <ProblemsPagination page={page} maxPages={Math.ceil(problemsCount.data / take)} />;
 }
 
 async function ProblemItems({ options }: { options: ProblemSetOptions }) {

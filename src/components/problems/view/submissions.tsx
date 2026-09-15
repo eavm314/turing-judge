@@ -4,8 +4,7 @@ import { RefreshCw } from 'lucide-react';
 
 import { getUserSubmissions } from '@/actions/submissions';
 import { Button } from '@/components/ui/button';
-import { EmptyTableRow, TableHeadButton } from '@/components/ui/my-table';
-import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyTableRow, LoadingTableRow, TableHeadButton } from '@/components/ui/my-table';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { useFirstRender } from '@/hooks/use-first-render';
 import { useServerQuery } from '@/hooks/use-server-query';
@@ -43,12 +42,7 @@ export default function Submissions({ problemId }: { problemId: string }) {
         </TableHeader>
         <TableBody>
           {submissions.data === undefined ? (
-            <TableRow>
-              <TableCell colSpan={4} className="space-y-2">
-                <Skeleton className="h-10" />
-                <Skeleton className="h-10" />
-              </TableCell>
-            </TableRow>
+            <LoadingTableRow colSpan={4} rows={3} />
           ) : submissions.data.length === 0 ? (
             <EmptyTableRow
               colSpan={4}
