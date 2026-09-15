@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
+import { ChevronLeft, ChevronRight, MoreHorizontal, RefreshCw } from "lucide-react"
 import * as React from "react"
 
 import { Button, ButtonProps } from "@/components/ui/button"
@@ -83,6 +83,22 @@ const PaginationNext = ({
 )
 PaginationNext.displayName = "PaginationNext"
 
+const PaginationRefresh = ({
+  refreshing,
+  className,
+  ...props
+}: { refreshing?: boolean } & React.ComponentProps<typeof PaginationLink>) => (
+  <PaginationLink
+    aria-label="Refresh results"
+    size="default"
+    className={cn("gap-1", className)}
+    {...props}
+  >
+    <RefreshCw className={cn("size-5", refreshing && "animate-spin")} />
+  </PaginationLink>
+)
+PaginationRefresh.displayName = "PaginationRefresh"
+
 const PaginationEllipsis = ({
   className,
   ...props
@@ -100,5 +116,5 @@ PaginationEllipsis.displayName = "PaginationEllipsis"
 
 export {
   Pagination,
-  PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious
+  PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationRefresh
 }

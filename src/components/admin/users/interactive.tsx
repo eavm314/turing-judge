@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 
 import { ArrowDown, ArrowUp, ArrowUpDown, Eraser } from 'lucide-react';
 
@@ -15,6 +15,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationRefresh,
 } from '@/components/ui/pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { TableHead, TableRow } from '@/components/ui/table';
@@ -127,7 +128,9 @@ export const UsersSortableHeader = ({
 export const UsersPagination = ({ page, maxPages }: { page: number; maxPages: number }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const { replace } = useRouter();
+  const { replace, refresh } = useRouter();
+
+  const [refreshing, startRefresh] = useTransition();
 
   const goTo = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -162,6 +165,9 @@ export const UsersPagination = ({ page, maxPages }: { page: number; maxPages: nu
         </PaginationItem>
         <PaginationItem>
           <PaginationNext onClick={() => goTo(page + 1)} disabled={page >= maxPages} />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationRefresh onClick={() => startRefresh(refresh)} refreshing={refreshing} />
         </PaginationItem>
       </PaginationContent>
     </Pagination>
