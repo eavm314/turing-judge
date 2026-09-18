@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 
 import { ArrowRight, Cpu, PlayCircle, Save } from 'lucide-react';
@@ -6,6 +5,7 @@ import { ArrowRight, Cpu, PlayCircle, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { APP_NAME, REPO } from '@/constants/app';
 import { GithubIcon } from '@/components/ui/icons';
+import { ThemedImage } from '@/components/ui/themed-image';
 
 export default async function HomePage() {
   return (
@@ -40,9 +40,10 @@ export default async function HomePage() {
           <div className="container px-4 md:px-6 mx-auto">
             <h2 className="text-2xl md:text-4xl font-bold text-center mb-8">Playground Preview</h2>
             <div className="flex justify-center">
-              <Image
-                src="/preview.png" // replace with your image path
-                alt="Editor preview"
+              <ThemedImage
+                light="/landing-light.png"
+                dark="/landing-dark.png"
+                alt="Playground editor preview"
                 width={900}
                 height={500}
                 className="rounded-xl border shadow-md"
