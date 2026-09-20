@@ -66,12 +66,7 @@ export const addTmRuleInModal = async (
   await page.getByRole('button', { name: 'Add This Rule' }).click();
 };
 
-export const addTransitionRule = async (
-  page: Page,
-  from: string,
-  to: string,
-  rule: { read: string; write: string; move: 'L' | 'R' | 'S' },
-) => {
+export const connectStates = async (page: Page, from: string, to: string) => {
   await switchMode(page, 'Transitions');
 
   const fromState = page.getByTestId(from);
@@ -90,7 +85,15 @@ export const addTransitionRule = async (
   await page.mouse.down();
   await page.mouse.move(toX, toY, { steps: 2 });
   await page.mouse.up();
+};
 
+export const addTransitionRule = async (
+  page: Page,
+  from: string,
+  to: string,
+  rule: { read: string; write: string; move: 'L' | 'R' | 'S' },
+) => {
+  await connectStates(page, from, to);
   await addTmRuleInModal(page, rule.read, rule.write, rule.move);
   await page.getByRole('button', { name: 'OK' }).click();
 };

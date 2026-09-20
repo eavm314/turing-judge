@@ -1,6 +1,12 @@
 import { BLANK } from '@/constants/symbols';
 import { expect, test } from '@playwright/test';
-import { addState, addTransitionRule, editTransitionAndAddRule, moveState } from './utils/actions';
+import {
+  addState,
+  addTransitionRule,
+  connectStates,
+  editTransitionAndAddRule,
+  moveState,
+} from './utils/actions';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/playground?type=tm');
@@ -29,6 +35,17 @@ test.describe('TM controls', () => {
 
     await edge.click();
     await expect(edge).toContainText(`${BLANK}/${BLANK},S`);
+  });
+
+  test('should not create a transition without rules', async ({ page }) => {
+    await addState(page, 'q1');
+    await moveState(page, 'q1', 200, 0);
+
+    await connectStates(page, 'q0', 'q1');
+    await page.getByRole('button', { name: 'OK' }).click();
+
+    await expect(page.getByRole('dialog')).not.toBeVisible();
+    await expect(page.getByTestId('q0->q1')).toHaveCount(0);
   });
 
   test('should create a self-loop TM transition', async ({ page }) => {

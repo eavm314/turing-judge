@@ -4,6 +4,7 @@ import {
   addStackAlphabetSymbol,
   addState,
   addTransitionRule,
+  connectStates,
   editTransitionAndAddRule,
   moveState,
 } from './utils/actions';
@@ -36,6 +37,17 @@ test.describe('PDA controls', () => {
 
     await edge.click();
     await expect(edge).toContainText(`${EPSILON},A/${EPSILON}`);
+  });
+
+  test('should not create a transition without rules', async ({ page }) => {
+    await addState(page, 'q1');
+    await moveState(page, 'q1', 200, 0);
+
+    await connectStates(page, 'q0', 'q1');
+    await page.getByRole('button', { name: 'OK' }).click();
+
+    await expect(page.getByRole('dialog')).not.toBeVisible();
+    await expect(page.getByTestId('q0->q1')).toHaveCount(0);
   });
 
   test('should add and delete stack alphabet symbols', async ({ page }) => {

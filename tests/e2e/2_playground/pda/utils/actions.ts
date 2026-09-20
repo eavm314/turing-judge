@@ -89,12 +89,7 @@ export const addPdaRuleInModal = async (
   await page.getByRole('button', { name: 'Add This Rule' }).click();
 };
 
-export const addTransitionRule = async (
-  page: Page,
-  from: string,
-  to: string,
-  rule: { input: string; pop: string; push?: string[] },
-) => {
+export const connectStates = async (page: Page, from: string, to: string) => {
   await switchMode(page, 'Transitions');
   const fromState = page.getByTestId(from);
   const toState = page.getByTestId(to);
@@ -112,7 +107,15 @@ export const addTransitionRule = async (
   await page.mouse.down();
   await page.mouse.move(toX, toY, { steps: 2 });
   await page.mouse.up();
+};
 
+export const addTransitionRule = async (
+  page: Page,
+  from: string,
+  to: string,
+  rule: { input: string; pop: string; push?: string[] },
+) => {
+  await connectStates(page, from, to);
   await addPdaRuleInModal(page, rule.input, rule.pop, rule.push ?? []);
   await page.getByRole('button', { name: 'OK' }).click();
 };
