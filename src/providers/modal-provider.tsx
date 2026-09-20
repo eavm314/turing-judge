@@ -34,6 +34,7 @@ interface CustomModalOptions<T, D> extends ModalOptions {
   customContent?: React.FC<CustomContentProps<T, D>>;
   onSubmit?: (value: T) => void;
   customComponentData?: D;
+  confirmDisabled?: (value: T | null) => boolean;
 }
 
 interface ModalContextType {
@@ -123,6 +124,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         cancelLabel: options.cancelLabel || 'Cancel',
         customContent: options.customContent,
         customComponentData: options.customComponentData,
+        confirmDisabled: options.confirmDisabled,
         onSubmit: (value: T) => {
           closeModal();
           resolve(value as T);

@@ -1,6 +1,7 @@
 import { BOTTOM, EPSILON } from '@/constants/symbols';
 import { expect, test } from '@playwright/test';
 import {
+  addPdaRuleInModal,
   addStackAlphabetSymbol,
   addState,
   addTransitionRule,
@@ -44,10 +45,37 @@ test.describe('PDA controls', () => {
     await moveState(page, 'q1', 200, 0);
 
     await connectStates(page, 'q0', 'q1');
-    await page.getByRole('button', { name: 'OK' }).click();
+    await expect(page.getByRole('button', { name: 'OK' })).toBeDisabled();
+    await page.getByRole('button', { name: 'Cancel' }).click();
 
     await expect(page.getByRole('dialog')).not.toBeVisible();
     await expect(page.getByTestId('q0->q1')).toHaveCount(0);
+  });
+
+  test('should enable the confirm button only once the rules change', async ({ page }) => {
+    await addState(page, 'q1');
+    await moveState(page, 'q1', 200, 0);
+
+    await addTransitionRule(page, 'q0', 'q1', {
+      input: '0',
+      pop: BOTTOM,
+      push: ['A', BOTTOM],
+    });
+
+    const confirm = page.getByRole('button', { name: 'OK' });
+    const deleteRule = page.getByRole('button', { name: 'Delete rule' });
+
+    await page.getByTestId('q0->q1').dblclick();
+    await expect(confirm).toBeDisabled();
+
+    await addPdaRuleInModal(page, '1', BOTTOM, [BOTTOM]);
+    await expect(confirm).toBeEnabled();
+
+    await deleteRule.last().click();
+    await expect(confirm).toBeDisabled();
+
+    await deleteRule.first().click();
+    await expect(confirm).toBeEnabled();
   });
 
   test('should add and delete stack alphabet symbols', async ({ page }) => {
