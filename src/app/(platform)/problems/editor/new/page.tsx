@@ -1,4 +1,11 @@
+import type { Metadata } from 'next';
+
 import { ProblemForm } from '@/components/problems/editor/problem-form';
+
+export const metadata: Metadata = {
+  title: 'New Problem',
+  description: 'Draft a new problem statement, constraints and test cases.',
+};
 
 export default function CreateProblemPage() {
   return (

@@ -1,11 +1,17 @@
 import { Suspense } from 'react';
 
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { getUserProjects } from '@/actions/projects';
 import AutomataLibrary from '@/components/projects';
 import { ProjectsSkeleton } from '@/components/projects/skeleton';
 import { QueryError } from '@/components/ui/query-error';
+
+export const metadata: Metadata = {
+  title: 'My Projects',
+  description: 'Open, rename and share the automata you have saved.',
+};
 
 export default function ProjectsPage() {
   return (

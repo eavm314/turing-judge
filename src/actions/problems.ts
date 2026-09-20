@@ -85,6 +85,21 @@ export const getProblemView = async (id: string) =>
     };
   });
 
+export const getProblemTitle = async (id: string) =>
+  serverQuery(async (): Promise<string> => {
+    const session = await auth();
+    const problem = await prisma.problem.findUnique({
+      where: { id },
+      select: { title: true, isPublic: true, authorId: true },
+    });
+
+    if (!problem || (!problem.isPublic && problem.authorId !== session?.user?.id)) {
+      throw new ActionError('NOT_FOUND', 'Problem not found');
+    }
+
+    return problem.title;
+  });
+
 export const getUserProblems = async () =>
   serverQuery(async (): Promise<ProblemEditorItem[]> => {
     const session = await auth();

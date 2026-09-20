@@ -1,11 +1,17 @@
 import { Suspense } from 'react';
 
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { getProblemEditable } from '@/actions/problems';
 import { ProblemForm } from '@/components/problems/editor/problem-form';
 import { ProblemFormSkeleton } from '@/components/problems/editor/skeletons';
 import { QueryError } from '@/components/ui/query-error';
+
+export const metadata: Metadata = {
+  title: 'Edit Problem',
+  description: 'Update the statement, constraints and test cases of a problem you author.',
+};
 
 export default async function EditProblemPage({
   params,

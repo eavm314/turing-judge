@@ -21,6 +21,21 @@ export const getAutomatonById = async (id: string) =>
     return savedItem;
   });
 
+export const getProjectTitle = async (id: string) =>
+  serverQuery(async (): Promise<string | null> => {
+    const session = await auth();
+    const project = await prisma.project.findUnique({
+      where: { id },
+      select: { title: true, isPublic: true, userId: true },
+    });
+
+    if (!project || (!project.isPublic && project.userId !== session?.user?.id)) {
+      throw new ActionError('NOT_FOUND', 'Automaton not found');
+    }
+
+    return project.title;
+  });
+
 export const getUserProjects = async () =>
   serverQuery(async (): Promise<AutomatonProjectItem[]> => {
     const session = await auth();

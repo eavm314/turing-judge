@@ -1,5 +1,7 @@
 import { Suspense } from 'react';
 
+import type { Metadata } from 'next';
+
 import { getUsers, getUsersCount } from '@/actions/admin';
 import { CreateUserDialog } from '@/components/admin/users/create-user-dialog';
 import {
@@ -17,6 +19,11 @@ import { type ServerActionResult } from '@/lib/actions/result';
 import { adminUsersOptionsSchema, type AdminUsersOptions } from '@/lib/schemas/admin-users';
 
 type CountResult = Promise<ServerActionResult<number>>;
+
+export const metadata: Metadata = {
+  title: 'User Management',
+  description: 'Review platform users, their roles and the resources they own.',
+};
 
 export default async function AdminUsersPage({
   searchParams,

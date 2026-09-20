@@ -1,5 +1,7 @@
 import { Suspense } from 'react';
 
+import type { Metadata } from 'next';
+
 import { getProblemsCount, getProblemSet } from '@/actions/problems';
 import {
   FiltersBar,
@@ -16,6 +18,12 @@ import { type ServerActionResult } from '@/lib/actions/result';
 import { optionsSchema, type ProblemSetOptions } from '@/lib/schemas/problem-set';
 
 type CountResult = Promise<ServerActionResult<number>>;
+
+export const metadata: Metadata = {
+  title: 'Problem Set',
+  description:
+    'Browse automata theory problems and submit your automata to be graded automatically.',
+};
 
 export default async function ProblemsPage({
   searchParams,

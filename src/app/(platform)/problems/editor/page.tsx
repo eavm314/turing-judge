@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -10,6 +11,11 @@ import UserProblems from '@/components/problems/editor/user-problems';
 import { UserProblemsSkeleton } from '@/components/problems/editor/skeletons';
 import { Button } from '@/components/ui/button';
 import { QueryError } from '@/components/ui/query-error';
+
+export const metadata: Metadata = {
+  title: 'Problems Editor',
+  description: 'Create, edit and publish the problems you author.',
+};
 
 export default function ProblemsEditorPage() {
   return (

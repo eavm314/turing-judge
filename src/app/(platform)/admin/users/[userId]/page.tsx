@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { getUserResources } from '@/actions/admin';
@@ -19,6 +20,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AutomatonTypeBadge, DifficultyBadge, RoleBadge, StatusBadge } from '@/utils/badges';
 import { formatDate, formatDateTime } from '@/utils/date';
+
+export const metadata: Metadata = {
+  title: 'User Details',
+  description: 'Inspect the projects, problems and submissions of a single user.',
+};
 
 export default async function AdminUserPage({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params;

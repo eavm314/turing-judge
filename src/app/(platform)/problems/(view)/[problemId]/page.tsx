@@ -1,12 +1,27 @@
 import { Suspense } from 'react';
 
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { getProblemView } from '@/actions/problems';
+import { getProblemTitle, getProblemView } from '@/actions/problems';
 import { ProblemContent, ProblemContentSkeleton, Submissions } from '@/components/problems/view';
 import { SetSection } from '@/components/problems/view/set-section';
 import { QueryError } from '@/components/ui/query-error';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ problemId: string }>;
+}): Promise<Metadata> {
+  const result = await getProblemTitle((await params).problemId);
+  if (!result.success) return { title: 'Problem' };
+
+  return {
+    title: result.data,
+    description: `Solve "${result.data}" by designing an automaton and submitting it to the judge.`,
+  };
+}
 
 export default async function ProblemPage({
   params,

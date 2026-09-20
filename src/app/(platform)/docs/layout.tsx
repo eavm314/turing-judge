@@ -1,5 +1,18 @@
+import type { Metadata } from 'next';
+
+import { APP_NAME } from '@/constants/app';
+
 import { DocsMobileNav, DocsSidebar } from './components/docs-sidebar';
 import 'katex/dist/katex.min.css';
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Docs',
+    template: `%s | ${APP_NAME} Docs`,
+  },
+  description:
+    'Guides for the playground, the automaton JSON formats and the theory behind finite state machines, pushdown automata and Turing machines.',
+};
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
   return (
