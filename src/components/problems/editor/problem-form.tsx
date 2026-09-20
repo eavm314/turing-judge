@@ -236,7 +236,7 @@ export function ProblemForm({
                           <FormDescription>Allow Turing Machines</FormDescription>
                         </div>
                         <FormControl>
-                          <Switch disabled checked={field.value} onCheckedChange={field.onChange} />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </FormItem>
                     )}

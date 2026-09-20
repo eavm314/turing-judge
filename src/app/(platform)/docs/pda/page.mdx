@@ -1,3 +1,9 @@
+export const metadata = {
+  title: 'Pushdown Automaton',
+  description:
+    'How pushdown automata use a stack to recognise context-free languages in Turing Judge.',
+};
+
 # Pushdown Automaton (PDA)
 
 A **Pushdown Automaton (PDA)** takes the concept of a Finite State Machine and adds a significant upgrade: **a stack**. 
@@ -28,7 +34,13 @@ A PDA is mathematically defined as a 7-tuple $(Q, \Sigma, \Gamma, \delta, q_0, Z
 6.  $Z_0$: The **initial stack symbol** (also known as the stack bottom, usually represented as $\perp$).
 7.  $F$: The set of accepting states.
 
-<ImagePlaceholder text="PDA Diagram for matched parenthesis" />
+<ThemedImage
+  light="/pda-light.png"
+  dark="/pda-dark.png"
+  alt="Pushdown automaton that accepts the language a to the n b to the n"
+  width={3024}
+  height={1722}
+/>
 
 ## How to Build One in Turing Judge
 

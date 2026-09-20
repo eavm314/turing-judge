@@ -79,13 +79,16 @@ export class PdaDesigner extends BaseDesigner<PdaTransitionData> {
     const edges: TransitionEdgeType[] = this.states
       .values()
       .flatMap(state =>
-        state.transitions.entries().map(([target, transition]) => ({
-          id: `${state.id}->${target}`,
-          type: 'pda',
-          source: String(state.id),
-          target: String(target),
-          data: { transition },
-        })),
+        state.transitions
+          .entries()
+          .filter(([, tr]) => tr.length > 0)
+          .map(([target, transition]) => ({
+            id: `${state.id}->${target}`,
+            type: 'pda',
+            source: String(state.id),
+            target: String(target),
+            data: { transition },
+          })),
       )
       .toArray();
 

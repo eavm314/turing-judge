@@ -14,7 +14,7 @@ export default function PlatformLayout({
 }>) {
   return (
     <div className="flex flex-col min-h-dvh">
-      <header className="px-4 lg:px-6 h-14 flex items-center">
+      <header className="fixed top-0 left-0 right-0 z-10 bg-background border-b border-foreground px-4 lg:px-6 h-14 flex items-center">
         <nav className="mr-auto flex items-center">
           <MobileNav />
           <Link className="flex items-center justify-center mr-2 md:mr-8" href="/">
@@ -51,7 +51,9 @@ export default function PlatformLayout({
           <AccountMenu />
         </nav>
       </header>
-      {children}
+      <div className="pt-14">
+        {children}
+      </div>
     </div>
   );
 }

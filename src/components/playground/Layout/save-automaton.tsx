@@ -157,7 +157,7 @@ export function SaveAutomaton() {
         {unsavedChanges && (
           <span
             aria-hidden
-            className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full border border-background bg-warning"
+            className="absolute -right-1 -top-1 size-3 rounded-full border border-background bg-destructive"
           />
         )}
       </div>

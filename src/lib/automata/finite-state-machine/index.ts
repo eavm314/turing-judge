@@ -1,21 +1,10 @@
 import { type JsonFsm } from '@/lib/schemas/finite-state-machine';
+import { defaultFsm } from './default-automaton';
 import { FsmDesigner } from './FsmDesigner';
 import { FsmExecutor } from './FsmExecutor';
 import { FsmAnimator } from './FsmAnimator';
 
-const basicAutomata: JsonFsm = {
-  alphabet: ['0', '1'],
-  states: {
-    q0: {
-      position: { x: 0, y: 0 },
-      transitions: {},
-    },
-  },
-  initial: 'q0',
-  finals: [],
-};
-
-export const createFSM = (initialCode: JsonFsm = basicAutomata) => {
+export const createFSM = (initialCode: JsonFsm = defaultFsm) => {
   let designer: FsmDesigner | undefined;
   let executor: FsmExecutor;
   let animator: FsmAnimator | undefined;

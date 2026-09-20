@@ -1,11 +1,7 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 
-export default async function ProblemCreationLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function ProblemCreationLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
   // Redirect to docs home if not an editor or admin

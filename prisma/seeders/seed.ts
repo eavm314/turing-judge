@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { PrismaClient, Role, User } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import bcrypt from 'bcryptjs';
 import exampleProjects from '@/constants/example-projects';
 
 const connectionString = process.env.DATABASE_URL;
@@ -14,12 +15,22 @@ const prisma = new PrismaClient({ adapter });
 async function getAdminUser() {
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
   const adminName = process.env.ADMIN_NAME || 'Admin';
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  const password = adminPassword ? await bcrypt.hash(adminPassword, 10) : undefined;
 
   const existingAdmin = await prisma.user.findUnique({
     where: { email: adminEmail, role: Role.ADMIN },
   });
 
   if (existingAdmin?.email === adminEmail) {
+    if (password) {
+      const updatedAdmin = await prisma.user.update({
+        where: { id: existingAdmin.id },
+        data: { password },
+      });
+      console.log(`Admin user with email ${adminEmail} already exists. Updated password.`);
+      return updatedAdmin;
+    }
     console.log(`Admin user with email ${adminEmail} already exists. Skipping admin creation.`);
     return existingAdmin;
   }
@@ -34,6 +45,7 @@ async function getAdminUser() {
       email: adminEmail,
       name: adminName,
       role: Role.ADMIN,
+      password,
     },
   });
 

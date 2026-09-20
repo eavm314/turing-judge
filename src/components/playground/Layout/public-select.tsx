@@ -10,12 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useServerAction } from '@/hooks/use-server-action';
 import { useModal } from '@/providers/modal-provider';
 import { useIsOwner } from '@/providers/playground-provider';
 
 export function useChangeVisibility() {
   const { automatonId } = useParams<{ automatonId: string }>();
   const { showConfirm } = useModal();
+  const updateProject = useServerAction(updateProjectAction);
 
   return async (isPublic: boolean) => {
     const value = isPublic ? 'public' : 'private';
@@ -27,7 +29,7 @@ export function useChangeVisibility() {
     });
     if (!confirmation) return;
 
-    await updateProjectAction(automatonId, {
+    await updateProject.execute(automatonId, {
       isPublic,
     });
   };

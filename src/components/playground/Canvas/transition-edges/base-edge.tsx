@@ -107,7 +107,7 @@ export function BaseEdge({
         <circle r="8" className="fill-amber-400 dark:fill-purple-800">
           <animateMotion
             ref={animateRef}
-            dur={`${simulationSpeed}ms`}
+            dur={`${simulationSpeed+50}ms`}
             repeatCount={1}
             path={edgePath}
           />

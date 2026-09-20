@@ -1,7 +1,7 @@
 'use client';
 
 import { type Project } from '@prisma/browser';
-import { Copy, Download, LibraryBig, Lock, MoreVertical, Unlock, Upload } from 'lucide-react';
+import { Copy, Download, LibraryBig, Lock, MoreHorizontal, Unlock, Upload } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -36,8 +36,8 @@ export function OverflowMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="size-10 md:hidden" aria-label="More options">
-          <MoreVertical className="!size-5" />
+        <Button variant="ghost" size="icon" className="size-10 lg:hidden" aria-label="More options">
+          <MoreHorizontal className="!size-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">

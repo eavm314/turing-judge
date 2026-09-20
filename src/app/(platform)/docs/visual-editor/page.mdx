@@ -1,8 +1,12 @@
+export const metadata = {
+  title: 'Visual Editor',
+  description:
+    'Add states, draw transitions and move around the canvas with the drag-and-drop editor.',
+};
+
 # Managing the Canvas
 
 The Turing Judge Visual Editor provides an intuitive, drag-and-drop interface for constructing Finite State Machines (FSM), Pushdown Automata (PDA), and Turing Machines (TM).
-
-<ImagePlaceholder text="Visual Editor Overall Interface" />
 
 ## 1. Creating Nodes (States)
 
@@ -13,7 +17,14 @@ Nodes represent the different states of your automaton.
 - **Final/Accepting States:** You can toggle a node's "isFinal" property. Accept states are visually represented by a double circle.
 - **Moving Nodes:** Click and drag any node to organize your canvas. The layout is saved relative to the node positions.
 
-<ImagePlaceholder text="Canvas with Several Nodes (Differentiating Initial vs Final)" />
+<ThemedImage
+  light="/nodes-light.png"
+  dark="/nodes-dark.png"
+  alt="Canvas with an initial state, a final state drawn as a double circle, and a selected state showing its edit controls"
+  width={1294}
+  height={1048}
+  className="mx-auto max-w-2xl"
+/>
 
 ## 2. Creating Edges (Transitions)
 
@@ -25,13 +36,25 @@ Edges dictate how your automaton moves from one Node to another based on the inp
 - **TM Transitions:** You must define the reading symbol, the symbol to write to the tape, and the head movement direction (`L` for Left, `R` for Right, or `S` for Stay).
 - **Self-Loops:** Dragging an edge from a node back onto itself creates a self-loop (e.g. state $q_0 \to q_0$).
 
-<ImagePlaceholder text="Creating a Transition (Modal Popup visible)" />
+<ThemedImage
+  light="/edges-light.png"
+  dark="/edges-dark.png"
+  alt="Two states joined by a transition labelled with two Turing Machine rules, plus a self-loop and the edge edit controls"
+  width={1726}
+  height={868}
+/>
 
 ## 3. The Side Menu
 
 The right-hand Side Menu offers granular control:
 
-<ImagePlaceholder text="Side Menu Sections: Test execution and JSON View" />
+<ThemedImage
+  light="/sidebar-light.png"
+  dark="/sidebar-dark.png"
+  alt="Side menu during a manual simulation, showing the testing panel, step controls, stack depth and available paths"
+  width={3024}
+  height={1722}
+/>
 
 - **JSON Sync:** At any time, you can flip to the **JSON** tab in the side menu to view the raw representation of your automaton. Edits made in the visual canvas instantly reflect here, and edits made in the JSON instantly update your canvas.
 - **Testing Inputs:** Enter strings into the test panel and click **Run**. The canvas will highlight the active node as it steps through your input, making it incredibly easy to debug logical flaws.

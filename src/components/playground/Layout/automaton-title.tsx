@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { updateProjectAction } from '@/actions/projects';
 import { Input } from '@/components/ui/input';
+import { useServerAction } from '@/hooks/use-server-action';
 import { useIsOwner } from '@/providers/playground-provider';
 import { Check, Loader2 } from 'lucide-react';
 
@@ -13,6 +14,10 @@ export function AutomatonTitle({ title }: { title: string | null }) {
 
   const [editing, setEditing] = useState(false);
   const isOwner = useIsOwner();
+
+  // The inline spinner/check already reports progress; a toast per debounced
+  // save would fire on every pause in typing.
+  const updateProject = useServerAction(updateProjectAction, { successToast: false });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditing(true);
@@ -26,7 +31,7 @@ export function AutomatonTitle({ title }: { title: string | null }) {
       return;
     }
     const newTimer = setTimeout(async () => {
-      await updateProjectAction(automatonId, {
+      await updateProject.execute(automatonId, {
         title: newTitle,
       });
       setEditing(false);
@@ -34,14 +39,14 @@ export function AutomatonTitle({ title }: { title: string | null }) {
     setTimer(newTimer);
   };
   return (
-    <div className="relative min-w-0 flex-1 md:flex-initial">
+    <div className="relative min-w-36 w-full max-w-72 flex-1 md:flex-initial">
       {editing ? (
         <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 text-neutral-foreground animate-spin" />
       ) : (
         <Check className="absolute right-2.5 top-2.5 h-4 w-4 text-green-500" />
       )}
       <Input
-        className="w-full pr-8 text-base md:w-72 text-neutral-foreground placeholder:italic disabled:opacity-100"
+        className="w-full pr-8 text-base text-neutral-foreground placeholder:italic disabled:opacity-100"
         disabled={!isOwner}
         placeholder="Untitled"
         value={tempTitle ?? ''}

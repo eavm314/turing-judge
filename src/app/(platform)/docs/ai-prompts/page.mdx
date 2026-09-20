@@ -1,8 +1,14 @@
+export const metadata = {
+  title: 'Using AI Prompts',
+  description:
+    'Prompt templates that make ChatGPT or Claude generate automaton JSON the playground accepts as is.',
+};
+
 # Using AI Prompts
 
 LLMs like ChatGPT, Claude, and GitHub Copilot are excellent at generating finite state logic and JSON data. Because Turing Judge uses clear JSON schemas, you can ask your favorite AI to generate complete automatons for you and just paste them right into the editor's **JSON view**.
 
-Here are some prompt templates you can use to get the best results.
+Each template below states the full schema, so the model has everything it needs to produce JSON that imports without edits. Replace the bracketed placeholder with your language and send the rest verbatim.
 
 ---
 
@@ -11,10 +17,10 @@ Here are some prompt templates you can use to get the best results.
 If you need an FSM for a regular expression or a strict validation pattern:
 
 ```text
-I need a Finite State Machine (FSM) JSON that accepts strings matching the pattern:
-[INSERT YOUR PATTERN, e.g., 'starts with 01 and ends in 0']
+Generate a Finite State Machine (FSM) in Turing Judge JSON that accepts exactly the strings described by:
+[DESCRIBE THE LANGUAGE, e.g. 'binary strings that start with 01']
 
-It must precisely use this JSON format:
+Return a single JSON object with this shape:
 {
   "type": "FSM",
   "automaton": {
@@ -24,28 +30,31 @@ It must precisely use this JSON format:
     "states": {
       "q0": {
         "position": { "x": 100, "y": 100 },
-        "transitions": {
-          "q1": ["0"]
-        }
+        "transitions": { "q1": ["0"] }
       },
       "q1": {
-        "position": { "x": 200, "y": 100 },
-        "transitions": {
-          "q2": ["1"]
-        }
+        "position": { "x": 300, "y": 100 },
+        "transitions": { "q2": ["1"] }
       },
       "q2": {
-        "position": { "x": 300, "y": 100 },
-        "transitions": {}
+        "position": { "x": 500, "y": 100 },
+        "transitions": { "q2": ["0", "1"] }
       }
     }
   }
 }
 
-Important considerations:
-- States should be separated for a distance greater than 150, properly spaced out for the visual editor in both axes x and y.
-- Use 'ε' for epsilon transitions, include it in the alphabet if needed (forces non-determinism).
-- Please output only the JSON.
+Schema rules:
+- "type" is the literal "FSM", and "automaton" holds the whole machine.
+- "alphabet" is an array of single-character strings.
+- State names are the keys of "states" and are 1 to 10 characters long.
+- "initial" is one state name and "finals" is an array of state names; every one of them must be a key of "states".
+- "transitions" maps a target state name to the array of symbols that lead to it, and every symbol must appear in "alphabet".
+- Epsilon transitions use the symbol "ε", which must then be listed in "alphabet"; they make the machine non-deterministic.
+- "position" is optional; keep states at least 150 apart on both x and y so the canvas stays readable.
+- A word is accepted when the whole input is consumed in a final state.
+
+Output only the JSON object, with no code fences, comments or explanation.
 ```
 
 ## 2. Prompting for a Pushdown Automaton
@@ -53,42 +62,66 @@ Important considerations:
 Context-free languages like matching parenthesis or palindromes require a stack.
 
 ```text
-I need a Pushdown Automaton (PDA) JSON to recognize:
-[INSERT YOUR LANGUAGE, e.g., 'the language $a^n b^n$']
+Generate a Pushdown Automaton (PDA) in Turing Judge JSON that recognizes:
+[DESCRIBE THE LANGUAGE, e.g. 'the language a^n b^n with n >= 0']
 
-It must follow this JSON schema exactly:
+Return a single JSON object with this shape:
 {
   "type": "PDA",
   "automaton": {
-    "alphabet": ["a", "b"],
+    "alphabet": ["a", "b", "ε"],
     "stackAlphabet": ["A", "⊥"],
     "initial": "q0",
-    "finals": ["q1"],
+    "finals": ["q2"],
     "states": {
       "q0": {
         "position": { "x": 100, "y": 100 },
         "transitions": {
           "q0": [
-            { "input": "a", "pop": "⊥", "push": ["A", "⊥"] }
+            { "input": "a", "pop": "⊥", "push": ["A", "⊥"] },
+            { "input": "a", "pop": "A", "push": ["A", "A"] }
           ],
           "q1": [
+            { "input": "b", "pop": "A", "push": [] }
+          ],
+          "q2": [
             { "input": "ε", "pop": "⊥", "push": ["⊥"] }
           ]
         }
       },
       "q1": {
-        "position": { "x": 250, "y": 100 },
+        "position": { "x": 300, "y": 100 },
+        "transitions": {
+          "q1": [
+            { "input": "b", "pop": "A", "push": [] }
+          ],
+          "q2": [
+            { "input": "ε", "pop": "⊥", "push": ["⊥"] }
+          ]
+        }
+      },
+      "q2": {
+        "position": { "x": 500, "y": 100 },
         "transitions": {}
       }
     }
   }
 }
 
-Important considerations:
-- States should be separated for a distance greater than 150, properly spaced out for the visual editor in both axes x and y.
-- Use 'ε' for empty input, include it in the alphabet if needed.
-- '⊥' is the stack bottom.
-- Please provide the JSON alone.
+Schema rules:
+- "type" is the literal "PDA", and "automaton" holds the whole machine.
+- "alphabet" and "stackAlphabet" are arrays of single-character strings, and "stackAlphabet" must contain the stack bottom "⊥".
+- State names are the keys of "states" and are 1 to 10 characters long.
+- "initial" is one state name and "finals" is an array of state names; every one of them must be a key of "states".
+- "transitions" maps a target state name to an array of { "input", "pop", "push" } moves.
+- "input" must appear in "alphabet"; use "ε" for a move that reads no symbol, and list "ε" in "alphabet" when you do.
+- Every move pops the top of the stack, so "pop" is a single symbol of "stackAlphabet", and it has to be pushed back whenever the stack should keep it.
+- "push" is an array of stack symbols whose first element ends up on top of the stack; use [] to pop without pushing.
+- The stack starts out holding only "⊥".
+- "position" is optional; keep states at least 150 apart on both x and y so the canvas stays readable.
+- A word is accepted when the whole input is consumed in a final state; the stack does not need to be empty.
+
+Output only the JSON object, with no code fences, comments or explanation.
 ```
 
 ## 3. Prompting for a Turing Machine
@@ -96,10 +129,10 @@ Important considerations:
 If you are evaluating complex logic or doing computation, use a TM:
 
 ```text
-Generate a Turing Machine (TM) JSON that computes:
-[INSERT YOUR TASK, e.g., 'binary addition']
+Generate a Turing Machine (TM) in Turing Judge JSON that:
+[DESCRIBE THE TASK, e.g. 'accepts binary strings that end with 0']
 
-The JSON schema requires this exact structure:
+Return a single JSON object with this shape:
 {
   "type": "TM",
   "automaton": {
@@ -110,26 +143,44 @@ The JSON schema requires this exact structure:
       "q0": {
         "position": { "x": 100, "y": 100 },
         "transitions": {
+          "q0": [
+            { "read": "0", "write": "0", "move": "R" },
+            { "read": "1", "write": "1", "move": "R" }
+          ],
+          "q1": [
+            { "read": "_", "write": "_", "move": "L" }
+          ]
+        }
+      },
+      "q1": {
+        "position": { "x": 300, "y": 100 },
+        "transitions": {
           "qf": [
-            { "read": "1", "write": "0", "move": "R" }
+            { "read": "0", "write": "0", "move": "S" }
           ]
         }
       },
       "qf": {
-        "position": { "x": 300, "y": 100 },
+        "position": { "x": 500, "y": 100 },
         "transitions": {}
       }
     }
   }
 }
 
-Important considerations:
-- States should be separated for a distance greater than 150, properly spaced out for the visual editor in both axes x and y.
-- Use 'ε' for epsilon transitions, include it in the alphabet if needed (forces non-determinism).
-- The `move` property must be one of 'L', 'R', or 'S'.
-- The blank symbol is represented by '_'.
-- Do not include '_' in the alphabet array.
-- Please provide the JSON alone.
+Schema rules:
+- "type" is the literal "TM", and "automaton" holds the whole machine.
+- "alphabet" is an array of single-character strings and must not contain the blank symbol "_".
+- State names are the keys of "states" and are 1 to 10 characters long.
+- "initial" is one state name and "finals" is an array of state names; every one of them must be a key of "states".
+- "transitions" maps a target state name to an array of { "read", "write", "move" } moves.
+- "read" and "write" are either a symbol of "alphabet" or the blank "_"; every cell the machine has not written yet reads as "_".
+- "move" is "L", "R" or "S".
+- A "read" of "ε" fires without touching the tape, ignoring its "write" and "move"; it requires "ε" in "alphabet" and makes the machine non-deterministic.
+- "position" is optional; keep states at least 150 apart on both x and y so the canvas stays readable.
+- The run accepts as soon as a final state is entered, so final states normally have no outgoing transitions.
+
+Output only the JSON object, with no code fences, comments or explanation.
 ```
 
 ---
@@ -138,5 +189,7 @@ Important considerations:
 
 When copying an AI-generated JSON into Turing Judge, pay attention to these common pitfalls:
 - **Missing Nodes:** The AI might reference a state in a transition that it forgot to define in the `states` object.
+- **Symbols outside the alphabet:** Every transition symbol has to be declared, `ε` included. An automaton that uses `ε` without listing it in `alphabet` is rejected on import.
+- **Long state names:** Labels such as `q_accept_final` exceed the 10 character limit; shorten them to something like `qacc`.
 - **Missing `position`:** While `position: { x: 0, y: 0 }` is technically optional, the visual editor performs best when nodes are spaced out (e.g. `{x: 100, y: 150}`). If the AI clusters them all at `0,0`, you might need to drag them apart on the canvas.
 - **Unreachable States:** Use the editor's visual flow to sanity-check what the AI produced. Do all paths eventually have a route to an accepting final state?

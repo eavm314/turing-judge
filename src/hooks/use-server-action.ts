@@ -1,18 +1,15 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { unstable_rethrow } from 'next/navigation';
+import { type ServerActionResult } from '@/lib/actions/result';
 import { useToast } from './use-toast';
-
-export type ServerActionResult<T = void> = {
-  success: boolean;
-  message: string;
-  data?: T;
-};
 
 type MaybeVoid<T> = T extends void ? true : T;
 
 export function useServerAction<Args extends unknown[], T>(
   action: (...args: Args) => Promise<ServerActionResult<T>>,
+  { successToast = true }: { successToast?: boolean } = {},
 ) {
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +19,13 @@ export function useServerAction<Args extends unknown[], T>(
     async (...args: Args): Promise<MaybeVoid<T> | false> => {
       try {
         setLoading(true);
-        const result = await action(...args);
+        // T is still generic here, so SuccessData<T> stays an unresolved
+        // conditional and cannot narrow on `success`.
+        const result = (await action(...args)) as {
+          success: boolean;
+          message: string;
+          data?: T;
+        };
 
         if (!result.success) {
           toast({
@@ -34,13 +37,16 @@ export function useServerAction<Args extends unknown[], T>(
           return false;
         }
 
-        toast({
-          title: result.message,
-          variant: 'success',
-        });
+        if (successToast) {
+          toast({
+            title: result.message,
+            variant: 'success',
+          });
+        }
 
         return ('data' in result ? result.data : true) as MaybeVoid<T>;
-      } catch {
+      } catch (error) {
+        unstable_rethrow(error);
         toast({
           title: 'Error',
           description: 'An unexpected error occurred.',
@@ -51,7 +57,7 @@ export function useServerAction<Args extends unknown[], T>(
         setLoading(false);
       }
     },
-    [action],
+    [action, successToast],
   );
 
   return { execute, loading };

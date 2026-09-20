@@ -291,6 +291,7 @@ const AddPdaTransition = ({
                           handleRemoveTransition(index);
                         }}
                         className="size-8 p-0"
+                        aria-label="Edit rule"
                       >
                         <Edit className="size-4" />
                       </Button>
@@ -298,6 +299,7 @@ const AddPdaTransition = ({
                         variant="ghost"
                         onClick={() => handleRemoveTransition(index)}
                         className="size-8 p-0 text-destructive hover:text-destructive"
+                        aria-label="Delete rule"
                       >
                         <Trash2 className="size-4" />
                       </Button>
@@ -481,6 +483,7 @@ const AddTmTransition = ({
                           handleRemoveTransition(index);
                         }}
                         className="size-8 p-0"
+                        aria-label="Edit rule"
                       >
                         <Edit className="size-4" />
                       </Button>
@@ -488,6 +491,7 @@ const AddTmTransition = ({
                         variant="ghost"
                         onClick={() => handleRemoveTransition(index)}
                         className="size-8 p-0 text-destructive hover:text-destructive"
+                        aria-label="Delete rule"
                       >
                         <Trash2 className="size-4" />
                       </Button>
@@ -514,16 +518,28 @@ const componentByType: Record<
   [AutomatonType.TM]: AddTmTransition,
 };
 
+const rulesKey = (rules: unknown[]) =>
+  rules
+    .map(rule =>
+      JSON.stringify(Object.entries(rule as object).sort(([a], [b]) => a.localeCompare(b))),
+    )
+    .sort()
+    .join('|');
+
 export const useAddTransitionPrompt = () => {
   const { showCustomModal } = useModal();
 
-  const addTransition = (data: AddTransitionProps) =>
-    showCustomModal<unknown[], AddTransitionProps>({
+  const addTransition = ({ source, target }: AddTransitionProps) => {
+    const initialRules = rulesKey(automatonManager.getDesigner().getTransition(source, target));
+
+    return showCustomModal<unknown[], AddTransitionProps>({
       title: 'Edit Transition',
       message: 'Choose the symbols for the transition',
       customContent: componentByType[automatonManager.getType()],
-      customComponentData: data,
+      customComponentData: { source, target },
+      confirmDisabled: rules => !rules || rulesKey(rules) === initialRules,
     });
+  };
 
   return addTransition;
 };
