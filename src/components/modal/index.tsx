@@ -81,7 +81,10 @@ export function Modal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && handleCancel()}>
-      <DialogContent className={cn('max-w-[420px]', options.className)} onKeyDown={handleKeyDown}>
+      <DialogContent
+        className={cn('w-[calc(100vw-2rem)] max-w-[420px] rounded-lg', options.className)}
+        onKeyDown={handleKeyDown}
+      >
         <DialogHeader>
           <DialogTitle>{options.title}</DialogTitle>
         </DialogHeader>
@@ -89,7 +92,7 @@ export function Modal() {
         {options.message && <DialogDescription>{options.message}</DialogDescription>}
 
         {modalType === 'prompt' && (
-          <div className='mb-2'>
+          <div className="mb-2">
             {options.inputLabel && (
               <Label htmlFor="modal-input" className="text-left font-light">
                 {options.inputLabel}
@@ -120,12 +123,14 @@ export function Modal() {
         )}
 
         <DialogFooter>
-          {(modalType === 'confirm' || modalType === 'prompt' || modalType === 'custom') && (
-            <Button variant="outline" onClick={handleCancel}>
-              {options.cancelLabel || 'Cancel'}
-            </Button>
-          )}
-          <Button variant={options.destructive ? 'destructive' : 'default'} onClick={handleConfirm}>
+          <Button variant="outline" onClick={handleCancel}>
+            {options.cancelLabel || 'Cancel'}
+          </Button>
+          <Button
+            variant={options.destructive ? 'destructive' : 'default'}
+            disabled={options.confirmDisabled?.(customInputValue) ?? false}
+            onClick={handleConfirm}
+          >
             {options.confirmLabel || 'OK'}
           </Button>
         </DialogFooter>

@@ -9,4 +9,14 @@ function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>)
   );
 }
 
-export { Skeleton };
+function SkeletonRows({ rows = 5, className }: { rows?: number; className?: string }) {
+  return (
+    <div className="space-y-2">
+      {Array.from({ length: rows }, (_, index) => (
+        <Skeleton key={index} className={cn('h-10', className)} />
+      ))}
+    </div>
+  );
+}
+
+export { Skeleton, SkeletonRows };

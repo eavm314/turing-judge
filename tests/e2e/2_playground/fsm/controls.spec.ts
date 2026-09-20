@@ -66,17 +66,14 @@ test.describe('Basic controls', () => {
 
     await okButton.click();
     await expect(textError).toBeAttached();
-    await expect(textError).toHaveText('State name must contain 1 to 3 characters');
+    await expect(textError).toHaveText('State name must contain 1 to 10 characters');
 
     const validateNameErrors = async () => {
-      await input.fill('new1');
-      await expect(textError).toHaveText('State name must contain 1 to 3 characters');
+      await input.fill('new1234567890');
+      await expect(textError).toHaveText('State name must contain 1 to 10 characters');
 
       await input.fill('');
-      await expect(textError).toHaveText('State name must contain 1 to 3 characters');
-
-      await input.fill('++');
-      await expect(textError).toHaveText('State name can only contain letters and numbers');
+      await expect(textError).toHaveText('State name must contain 1 to 10 characters');
 
       await input.fill('q0');
       await expect(textError).toHaveText('State name must be unique');
@@ -124,7 +121,7 @@ test.describe('Basic controls', () => {
   test('should not delete initial state', async ({ page }) => {
     await deleteState(page, 'q0');
     await expect(page.getByTestId('q0')).toBeVisible();
-    const notificationsRegion = page.getByRole('region');
+    const notificationsRegion = page.getByRole('region', { name: /Notifications/ });
     await expect(notificationsRegion).toBeAttached();
 
     const notification = notificationsRegion.getByText('Initial state cannot be removed');
@@ -239,7 +236,7 @@ test.describe('Alphabet controls', () => {
     const removeButton = page.locator('span:has-text("1") + button');
     await removeButton.click();
 
-    const notificationsRegion = page.getByRole('region');
+    const notificationsRegion = page.getByRole('region', { name: /Notifications/ });
     await expect(notificationsRegion).toBeAttached();
     const notification = notificationsRegion.getByText('Cannot remove symbol');
     await expect(notification).toBeVisible();

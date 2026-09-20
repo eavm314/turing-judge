@@ -1,9 +1,10 @@
 'use client';
 
 import { BLANK } from '@/constants/symbols';
+import { useIsMobile } from '@/hooks/use-media-query';
 import { cn } from '@/lib/ui/utils';
 import { useSimulationTape } from '@/providers/playground-provider';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 
 type TapeCell = {
   key: string;
@@ -11,10 +12,25 @@ type TapeCell = {
   absoluteIndex: number;
 };
 
-const size = 50;
-const tapeSize = 11;
+const DESKTOP_CELL_SIZE = 50;
+const MOBILE_CELL_SIZE = 36;
+const MAX_TAPE_SIZE = 11;
 
-const buildTape = (symbols: Record<number, string>, position: number): TapeCell[] => {
+const useViewportWidth = () =>
+  useSyncExternalStore(
+    onChange => {
+      window.addEventListener('resize', onChange);
+      return () => window.removeEventListener('resize', onChange);
+    },
+    () => window.innerWidth,
+    () => 1280,
+  );
+
+const buildTape = (
+  symbols: Record<number, string>,
+  position: number,
+  tapeSize: number,
+): TapeCell[] => {
   const half = Math.floor((tapeSize + 1) / 2);
   const tape: TapeCell[] = [];
   for (let i = 0; i < tapeSize + 2; i++) {
@@ -26,7 +42,15 @@ const buildTape = (symbols: Record<number, string>, position: number): TapeCell[
   return tape;
 };
 
-function TapeCellViewer({ cell, speed }: { cell: TapeCell; speed: number }) {
+function TapeCellViewer({
+  cell,
+  speed,
+  size,
+}: {
+  cell: TapeCell;
+  speed: number;
+  size: number;
+}) {
   const [animate, setAnimate] = useState(false);
   const [prevSymbol, setPrevSymbol] = useState(cell.symbol);
   const [prevIndex, setPrevIndex] = useState(cell.absoluteIndex);
@@ -63,15 +87,29 @@ function TapeCellViewer({ cell, speed }: { cell: TapeCell; speed: number }) {
 export default function TuringTape() {
   const { tapeSymbols, speed, position, translation, transitionLabel } = useSimulationTape();
 
-  const tape = buildTape(tapeSymbols, position);
+  const isMobile = useIsMobile();
+  const viewportWidth = useViewportWidth();
+
+  const size = isMobile ? MOBILE_CELL_SIZE : DESKTOP_CELL_SIZE;
+  // Largest odd cell count that fits the viewport (with breathing room),
+  // capped at the classic 11 cells.
+  const fittingCells = Math.floor((viewportWidth - 24) / size);
+  const tapeSize = Math.max(
+    3,
+    Math.min(MAX_TAPE_SIZE, fittingCells % 2 === 0 ? fittingCells - 1 : fittingCells),
+  );
+
+  const tape = buildTape(tapeSymbols, position, tapeSize);
 
   return (
-    <div className="flex flex-col items-center gap-4 pb-6">
-      {transitionLabel && (
-        <div className="flex items-center justify-center text-3xl font-mono bg-background border rounded-xl pt-1 pb-2 px-4">
-          {transitionLabel}
-        </div>
-      )}
+    <div className="flex flex-col items-center gap-2 md:gap-4 md:mb-2">
+      <div className="flex h-10 items-center justify-center md:h-12">
+        {transitionLabel && (
+          <div className="flex items-center justify-center text-xl md:text-3xl font-mono bg-background border rounded-xl pt-1 pb-2 px-4">
+            {transitionLabel}
+          </div>
+        )}
+      </div>
       <div className="relative">
         <div
           className="overflow-hidden border rounded-xl"
@@ -90,7 +128,7 @@ export default function TuringTape() {
             }}
           >
             {tape.map(cell => (
-              <TapeCellViewer key={cell.key} cell={cell} speed={speed} />
+              <TapeCellViewer key={cell.key} cell={cell} speed={speed} size={size} />
             ))}
           </div>
         </div>

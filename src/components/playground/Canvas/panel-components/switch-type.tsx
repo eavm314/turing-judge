@@ -20,7 +20,8 @@ export function SwitchType() {
   const handleSelectChange = async (value: AutomatonType) => {
     const params = new URLSearchParams();
     params.set('type', value.toLowerCase());
-    window.open(`/playground?${params.toString()}`, '_blank');
+    const url = `/playground?${params.toString()}`;
+    window.location.assign(url);
   };
 
   return (

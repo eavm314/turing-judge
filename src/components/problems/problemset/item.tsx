@@ -21,7 +21,7 @@ export default function ProblemSetItem({ problem }: { problem: ProblemSetItem })
       <TableCell className="text-center">
         <DifficultyBadge difficulty={problem.difficulty} />
       </TableCell>
-      <TableCell className="w-72">{formatDate(problem.updatedAt)}</TableCell>
+      <TableCell className="whitespace-nowrap md:w-72">{formatDate(problem.updatedAt)}</TableCell>
     </TableRow>
   );
 }

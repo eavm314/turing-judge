@@ -1,22 +1,10 @@
 import { JsonTm } from '@/lib/schemas/turing-machine';
+import { defaultTm } from './default-automaton';
 import { TmDesigner } from './TmDesigner';
 import { TmExecutor } from './TmExecutor';
 import { TmAnimator } from './TmAnimator';
-// import { FsmAnimator } from './FsmAnimator';
 
-const basicAutomata: JsonTm = {
-  alphabet: ['0', '1'],
-  states: {
-    q0: {
-      position: { x: 0, y: 0 },
-      transitions: {},
-    },
-  },
-  initial: 'q0',
-  finals: [],
-};
-
-export const createTM = (initialCode: JsonTm = basicAutomata) => {
+export const createTM = (initialCode: JsonTm = defaultTm) => {
   let designer: TmDesigner | undefined;
   let executor: TmExecutor;
   let animator: TmAnimator | undefined;

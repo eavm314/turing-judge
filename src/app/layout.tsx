@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Orbitron } from 'next/font/google';
 import './globals.css';
 
@@ -17,8 +17,20 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  title: APP_NAME,
-  description: 'Automaton Designer',
+  title: {
+    default: `${APP_NAME} | Automata Designer and Virtual Judge`,
+    template: `%s | ${APP_NAME}`,
+  },
+  description:
+    'Design, simulate and test finite state machines, pushdown automata and Turing machines, then submit your solutions to an automated judge.',
+  applicationName: APP_NAME,
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  interactiveWidget: 'resizes-content',
 };
 
 async function AppSessionProvider({ children }: { children: React.ReactNode }) {

@@ -5,8 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { BLANK } from '@/constants/symbols';
+import {
+  type ManualRuntime,
+  type ManualSessionStatus,
+} from '@/lib/automata/manual/manual-types';
 import { cn } from '@/lib/ui/utils';
 import { type ManualSimulationController } from './use-manual-simulation';
+
+export const runtimeCurrentSymbol = (runtime: ManualRuntime | null) =>
+  runtime && runtime.type === 'TM'
+    ? (runtime.tape.get(runtime.inputPos) ?? BLANK)
+    : (runtime?.word[runtime?.inputPos ?? 0] ?? BLANK);
+
+export const statusBadgeVariant = (status: ManualSessionStatus) =>
+  status === 'accepted' ? 'secondary' : status === 'blocked' ? 'destructive' : 'outline';
 
 type ManualSimulationControlsProps = {
   controller: ManualSimulationController;
@@ -15,10 +27,7 @@ type ManualSimulationControlsProps = {
 export default function ManualSimulationControls({ controller }: ManualSimulationControlsProps) {
   const { state: { runtime, choices, status, canUndo, stepCount }, isApplyingStep } = controller;
 
-  const runtimeSymbol =
-    runtime && runtime.type === 'TM'
-      ? (runtime.tape.get(runtime.inputPos) ?? BLANK)
-      : (runtime?.word[runtime?.inputPos ?? 0] ?? BLANK);
+  const runtimeSymbol = runtimeCurrentSymbol(runtime);
 
   const statusTitle =
     status === 'accepted'
@@ -35,13 +44,7 @@ export default function ManualSimulationControls({ controller }: ManualSimulatio
         <Label className="text-[11px] uppercase tracking-wide text-muted-foreground">
           Manual Controls
         </Label>
-        <Badge
-          variant={
-            status === 'accepted' ? 'secondary' : status === 'blocked' ? 'destructive' : 'outline'
-          }
-        >
-          {status}
-        </Badge>
+        <Badge variant={statusBadgeVariant(status)}>{status}</Badge>
       </div>
 
       {runtime && (

@@ -18,8 +18,20 @@ import {
 import { useChange } from '@/hooks/use-change';
 import { automatonManager } from '@/store/playground-store';
 
-export function ExportCode({ title }: { title?: string | null }) {
-  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+type ExportCodeProps = {
+  title?: string | null;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
+
+export function ExportCode({ title, open: controlledOpen, onOpenChange }: ExportCodeProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isExportDialogOpen = controlledOpen ?? internalOpen;
+  const setIsExportDialogOpen = (open: boolean) => {
+    setInternalOpen(open);
+    onOpenChange?.(open);
+  };
+
   const [exportJson, setExportJson] = useState('');
   const [copied, setCopied] = useState(false);
 

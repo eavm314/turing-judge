@@ -1,30 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-
 import { RefreshCw } from 'lucide-react';
 
+import { getUserSubmissions } from '@/actions/submissions';
 import { Button } from '@/components/ui/button';
-import { EmptyTableRow, TableHeadButton } from '@/components/ui/my-table';
-import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyTableRow, LoadingTableRow, TableHeadButton } from '@/components/ui/my-table';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { useFirstRender } from '@/hooks/use-first-render';
-import { type SubmissionItem } from '@/lib/schemas';
+import { useServerQuery } from '@/hooks/use-server-query';
 import { StatusBadge } from '@/utils/badges';
 import { formatDateTime } from '@/utils/date';
 import { SubmitSolution } from './submit-solution';
 
 export default function Submissions({ problemId }: { problemId: string }) {
-  const [submissions, setSubmissions] = useState<SubmissionItem[]>();
-  const [loading, setLoading] = useState(true);
+  const submissions = useServerQuery(getUserSubmissions);
 
-  const handleRefresh = async () => {
-    setLoading(true);
-    const response = await fetch(`/api/queries/submissions/${problemId}`);
-    const data = await response.json();
-    setSubmissions(data);
-    setLoading(false);
-  };
+  const handleRefresh = () => submissions.execute(problemId);
 
   useFirstRender(() => {
     handleRefresh();
@@ -36,7 +27,7 @@ export default function Submissions({ problemId }: { problemId: string }) {
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-medium">Summary</h3>
         <Button variant="outline" size="icon" onClick={handleRefresh}>
-          <RefreshCw size={20} className={loading ? 'animate-spin' : undefined} />
+          <RefreshCw size={20} className={submissions.loading ? 'animate-spin' : undefined} />
         </Button>
       </div>
       <div className="text-sm text-muted-foreground">Last 50 submissions</div>
@@ -50,20 +41,15 @@ export default function Submissions({ problemId }: { problemId: string }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {submissions === undefined ? (
-            <TableRow>
-              <TableCell colSpan={4} className="space-y-2">
-                <Skeleton className="h-10" />
-                <Skeleton className="h-10" />
-              </TableCell>
-            </TableRow>
-          ) : submissions.length === 0 ? (
+          {submissions.data === undefined ? (
+            <LoadingTableRow colSpan={4} rows={3} />
+          ) : submissions.data.length === 0 ? (
             <EmptyTableRow
               colSpan={4}
               text="You haven't submitted any solutions for this problem yet."
             />
           ) : (
-            submissions.map((submission, index) => (
+            submissions.data.map((submission, index) => (
               <TableRow key={index} className="hover:bg-muted/50">
                 <TableCell className="w-56 text-nowrap ml-4 text-center">
                   <StatusBadge verdict={submission.verdict} status={submission.status} />

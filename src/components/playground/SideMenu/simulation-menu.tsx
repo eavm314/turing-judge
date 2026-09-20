@@ -1,5 +1,4 @@
 import { CircleStop, PenLine, Play, Shuffle } from 'lucide-react';
-import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -7,13 +6,22 @@ import { useToast } from '@/hooks/use-toast';
 import { usePlaygroundMode, useSimulation } from '@/providers/playground-provider';
 import { automatonManager } from '@/store/playground-store';
 import ManualSimulationControls from './manual-simulation-controls';
-import { useManualSimulation } from './use-manual-simulation';
+import { type ManualSimulationController } from './use-manual-simulation';
 
-type SimulationType = 'normal' | 'random' | 'manual';
+export type SimulationType = 'normal' | 'random' | 'manual';
 
-export default function SimulationMenu() {
+type SimulationMenuProps = {
+  manualController: ManualSimulationController;
+  simulationType: SimulationType;
+  setSimulationType: (type: SimulationType) => void;
+};
+
+export default function SimulationMenu({
+  manualController,
+  simulationType,
+  setSimulationType,
+}: SimulationMenuProps) {
   const { mode, setMode } = usePlaygroundMode();
-  const [simulationType, setSimulationType] = useState<SimulationType>('normal');
 
   const simulating = mode === 'simulation';
   const simulatingNormal = simulating && simulationType === 'normal';
@@ -21,7 +29,6 @@ export default function SimulationMenu() {
   const simulatingManual = simulating && simulationType === 'manual';
 
   const simulation = useSimulation();
-  const manualController = useManualSimulation();
 
   const { toast } = useToast();
 
@@ -103,8 +110,7 @@ export default function SimulationMenu() {
   };
 
   return (
-    <div className="space-y-2 p-3">
-      <h2>Simulation</h2>
+    <div className="space-y-2">
       <Label className="text-muted-foreground">Choose how to simulate the automaton</Label>
       <div className="space-y-2">
         <Button

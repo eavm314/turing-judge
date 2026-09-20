@@ -4,9 +4,9 @@ import { defineConfig, devices } from '@playwright/test';
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+import dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -26,7 +26,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -36,6 +36,9 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      /* The desktop suite relies on keyboard/mouse interactions (Backspace
+         deletion, Shift+drag) — keep it off the mobile specs. */
+      testIgnore: /3_mobile/,
       use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 600 } },
     },
     // {
@@ -47,13 +50,15 @@ export default defineConfig({
     //   use: { ...devices['Desktop Safari'] },
     // },
 
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
+    /* Mobile viewports run only the touch-oriented smoke suite. */
+    {
+      name: 'Mobile Chrome',
+      testMatch: /3_mobile/,
+      use: { ...devices['Pixel 5'] },
+    },
     // {
     //   name: 'Mobile Safari',
+    //   testMatch: /3_mobile/,
     //   use: { ...devices['iPhone 12'] },
     // },
 

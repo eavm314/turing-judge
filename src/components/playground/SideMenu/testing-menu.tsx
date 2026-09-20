@@ -43,8 +43,7 @@ export default function TestingMenu() {
   };
 
   return (
-    <div className="p-3 space-y-1">
-      <h2>Testing</h2>
+    <div className="space-y-1">
       <Label htmlFor="test-input" className="text-muted-foreground">
         Enter input string
       </Label>

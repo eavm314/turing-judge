@@ -16,7 +16,8 @@ const stateSchema = z.object({
   transitions: transitionsSchema,
 });
 
-const statesRecord = z.record(z.string().min(1).max(3), stateSchema);
+export const stateLabel = z.string().min(1).max(10);
+const statesRecord = z.record(stateLabel, stateSchema);
 
 export const fsmSchema = z
   .object({

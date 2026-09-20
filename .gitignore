@@ -1,5 +1,6 @@
-# jetbrains
+# ide
 .idea/
+.vscode/
 
 # dependencies
 /node_modules
@@ -54,3 +55,5 @@ next-env.d.ts
 # Dev Files
 /scripts/
 .github/prompts/
+# Worker bundle (built by npm run build:worker)
+/dist/

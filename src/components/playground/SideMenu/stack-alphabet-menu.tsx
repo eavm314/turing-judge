@@ -62,8 +62,7 @@ export default function StackAlphabetMenu() {
   const disabled = mode === 'simulation' || !isOwner;
 
   return (
-    <div className="space-y-2 p-3">
-      <h2>Stack Alphabet</h2>
+    <div className="space-y-2">
       <Label htmlFor="alphabet-input" className="text-muted-foreground">
         Only alphanumeric characters
       </Label>
@@ -84,14 +83,15 @@ export default function StackAlphabetMenu() {
       </div>
       <div className="flex flex-wrap gap-2 font-mono">
         {automaton.stackAlphabet?.map(symbol => (
-          <Badge key={symbol} variant="outline" className="flex items-center gap-1 p-0 w-11">
+          <Badge key={symbol} variant="outline" className="flex items-center gap-1 p-0 min-w-11">
             <span className="py-1 pl-2 pr-0 text-sm">{symbol}</span>
             {symbol !== BOTTOM && (
               <button
                 className={cn(
-                  'p-2 pt-1 text-muted-foreground select-none',
+                  'px-2.5 py-1.5 text-muted-foreground select-none',
                   !disabled && 'hover:text-foreground',
                 )}
+                aria-label={`Remove stack symbol ${symbol}`}
                 onClick={() => handleRemoveFromAlphabet(symbol)}
                 disabled={disabled}
               >

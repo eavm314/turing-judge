@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/ui/utils';
-import { AutomatonType, ProblemDifficulty, Status, Verdict } from '@prisma/browser';
+import { AutomatonType, ProblemDifficulty, Role, Status, Verdict } from '@prisma/browser';
 
 export const DifficultyBadge = ({ difficulty }: { difficulty: ProblemDifficulty }) => {
   let values;
@@ -61,6 +61,12 @@ export const StatusBadge = ({ verdict, status }: { verdict: Verdict | null; stat
         text: 'Step Limit Exceeded',
       };
       break;
+    case Verdict.TIME_LIMIT_EXCEEDED:
+      values = {
+        color: 'bg-red-200 text-red-900 hover:bg-red-100/80',
+        text: 'Time Limit Exceeded',
+      };
+      break;
     case Verdict.INVALID_FORMAT:
       values = {
         color: 'bg-orange-200 text-amber-900 hover:bg-amber-100/80',
@@ -100,4 +106,20 @@ export const AutomatonTypeBadge = ({ type }: { type: AutomatonType }) => {
   }
 
   return <Badge className={color}>{type}</Badge>;
+};
+
+export const RoleBadge = ({ role }: { role: Role }) => {
+  let color;
+  switch (role) {
+    case Role.ADMIN:
+      color = 'bg-red-200 text-red-900 hover:bg-red-200/80';
+      break;
+    case Role.EDITOR:
+      color = 'bg-sky-200 text-sky-900 hover:bg-sky-200/80';
+      break;
+    default:
+      color = 'bg-gray-200 text-gray-800 hover:bg-gray-200/80';
+  }
+
+  return <Badge className={color}>{role}</Badge>;
 };
