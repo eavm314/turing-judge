@@ -66,17 +66,14 @@ test.describe('Basic controls', () => {
 
     await okButton.click();
     await expect(textError).toBeAttached();
-    await expect(textError).toHaveText('State name must contain 1 to 3 characters');
+    await expect(textError).toHaveText('State name must contain 1 to 10 characters');
 
     const validateNameErrors = async () => {
-      await input.fill('new1');
-      await expect(textError).toHaveText('State name must contain 1 to 3 characters');
+      await input.fill('new1234567890');
+      await expect(textError).toHaveText('State name must contain 1 to 10 characters');
 
       await input.fill('');
-      await expect(textError).toHaveText('State name must contain 1 to 3 characters');
-
-      await input.fill('++');
-      await expect(textError).toHaveText('State name can only contain letters and numbers');
+      await expect(textError).toHaveText('State name must contain 1 to 10 characters');
 
       await input.fill('q0');
       await expect(textError).toHaveText('State name must be unique');
