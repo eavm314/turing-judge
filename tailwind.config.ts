@@ -88,10 +88,36 @@ export default {
             height: '0',
           },
         },
+        'pulse-glow': {
+          '0%, 100%': {
+            opacity: '0.35',
+            transform: 'scale(1)',
+          },
+          '50%': {
+            opacity: '0.6',
+            transform: 'scale(1.06)',
+          },
+        },
+        'node-visit': {
+          '0%, 22%': {
+            fill: 'hsl(var(--primary))',
+          },
+          '34%, 100%': {
+            fill: 'hsl(var(--muted))',
+          },
+        },
+        'edge-dash': {
+          to: {
+            strokeDashoffset: '-24',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'pulse-glow': 'pulse-glow 7s ease-in-out infinite',
+        'node-visit': 'node-visit 3.6s ease-in-out infinite',
+        'edge-dash': 'edge-dash 1s linear infinite',
       },
     },
   },
