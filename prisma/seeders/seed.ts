@@ -3,6 +3,7 @@ import { PrismaClient, Role, User } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcryptjs';
 import exampleProjects from '@/constants/example-projects';
+import exampleProblems from './example-problems';
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -81,10 +82,24 @@ async function syncExampleProjects(adminUser: User) {
   }
 }
 
+async function syncExampleProblems(adminUser: User) {
+  // Stale problems are left in place, unlike stale projects: Submission has no cascade on
+  // problemId, so deleting a problem somebody already submitted to throws and fails the deploy.
+  for (const { testCases, ...problem } of exampleProblems) {
+    const data = { ...problem, authorId: adminUser.id, isPublic: true };
+    await prisma.problem.upsert({
+      where: { id: problem.id },
+      update: { ...data, testCases: { deleteMany: {}, createMany: { data: testCases } } },
+      create: { ...data, testCases: { createMany: { data: testCases } } },
+    });
+  }
+}
+
 async function main() {
   const adminUser = await getAdminUser();
 
   await syncExampleProjects(adminUser);
+  await syncExampleProblems(adminUser);
 }
 
 main()
