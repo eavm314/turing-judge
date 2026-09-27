@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { prismaFailure } from '@/lib/actions/prisma-error';
 import { ActionError, serverQuery, type ServerActionResult } from '@/lib/actions/result';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
@@ -276,7 +277,10 @@ export const deleteProblemAction = async (id: string): Promise<ServerActionResul
     revalidatePath('/problems');
     revalidatePath('/problems/editor');
     return { success: true, message: 'Problem deleted successfully' };
-  } catch {
-    return { success: false, message: 'Problem not found', code: 'NOT_FOUND' };
+  } catch (error) {
+    return prismaFailure(error, {
+      NOT_FOUND: 'Problem not found',
+      CONFLICT: 'This problem already has submissions. Make it private instead of deleting it.',
+    });
   }
 };
