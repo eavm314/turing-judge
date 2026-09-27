@@ -150,7 +150,8 @@ model Submission {
   createdAt DateTime @default(now()) @map("created_at")
 
   user    User    @relation(fields: [userId], references: [id])
-  problem Problem @relation(fields: [problemId], references: [id])
+  // Prisma needs NoAction to throw a known error instead of falling to driver-level error
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: NoAction)
 
   @@map("submissions")
 }

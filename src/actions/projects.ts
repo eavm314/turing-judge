@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { type Project } from '@prisma/client';
 
 import { PROJECTS_LIMIT } from '@/constants/app';
+import { prismaFailure } from '@/lib/actions/prisma-error';
 import { ActionError, serverQuery, type ServerActionResult } from '@/lib/actions/result';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db/prisma';
@@ -156,7 +157,7 @@ export const deleteAutomatonAction = async (id: string): Promise<ServerActionRes
     await prisma.project.delete({ where: { id, userId: session.user.id } });
     revalidatePath('/library');
     return { success: true, message: 'Automaton deleted successfully' };
-  } catch {
-    return { success: false, message: 'Automaton not found', code: 'NOT_FOUND' };
+  } catch (error) {
+    return prismaFailure(error, { NOT_FOUND: 'Automaton not found' });
   }
 };

@@ -1,10 +1,17 @@
-import { AutomatonType } from '@prisma/browser';
+import type { AutomatonType } from '@prisma/browser';
+
+type ExampleProjectShape = {
+  id: string;
+  title: string;
+  type: AutomatonType;
+  automaton: unknown;
+};
 
 const exampleProjects = [
   {
     id: 'pilw80yiq2vnjy2w1gm8hi5q',
     title: 'Even Ones',
-    type: AutomatonType.FSM,
+    type: 'FSM',
     automaton: {
       finals: ['q0'],
       states: {
@@ -18,7 +25,7 @@ const exampleProjects = [
   {
     id: 'q25bcbnu07apqx6iiv08qhx2',
     title: 'Ends with "01"',
-    type: AutomatonType.FSM,
+    type: 'FSM',
     automaton: {
       finals: ['q2'],
       states: {
@@ -33,7 +40,7 @@ const exampleProjects = [
   {
     id: 'h147pt8jj29gpztrpob0oeft',
     title: '3-Char Palindrome',
-    type: AutomatonType.FSM,
+    type: 'FSM',
     automaton: {
       finals: ['q_a'],
       states: {
@@ -54,7 +61,7 @@ const exampleProjects = [
   {
     id: 'x9h6i1odejrjr54mxe79a5n9',
     title: 'Simple NFA',
-    type: AutomatonType.FSM,
+    type: 'FSM',
     automaton: {
       finals: ['q2'],
       states: {
@@ -68,7 +75,7 @@ const exampleProjects = [
   {
     id: 'y9h6i1odejrjr54mxe79a5n9',
     title: 'NFA Containing 101',
-    type: AutomatonType.FSM,
+    type: 'FSM',
     automaton: {
       alphabet: ['0', '1'],
       states: {
@@ -117,7 +124,7 @@ const exampleProjects = [
   {
     id: 'a9h6i1odejrjr54mxe79a5n9',
     title: 'PDA for Balanced Parentheses',
-    type: AutomatonType.PDA,
+    type: 'PDA',
     automaton: {
       alphabet: ['ε', '(', ')'],
       stackAlphabet: ['⊥', '*'],
@@ -172,7 +179,7 @@ const exampleProjects = [
   {
     id: 'z9h6i1odejrjr54mxe79a5n9',
     title: 'PDA for a^n b^n',
-    type: AutomatonType.PDA,
+    type: 'PDA',
     automaton: {
       alphabet: ['ε', 'a', 'b'],
       stackAlphabet: ['⊥', 'A'],
@@ -248,7 +255,7 @@ const exampleProjects = [
   {
     id: 'b9h6i1odejrjr54mxe79a5n9',
     title: 'Turing Machine for a^n b^n c^n',
-    type: AutomatonType.TM,
+    type: 'TM',
     automaton: {
       alphabet: ['a', 'b', 'c', 'X', 'Y', 'Z'],
       states: {
@@ -446,7 +453,7 @@ const exampleProjects = [
   {
     id: 'c9h6i1odejrjr54mxe79a5n9',
     title: 'Turing Machine for Binary Multiplication',
-    type: AutomatonType.TM,
+    type: 'TM',
     automaton: {
       alphabet: ['#', '0', '1'],
       states: {
@@ -692,6 +699,6 @@ const exampleProjects = [
       finals: ['qf'],
     },
   },
-];
+] satisfies ExampleProjectShape[];
 
 export default exampleProjects;

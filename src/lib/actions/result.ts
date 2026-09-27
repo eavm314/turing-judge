@@ -5,14 +5,19 @@ export type ActionErrorCode =
   | 'FORBIDDEN'
   | 'NOT_FOUND'
   | 'VALIDATION'
+  | 'CONFLICT'
   | 'RATE_LIMITED'
   | 'UNEXPECTED';
 
+export const UNEXPECTED_MESSAGE = 'Something went wrong. Please try again.';
+
 type SuccessData<T> = undefined extends T ? { data?: T } : { data: T };
+
+export type ActionFailure = { success: false; message: string; code: ActionErrorCode };
 
 export type ServerActionResult<T = void> =
   | ({ success: true; message: string } & SuccessData<T>)
-  | { success: false; message: string; code: ActionErrorCode };
+  | ActionFailure;
 
 export class ActionError extends Error {
   constructor(
@@ -34,10 +39,6 @@ export const serverQuery = async <T>(fn: () => Promise<T>): Promise<ServerAction
       return { success: false, message: error.message, code: error.code };
     }
     console.error(error);
-    return {
-      success: false,
-      message: 'Something went wrong. Please try again.',
-      code: 'UNEXPECTED',
-    };
+    return { success: false, message: UNEXPECTED_MESSAGE, code: 'UNEXPECTED' };
   }
 };
